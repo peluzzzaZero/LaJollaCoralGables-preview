@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>La Jolla Coral Gables · Est. 1928</title>
+<meta name="description" content="La Jolla, a jewel in Coral Gables. Historic venue for weddings, celebrations, corporate and social events. Managed by Epic Lux Management." />
+<meta name="color-scheme" content="light" />
+<link rel="icon" href="assets/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body id="top">
+<!--
+  Taglines (PENDING — confirm context with Pat):
+  - "events & experiences"
+  - "ballroom & catering"
+  Both noted; neither used as primary until Pat decides.
+-->
+<a class="skip" href="#history">Skip to content</a>
+
+<header class="site-header" id="header">
+  <div class="header-inner">
+    <a class="logo" href="#top" aria-label="La Jolla Coral Gables — home">
+      <img class="logo-mark-img" src="assets/brand/logo-lj-oval-sage.png" alt="" width="40" height="48" />
+      <span class="logo-text">
+        <b>La Jolla</b>
+        <i>Coral Gables</i>
+      </span>
+    </a>
+
+    <div class="header-actions">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" class="lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <button type="button" class="lang-btn" data-lang="es" aria-pressed="false">ES</button>
+      </div>
+      <a class="inquire-link" href="#quote" data-i18n="nav.inquire">Inquire</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1. HERO -->
+  <section class="section hero" id="hero" aria-label="Hero">
+    <div class="hero-media">
+      <!-- PENDING: venue video from Epic Lux — <video> slot ready; poster = static fallback -->
+      <video class="hero-video" poster="assets/brand/hero-facade.jpg" muted loop playsinline preload="none" aria-hidden="true">
+        <!-- <source src="assets/venue-loop.mp4" type="video/mp4" /> -->
+      </video>
+      <img class="hero-fallback" src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" />
+      <div class="hero-scrim" aria-hidden="true"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-script">La Jolla</p>
+      <p class="hero-est" data-i18n="hero.est">Coral Gables · Est. 1928</p>
+      <h1 class="hero-title" data-i18n="hero.title">A jewel in Coral Gables</h1>
+      <a class="btn btn-cream" href="#quote" data-i18n="hero.cta">Request a private quote</a>
+    </div>
+    <p class="hero-whisper" data-i18n="hero.whisper">Venue film forthcoming</p>
+    <a class="scroll-hint" href="#history" aria-label="Scroll to history">
+      <span aria-hidden="true"></span>
+    </a>
+  </section>
+
+  <!-- 2. OUR HISTORY -->
+  <section class="section history" id="history" aria-labelledby="history-title">
+    <div class="wrap narrow reveal">
+      <img class="history-accent" src="assets/brand/art-balcony.jpg" alt="" width="160" height="160" loading="lazy" />
+      <p class="eyebrow" data-i18n="history.eyebrow">Our History</p>
+      <h2 id="history-title" class="section-title" data-i18n="history.title">La Jolla, a jewel in Coral Gables</h2>
+      <p class="lede" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
+      <p class="managed" data-i18n="history.managed">Managed by Epic Lux Management</p>
+    </div>
+  </section>
+
+  <!-- 3. FULL-BLEED ASPIRATIONAL QUOTE -->
+  <section class="section quote-bleed" id="moment" aria-label="Aspirational quote">
+    <div class="quote-bleed-media">
+      <img src="assets/brand/mood-card-flowers.jpg" alt="" aria-hidden="true" loading="lazy" />
+      <div class="quote-bleed-scrim" aria-hidden="true"></div>
+    </div>
+    <blockquote class="quote-bleed-text reveal">
+      <img class="quote-bleed-logo" src="assets/brand/logo-lj-oval-cream.png" alt="" width="72" height="86" loading="lazy" />
+      <p data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
+    </blockquote>
+  </section>
+
+  <!-- 4. EVENTS WE HOST — editorial alternating -->
+  <section class="section events" id="events" aria-labelledby="events-title">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="eyebrow" data-i18n="events.eyebrow">Events we host</p>
+        <h2 id="events-title" class="section-title" data-i18n="events.title">Celebrations of every kind</h2>
+      </header>
+
+      <article class="editorial editorial--img-right reveal">
+        <div class="editorial-copy">
+          <h3 data-i18n="events.weddings.title">Weddings</h3>
+          <p data-i18n="events.weddings.body">Ceremonies and receptions framed by historic architecture and garden calm — from intimate vows to full celebrations.</p>
+        </div>
+        <figure class="editorial-media">
+          <img src="assets/brand/mood-card-flowers.jpg" alt="" loading="lazy" />
+          <figcaption class="whisper" data-i18n="pending.mood">Brand mood · venue photography forthcoming</figcaption>
+        </figure>
+      </article>
+
+      <article class="editorial editorial--img-left reveal">
+        <figure class="editorial-media">
+          <img src="assets/brand/mood-plaque.jpg" alt="" loading="lazy" />
+          <figcaption class="whisper" data-i18n="pending.mood">Brand mood · venue photography forthcoming</figcaption>
+        </figure>
+        <div class="editorial-copy">
+          <h3 data-i18n="events.celebrations.title">Celebrations</h3>
+          <p data-i18n="events.celebrations.body">Anniversaries, milestones, and gatherings that deserve a room with character and care.</p>
+        </div>
+      </article>
+
+      <article class="editorial editorial--img-right reveal">
+        <div class="editorial-copy">
+          <h3 data-i18n="events.corporate.title">Corporate</h3>
+          <p data-i18n="events.corporate.body">Board dinners, brand dinners, and professional occasions in a setting that feels considered, not corporate.</p>
+        </div>
+        <figure class="editorial-media">
+          <img src="assets/brand/logo-paper-balcony.jpg" alt="" loading="lazy" />
+          <figcaption class="whisper" data-i18n="pending.mood">Brand mood · venue photography forthcoming</figcaption>
+        </figure>
+      </article>
+
+      <article class="editorial editorial--img-left reveal">
+        <figure class="editorial-media">
+          <img src="assets/brand/mood-wax-seal.jpg" alt="" loading="lazy" />
+          <figcaption class="whisper" data-i18n="pending.mood">Brand mood · venue photography forthcoming</figcaption>
+        </figure>
+        <div class="editorial-copy">
+          <h3 data-i18n="events.social.title">Social</h3>
+          <p data-i18n="events.social.body">Private dinners, showers, and evenings among friends — hosted with the ease of a well-kept home.</p>
+        </div>
+      </article>
+
+      <article class="editorial editorial--img-right reveal">
+        <div class="editorial-copy">
+          <h3 data-i18n="events.alcazar.title">The Alcazar Room</h3>
+          <p data-i18n="events.alcazar.body">A curated private space with 1928 vintage character — for occasions that ask for something more intimate.</p>
+          <a class="text-link" href="#alcazar" data-i18n="events.alcazar.link">Discover The Alcazar Room</a>
+        </div>
+        <figure class="editorial-media editorial-media--ornament">
+          <img src="assets/brand/art-balcony.jpg" alt="" loading="lazy" />
+          <figcaption class="whisper" data-i18n="pending.alcazar">Awaiting interior photography</figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <!-- 5. THE ALCAZAR ROOM -->
+  <section class="section alcazar" id="alcazar" aria-labelledby="alcazar-title">
+    <div class="wrap alcazar-grid reveal">
+      <div class="alcazar-copy">
+        <p class="eyebrow" data-i18n="alcazar.eyebrow">Curated · Vintage 1928</p>
+        <h2 id="alcazar-title" class="section-title" data-i18n="alcazar.title">The Alcazar Room</h2>
+        <p data-i18n="alcazar.body">A private chamber within La Jolla — soft light, period detail, and the quiet grandeur of Coral Gables’ historic decade. Reserved for gatherings that prefer intimacy over spectacle.</p>
+        <a class="btn btn-sage" href="#quote" data-i18n="alcazar.cta">Inquire about The Alcazar Room</a>
+      </div>
+      <figure class="alcazar-visual empty-frame">
+        <img class="alcazar-ornament" src="assets/brand/logo-awning-sage.png" alt="" width="200" height="200" loading="lazy" />
+        <figcaption class="whisper" data-i18n="pending.alcazar">Awaiting interior photography</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6. RENTALS & SERVICES — no vendor names -->
+  <section class="section rentals" id="rentals" aria-labelledby="rentals-title">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="eyebrow" data-i18n="rentals.eyebrow">Rentals &amp; Services</p>
+        <h2 id="rentals-title" class="section-title" data-i18n="rentals.title">For La Jolla — or anywhere you gather</h2>
+        <p class="section-intro" data-i18n="rentals.intro">Furniture, décor, glassware, and production services available for events at La Jolla or at a location of your choosing. Inquire to reserve — no public prices.</p>
+      </header>
+
+      <div class="rentals-featured reveal">
+        <button type="button" class="rentals-frame" data-interest="Furniture" data-scroll-quote>
+          <div class="rentals-frame-media">
+            <img src="assets/brand/mood-card-flowers.jpg" alt="" loading="lazy" />
+          </div>
+          <span class="rentals-frame-label" data-i18n="rentals.furniture">Furniture</span>
+          <span class="whisper" data-i18n="pending.catalog">Awaiting photography</span>
+          <span class="rentals-frame-cta" data-i18n="rentals.inquire">Inquire</span>
+        </button>
+        <button type="button" class="rentals-frame" data-interest="Decor" data-scroll-quote>
+          <div class="rentals-frame-media">
+            <img src="assets/brand/mood-plaque.jpg" alt="" loading="lazy" />
+          </div>
+          <span class="rentals-frame-label" data-i18n="rentals.decor">Decor</span>
+          <span class="whisper" data-i18n="pending.catalog">Awaiting photography</span>
+          <span class="rentals-frame-cta" data-i18n="rentals.inquire">Inquire</span>
+        </button>
+        <button type="button" class="rentals-frame" data-interest="Photography" data-scroll-quote>
+          <div class="rentals-frame-media">
+            <img src="assets/brand/mood-wax-seal.jpg" alt="" loading="lazy" />
+          </div>
+          <span class="rentals-frame-label" data-i18n="rentals.photography">Photography</span>
+          <span class="whisper" data-i18n="pending.catalog">Awaiting photography</span>
+          <span class="rentals-frame-cta" data-i18n="rentals.inquire">Inquire</span>
+        </button>
+      </div>
+
+      <ul class="rentals-quiet reveal">
+        <li>
+          <button type="button" class="rentals-quiet-link" data-interest="Glassware" data-scroll-quote>
+            <span data-i18n="rentals.glassware">Glassware</span>
+            <em data-i18n="rentals.inquire">Inquire</em>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rentals-quiet-link" data-interest="Video" data-scroll-quote>
+            <span data-i18n="rentals.video">Video</span>
+            <em data-i18n="rentals.inquire">Inquire</em>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rentals-quiet-link" data-interest="DJ" data-scroll-quote>
+            <span data-i18n="rentals.dj">DJ</span>
+            <em data-i18n="rentals.inquire">Inquire</em>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rentals-quiet-link" data-interest="Lighting" data-scroll-quote>
+            <span data-i18n="rentals.lighting">Lighting</span>
+            <em data-i18n="rentals.inquire">Inquire</em>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="rentals-quiet-link" data-interest="Other services" data-scroll-quote>
+            <span data-i18n="rentals.other">More services</span>
+            <em data-i18n="rentals.inquire">Inquire</em>
+          </button>
+        </li>
+      </ul>
+      <p class="rentals-note whisper centered" data-i18n="pending.catalogNote">Catalog photography forthcoming · inquire for the full collection</p>
+    </div>
+  </section>
+
+  <!-- 7. TESTIMONIAL — hidden until approved guest quote (CEO QC 2026-09-26) -->
+  <section class="section testimonial" id="testimonial" hidden aria-hidden="true">
+  </section>
+
+  <!-- 8. GALLERY + SPACES -->
+  <section class="section gallery" id="gallery" aria-labelledby="gallery-title">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="eyebrow" data-i18n="gallery.eyebrow">Gallery</p>
+        <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">Spaces &amp; moments</h2>
+      </header>
+
+      <div class="gallery-masonry">
+        <figure class="gallery-item gallery-item--tall reveal">
+          <img src="assets/brand/hero-facade.jpg" alt="Exterior of La Jolla, 301 Alcazar Avenue." loading="lazy" />
+          <figcaption data-i18n="gallery.cap1">301 Alcazar Avenue</figcaption>
+        </figure>
+        <figure class="gallery-item reveal">
+          <img src="assets/brand/mood-card-flowers.jpg" alt="La Jolla brand card among flowers." loading="lazy" />
+          <figcaption data-i18n="gallery.cap3">Brand mood</figcaption>
+        </figure>
+        <figure class="gallery-item reveal">
+          <img src="assets/brand/mood-plaque.jpg" alt="La Jolla brand plaque mood." loading="lazy" />
+          <figcaption data-i18n="gallery.cap5">Plaque</figcaption>
+        </figure>
+        <figure class="gallery-item gallery-item--wide reveal">
+          <img src="assets/brand/mood-wax-seal.jpg" alt="La Jolla wax seal stamp mood." loading="lazy" />
+          <figcaption data-i18n="gallery.cap4">Wax seal</figcaption>
+        </figure>
+        <figure class="gallery-item reveal">
+          <img src="assets/brand/logo-paper-balcony.jpg" alt="La Jolla balcony mark on paper." loading="lazy" />
+          <figcaption data-i18n="gallery.cap2">Balcony mark</figcaption>
+        </figure>
+        <figure class="gallery-item empty-frame reveal">
+          <figcaption class="whisper" data-i18n="gallery.space1">Awaiting photography · name TBD</figcaption>
+        </figure>
+        <figure class="gallery-item empty-frame reveal">
+          <figcaption class="whisper" data-i18n="gallery.space2">Awaiting photography · name TBD</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. TEAM -->
+  <section class="section team" id="team" aria-labelledby="team-title">
+    <div class="wrap">
+      <header class="section-head reveal">
+        <p class="eyebrow" data-i18n="team.eyebrow">Our Team</p>
+        <h2 id="team-title" class="section-title" data-i18n="team.title">Here for your celebration</h2>
+      </header>
+      <div class="team-grid">
+        <article class="team-card reveal">
+          <div class="team-photo empty-frame oval" aria-hidden="true">
+            <span class="whisper" data-i18n="pending.photo">Portrait forthcoming</span>
+          </div>
+          <h3>Julie Arias</h3>
+          <p class="team-role" data-i18n="team.julie.role">Events</p>
+        </article>
+        <article class="team-card reveal">
+          <div class="team-photo empty-frame oval" aria-hidden="true">
+            <span class="whisper" data-i18n="pending.photo">Portrait forthcoming</span>
+          </div>
+          <h3>Patricia Mir</h3>
+          <p class="team-role" data-i18n="team.pat.role">Events</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. PRIVATE QUOTE FORM -->
+  <section class="section quote" id="quote" aria-labelledby="quote-title">
+    <div class="wrap narrow">
+      <header class="section-head reveal">
+        <p class="eyebrow" data-i18n="quote.eyebrow">Private quote</p>
+        <h2 id="quote-title" class="section-title" data-i18n="quote.title">Request a private quote</h2>
+        <p class="section-intro" data-i18n="quote.intro">Share a few details. We respond personally — no prices are shown on this site.</p>
+      </header>
+
+      <div class="quote-panel reveal">
+        <p class="form-notice whisper" data-i18n="quote.notice">Local preview only — nothing is sent yet.</p>
+
+        <form class="quote-form" id="quote-form" novalidate>
+          <div class="form-row">
+            <label for="q-name"><span data-i18n="form.name">Name</span> <abbr title="required">*</abbr></label>
+            <input type="text" id="q-name" name="name" autocomplete="name" required />
+          </div>
+          <div class="form-row">
+            <label for="q-email"><span data-i18n="form.email">Email</span> <abbr title="required">*</abbr></label>
+            <input type="email" id="q-email" name="email" autocomplete="email" required />
+          </div>
+          <div class="form-row">
+            <label for="q-phone"><span data-i18n="form.phone">Phone</span> <abbr title="required">*</abbr></label>
+            <input type="tel" id="q-phone" name="phone" autocomplete="tel" inputmode="tel" required />
+          </div>
+          <div class="form-row two-col">
+            <div>
+              <label for="q-date"><span data-i18n="form.date">Event date</span> <abbr title="required">*</abbr></label>
+              <input type="date" id="q-date" name="eventDate" required />
+            </div>
+            <div>
+              <label for="q-guests"><span data-i18n="form.guests">Guest count</span> <abbr title="required">*</abbr></label>
+              <input type="number" id="q-guests" name="guestCount" min="1" max="500" inputmode="numeric" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="q-type"><span data-i18n="form.type">Event type</span> <abbr title="required">*</abbr></label>
+            <select id="q-type" name="eventType" required>
+              <option value="" data-i18n="form.typePlaceholder">Select…</option>
+              <option value="wedding" data-i18n="form.typeWedding">Wedding</option>
+              <option value="celebration" data-i18n="form.typeCelebration">Celebration</option>
+              <option value="corporate" data-i18n="form.typeCorporate">Corporate</option>
+              <option value="social" data-i18n="form.typeSocial">Social</option>
+              <option value="alcazar" data-i18n="form.typeAlcazar">The Alcazar Room</option>
+              <option value="rental" data-i18n="form.typeRental">Rentals / services only</option>
+              <option value="other" data-i18n="form.typeOther">Other</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="q-interest"><span data-i18n="form.interest">Rental / service interest</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
+            <input type="text" id="q-interest" name="rentalInterest" placeholder="e.g. Furniture, Lighting" data-i18n-attr="placeholder" data-i18n="form.interestPh" />
+          </div>
+          <div class="form-row">
+            <label for="q-comments"><span data-i18n="form.comments">Comments</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
+            <textarea id="q-comments" name="comments" rows="4"></textarea>
+          </div>
+          <button type="submit" class="btn btn-sage btn-block" data-i18n="form.submit">Submit inquiry</button>
+          <p class="form-success" id="form-success" hidden role="status" data-i18n="form.success">Thank you — your inquiry was recorded locally for this preview. Nothing was sent. When live, you will receive a confirmation email.</p>
+          <p class="form-error" id="form-error" hidden role="alert" data-i18n="form.error">Please complete the required fields.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- 11. FOOTER -->
+<footer class="site-footer" id="footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <img class="footer-mark" src="assets/brand/logo-lj-oval-sage.png" alt="" width="56" height="67" loading="lazy" />
+      <p class="footer-logo">La Jolla</p>
+      <p class="footer-tag" data-i18n="footer.tag">Coral Gables · Est. 1928</p>
+      <p class="footer-managed" data-i18n="footer.managed">Managed by Epic Lux Management</p>
+    </div>
+    <div class="footer-contact">
+      <h3 data-i18n="footer.contact">Contact</h3>
+      <p><a href="tel:+17862908813">786-290-8813</a></p>
+      <p><a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a></p>
+      <p class="footer-address"><a class="footer-address-link" href="https://www.google.com/maps/search/?api=1&amp;query=301+Alcazar+Avenue%2C+Coral+Gables" target="_blank" rel="noopener" data-i18n="footer.address">301 Alcazar Avenue, Coral Gables</a></p>
+    </div>
+    <div class="footer-maps">
+      <h3 data-i18n="footer.maps">Find us</h3>
+      <p class="whisper" data-i18n="footer.mapsSoon">Map &amp; reviews coming soon</p>
+      <p class="footer-address-soft">301 Alcazar Avenue</p>
+    </div>
+    <div class="footer-links">
+      <h3 data-i18n="footer.connect">Connect</h3>
+      <ul class="social-list">
+        <li><span class="whisper" data-i18n="footer.igSoon">Instagram — coming soon</span></li>
+        <li><span class="whisper" data-i18n="footer.ttSoon">TikTok — coming soon</span></li>
+        <li><span class="whisper" data-i18n="footer.fbSoon">Facebook — coming soon</span></li>
+      </ul>
+      <p><a href="#vendor-stub" id="vendor-stub" data-i18n="footer.vendor">Become a Vendor</a></p>
+      <p>
+        <a href="#terms-stub" id="terms-stub" data-i18n="footer.terms">Terms</a>
+        <span aria-hidden="true"> · </span>
+        <a href="#privacy-stub" id="privacy-stub" data-i18n="footer.privacy">Privacy</a>
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span id="year"></span> La Jolla Coral Gables. <span data-i18n="footer.rights">All rights reserved.</span></p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
