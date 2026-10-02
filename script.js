@@ -438,19 +438,11 @@
       }
       var frame = layer.querySelector(".layer-frame");
       if (!parts.length || !frame) return;
-      var tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: frame,
-          start: "top 96%",
-          end: "bottom 4%",
-          scrub: true
-        }
-      });
-      parts.forEach(function (img, i) {
-        var lift = i === 0 ? 6 : -16 - (i - 1) * 10;
-        tl.fromTo(img, { yPercent: lift }, { yPercent: 0, ease: "none", duration: 0.14 }, 0);
-        tl.to(img, { yPercent: 0, ease: "none", duration: 0.72 }, 0.14);
-        tl.to(img, { yPercent: lift, ease: "none", duration: 0.14 }, 0.86);
+      gsap.set(parts, { yPercent: 0, y: 0 });
+      gsap.fromTo(frame, { y: 22 }, {
+        y: 0,
+        ease: "none",
+        scrollTrigger: { trigger: frame, start: "top 92%", end: "top 64%", scrub: true }
       });
     });
 
