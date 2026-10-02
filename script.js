@@ -410,7 +410,7 @@
       var heroTl = gsap.timeline({
         scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true }
       });
-      heroTl.fromTo(".hero-media", { yPercent: 0, scale: 1.08 }, { yPercent: -10, scale: 1, ease: "none", duration: 1 }, 0);
+      heroTl.fromTo(".hero-media", { yPercent: 0, scale: 1 }, { yPercent: -6, scale: 1, ease: "none", duration: 1 }, 0);
       heroTl.fromTo(".hero-content", { y: 0, autoAlpha: 1 }, { y: -28, autoAlpha: 0, ease: "none", duration: 1 }, 0);
       heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.3 }, 0);
     }
@@ -424,27 +424,48 @@
       });
     }
 
-    var layers = Array.prototype.slice.call(document.querySelectorAll(".passage .layer"));
-    layers.forEach(function (layer) {
-      var parts = Array.prototype.slice.call(layer.querySelectorAll(".depth"));
-      var copy = layer.querySelector(".layer-copy");
+    var moment = document.querySelector(".moment-pin");
+    if (moment) {
+      gsap.fromTo(".quote-bleed-text", { y: 26, autoAlpha: 0 }, {
+        y: 0,
+        autoAlpha: 1,
+        ease: "none",
+        scrollTrigger: { trigger: moment, start: "top 78%", end: "top 52%", scrub: true }
+      });
+    }
+
+    document.querySelectorAll(".chapter:not(.chapter--object)").forEach(function (chapter) {
+      var img = chapter.querySelector(".chapter-media img");
+      var copy = chapter.querySelector(".chapter-copy");
+      if (img) gsap.set(img, { scale: 1, yPercent: 0 });
       if (copy) {
-        gsap.fromTo(copy, { y: 22, autoAlpha: 0 }, {
+        gsap.fromTo(copy, { y: 28 }, {
           y: 0,
-          autoAlpha: 1,
           ease: "none",
-          scrollTrigger: { trigger: layer, start: "top 72%", end: "top 46%", scrub: true }
+          scrollTrigger: { trigger: chapter, start: "top 82%", end: "top 58%", scrub: true }
         });
       }
-      var frame = layer.querySelector(".layer-frame");
-      if (!parts.length || !frame) return;
-      gsap.set(parts, { yPercent: 0, y: 0 });
-      gsap.fromTo(frame, { y: 22 }, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: frame, start: "top 92%", end: "top 64%", scrub: true }
-      });
     });
+
+    var objectChapter = document.querySelector(".chapter--object");
+    if (objectChapter) {
+      var seal = objectChapter.querySelector(".chapter-media");
+      var sealCopy = objectChapter.querySelector(".chapter-copy");
+      if (seal) {
+        gsap.fromTo(seal, { y: 24 }, {
+          y: 0,
+          ease: "none",
+          scrollTrigger: { trigger: objectChapter, start: "top 86%", end: "top 60%", scrub: true }
+        });
+      }
+      if (sealCopy) {
+        gsap.fromTo(sealCopy, { y: 24 }, {
+          y: 0,
+          ease: "none",
+          scrollTrigger: { trigger: objectChapter, start: "top 86%", end: "top 60%", scrub: true }
+        });
+      }
+    }
 
     var alcazarVisual = document.querySelector(".alcazar-visual");
     if (alcazarVisual) {
