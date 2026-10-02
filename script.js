@@ -443,19 +443,19 @@
         var scaled = Math.min(0.9999, Math.max(0, progress)) * count;
         var index = Math.min(count - 1, Math.floor(scaled));
         var local = scaled - index;
+        var fade = 0.2;
         photos.forEach(function (img, k) {
-          var angle = 78;
           var opacity = 0;
-          if (k === index) {
-            var turnT = Math.min(1, local / 0.42);
-            angle = 78 * (1 - turnT);
-            opacity = 0.4 + 0.6 * Math.min(1, local / 0.18);
-          }
-          img.style.transform = "rotateY(" + angle + "deg)";
+          if (k === index) opacity = index === 0 ? 1 : Math.min(1, local / fade);
+          else if (k === index - 1) opacity = Math.max(0, 1 - local / fade);
+          img.style.transform = "none";
           img.style.opacity = String(opacity);
         });
         captions.forEach(function (caption, k) {
-          caption.style.opacity = k === index ? "1" : "0";
+          var opacity = 0;
+          if (k === index) opacity = index === 0 ? 1 : Math.min(1, local / fade);
+          else if (k === index - 1) opacity = Math.max(0, 1 - local / fade);
+          caption.style.opacity = String(opacity);
         });
       };
       applyTurn(0);

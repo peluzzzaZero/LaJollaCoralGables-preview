@@ -487,39 +487,50 @@ p:last-child { margin-bottom: 0; }
   margin-bottom: 0.3rem;
 }
 .turn-caption p { color: rgba(242, 238, 227, 0.84); margin: 0; }
-html.has-gsap .turn { height: 560vh; }
+html.has-gsap .turn { height: 460vh; background: #1c1814; }
 html.has-gsap .turn-stage {
   position: sticky;
   top: 0;
   height: 100vh;
   height: 100dvh;
+  display: block;
+  padding: 0;
   overflow: hidden;
-  perspective: 1600px;
 }
-html.has-gsap .turn-photos {
-  position: relative;
-  height: min(52vh, 30rem);
-  transform-style: preserve-3d;
-}
+html.has-gsap .turn-photos,
 html.has-gsap .turn-photo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   margin: 0;
-  object-fit: contain;
-  object-position: center center;
-  transform-origin: center center;
-  backface-visibility: hidden;
 }
-html.has-gsap .turn-captions { position: relative; min-height: 8.2rem; }
+html.has-gsap .turn-photo {
+  object-fit: cover;
+  object-position: center 42%;
+  transform: none;
+}
+html.has-gsap .turn-captions {
+  position: absolute;
+  z-index: 2;
+  left: clamp(1rem, 4vw, 3.5rem);
+  bottom: clamp(1.2rem, 4vh, 2.6rem);
+  width: min(36rem, calc(100% - 2rem));
+  min-height: 0;
+}
 html.has-gsap .turn-caption {
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
-  padding: 0;
+  bottom: 0;
+  top: auto;
+  text-align: left;
+  padding: 1.15rem 1.3rem 1.05rem;
+  background: rgba(250, 248, 243, 0.94);
+  color: var(--ink);
 }
+html.has-gsap .turn-caption h3 { color: var(--ink); }
+html.has-gsap .turn-caption p { color: var(--ink-soft); margin: 0; }
 
 /* —— 4b. Events list —— */
 .events { background: var(--paper); padding: 0; }
