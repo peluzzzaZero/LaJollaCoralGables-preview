@@ -442,15 +442,15 @@
         scrollTrigger: {
           trigger: frame,
           start: "top 96%",
-          end: "bottom 8%",
+          end: "bottom 4%",
           scrub: true
         }
       });
       parts.forEach(function (img, i) {
-        var lift = i === 0 ? 7 : -10 - (i - 1) * 8;
-        tl.fromTo(img, { yPercent: lift }, { yPercent: 0, ease: "none", duration: 0.28 }, 0);
-        tl.to(img, { yPercent: 0, ease: "none", duration: 0.4 }, 0.28);
-        tl.to(img, { yPercent: lift, ease: "none", duration: 0.32 }, 0.68);
+        var lift = i === 0 ? 6 : -16 - (i - 1) * 10;
+        tl.fromTo(img, { yPercent: lift }, { yPercent: 0, ease: "none", duration: 0.14 }, 0);
+        tl.to(img, { yPercent: 0, ease: "none", duration: 0.72 }, 0.14);
+        tl.to(img, { yPercent: lift, ease: "none", duration: 0.14 }, 0.86);
       });
     });
 
