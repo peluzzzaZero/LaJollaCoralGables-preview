@@ -434,37 +434,38 @@
       });
     }
 
-    document.querySelectorAll(".chapter:not(.chapter--object)").forEach(function (chapter) {
-      var img = chapter.querySelector(".chapter-media img");
-      var copy = chapter.querySelector(".chapter-copy");
-      if (img) gsap.set(img, { scale: 1, yPercent: 0 });
-      if (copy) {
-        gsap.fromTo(copy, { y: 28 }, {
-          y: 0,
-          ease: "none",
-          scrollTrigger: { trigger: chapter, start: "top 82%", end: "top 58%", scrub: true }
+    var turn = document.querySelector(".turn");
+    if (turn) {
+      var photos = Array.prototype.slice.call(turn.querySelectorAll(".turn-photo"));
+      var captions = Array.prototype.slice.call(turn.querySelectorAll(".turn-caption"));
+      var count = photos.length;
+      var applyTurn = function (progress) {
+        var scaled = Math.min(0.9999, Math.max(0, progress)) * count;
+        var index = Math.min(count - 1, Math.floor(scaled));
+        var local = scaled - index;
+        photos.forEach(function (img, k) {
+          var angle = 78;
+          var opacity = 0;
+          if (k === index) {
+            var turnT = Math.min(1, local / 0.42);
+            angle = 78 * (1 - turnT);
+            opacity = 0.4 + 0.6 * Math.min(1, local / 0.18);
+          }
+          img.style.transform = "rotateY(" + angle + "deg)";
+          img.style.opacity = String(opacity);
         });
-      }
-    });
-
-    var objectChapter = document.querySelector(".chapter--object");
-    if (objectChapter) {
-      var seal = objectChapter.querySelector(".chapter-media");
-      var sealCopy = objectChapter.querySelector(".chapter-copy");
-      if (seal) {
-        gsap.fromTo(seal, { y: 24 }, {
-          y: 0,
-          ease: "none",
-          scrollTrigger: { trigger: objectChapter, start: "top 86%", end: "top 60%", scrub: true }
+        captions.forEach(function (caption, k) {
+          caption.style.opacity = k === index ? "1" : "0";
         });
-      }
-      if (sealCopy) {
-        gsap.fromTo(sealCopy, { y: 24 }, {
-          y: 0,
-          ease: "none",
-          scrollTrigger: { trigger: objectChapter, start: "top 86%", end: "top 60%", scrub: true }
-        });
-      }
+      };
+      applyTurn(0);
+      ScrollTrigger.create({
+        trigger: turn,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true,
+        onUpdate: function (self) { applyTurn(self.progress); }
+      });
     }
 
     var alcazarVisual = document.querySelector(".alcazar-visual");

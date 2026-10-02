@@ -462,7 +462,66 @@ p:last-child { margin-bottom: 0; }
   margin: 0;
 }
 
-/* —— 4. Events: full-bleed chapters, then a type list —— */
+/* —— 4. Scroll turns each whole photograph from its edge to face you —— */
+.turn { background: #2c241e; }
+.turn-stage {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 1.1rem;
+  padding: calc(var(--header-h) + 0.75rem) 1.1rem 1.5rem;
+}
+.turn-photos { width: min(86vw, 26rem); }
+.turn-photo {
+  display: block;
+  width: min(86vw, 26rem);
+  height: auto;
+  margin: 1.75rem auto 0;
+  object-fit: contain;
+}
+.turn-captions { width: min(40rem, 92vw); }
+.turn-caption { text-align: center; padding: 0.35rem 0.4rem 1.75rem; color: var(--cream); }
+.turn-caption h3 {
+  color: var(--cream);
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  margin-bottom: 0.3rem;
+}
+.turn-caption p { color: rgba(242, 238, 227, 0.84); margin: 0; }
+html.has-gsap .turn { height: 560vh; }
+html.has-gsap .turn-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  perspective: 1600px;
+}
+html.has-gsap .turn-photos {
+  position: relative;
+  height: min(52vh, 30rem);
+  transform-style: preserve-3d;
+}
+html.has-gsap .turn-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: contain;
+  object-position: center center;
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+html.has-gsap .turn-captions { position: relative; min-height: 8.2rem; }
+html.has-gsap .turn-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 0;
+}
+
+/* —— 4b. Events list —— */
 .events { background: var(--paper); padding: 0; }
 .events-intro { padding: clamp(5.5rem, 12vw, 8.5rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
 .events-intro .section-head { margin-bottom: 0; }
