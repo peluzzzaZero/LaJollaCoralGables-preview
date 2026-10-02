@@ -405,13 +405,6 @@
       else target.scrollIntoView({ block: "start" });
     });
 
-    var pass = {
-      trigger: null,
-      start: "top bottom",
-      end: "bottom top",
-      scrub: true
-    };
-
     var hero = document.querySelector(".hero");
     if (hero) {
       var heroTl = gsap.timeline({
@@ -431,42 +424,32 @@
       });
     }
 
-    var moment = document.querySelector(".moment-pin");
-    if (moment) {
-      var momentTl = gsap.timeline({
-        scrollTrigger: Object.assign({}, pass, { trigger: moment })
-      });
-      momentTl.fromTo(".quote-bleed-media img", { yPercent: 8, scale: 1.06 }, { yPercent: 0, scale: 1.12, ease: "none", duration: 0.5 }, 0);
-      momentTl.to(".quote-bleed-media img", { yPercent: -8, scale: 1.04, ease: "none", duration: 0.5 }, 0.5);
-      momentTl.fromTo(".quote-bleed-text", { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: "none", duration: 0.28 }, 0.18);
-    }
-
-    document.querySelectorAll(".chapter:not(.chapter--object)").forEach(function (chapter) {
-      var img = chapter.querySelector(".chapter-media img");
-      var copy = chapter.querySelector(".chapter-copy");
-      var tl = gsap.timeline({
-        scrollTrigger: Object.assign({}, pass, { trigger: chapter })
-      });
-      if (img) {
-        tl.fromTo(img, { yPercent: 8, scale: 1.05 }, { yPercent: 0, scale: 1.12, ease: "none", duration: 0.5 }, 0);
-        tl.to(img, { yPercent: -8, scale: 1.04, ease: "none", duration: 0.5 }, 0.5);
+    var layers = Array.prototype.slice.call(document.querySelectorAll(".passage .layer"));
+    layers.forEach(function (layer, index) {
+      var sheet = layer.querySelector(".layer-sheet");
+      var copy = layer.querySelector(".layer-copy");
+      var next = layers[index + 1];
+      if (copy) {
+        gsap.fromTo(copy, { y: 26, autoAlpha: 0 }, {
+          y: 0,
+          autoAlpha: 1,
+          ease: "none",
+          scrollTrigger: { trigger: layer, start: "top 78%", end: "top 38%", scrub: true }
+        });
       }
-      if (copy) tl.fromTo(copy, { y: 36 }, { y: 0, ease: "none", duration: 0.28 }, 0.16);
+      if (sheet && next) {
+        gsap.to(sheet, {
+          scale: 0.96,
+          ease: "none",
+          scrollTrigger: {
+            trigger: next,
+            start: "top bottom",
+            end: "top 12%",
+            scrub: true
+          }
+        });
+      }
     });
-
-    var objectChapter = document.querySelector(".chapter--object");
-    if (objectChapter) {
-      var seal = objectChapter.querySelector(".chapter-media");
-      var sealCopy = objectChapter.querySelector(".chapter-copy");
-      var sealTl = gsap.timeline({
-        scrollTrigger: Object.assign({}, pass, { trigger: objectChapter })
-      });
-      if (seal) {
-        sealTl.fromTo(seal, { y: 48 }, { y: 0, ease: "none", duration: 0.45 }, 0);
-        sealTl.to(seal, { y: -36, ease: "none", duration: 0.4 }, 0.6);
-      }
-      if (sealCopy) sealTl.fromTo(sealCopy, { y: 28 }, { y: 0, ease: "none", duration: 0.3 }, 0.12);
-    }
 
     var alcazarVisual = document.querySelector(".alcazar-visual");
     if (alcazarVisual) {
