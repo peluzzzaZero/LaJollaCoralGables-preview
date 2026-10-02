@@ -425,30 +425,33 @@
     }
 
     var layers = Array.prototype.slice.call(document.querySelectorAll(".passage .layer"));
-    layers.forEach(function (layer, index) {
-      var sheet = layer.querySelector(".layer-sheet");
+    layers.forEach(function (layer) {
+      var parts = Array.prototype.slice.call(layer.querySelectorAll(".depth"));
       var copy = layer.querySelector(".layer-copy");
-      var next = layers[index + 1];
       if (copy) {
-        gsap.fromTo(copy, { y: 26, autoAlpha: 0 }, {
+        gsap.fromTo(copy, { y: 22, autoAlpha: 0 }, {
           y: 0,
           autoAlpha: 1,
           ease: "none",
-          scrollTrigger: { trigger: layer, start: "top 78%", end: "top 38%", scrub: true }
+          scrollTrigger: { trigger: layer, start: "top 72%", end: "top 46%", scrub: true }
         });
       }
-      if (sheet && next) {
-        gsap.to(sheet, {
-          scale: 0.96,
-          ease: "none",
-          scrollTrigger: {
-            trigger: next,
-            start: "top bottom",
-            end: "top 12%",
-            scrub: true
-          }
-        });
-      }
+      var frame = layer.querySelector(".layer-frame");
+      if (!parts.length || !frame) return;
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: frame,
+          start: "top 96%",
+          end: "bottom 8%",
+          scrub: true
+        }
+      });
+      parts.forEach(function (img, i) {
+        var lift = i === 0 ? 7 : -10 - (i - 1) * 8;
+        tl.fromTo(img, { yPercent: lift }, { yPercent: 0, ease: "none", duration: 0.28 }, 0);
+        tl.to(img, { yPercent: 0, ease: "none", duration: 0.4 }, 0.28);
+        tl.to(img, { yPercent: lift, ease: "none", duration: 0.32 }, 0.68);
+      });
     });
 
     var alcazarVisual = document.querySelector(".alcazar-visual");

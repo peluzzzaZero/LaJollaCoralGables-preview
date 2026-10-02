@@ -140,9 +140,11 @@ p:last-child { margin-bottom: 0; }
   margin-bottom: 0.85rem;
 }
 .section-intro {
-  max-width: 34rem;
+  max-width: 38rem;
   margin: 0.85rem auto 0;
   color: var(--ink-soft);
+  font-size: 1.2rem;
+  line-height: 1.55;
 }
 .lede { font-size: 1.28rem; color: var(--ink-soft); line-height: 1.75; }
 
@@ -460,26 +462,23 @@ p:last-child { margin-bottom: 0; }
   margin: 0;
 }
 
-/* —— 3b. Passage: whole pictures, stacked as layers —— */
+/* —— 3b. Passage: each photograph's own layers divide, then meet —— */
 .passage { position: relative; background: var(--cream); }
 .layer {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   align-items: center;
-  padding: calc(var(--header-h) + 1rem) clamp(1.1rem, 4vw, 3.25rem) 1.25rem;
+  padding: calc(var(--header-h) + 1.25rem) clamp(1.1rem, 4vw, 3.25rem) 2rem;
   background: var(--cream);
-  box-shadow: 0 -24px 48px rgba(44, 36, 30, 0.08);
-  overflow: hidden;
 }
-.layer:nth-child(1) { z-index: 1; background: #2c241e; }
-.layer:nth-child(2) { z-index: 2; background: var(--cream); }
-.layer:nth-child(3) { z-index: 3; background: var(--paper); }
-.layer:nth-child(4) { z-index: 4; background: var(--cream); }
-.layer:nth-child(5) { z-index: 5; background: #e7ebe4; }
-.layer:nth-child(6) { z-index: 6; background: var(--paper); }
+.layer:nth-child(1) { background: #2c241e; }
+.layer:nth-child(2) { background: var(--cream); }
+.layer:nth-child(3) { background: var(--paper); }
+.layer:nth-child(4) { background: var(--cream); }
+.layer:nth-child(5) { background: #e7ebe4; }
+.layer:nth-child(6) { background: var(--paper); }
 .layer-sheet {
   width: min(100%, 68rem);
   margin-inline: auto;
@@ -487,7 +486,6 @@ p:last-child { margin-bottom: 0; }
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.9fr);
   gap: clamp(1.15rem, 3vw, 2.75rem);
   align-items: center;
-  transform-origin: center center;
 }
 .layer--flip .layer-frame { order: 2; }
 .layer-frame {
@@ -496,12 +494,14 @@ p:last-child { margin-bottom: 0; }
   display: grid;
   place-items: center;
 }
-.layer-frame img {
+.layer-frame .depth {
+  grid-area: 1 / 1;
   max-width: 100%;
   max-height: 100%;
   width: auto;
   height: auto;
   object-fit: contain;
+  transform-origin: center center;
 }
 .layer-copy h3 {
   font-size: clamp(2rem, 4vw, 3rem);
@@ -527,9 +527,9 @@ p:last-child { margin-bottom: 0; }
   .layer-quote { font-size: 1.45rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .layer { position: relative; height: auto; min-height: 0; overflow: visible; }
+  .layer { min-height: 0; }
   .layer-frame { height: auto; }
-  .layer-frame img { max-height: 70vh; }
+  .layer-frame .depth { max-height: 70vh; transform: none; }
 }
 
 /* —— 4. Events: full-bleed chapters, then a type list —— */
@@ -634,7 +634,7 @@ p:last-child { margin-bottom: 0; }
   font-size: clamp(1.7rem, 2.4vw, 2.15rem);
   margin-bottom: 0.4rem;
 }
-.event-types p { color: var(--ink-soft); margin: 0 0 0.85rem; }
+.event-types p { color: var(--ink-soft); margin: 0 0 0.85rem; font-size: 1.15rem; line-height: 1.5; }
 .event-types li:last-child { grid-column: 1 / -1; max-width: 38rem; }
 
 @media (max-width: 800px) {
@@ -849,7 +849,7 @@ p:last-child { margin-bottom: 0; }
   border: none;
   padding: 1rem 0.15rem;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.5rem;
   color: var(--ink);
   text-align: left;
   transition: color 0.2s;
@@ -857,10 +857,10 @@ p:last-child { margin-bottom: 0; }
 .rentals-quiet-link:hover { color: var(--sage-deep); }
 .rentals-quiet-link em {
   font-style: normal;
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--sage);
+  color: var(--sage-deep);
   text-decoration: underline;
   text-underline-offset: 0.28em;
 }
@@ -1038,15 +1038,15 @@ p:last-child { margin-bottom: 0; }
   padding-left: 0.18em;
 }
 .team-card h3 {
-  font-size: 1.55rem;
-  margin-bottom: 0.3rem;
+  font-size: clamp(2.15rem, 3vw, 2.7rem);
+  margin-bottom: 0.35rem;
 }
 .team-role {
   font-family: var(--font-display);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--sage);
+  color: var(--ink);
   margin-bottom: 0.85rem;
 }
 .team-bio { font-size: 0.95rem; }
