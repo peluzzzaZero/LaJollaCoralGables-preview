@@ -10,7 +10,6 @@
       "hero.est": "Coral Gables · Est. 1928",
       "hero.title": "A jewel in Coral Gables",
       "hero.cta": "Request a private quote",
-      "hero.whisper": "Venue film forthcoming",
       "history.eyebrow": "Our History",
       "history.title": "La Jolla, a jewel in Coral Gables",
       "history.lede":
@@ -89,27 +88,21 @@
       "testimonial.eyebrow": "Guest voice",
       "testimonial.title": "Testimonial",
       "testimonial.quote": "A guest reflection will appear here.",
-      "testimonial.cite": "— Name & celebration forthcoming",
       "gallery.eyebrow": "Gallery",
       "gallery.title": "Spaces & moments",
-      "gallery.spacesNote": "Space names to follow — a flexible gallery for rooms yet to be named.",
       "gallery.cap1": "301 Alcazar Avenue",
       "gallery.cap2": "Balcony mark",
       "gallery.cap3": "Brand mood",
       "gallery.cap4": "Wax seal",
       "gallery.cap5": "Plaque",
-      "gallery.space1": "Awaiting photography · name TBD",
-      "gallery.space2": "Awaiting photography · name TBD",
       "team.eyebrow": "Our Team",
       "team.title": "Here for your celebration",
       "team.julie.role": "Executive Director",
-      "team.julie.bio": "Biography forthcoming",
       "team.pat.role": "Managing Director",
-      "team.pat.bio": "Biography forthcoming",
       "quote.eyebrow": "Private quote",
       "quote.title": "Request a private quote",
       "quote.intro": "Share a few details. We respond personally.",
-      "quote.notice": "Local preview only — nothing is sent yet.",
+      "quote.notice": "This temporary page keeps your request in this browser. It is not emailed.",
       "form.name": "Name",
       "form.email": "Email",
       "form.phone": "Phone",
@@ -134,24 +127,27 @@
       "form.interestPh": "e.g. Furniture, Lighting",
       "form.comments": "Comments",
       "form.submit": "Submit inquiry",
-      "form.success":
-        "Thank you — your inquiry was recorded locally for this preview. Nothing was sent. When live, you will receive a confirmation email.",
+      "form.successEyebrow": "On this temporary page",
+      "form.successTitle": "Thank you",
+      "form.successBody": "Your request stays in this browser. It was not emailed, and no payment was taken.",
       "form.error": "Please complete the required fields.",
-      "pending.mood": "Brand mood · venue photography forthcoming",
-      "pending.alcazar": "Awaiting interior photography",
-      "pending.catalog": "Awaiting photography",
-      "pending.catalogNote": "Catalog photography forthcoming · inquire for the full collection",
-      "pending.photo": "Portrait forthcoming",
+      "vendors.eyebrow": "Vendors",
+      "vendors.title": "Become a vendor",
+      "vendors.intro": "Tell us your name, company, service, and email. This temporary page keeps the note in this browser. It is not emailed.",
+      "vendors.name": "Name",
+      "vendors.company": "Company",
+      "vendors.service": "Service",
+      "vendors.email": "Email",
+      "vendors.submit": "Send vendor note",
+      "vendors.successTitle": "Thank you",
+      "vendors.successBody": "Your vendor note stays in this browser. It was not emailed, and no payment was taken.",
       "footer.tag": "Coral Gables · Est. 1928",
       "footer.managed": "Managed by Epic Lux Management",
       "footer.contact": "Contact",
       "footer.address": "301 Alcazar Avenue, Coral Gables",
       "footer.maps": "Find us",
-      "footer.mapsSoon": "Map & reviews coming soon",
+      "footer.mapsLink": "Open in Google Maps",
       "footer.connect": "Connect",
-      "footer.igSoon": "Instagram — coming soon",
-      "footer.ttSoon": "TikTok — coming soon",
-      "footer.fbSoon": "Facebook — coming soon",
       "footer.vendor": "Become a Vendor",
       "footer.terms": "Terms",
       "footer.privacy": "Privacy",
@@ -162,7 +158,6 @@
       "hero.est": "Coral Gables · Est. 1928",
       "hero.title": "Una joya en Coral Gables",
       "hero.cta": "Solicitar cotización privada",
-      "hero.whisper": "Film del lugar próximamente",
       "history.eyebrow": "Nuestra historia",
       "history.title": "La Jolla, una joya en Coral Gables",
       "history.lede":
@@ -241,27 +236,21 @@
       "testimonial.eyebrow": "Voz de un invitado",
       "testimonial.title": "Testimonio",
       "testimonial.quote": "Aquí aparecerá la reflexión de un invitado.",
-      "testimonial.cite": "— Nombre y celebración próximamente",
       "gallery.eyebrow": "Galería",
       "gallery.title": "Espacios y momentos",
-      "gallery.spacesNote": "Nombres de espacios por confirmar — galería flexible para salas aún por nombrar.",
       "gallery.cap1": "301 Alcazar Avenue",
       "gallery.cap2": "Marca del balcón",
       "gallery.cap3": "Ambiente de marca",
       "gallery.cap4": "Sello de cera",
       "gallery.cap5": "Placa",
-      "gallery.space1": "Fotografía pendiente · nombre por confirmar",
-      "gallery.space2": "Fotografía pendiente · nombre por confirmar",
       "team.eyebrow": "Nuestro equipo",
       "team.title": "Aquí para su celebración",
       "team.julie.role": "Executive Director",
-      "team.julie.bio": "Biografía próximamente",
       "team.pat.role": "Managing Director",
-      "team.pat.bio": "Biografía próximamente",
       "quote.eyebrow": "Cotización privada",
       "quote.title": "Solicitar cotización privada",
       "quote.intro": "Comparta algunos datos. Respondemos de forma personal.",
-      "quote.notice": "Vista previa local — aún no se envía nada.",
+      "quote.notice": "Esta página temporal guarda su solicitud en este navegador. No se envía por correo.",
       "form.name": "Nombre",
       "form.email": "Correo",
       "form.phone": "Teléfono",
@@ -286,24 +275,27 @@
       "form.interestPh": "p. ej. Mobiliario, Iluminación",
       "form.comments": "Comentarios",
       "form.submit": "Enviar solicitud",
-      "form.success":
-        "Gracias — su solicitud se registró localmente para esta vista previa. No se envió nada. Cuando esté en vivo, recibirá un correo de confirmación.",
+      "form.successEyebrow": "En esta página temporal",
+      "form.successTitle": "Gracias",
+      "form.successBody": "Su solicitud permanece en este navegador. No se envió por correo y no se cobró nada.",
       "form.error": "Complete los campos obligatorios.",
-      "pending.mood": "Ambiente de marca · fotografía del lugar próximamente",
-      "pending.alcazar": "Fotografía del interior pendiente",
-      "pending.catalog": "Fotografía pendiente",
-      "pending.catalogNote": "Fotografía del catálogo próximamente · consulte por la colección completa",
-      "pending.photo": "Retrato próximamente",
+      "vendors.eyebrow": "Proveedores",
+      "vendors.title": "Ser proveedor",
+      "vendors.intro": "Indique su nombre, empresa, servicio y correo. Esta página temporal guarda la nota en este navegador. No se envía por correo.",
+      "vendors.name": "Nombre",
+      "vendors.company": "Empresa",
+      "vendors.service": "Servicio",
+      "vendors.email": "Correo",
+      "vendors.submit": "Enviar nota de proveedor",
+      "vendors.successTitle": "Gracias",
+      "vendors.successBody": "Su nota de proveedor permanece en este navegador. No se envió por correo y no se cobró nada.",
       "footer.tag": "Coral Gables · Est. 1928",
       "footer.managed": "Gestionado por Epic Lux Management",
       "footer.contact": "Contacto",
       "footer.address": "301 Alcazar Avenue, Coral Gables",
       "footer.maps": "Cómo llegar",
-      "footer.mapsSoon": "Mapa y reseñas próximamente",
+      "footer.mapsLink": "Abrir en Google Maps",
       "footer.connect": "Conectar",
-      "footer.igSoon": "Instagram — próximamente",
-      "footer.ttSoon": "TikTok — próximamente",
-      "footer.fbSoon": "Facebook — próximamente",
       "footer.vendor": "Convertirse en proveedor",
       "footer.terms": "Términos",
       "footer.privacy": "Privacidad",
@@ -430,11 +422,21 @@
     });
   }
 
-  function initForm() {
-    const form = document.getElementById("quote-form");
+  function storeLocal(key, payload) {
+    try {
+      const prev = JSON.parse(localStorage.getItem(key) || "[]");
+      prev.push(payload);
+      localStorage.setItem(key, JSON.stringify(prev));
+    } catch (_) {
+      /* ignore storage errors on this temporary page */
+    }
+  }
+
+  function initLocalForm(formId, successId, errorId, storageKey) {
+    const form = document.getElementById(formId);
     if (!form) return;
-    const success = document.getElementById("form-success");
-    const error = document.getElementById("form-error");
+    const success = document.getElementById(successId);
+    const error = document.getElementById(errorId);
     const required = form.querySelectorAll("[required]");
 
     form.addEventListener("submit", function (e) {
@@ -456,26 +458,13 @@
         return;
       }
 
-      // Local confirmation only — no fetch, Stripe, or email.
-      const payload = {
-        name: form.name.value.trim(),
-        email: form.email.value.trim(),
-        phone: form.phone.value.trim(),
-        eventDate: form.eventDate.value,
-        guestCount: form.guestCount.value,
-        eventType: form.eventType.value,
-        rentalInterest: form.rentalInterest.value.trim(),
-        comments: form.comments.value.trim(),
-        recordedAt: new Date().toISOString(),
-        previewOnly: true,
-      };
-      try {
-        const prev = JSON.parse(localStorage.getItem("lj_quote_preview") || "[]");
-        prev.push(payload);
-        localStorage.setItem("lj_quote_preview", JSON.stringify(prev));
-      } catch (_) {
-        /* ignore storage errors in preview */
-      }
+      // Kept in this browser only — no fetch, Stripe, or email.
+      const payload = { recordedAt: new Date().toISOString(), previewOnly: true };
+      Array.prototype.forEach.call(form.elements, function (field) {
+        if (!field.name || field.type === "submit" || field.type === "button") return;
+        payload[field.name] = String(field.value || "").trim();
+      });
+      storeLocal(storageKey, payload);
 
       if (success) {
         success.hidden = false;
@@ -501,16 +490,6 @@
     if (y) y.textContent = String(new Date().getFullYear());
   }
 
-  function initStubLinks() {
-    ["vendor-stub", "terms-stub", "privacy-stub"].forEach(function (id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener("click", function (e) {
-        e.preventDefault();
-      });
-    });
-  }
-
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
     applyI18n("en");
@@ -518,8 +497,8 @@
     initHeroVideo();
     initReveal();
     initCatalogPrefill();
-    initForm();
+    initLocalForm("quote-form", "form-success", "form-error", "lj_quote_preview");
+    initLocalForm("vendor-form", "vendor-success", "vendor-error", "lj_vendor_preview");
     initYear();
-    initStubLinks();
   });
 })();

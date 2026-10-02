@@ -539,6 +539,10 @@ p:last-child { margin-bottom: 0; }
 }
 .alcazar-copy p { color: var(--ink-soft); margin-bottom: 1.75rem; }
 .alcazar-visual {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
   min-height: 24rem;
   aspect-ratio: 4 / 5;
 }
@@ -550,7 +554,7 @@ p:last-child { margin-bottom: 0; }
 }
 @media (max-width: 800px) {
   .alcazar-grid { grid-template-columns: 1fr; }
-  .alcazar-visual { min-height: 16rem; aspect-ratio: 5 / 4; }
+  .alcazar-visual { min-height: 0; width: 100%; aspect-ratio: 5 / 4; }
 }
 
 /* —— 6. Rentals —— */
@@ -746,6 +750,22 @@ p:last-child { margin-bottom: 0; }
   max-width: 14rem;
   margin: 0 auto 1.5rem;
 }
+.team-photo.monogram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3 / 4;
+  border-radius: 50% / 42%;
+  border: 1px solid var(--line-soft);
+  background: radial-gradient(ellipse at center, var(--paper) 0%, var(--cream-deep) 100%);
+}
+.team-photo.monogram span {
+  font-family: var(--font-display);
+  font-size: 2.35rem;
+  letter-spacing: 0.18em;
+  color: var(--sage-deep);
+  padding-left: 0.18em;
+}
 .team-card h3 {
   font-size: 1.55rem;
   margin-bottom: 0.3rem;
@@ -819,12 +839,44 @@ p:last-child { margin-bottom: 0; }
 .form-row textarea.is-invalid {
   border-color: #8B4513;
 }
-.form-success {
+.confirm-panel {
   margin-top: 0.35rem;
-  padding: 1rem 1.15rem;
-  background: rgba(109, 123, 108, 0.12);
-  border: 1px solid var(--line-soft);
-  color: var(--sage-deep);
+  padding: 1.75rem 1.35rem 1.5rem;
+  text-align: center;
+  background: var(--paper);
+  border: 1px solid var(--sage);
+}
+.confirm-eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 0.55rem;
+}
+.confirm-title {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin-bottom: 0.4rem;
+}
+.vendors { background: var(--cream-deep); }
+.legal {
+  background: var(--paper);
+  padding: calc(var(--header-h) + 3.25rem) 0 4.5rem;
+}
+.legal h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); }
+.legal h2 { font-size: 1.55rem; margin-top: 2.2rem; }
+.legal .lang-block + .lang-block {
+  margin-top: 2.75rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+.legal-kicker {
+  font-family: var(--font-display);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--sage);
+  margin-bottom: 0.6rem;
 }
 .form-error {
   margin-top: 0.35rem;
