@@ -104,8 +104,7 @@
       "team.pat.role": "Managing Director",
       "quote.eyebrow": "Private quote",
       "quote.title": "Request a private quote",
-      "quote.intro": "Share a few details. We respond personally.",
-      "quote.notice": "This temporary page keeps your request in this browser. It is not emailed.",
+      "quote.intro": "Share a few details. We will be in touch.",
       "form.name": "Name",
       "form.email": "Email",
       "form.phone": "Phone",
@@ -130,20 +129,21 @@
       "form.interestPh": "e.g. Furniture, Lighting",
       "form.comments": "Comments",
       "form.submit": "Submit inquiry",
-      "form.successEyebrow": "On this temporary page",
+      "form.successEyebrow": "La Jolla",
       "form.successTitle": "Thank you",
-      "form.successBody": "Your request stays in this browser. It was not emailed, and no payment was taken.",
+      "form.successBody": "Your request has been sent. We will be in touch.",
       "form.error": "Please complete the required fields.",
+      "form.sendError": "We could not send that. Please email info@lajollacoralgables.com or call 786-290-8813.",
       "vendors.eyebrow": "Vendors",
       "vendors.title": "Become a vendor",
-      "vendors.intro": "Tell us your name, company, service, and email. This temporary page keeps the note in this browser. It is not emailed.",
+      "vendors.intro": "Tell us your name, company, service, and email.",
       "vendors.name": "Name",
       "vendors.company": "Company",
       "vendors.service": "Service",
       "vendors.email": "Email",
       "vendors.submit": "Send vendor note",
       "vendors.successTitle": "Thank you",
-      "vendors.successBody": "Your vendor note stays in this browser. It was not emailed, and no payment was taken.",
+      "vendors.successBody": "Your note has been sent. We will be in touch.",
       "footer.tag": "Coral Gables · Est. 1928",
       "footer.managed": "Managed by Epic Lux Management",
       "footer.contact": "Contact",
@@ -255,8 +255,7 @@
       "team.pat.role": "Managing Director",
       "quote.eyebrow": "Cotización privada",
       "quote.title": "Solicitar cotización privada",
-      "quote.intro": "Comparta algunos datos. Respondemos de forma personal.",
-      "quote.notice": "Esta página temporal guarda su solicitud en este navegador. No se envía por correo.",
+      "quote.intro": "Comparta algunos datos. Le responderemos.",
       "form.name": "Nombre",
       "form.email": "Correo",
       "form.phone": "Teléfono",
@@ -281,20 +280,21 @@
       "form.interestPh": "p. ej. Mobiliario, Iluminación",
       "form.comments": "Comentarios",
       "form.submit": "Enviar solicitud",
-      "form.successEyebrow": "En esta página temporal",
+      "form.successEyebrow": "La Jolla",
       "form.successTitle": "Gracias",
-      "form.successBody": "Su solicitud permanece en este navegador. No se envió por correo y no se cobró nada.",
+      "form.successBody": "Su solicitud ha sido enviada. Le responderemos.",
+      "form.sendError": "No pudimos enviarla. Escriba a info@lajollacoralgables.com o llame al 786-290-8813.",
       "form.error": "Complete los campos obligatorios.",
       "vendors.eyebrow": "Proveedores",
       "vendors.title": "Ser proveedor",
-      "vendors.intro": "Indique su nombre, empresa, servicio y correo. Esta página temporal guarda la nota en este navegador. No se envía por correo.",
+      "vendors.intro": "Indique su nombre, empresa, servicio y correo.",
       "vendors.name": "Nombre",
       "vendors.company": "Empresa",
       "vendors.service": "Servicio",
       "vendors.email": "Correo",
       "vendors.submit": "Enviar nota de proveedor",
       "vendors.successTitle": "Gracias",
-      "vendors.successBody": "Su nota de proveedor permanece en este navegador. No se envió por correo y no se cobró nada.",
+      "vendors.successBody": "Su nota ha sido enviada. Le responderemos.",
       "footer.tag": "Coral Gables · Est. 1928",
       "footer.managed": "Gestionado por Epic Lux Management",
       "footer.contact": "Contacto",
@@ -360,27 +360,50 @@
 
   function initReveal() {
     const nodes = document.querySelectorAll(".reveal");
-    if (!nodes.length) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+    const heroTrack = document.querySelector(".hero-track");
+    const moment = document.querySelector(".moment-track");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
       nodes.forEach(function (n) {
+        n.style.setProperty("--p", "1");
         n.classList.add("is-visible");
       });
+      if (moment) moment.style.setProperty("--p", "1");
       return;
     }
-    const io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
-    );
-    nodes.forEach(function (n) {
-      io.observe(n);
-    });
+    let ticking = false;
+    const update = function () {
+      const vh = window.innerHeight || 1;
+      nodes.forEach(function (el) {
+        const top = el.getBoundingClientRect().top;
+        const start = vh * 0.98;
+        const end = vh * 0.52;
+        const p = Math.max(0, Math.min(1, (start - top) / (start - end)));
+        el.style.setProperty("--p", p.toFixed(3));
+        el.classList.toggle("is-visible", p > 0.85);
+      });
+      if (heroTrack) {
+        const rect = heroTrack.getBoundingClientRect();
+        const total = Math.max(heroTrack.offsetHeight - vh, 1);
+        const scrolled = Math.min(Math.max(-rect.top, 0), total);
+        heroTrack.style.setProperty("--hero-p", (scrolled / total).toFixed(3));
+      }
+      if (moment) {
+        const rect = moment.getBoundingClientRect();
+        const total = Math.max(moment.offsetHeight - vh, 1);
+        const scrolled = Math.min(Math.max(-rect.top, 0), total);
+        moment.style.setProperty("--p", (scrolled / total).toFixed(3));
+      }
+      ticking = false;
+    };
+    const onScroll = function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
   }
 
   function scrollToQuote() {
@@ -428,27 +451,43 @@
     });
   }
 
-  function storeLocal(key, payload) {
-    try {
-      const prev = JSON.parse(localStorage.getItem(key) || "[]");
-      prev.push(payload);
-      localStorage.setItem(key, JSON.stringify(prev));
-    } catch (_) {
-      /* ignore storage errors on this temporary page */
-    }
+  var MAIL_KEY = "c13b3e4c-b71b-4df0-84b0-ce0b91be3b84";
+
+  function sendMail(payload) {
+    if (!MAIL_KEY) return Promise.reject(new Error("mail"));
+    return fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(Object.assign({
+        access_key: MAIL_KEY,
+        from_name: "La Jolla",
+        ccemail: "info@lajollacoralgables.com",
+        botcheck: ""
+      }, payload))
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok || data.success === false || data.success === "false") {
+          throw new Error("mail");
+        }
+        return data;
+      });
+    });
   }
 
-  function initLocalForm(formId, successId, errorId, storageKey) {
+  function initLocalForm(formId, successId, errorId, sendErrorId, subject) {
     const form = document.getElementById(formId);
     if (!form) return;
     const success = document.getElementById(successId);
     const error = document.getElementById(errorId);
+    const sendError = document.getElementById(sendErrorId);
     const required = form.querySelectorAll("[required]");
+    const submit = form.querySelector("[type='submit']");
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       if (success) success.hidden = true;
       if (error) error.hidden = true;
+      if (sendError) sendError.hidden = true;
 
       let ok = true;
       required.forEach(function (field) {
@@ -464,21 +503,27 @@
         return;
       }
 
-      // Kept in this browser only — no fetch, Stripe, or email.
-      const payload = { recordedAt: new Date().toISOString(), previewOnly: true };
+      const payload = { subject: subject };
       Array.prototype.forEach.call(form.elements, function (field) {
         if (!field.name || field.type === "submit" || field.type === "button") return;
         payload[field.name] = String(field.value || "").trim();
       });
-      storeLocal(storageKey, payload);
+      if (payload.email) payload.replyto = payload.email;
+      if (submit) submit.disabled = true;
 
-      if (success) {
-        success.hidden = false;
-        success.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }
-      form.reset();
-      required.forEach(function (field) {
-        field.classList.remove("is-invalid");
+      sendMail(payload).then(function () {
+        if (success) {
+          success.hidden = false;
+          success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        form.reset();
+        required.forEach(function (field) {
+          field.classList.remove("is-invalid");
+        });
+      }).catch(function () {
+        if (sendError) sendError.hidden = false;
+      }).then(function () {
+        if (submit) submit.disabled = false;
       });
     });
 
@@ -503,8 +548,8 @@
     initHeroVideo();
     initReveal();
     initCatalogPrefill();
-    initLocalForm("quote-form", "form-success", "form-error", "lj_quote_preview");
-    initLocalForm("vendor-form", "vendor-success", "vendor-error", "lj_vendor_preview");
+    initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
+    initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
     initYear();
   });
 })();

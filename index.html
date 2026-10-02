@@ -48,6 +48,7 @@
 <main>
 
   <!-- 1. HERO -->
+  <div class="hero-track">
   <section class="section hero" id="hero" aria-label="Hero">
     <div class="hero-media">
       <!-- PENDING: venue video from Epic Lux — <video> slot ready; poster = static fallback -->
@@ -67,11 +68,11 @@
       <span aria-hidden="true"></span>
     </a>
   </section>
+  </div>
 
   <!-- 2. OUR HISTORY -->
   <section class="section history" id="history" aria-labelledby="history-title">
     <div class="wrap narrow reveal">
-      <img class="history-accent" src="assets/brand/art-balcony.jpg" alt="" width="160" height="160" loading="lazy" />
       <p class="eyebrow" data-i18n="history.eyebrow">Our History</p>
       <h2 id="history-title" class="section-title" data-i18n="history.title">La Jolla, a jewel in Coral Gables</h2>
       <p class="lede" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
@@ -80,15 +81,17 @@
   </section>
 
   <!-- 3. FULL-BLEED ASPIRATIONAL QUOTE -->
-  <section class="section quote-bleed" id="moment" aria-label="Aspirational quote">
+  <section class="section quote-bleed moment-track" id="moment" aria-label="Aspirational quote">
+    <div class="moment-pin">
     <div class="quote-bleed-media">
-      <img src="assets/brand/mood-card-flowers.jpg" alt="" aria-hidden="true" loading="lazy" />
+      <img src="assets/brand/leaves-monogram.jpg" alt="" aria-hidden="true" loading="lazy" />
       <div class="quote-bleed-scrim" aria-hidden="true"></div>
     </div>
-    <blockquote class="quote-bleed-text reveal">
+    <blockquote class="quote-bleed-text">
       <img class="quote-bleed-logo" src="assets/brand/logo-lj-oval-cream.png" alt="" width="72" height="86" loading="lazy" />
       <p data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
     </blockquote>
+    </div>
   </section>
 
   <!-- 4. EVENTS WE HOST — editorial alternating -->
@@ -106,13 +109,13 @@
           <p data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
         </div>
         <figure class="editorial-media">
-          <img src="assets/brand/mood-card-flowers.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/welcome-table.jpg" alt="A set table with the La Jolla welcome card." loading="lazy" />
         </figure>
       </article>
 
       <article class="editorial editorial--img-left reveal">
         <figure class="editorial-media">
-          <img src="assets/brand/mood-plaque.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/card-flowers.jpg" alt="La Jolla card among flowers." loading="lazy" />
         </figure>
         <div class="editorial-copy">
           <h3 data-i18n="events.quince.title">Quinceañeras &amp; Sweet Sixteens</h3>
@@ -126,13 +129,13 @@
           <p data-i18n="events.social.body">Birthdays, anniversaries, engagements, baby showers, bridal showers, graduations, reunions and milestone occasions. Whatever you're celebrating, make the space your own.</p>
         </div>
         <figure class="editorial-media">
-          <img src="assets/brand/mood-wax-seal.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/flatlay-suite.jpg" alt="La Jolla stationery arranged with a table detail." loading="lazy" />
         </figure>
       </article>
 
       <article class="editorial editorial--img-left reveal">
         <figure class="editorial-media">
-          <img src="assets/brand/logo-paper-balcony.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/stationery-sage.jpg" alt="La Jolla sage stationery." loading="lazy" />
         </figure>
         <div class="editorial-copy">
           <h3 data-i18n="events.corporate.title">Corporate events</h3>
@@ -146,13 +149,13 @@
           <p data-i18n="events.brand.body">A versatile backdrop for launches, pop-ups, showcases, influencer events, experiential marketing and immersive brand experiences.</p>
         </div>
         <figure class="editorial-media">
-          <img src="assets/brand/mood-card-flowers.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/flower-plaque.jpg" alt="La Jolla plaque among white flowers." loading="lazy" />
         </figure>
       </article>
 
       <article class="editorial editorial--img-left reveal">
         <figure class="editorial-media">
-          <img src="assets/brand/art-balcony.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/landscape-mark.jpg" alt="Painted landscape with the La Jolla mark." loading="lazy" />
         </figure>
         <div class="editorial-copy">
           <h3 data-i18n="events.productions.title">Productions &amp; entertainment</h3>
@@ -166,13 +169,13 @@
           <p data-i18n="events.film.body">Photoshoots, commercials, interviews, music videos, film productions and branded content, with multiple spaces and distinctive looks available within one property.</p>
         </div>
         <figure class="editorial-media">
-          <img src="assets/brand/mood-plaque.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/wax-seal-photo.jpg" alt="La Jolla wax seal and stamp." loading="lazy" />
         </figure>
       </article>
 
       <article class="editorial editorial--img-left reveal">
         <figure class="editorial-media">
-          <img src="assets/brand/mood-wax-seal.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/stripe-monogram.jpg" alt="La Jolla monogram on the sage stripe." loading="lazy" />
         </figure>
         <div class="editorial-copy">
           <h3 data-i18n="events.galas.title">Galas &amp; fundraisers</h3>
@@ -186,13 +189,13 @@
           <p data-i18n="events.dining.body">Rehearsal dinners, private dinners, cocktail receptions, tastings and smaller gatherings for occasions that call for a more intimate experience.</p>
         </div>
         <figure class="editorial-media">
-          <img src="assets/brand/logo-paper-balcony.jpg" alt="" loading="lazy" />
+          <img src="assets/brand/balcony-line.jpg" alt="Line drawing of the La Jolla balcony." loading="lazy" />
         </figure>
       </article>
 
       <article class="editorial editorial--img-left reveal">
-        <figure class="editorial-media editorial-media--ornament">
-          <img src="assets/brand/logo-awning-sage.png" alt="" loading="lazy" />
+        <figure class="editorial-media editorial-media--mark">
+          <img src="assets/brand/oval-monogram.jpg" alt="La Jolla oval monogram." loading="lazy" />
         </figure>
         <div class="editorial-copy">
           <h3 data-i18n="events.other.title">Something completely different?</h3>
@@ -212,8 +215,8 @@
         <p data-i18n="alcazar.body">Step upstairs and into another era. Layered in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from private clubs, classic whiskey rooms, and the timeless elegance of Kentucky racing culture. Designed for cocktails, private dinners, intimate celebrations, and distinctive gatherings, the space feels secluded, sophisticated, and entirely its own.</p>
         <a class="btn btn-sage" href="#quote" data-i18n="alcazar.cta">Inquire about The Alcazar Room</a>
       </div>
-      <figure class="alcazar-visual empty-frame">
-        <img class="alcazar-ornament" src="assets/brand/logo-awning-sage.png" alt="" width="200" height="200" loading="lazy" />
+      <figure class="alcazar-visual">
+        <img src="assets/brand/awning-mark.jpg" alt="La Jolla awning monogram." loading="lazy" />
       </figure>
     </div>
   </section>
@@ -226,30 +229,6 @@
         <h2 id="rentals-title" class="section-title" data-i18n="rentals.title">At La Jolla &amp; beyond</h2>
         <p class="section-intro" data-i18n="rentals.intro">From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Inquire for rentals, custom packages and full-service event production.</p>
       </header>
-
-      <div class="rentals-featured reveal">
-        <button type="button" class="rentals-frame" data-interest="Furniture" data-scroll-quote>
-          <div class="rentals-frame-media">
-            <img src="assets/brand/mood-card-flowers.jpg" alt="" loading="lazy" />
-          </div>
-          <span class="rentals-frame-label" data-i18n="rentals.furniture">Furniture</span>
-          <span class="rentals-frame-cta" data-i18n="rentals.inquire">Inquire</span>
-        </button>
-        <button type="button" class="rentals-frame" data-interest="Decor" data-scroll-quote>
-          <div class="rentals-frame-media">
-            <img src="assets/brand/mood-plaque.jpg" alt="" loading="lazy" />
-          </div>
-          <span class="rentals-frame-label" data-i18n="rentals.decor">Decor</span>
-          <span class="rentals-frame-cta" data-i18n="rentals.inquire">Inquire</span>
-        </button>
-        <button type="button" class="rentals-frame" data-interest="Photography" data-scroll-quote>
-          <div class="rentals-frame-media">
-            <img src="assets/brand/mood-wax-seal.jpg" alt="" loading="lazy" />
-          </div>
-          <span class="rentals-frame-label" data-i18n="rentals.photography">Photography</span>
-          <span class="rentals-frame-cta" data-i18n="rentals.inquire">Inquire</span>
-        </button>
-      </div>
 
       <header class="section-head reveal">
         <h2 class="section-title" data-i18n="rentals.servicesTitle">Everything your event needs</h2>
@@ -283,38 +262,14 @@
         <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">Spaces &amp; moments</h2>
       </header>
 
-      <div class="gallery-masonry">
-        <figure class="gallery-item gallery-item--tall reveal">
-          <img src="assets/brand/hero-facade.jpg" alt="Exterior of La Jolla, 301 Alcazar Avenue." loading="lazy" />
-          <figcaption data-i18n="gallery.cap1">301 Alcazar Avenue</figcaption>
-        </figure>
-        <figure class="gallery-item reveal">
-          <img src="assets/brand/mood-card-flowers.jpg" alt="La Jolla brand card among flowers." loading="lazy" />
-          <figcaption data-i18n="gallery.cap3">Brand mood</figcaption>
-        </figure>
-        <figure class="gallery-item reveal">
-          <img src="assets/brand/mood-plaque.jpg" alt="La Jolla brand plaque mood." loading="lazy" />
-          <figcaption data-i18n="gallery.cap5">Plaque</figcaption>
-        </figure>
+      <div class="gallery-masonry gallery-masonry--pair">
         <figure class="gallery-item gallery-item--wide reveal">
-          <img src="assets/brand/mood-wax-seal.jpg" alt="La Jolla wax seal stamp mood." loading="lazy" />
-          <figcaption data-i18n="gallery.cap4">Wax seal</figcaption>
-        </figure>
-        <figure class="gallery-item reveal">
-          <img src="assets/brand/logo-paper-balcony.jpg" alt="La Jolla balcony mark on paper." loading="lazy" />
-          <figcaption data-i18n="gallery.cap2">Balcony mark</figcaption>
-        </figure>
-        <figure class="gallery-item reveal">
           <img src="assets/brand/lockup-events.jpg" alt="Official La Jolla mark, events and experiences." loading="lazy" />
           <figcaption data-i18n="gallery.lockupEvents">Events &amp; experiences</figcaption>
         </figure>
-        <figure class="gallery-item reveal">
+        <figure class="gallery-item gallery-item--wide reveal">
           <img src="assets/brand/lockup-ballroom.jpg" alt="Official La Jolla mark, ballroom and catering." loading="lazy" />
           <figcaption data-i18n="gallery.lockupBallroom">Ballroom &amp; catering</figcaption>
-        </figure>
-        <figure class="gallery-item reveal">
-          <img src="assets/brand/welcome-table.jpg" alt="La Jolla welcome card on a set table." loading="lazy" />
-          <figcaption data-i18n="gallery.welcome">Welcome</figcaption>
         </figure>
       </div>
     </div>
@@ -352,12 +307,10 @@
       <header class="section-head reveal">
         <p class="eyebrow" data-i18n="quote.eyebrow">Private quote</p>
         <h2 id="quote-title" class="section-title" data-i18n="quote.title">Request a private quote</h2>
-        <p class="section-intro" data-i18n="quote.intro">Share a few details. We respond personally.</p>
+        <p class="section-intro" data-i18n="quote.intro">Share a few details. We will be in touch.</p>
       </header>
 
       <div class="quote-panel reveal">
-        <p class="form-notice" data-i18n="quote.notice">This temporary page keeps your request in this browser. It is not emailed.</p>
-
         <form class="quote-form" id="quote-form" novalidate>
           <div class="form-row">
             <label for="q-name"><span data-i18n="form.name">Name</span> <abbr title="required">*</abbr></label>
@@ -409,11 +362,12 @@
           </div>
           <button type="submit" class="btn btn-sage btn-block" data-i18n="form.submit">Submit inquiry</button>
           <div class="confirm-panel" id="form-success" hidden role="status">
-            <p class="confirm-eyebrow" data-i18n="form.successEyebrow">On this temporary page</p>
+            <p class="confirm-eyebrow" data-i18n="form.successEyebrow">La Jolla</p>
             <h3 class="confirm-title" data-i18n="form.successTitle">Thank you</h3>
-            <p data-i18n="form.successBody">Your request stays in this browser. It was not emailed, and no payment was taken.</p>
+            <p data-i18n="form.successBody">Your request has been sent. We will be in touch.</p>
           </div>
           <p class="form-error" id="form-error" hidden role="alert" data-i18n="form.error">Please complete the required fields.</p>
+          <p class="form-error" id="form-send-error" hidden role="alert" data-i18n="form.sendError">We could not send that. Please email info@lajollacoralgables.com or call 786-290-8813.</p>
         </form>
       </div>
     </div>
@@ -425,7 +379,7 @@
       <header class="section-head reveal">
         <p class="eyebrow" data-i18n="vendors.eyebrow">Vendors</p>
         <h2 id="vendors-title" class="section-title" data-i18n="vendors.title">Become a vendor</h2>
-        <p class="section-intro" data-i18n="vendors.intro">Tell us your name, company, service, and email. This temporary page keeps the note in this browser. It is not emailed.</p>
+        <p class="section-intro" data-i18n="vendors.intro">Tell us your name, company, service, and email.</p>
       </header>
       <div class="quote-panel reveal">
         <form class="quote-form" id="vendor-form" novalidate>
@@ -447,11 +401,12 @@
           </div>
           <button type="submit" class="btn btn-sage btn-block" data-i18n="vendors.submit">Send vendor note</button>
           <div class="confirm-panel" id="vendor-success" hidden role="status">
-            <p class="confirm-eyebrow" data-i18n="form.successEyebrow">On this temporary page</p>
+            <p class="confirm-eyebrow" data-i18n="form.successEyebrow">La Jolla</p>
             <h3 class="confirm-title" data-i18n="vendors.successTitle">Thank you</h3>
-            <p data-i18n="vendors.successBody">Your vendor note stays in this browser. It was not emailed, and no payment was taken.</p>
+            <p data-i18n="vendors.successBody">Your note has been sent. We will be in touch.</p>
           </div>
           <p class="form-error" id="vendor-error" hidden role="alert" data-i18n="form.error">Please complete the required fields.</p>
+          <p class="form-error" id="vendor-send-error" hidden role="alert" data-i18n="form.sendError">We could not send that. Please email info@lajollacoralgables.com or call 786-290-8813.</p>
         </form>
       </div>
     </div>
