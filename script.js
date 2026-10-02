@@ -434,39 +434,27 @@
       });
     }
 
-    var turn = document.querySelector(".turn");
-    if (turn) {
-      var photos = Array.prototype.slice.call(turn.querySelectorAll(".turn-photo"));
-      var captions = Array.prototype.slice.call(turn.querySelectorAll(".turn-caption"));
-      var count = photos.length;
-      var applyTurn = function (progress) {
-        var scaled = Math.min(0.9999, Math.max(0, progress)) * count;
-        var index = Math.min(count - 1, Math.floor(scaled));
-        var local = scaled - index;
-        var fade = 0.2;
-        photos.forEach(function (img, k) {
-          var opacity = 0;
-          if (k === index) opacity = index === 0 ? 1 : Math.min(1, local / fade);
-          else if (k === index - 1) opacity = Math.max(0, 1 - local / fade);
-          img.style.transform = "none";
-          img.style.opacity = String(opacity);
-        });
-        captions.forEach(function (caption, k) {
-          var opacity = 0;
-          if (k === index) opacity = index === 0 ? 1 : Math.min(1, local / fade);
-          else if (k === index - 1) opacity = Math.max(0, 1 - local / fade);
-          caption.style.opacity = String(opacity);
-        });
-      };
-      applyTurn(0);
-      ScrollTrigger.create({
-        trigger: turn,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true,
-        onUpdate: function (self) { applyTurn(self.progress); }
+    document.querySelectorAll(".spread-frame").forEach(function (frame) {
+      var img = frame.querySelector("img");
+      if (!img) return;
+      gsap.fromTo(img, { yPercent: -6 }, {
+        yPercent: 6,
+        ease: "none",
+        scrollTrigger: {
+          trigger: frame,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
       });
-    }
+    });
+    document.querySelectorAll(".spread-copy").forEach(function (copy) {
+      gsap.fromTo(copy, { y: 28 }, {
+        y: 0,
+        ease: "none",
+        scrollTrigger: { trigger: copy, start: "top 88%", end: "top 60%", scrub: true }
+      });
+    });
 
     var alcazarVisual = document.querySelector(".alcazar-visual");
     if (alcazarVisual) {

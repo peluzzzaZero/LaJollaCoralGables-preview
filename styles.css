@@ -462,75 +462,42 @@ p:last-child { margin-bottom: 0; }
   margin: 0;
 }
 
-/* —— 4. Scroll turns each whole photograph from its edge to face you —— */
-.turn { background: #2c241e; }
-.turn-stage {
+/* —— 4. Photographs drift inside their frames. The picture stays whole. —— */
+.spread {
   display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 1.1rem;
-  padding: calc(var(--header-h) + 0.75rem) 1.1rem 1.5rem;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(1.5rem, 4vw, 4.5rem);
+  align-items: center;
+  padding: clamp(3.5rem, 8vh, 6rem) clamp(1.25rem, 5vw, 4.5rem);
+  background: var(--cream);
 }
-.turn-photos { width: min(86vw, 26rem); }
-.turn-photo {
-  display: block;
-  width: min(86vw, 26rem);
-  height: auto;
-  margin: 1.75rem auto 0;
-  object-fit: contain;
-}
-.turn-captions { width: min(40rem, 92vw); }
-.turn-caption { text-align: center; padding: 0.35rem 0.4rem 1.75rem; color: var(--cream); }
-.turn-caption h3 {
-  color: var(--cream);
-  font-size: clamp(1.7rem, 3vw, 2.35rem);
-  margin-bottom: 0.3rem;
-}
-.turn-caption p { color: rgba(242, 238, 227, 0.84); margin: 0; }
-html.has-gsap .turn { height: 460vh; background: #1c1814; }
-html.has-gsap .turn-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
-  display: block;
-  padding: 0;
+.spread:nth-child(even) { background: var(--paper); }
+.spread--flip .spread-frame { order: 2; }
+.spread-frame {
+  position: relative;
+  margin: 0;
+  height: min(72vh, 38rem);
   overflow: hidden;
 }
-html.has-gsap .turn-photos,
-html.has-gsap .turn-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-html.has-gsap .turn-photo {
-  object-fit: cover;
-  object-position: center 42%;
-  transform: none;
-}
-html.has-gsap .turn-captions {
-  position: absolute;
-  z-index: 2;
-  left: clamp(1rem, 4vw, 3.5rem);
-  bottom: clamp(1.2rem, 4vh, 2.6rem);
-  width: min(36rem, calc(100% - 2rem));
-  min-height: 0;
-}
-html.has-gsap .turn-caption {
+.spread-frame img {
   position: absolute;
   left: 0;
-  right: 0;
-  bottom: 0;
-  top: auto;
-  text-align: left;
-  padding: 1.15rem 1.3rem 1.05rem;
-  background: rgba(250, 248, 243, 0.94);
-  color: var(--ink);
+  top: -12%;
+  width: 100%;
+  height: 124%;
+  object-fit: cover;
+  object-position: center 42%;
 }
-html.has-gsap .turn-caption h3 { color: var(--ink); }
-html.has-gsap .turn-caption p { color: var(--ink-soft); margin: 0; }
+.spread-copy h3 {
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  margin-bottom: 0.45rem;
+}
+.spread-copy p { color: var(--ink-soft); margin: 0; font-size: 1.15rem; line-height: 1.55; }
+@media (max-width: 800px) {
+  .spread { grid-template-columns: 1fr; gap: 1rem; padding: 2.25rem 1rem 2.5rem; }
+  .spread--flip .spread-frame { order: -1; }
+  .spread-frame { height: 58vh; }
+}
 
 /* —— 4b. Events list —— */
 .events { background: var(--paper); padding: 0; }
