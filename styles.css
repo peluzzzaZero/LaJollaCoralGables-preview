@@ -462,30 +462,33 @@ p:last-child { margin-bottom: 0; }
   margin: 0;
 }
 
-/* —— 4. One evening. Each scene is a page. The next page covers it. —— */
-.evening { position: relative; background: var(--cream-deep); }
-.story-card {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-  background: var(--cream-deep);
+/* —— 4. One film. A shot holds, then the next shot wipes across. —— */
+.film-stage { background: var(--cream); }
+.shot { position: relative; }
+.shot-words {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--cream);
+  padding: calc(var(--header-h) + 2rem) 1.5rem 3rem;
+  min-height: 70vh;
 }
-.story-card-sheet {
-  height: 100%;
+.shot-words-inner { max-width: 40rem; }
+.shot-words .section-title { margin-bottom: 1rem; }
+.shot-photo {
   display: grid;
   grid-template-rows: 1fr auto;
+  min-height: 100dvh;
   background: var(--paper);
 }
-.story-card:nth-child(even) .story-card-sheet { background: var(--cream); }
-.story-card-photo {
+.shot-photo figure {
   position: relative;
   margin: 0;
-  min-height: 0;
+  min-height: 16rem;
   overflow: hidden;
 }
-.story-card-photo img {
+.shot-photo img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -494,22 +497,48 @@ p:last-child { margin-bottom: 0; }
   object-fit: cover;
   object-position: center 42%;
 }
-.story-card-copy {
-  padding: 1.35rem clamp(1.25rem, 6vw, 4.5rem) 1.7rem;
+.shot-caption {
+  padding: 1.2rem clamp(1.15rem, 5vw, 4rem) 1.5rem;
+  background: var(--paper);
   max-width: 48rem;
 }
-.story-card-copy h3 {
+.shot-caption h3 {
   font-size: clamp(2.15rem, 3.2vw, 3rem);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
 }
-.story-card-copy p {
-  color: var(--ink-soft);
+.shot-caption p {
   margin: 0;
+  color: var(--ink-soft);
   font-size: 1.15rem;
   line-height: 1.5;
 }
+.shot-quote {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+html.has-gsap .film-stage {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+html.has-gsap .shot {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+}
+html.has-gsap .shot:nth-child(1) { z-index: 1; }
+html.has-gsap .shot:nth-child(2) { z-index: 2; }
+html.has-gsap .shot:nth-child(3) { z-index: 3; }
+html.has-gsap .shot:nth-child(4) { z-index: 4; }
+html.has-gsap .shot:nth-child(5) { z-index: 5; }
+html.has-gsap .shot:nth-child(6) { z-index: 6; }
+html.has-gsap .shot:nth-child(7) { z-index: 7; }
+html.has-gsap .shot-photo,
+html.has-gsap .shot-quote { clip-path: inset(0% 0% 0% 100%); }
 @media (max-width: 800px) {
-  .story-card-copy { padding: 1rem 1.1rem 1.25rem; }
+  .shot-caption { padding: 1rem 1.1rem 1.2rem; }
 }
 
 /* —— 4b. Events list —— */
@@ -1279,6 +1308,5 @@ html.has-gsap .editorial.reveal .editorial-media img {
   html.js .editorial.reveal .editorial-media img { transform: none; }
   .hero-video, .hero-fallback { transition: none; }
   .scroll-hint span { animation: none; }
-  .story-card { position: relative; height: auto; min-height: 70vh; }
-  .story-card-sheet { height: auto; min-height: 70vh; }
+  .shot-photo, .shot-quote { clip-path: none; }
 }

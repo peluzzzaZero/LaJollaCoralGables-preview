@@ -415,40 +415,34 @@
       heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.3 }, 0);
     }
 
-    var historyBlock = document.querySelector(".history .narrow");
-    if (historyBlock) {
-      gsap.fromTo(historyBlock, { y: 28 }, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: historyBlock, start: "top 88%", end: "top 58%", scrub: true }
-      });
-    }
-
-    var moment = document.querySelector(".moment-pin");
-    if (moment) {
-      gsap.fromTo(".quote-bleed-text", { y: 26, autoAlpha: 0 }, {
-        y: 0,
-        autoAlpha: 1,
-        ease: "none",
-        scrollTrigger: { trigger: moment, start: "top 78%", end: "top 52%", scrub: true }
-      });
-    }
-
-    gsap.utils.toArray(".story-card").forEach(function (card) {
-      var copy = card.querySelector(".story-card-copy");
-      if (!copy) return;
-      gsap.fromTo(copy, { y: 28, autoAlpha: 0 }, {
-        y: 0,
-        autoAlpha: 1,
-        ease: "none",
+    var stage = document.querySelector(".film-stage");
+    if (stage) {
+      var film = gsap.timeline({
         scrollTrigger: {
-          trigger: card,
-          start: "top 65%",
-          end: "top 28%",
-          scrub: true
+          trigger: stage,
+          start: "top top",
+          end: "+=840%",
+          pin: true,
+          scrub: true,
+          anticipatePin: 1
         }
       });
-    });
+      var hold = 1.15;
+      var wipeDur = 0.5;
+      film.to({}, { duration: hold });
+      gsap.utils.toArray(".shot").forEach(function (shot, i) {
+        if (i === 0) return;
+        var from = shot.getAttribute("data-wipe") === "left"
+          ? "inset(0% 100% 0% 0%)"
+          : "inset(0% 0% 0% 100%)";
+        film.fromTo(shot, { clipPath: from }, {
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: wipeDur,
+          ease: "none"
+        });
+        film.to({}, { duration: hold });
+      });
+    }
 
     var alcazarVisual = document.querySelector(".alcazar-visual");
     if (alcazarVisual) {
