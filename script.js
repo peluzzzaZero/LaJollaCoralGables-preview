@@ -417,43 +417,39 @@
 
     var orbit = document.querySelector(".orbit");
     if (orbit) {
-      var scenes = gsap.utils.toArray(".orbit-scene");
-      var turn = gsap.timeline({
-        scrollTrigger: {
-          trigger: orbit,
-          start: "top top",
-          end: "+=640%",
-          pin: true,
-          scrub: true,
-          anticipatePin: 1
-        }
-      });
-      var hold = 1.15;
-      var spin = 0.6;
-      turn.to({}, { duration: hold });
-      scenes.forEach(function (scene, i) {
-        if (i === 0) return;
-        var prev = scenes[i - 1];
-        var prevFace = prev.querySelector(".orbit-face");
-        var face = scene.querySelector(".orbit-face");
-        var prevLine = prev.querySelector(".orbit-line");
-        var line = scene.querySelector(".orbit-line");
-        turn.to(prevFace, { rotateY: -42, autoAlpha: 0, duration: spin, ease: "none" });
-        turn.fromTo(face, { rotateY: 42, autoAlpha: 0 }, {
-          rotateY: 0,
-          autoAlpha: 1,
-          duration: spin,
-          ease: "none"
-        }, "<");
-        turn.to(prevLine, { autoAlpha: 0, y: -16, duration: 0.35, ease: "none" }, "<");
-        turn.fromTo(line, { autoAlpha: 0, y: 16 }, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.4,
-          ease: "none"
-        }, "<0.22");
-        turn.to({}, { duration: hold });
-      });
+      var face = orbit.querySelector(".orbit-face");
+      var beats = gsap.utils.toArray(orbit.querySelectorAll(".orbit-beat"));
+      if (face && beats.length) {
+        var turn = gsap.timeline({
+          scrollTrigger: {
+            trigger: orbit,
+            start: "top top",
+            end: "+=400%",
+            pin: true,
+            scrub: true,
+            anticipatePin: 1
+          }
+        });
+        var span = beats.length;
+        var fade = 0.45;
+        turn.fromTo(face, { rotateY: -16 }, { rotateY: 16, ease: "none", duration: span }, 0);
+        beats.forEach(function (beat, i) {
+          if (i === 0) {
+            gsap.set(beat, { autoAlpha: 1 });
+          } else {
+            gsap.set(beat, { autoAlpha: 0 });
+            turn.fromTo(beat, { autoAlpha: 0 }, {
+              autoAlpha: 1,
+              ease: "none",
+              duration: fade,
+              immediateRender: false
+            }, i - fade);
+          }
+          if (i < beats.length - 1) {
+            turn.to(beat, { autoAlpha: 0, ease: "none", duration: fade }, (i + 1) - fade);
+          }
+        });
+      }
     }
 
     var alcazarVisual = document.querySelector(".alcazar-visual");
