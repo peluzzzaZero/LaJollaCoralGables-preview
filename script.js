@@ -1,5 +1,6 @@
-/* La Jolla Coral Gables — P0 UI script
-   Local form only — no network, Stripe, or email. */
+/* La Jolla Coral Gables — page script.
+   Scroll: GSAP ScrollTrigger + Lenis, with a CSS fallback.
+   Forms post through Web3Forms. No Stripe. */
 
 (function () {
   "use strict";
@@ -90,6 +91,9 @@
       "testimonial.quote": "A guest reflection will appear here.",
       "gallery.eyebrow": "Gallery",
       "gallery.title": "Spaces & moments",
+      "gallery.stationery": "Stationery",
+      "gallery.stripe": "Monogram",
+      "gallery.oval": "Oval monogram",
       "gallery.cap1": "301 Alcazar Avenue",
       "gallery.cap2": "Balcony mark",
       "gallery.cap3": "Brand mood",
@@ -241,6 +245,9 @@
       "testimonial.quote": "Aquí aparecerá la reflexión de un invitado.",
       "gallery.eyebrow": "Galería",
       "gallery.title": "Espacios y momentos",
+      "gallery.stationery": "Papelería",
+      "gallery.stripe": "Monograma",
+      "gallery.oval": "Monograma oval",
       "gallery.cap1": "301 Alcazar Avenue",
       "gallery.cap2": "Marca del balcón",
       "gallery.cap3": "Ambiente de marca",
@@ -358,6 +365,158 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  function initStory() {
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") {
+      initReveal();
+      return;
+    }
+
+    var gsap = window.gsap;
+    var ScrollTrigger = window.ScrollTrigger;
+    gsap.registerPlugin(ScrollTrigger);
+    document.documentElement.classList.add("has-gsap");
+
+    var lenis = null;
+    if (typeof window.Lenis !== "undefined") {
+      lenis = new window.Lenis({
+        duration: 1.05,
+        smoothWheel: true,
+        syncTouch: false,
+        autoRaf: false
+      });
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add(function (time) {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+      window.__ljLenis = lenis;
+    }
+
+    document.addEventListener("click", function (event) {
+      var link = event.target && event.target.closest ? event.target.closest("a[href^='#']") : null;
+      if (!link) return;
+      var id = link.getAttribute("href");
+      if (!id || id.length < 2) return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      event.preventDefault();
+      if (lenis) lenis.scrollTo(target, { offset: -8 });
+      else target.scrollIntoView({ block: "start" });
+    });
+
+    var hero = document.querySelector(".hero");
+    if (hero) {
+      var heroTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: hero,
+          start: "top top",
+          end: "+=120%",
+          pin: true,
+          scrub: 0.6,
+          anticipatePin: 1
+        }
+      });
+      heroTl.fromTo(".hero-media", { scale: 1.2 }, { scale: 1, ease: "none", duration: 1 }, 0);
+      heroTl.fromTo(".hero-content", { y: 0 }, { y: -64, ease: "none", duration: 1 }, 0);
+      heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.35 }, 0);
+    }
+
+    var moment = document.querySelector(".moment-pin");
+    if (moment) {
+      var momentTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: moment,
+          start: "top top",
+          end: "+=100%",
+          pin: true,
+          scrub: 0.6,
+          anticipatePin: 1
+        }
+      });
+      momentTl.fromTo(".quote-bleed-media img", { scale: 1.18 }, { scale: 1, ease: "none", duration: 1 }, 0);
+      momentTl.fromTo(".quote-bleed-text", { y: 28 }, { y: 0, ease: "none", duration: 1 }, 0);
+    }
+
+    document.querySelectorAll(".chapter:not(.chapter--object)").forEach(function (chapter) {
+      var img = chapter.querySelector(".chapter-media img");
+      var copy = chapter.querySelector(".chapter-copy");
+      var tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: chapter,
+          start: "top top",
+          end: "+=75%",
+          pin: chapter.querySelector(".chapter-pin"),
+          scrub: 0.65,
+          anticipatePin: 1
+        }
+      });
+      if (img) tl.fromTo(img, { scale: 1.16 }, { scale: 1, ease: "none", duration: 1 }, 0);
+      if (copy) tl.fromTo(copy, { y: 48, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: "none", duration: 0.42 }, 0);
+    });
+
+    var objectChapter = document.querySelector(".chapter--object");
+    if (objectChapter) {
+      gsap.fromTo(objectChapter.querySelector(".chapter-media"), { y: 36 }, {
+        y: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: objectChapter,
+          start: "top 85%",
+          end: "top 35%",
+          scrub: true
+        }
+      });
+    }
+
+    var track = document.querySelector(".brand-track");
+    var reel = document.querySelector(".brand-reel");
+    var pin = document.querySelector(".brand-pin");
+    if (track && reel && pin) {
+      var distance = function () {
+        return Math.max(0, track.scrollWidth - pin.clientWidth);
+      };
+      gsap.to(track, {
+        x: function () { return -distance(); },
+        ease: "none",
+        duration: 1,
+        scrollTrigger: {
+          trigger: reel,
+          start: "top top",
+          end: function () { return "+=" + Math.max(distance(), window.innerHeight * 0.65); },
+          pin: pin,
+          scrub: 0.65,
+          invalidateOnRefresh: true,
+          anticipatePin: 1
+        }
+      });
+    }
+
+    gsap.utils.toArray(".section-head, .event-types li, .team-card, .alcazar-grid").forEach(function (el) {
+      if (el.closest(".brand-pin")) return;
+      gsap.from(el, {
+        y: 32,
+        autoAlpha: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 90%",
+          end: "top 62%",
+          scrub: true
+        }
+      });
+    });
+
+    if (lenis) {
+      ScrollTrigger.addEventListener("refresh", function () { lenis.resize(); });
+      lenis.resize();
+    }
+    window.addEventListener("load", function () {
+      ScrollTrigger.refresh();
+      if (lenis) lenis.resize();
+    });
+  }
+
   function initReveal() {
     const nodes = document.querySelectorAll(".reveal");
     const heroTrack = document.querySelector(".hero-track");
@@ -410,6 +569,10 @@
     const quote = document.getElementById("quote");
     if (!quote) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (window.__ljLenis && !reduced) {
+      window.__ljLenis.scrollTo(quote, { offset: -8 });
+      return;
+    }
     quote.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
@@ -546,7 +709,7 @@
     applyI18n("en");
     initHeader();
     initHeroVideo();
-    initReveal();
+    initStory();
     initCatalogPrefill();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");

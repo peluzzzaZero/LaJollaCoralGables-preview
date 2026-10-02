@@ -460,7 +460,129 @@ p:last-child { margin-bottom: 0; }
   margin: 0;
 }
 
-/* —— 4. Events editorial —— */
+/* —— 4. Events: full-bleed chapters, then a type list —— */
+.events { background: var(--paper); padding: 0; }
+.events-intro { padding: clamp(5.5rem, 12vw, 8.5rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
+.events-intro .section-head { margin-bottom: 0; }
+
+.chapter { background: var(--ink); }
+.chapter-pin {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 34rem;
+  overflow: hidden;
+  display: grid;
+  align-items: end;
+}
+.chapter-media {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+}
+.chapter-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  transform-origin: center center;
+}
+.chapter-copy {
+  position: relative;
+  z-index: 2;
+  width: min(34rem, calc(100% - 2.5rem));
+  margin: 0 0 clamp(1.75rem, 5vh, 3.25rem) clamp(1.15rem, 5vw, 4.5rem);
+  padding: 1.45rem 1.55rem 1.3rem;
+  background: rgba(250, 248, 243, 0.94);
+}
+.chapter-copy h3 {
+  font-size: clamp(2rem, 4vw, 2.85rem);
+  margin-bottom: 0.35rem;
+}
+.chapter-copy p { color: var(--ink-soft); margin: 0; }
+.chapter--end .chapter-copy {
+  margin-left: auto;
+  margin-right: clamp(1.15rem, 5vw, 4.5rem);
+}
+
+.chapter--object { background: var(--paper); }
+.chapter--object .chapter-pin {
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding: clamp(5.5rem, 10vh, 7rem) clamp(1.25rem, 5vw, 4.5rem);
+  background: var(--paper);
+}
+.chapter--object .chapter-media {
+  position: relative;
+  inset: auto;
+  height: auto;
+  background: transparent;
+  border: 0;
+}
+.chapter--object .chapter-media img {
+  position: relative;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: #f6f3ec;
+  border: 1px solid var(--line);
+}
+.chapter--object .chapter-media figcaption {
+  position: static;
+  display: block;
+  padding: 0.75rem 0.1rem 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+.chapter--object .chapter-copy {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  background: transparent;
+}
+
+.event-types {
+  list-style: none;
+  margin: 0;
+  padding: clamp(4rem, 8vw, 6.5rem) 0 clamp(4.5rem, 9vw, 7rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.4rem 4rem;
+}
+.event-types h3 {
+  font-size: clamp(1.7rem, 2.4vw, 2.15rem);
+  margin-bottom: 0.4rem;
+}
+.event-types p { color: var(--ink-soft); margin: 0 0 0.85rem; }
+.event-types li:last-child { grid-column: 1 / -1; max-width: 38rem; }
+
+@media (max-width: 800px) {
+  .chapter-copy,
+  .chapter--end .chapter-copy {
+    width: min(100% - 1.4rem, 34rem);
+    margin: 0 0.7rem 1rem;
+  }
+  .chapter-pin { min-height: 100svh; }
+  .chapter--object .chapter-pin {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 4.5rem 1.1rem 3rem;
+  }
+  .chapter--object .chapter-media { height: auto; }
+  .event-types { grid-template-columns: 1fr; gap: 1.8rem; }
+  .event-types li:last-child { max-width: none; }
+}
+
+/* —— 4b. Editorial (kept for any leftover rows) —— */
 .events { background: var(--paper); }
 .editorial {
   display: grid;
@@ -556,8 +678,8 @@ p:last-child { margin-bottom: 0; }
   max-width: 100%;
   min-width: 0;
   margin: 0;
-  min-height: 0;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1;
+  min-height: min(72vh, 38rem);
   position: relative;
   overflow: hidden;
   background: var(--sage);
@@ -567,8 +689,8 @@ p:last-child { margin-bottom: 0; }
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 10%;
+  object-fit: cover;
+  padding: 0;
 }
 .alcazar-ornament {
   width: min(11rem, 50%);
@@ -578,7 +700,7 @@ p:last-child { margin-bottom: 0; }
 }
 @media (max-width: 800px) {
   .alcazar-grid { grid-template-columns: 1fr; }
-  .alcazar-visual { min-height: 0; width: 100%; aspect-ratio: 5 / 4; }
+  .alcazar-visual { min-height: 0; width: 100%; aspect-ratio: 1; }
 }
 
 /* —— 6. Rentals —— */
@@ -702,7 +824,62 @@ p:last-child { margin-bottom: 0; }
   color: var(--sage);
 }
 
-/* —— 8. Gallery —— */
+/* —— 8. Gallery: horizontal brand reel —— */
+.brand-reel {
+  background: var(--cream);
+  padding: 0;
+  overflow: hidden;
+}
+.brand-pin {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 34rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+.brand-pin .section-head { margin: 0; padding: 0 1.25rem; }
+.brand-viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.brand-track {
+  display: flex;
+  align-items: stretch;
+  gap: 1.1rem;
+  width: max-content;
+  padding: 0.4rem clamp(1.15rem, 4vw, 3rem) 0.2rem;
+}
+.brand-card {
+  margin: 0;
+  flex: 0 0 auto;
+  width: auto;
+}
+.brand-card img {
+  width: auto;
+  max-width: none;
+  height: min(56vh, 30rem);
+  object-fit: contain;
+  background: transparent;
+  border: 0;
+}
+.brand-card figcaption {
+  margin-top: 0.65rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+html.has-gsap .brand-viewport { overflow: hidden; }
+@media (max-width: 800px) {
+  .brand-pin { min-height: 100svh; }
+  .brand-card img { height: min(46vh, 22rem); }
+}
+
+/* —— 8b. Gallery grid (unused by the reel) —— */
 .gallery { background: var(--paper); }
 .gallery-masonry {
   display: grid;
@@ -1029,6 +1206,23 @@ html.js .editorial.reveal .editorial-media img {
 }
 html.js .editorial-media--mark img,
 html.js .editorial-media--ornament img {
+  transform: none;
+}
+
+/* GSAP owns the transforms. The CSS variables must not fight them. */
+html.has-gsap .reveal,
+html.has-gsap .hero-track .hero-content,
+html.has-gsap .moment-track .quote-bleed-text {
+  opacity: 1;
+  transform: none;
+}
+html.has-gsap .hero-track { height: auto; }
+html.has-gsap .hero { position: relative; top: auto; }
+html.has-gsap .quote-bleed { height: auto; }
+html.has-gsap .moment-pin { position: relative; }
+html.has-gsap .hero-track .hero-media,
+html.has-gsap .moment-track .quote-bleed-media img,
+html.has-gsap .editorial.reveal .editorial-media img {
   transform: none;
 }
 
