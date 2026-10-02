@@ -824,43 +824,32 @@ p:last-child { margin-bottom: 0; }
   color: var(--sage);
 }
 
-/* —— 8. Gallery: horizontal brand reel —— */
+/* —— 8. Gallery: the marks, hung as a wall —— */
 .brand-reel {
   background: var(--cream);
-  padding: 0;
-  overflow: hidden;
+  padding: clamp(4.5rem, 9vw, 7rem) 0 clamp(5rem, 10vw, 7.5rem);
+  overflow: visible;
 }
 .brand-pin {
-  height: 100vh;
-  height: 100dvh;
-  min-height: 34rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.5rem;
-  overflow: hidden;
+  height: auto;
+  min-height: 0;
+  display: block;
+  overflow: visible;
 }
-.brand-pin .section-head { margin: 0; padding: 0 1.25rem; }
-.brand-viewport {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
+.brand-pin .section-head { margin-bottom: 2.4rem; }
+.brand-viewport { overflow: visible; }
 .brand-track {
-  display: flex;
-  align-items: stretch;
-  gap: 1.1rem;
-  width: max-content;
-  padding: 0.4rem clamp(1.15rem, 4vw, 3rem) 0.2rem;
-}
-.brand-card {
-  margin: 0;
-  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: auto;
+  gap: 1.8rem 1.15rem;
+  padding: 0 clamp(1.15rem, 4vw, 3.5rem);
 }
+.brand-card { margin: 0; width: auto; }
 .brand-card img {
-  width: auto;
-  max-width: none;
-  height: min(56vh, 30rem);
+  width: 100%;
+  max-width: 100%;
+  height: 15.5rem;
   object-fit: contain;
   background: transparent;
   border: 0;
@@ -873,10 +862,9 @@ p:last-child { margin-bottom: 0; }
   text-transform: uppercase;
   color: var(--sage);
 }
-html.has-gsap .brand-viewport { overflow: hidden; }
-@media (max-width: 800px) {
-  .brand-pin { min-height: 100svh; }
-  .brand-card img { height: min(46vh, 22rem); }
+@media (max-width: 900px) {
+  .brand-track { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .brand-card img { height: 13rem; }
 }
 
 /* —— 8b. Gallery grid (unused by the reel) —— */

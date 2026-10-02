@@ -405,105 +405,92 @@
       else target.scrollIntoView({ block: "start" });
     });
 
+    var pass = {
+      trigger: null,
+      start: "top bottom",
+      end: "bottom top",
+      scrub: true
+    };
+
     var hero = document.querySelector(".hero");
     if (hero) {
       var heroTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: hero,
-          start: "top top",
-          end: "+=120%",
-          pin: true,
-          scrub: 0.6,
-          anticipatePin: 1
-        }
+        scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true }
       });
-      heroTl.fromTo(".hero-media", { scale: 1.2 }, { scale: 1, ease: "none", duration: 1 }, 0);
-      heroTl.fromTo(".hero-content", { y: 0 }, { y: -64, ease: "none", duration: 1 }, 0);
-      heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.35 }, 0);
+      heroTl.fromTo(".hero-media", { yPercent: 0, scale: 1.08 }, { yPercent: -10, scale: 1, ease: "none", duration: 1 }, 0);
+      heroTl.fromTo(".hero-content", { y: 0, autoAlpha: 1 }, { y: -28, autoAlpha: 0, ease: "none", duration: 1 }, 0);
+      heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.3 }, 0);
+    }
+
+    var historyBlock = document.querySelector(".history .narrow");
+    if (historyBlock) {
+      gsap.fromTo(historyBlock, { y: 28 }, {
+        y: 0,
+        ease: "none",
+        scrollTrigger: { trigger: historyBlock, start: "top 88%", end: "top 58%", scrub: true }
+      });
     }
 
     var moment = document.querySelector(".moment-pin");
     if (moment) {
       var momentTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: moment,
-          start: "top top",
-          end: "+=100%",
-          pin: true,
-          scrub: 0.6,
-          anticipatePin: 1
-        }
+        scrollTrigger: Object.assign({}, pass, { trigger: moment })
       });
-      momentTl.fromTo(".quote-bleed-media img", { scale: 1.18 }, { scale: 1, ease: "none", duration: 1 }, 0);
-      momentTl.fromTo(".quote-bleed-text", { y: 28 }, { y: 0, ease: "none", duration: 1 }, 0);
+      momentTl.fromTo(".quote-bleed-media img", { yPercent: 8, scale: 1.06 }, { yPercent: 0, scale: 1.12, ease: "none", duration: 0.5 }, 0);
+      momentTl.to(".quote-bleed-media img", { yPercent: -8, scale: 1.04, ease: "none", duration: 0.5 }, 0.5);
+      momentTl.fromTo(".quote-bleed-text", { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: "none", duration: 0.28 }, 0.18);
     }
 
     document.querySelectorAll(".chapter:not(.chapter--object)").forEach(function (chapter) {
       var img = chapter.querySelector(".chapter-media img");
       var copy = chapter.querySelector(".chapter-copy");
       var tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: chapter,
-          start: "top top",
-          end: "+=75%",
-          pin: chapter.querySelector(".chapter-pin"),
-          scrub: 0.65,
-          anticipatePin: 1
-        }
+        scrollTrigger: Object.assign({}, pass, { trigger: chapter })
       });
-      if (img) tl.fromTo(img, { scale: 1.16 }, { scale: 1, ease: "none", duration: 1 }, 0);
-      if (copy) tl.fromTo(copy, { y: 48, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: "none", duration: 0.42 }, 0);
+      if (img) {
+        tl.fromTo(img, { yPercent: 8, scale: 1.05 }, { yPercent: 0, scale: 1.12, ease: "none", duration: 0.5 }, 0);
+        tl.to(img, { yPercent: -8, scale: 1.04, ease: "none", duration: 0.5 }, 0.5);
+      }
+      if (copy) tl.fromTo(copy, { y: 36 }, { y: 0, ease: "none", duration: 0.28 }, 0.16);
     });
 
     var objectChapter = document.querySelector(".chapter--object");
     if (objectChapter) {
-      gsap.fromTo(objectChapter.querySelector(".chapter-media"), { y: 36 }, {
+      var seal = objectChapter.querySelector(".chapter-media");
+      var sealCopy = objectChapter.querySelector(".chapter-copy");
+      var sealTl = gsap.timeline({
+        scrollTrigger: Object.assign({}, pass, { trigger: objectChapter })
+      });
+      if (seal) {
+        sealTl.fromTo(seal, { y: 48 }, { y: 0, ease: "none", duration: 0.45 }, 0);
+        sealTl.to(seal, { y: -36, ease: "none", duration: 0.4 }, 0.6);
+      }
+      if (sealCopy) sealTl.fromTo(sealCopy, { y: 28 }, { y: 0, ease: "none", duration: 0.3 }, 0.12);
+    }
+
+    var alcazarVisual = document.querySelector(".alcazar-visual");
+    if (alcazarVisual) {
+      gsap.fromTo(alcazarVisual, { y: 40 }, {
         y: 0,
         ease: "none",
-        scrollTrigger: {
-          trigger: objectChapter,
-          start: "top 85%",
-          end: "top 35%",
-          scrub: true
-        }
+        scrollTrigger: { trigger: ".alcazar", start: "top 82%", end: "top 48%", scrub: true }
       });
     }
 
-    var track = document.querySelector(".brand-track");
-    var reel = document.querySelector(".brand-reel");
-    var pin = document.querySelector(".brand-pin");
-    if (track && reel && pin) {
-      var distance = function () {
-        return Math.max(0, track.scrollWidth - pin.clientWidth);
-      };
-      gsap.to(track, {
-        x: function () { return -distance(); },
+    gsap.utils.toArray(".brand-card").forEach(function (card) {
+      gsap.fromTo(card, { y: 32, autoAlpha: 0 }, {
+        y: 0,
+        autoAlpha: 1,
         ease: "none",
-        duration: 1,
-        scrollTrigger: {
-          trigger: reel,
-          start: "top top",
-          end: function () { return "+=" + Math.max(distance(), window.innerHeight * 0.65); },
-          pin: pin,
-          scrub: 0.65,
-          invalidateOnRefresh: true,
-          anticipatePin: 1
-        }
+        scrollTrigger: { trigger: card, start: "top 92%", end: "top 68%", scrub: true }
       });
-    }
+    });
 
-    gsap.utils.toArray(".section-head, .event-types li, .team-card, .alcazar-grid").forEach(function (el) {
-      if (el.closest(".brand-pin")) return;
-      gsap.from(el, {
-        y: 32,
-        autoAlpha: 0,
+    gsap.utils.toArray(".section-head, .event-types li, .team-card").forEach(function (el) {
+      gsap.fromTo(el, { y: 22 }, {
+        y: 0,
         ease: "none",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 90%",
-          end: "top 62%",
-          scrub: true
-        }
+        scrollTrigger: { trigger: el, start: "top 90%", end: "top 68%", scrub: true }
       });
     });
 
