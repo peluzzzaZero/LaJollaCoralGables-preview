@@ -415,32 +415,44 @@
       heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.3 }, 0);
     }
 
-    var stage = document.querySelector(".film-stage");
-    if (stage) {
-      var film = gsap.timeline({
+    var orbit = document.querySelector(".orbit");
+    if (orbit) {
+      var scenes = gsap.utils.toArray(".orbit-scene");
+      var turn = gsap.timeline({
         scrollTrigger: {
-          trigger: stage,
+          trigger: orbit,
           start: "top top",
-          end: "+=840%",
+          end: "+=640%",
           pin: true,
           scrub: true,
           anticipatePin: 1
         }
       });
       var hold = 1.15;
-      var wipeDur = 0.5;
-      film.to({}, { duration: hold });
-      gsap.utils.toArray(".shot").forEach(function (shot, i) {
+      var spin = 0.6;
+      turn.to({}, { duration: hold });
+      scenes.forEach(function (scene, i) {
         if (i === 0) return;
-        var from = shot.getAttribute("data-wipe") === "left"
-          ? "inset(0% 100% 0% 0%)"
-          : "inset(0% 0% 0% 100%)";
-        film.fromTo(shot, { clipPath: from }, {
-          clipPath: "inset(0% 0% 0% 0%)",
-          duration: wipeDur,
+        var prev = scenes[i - 1];
+        var prevFace = prev.querySelector(".orbit-face");
+        var face = scene.querySelector(".orbit-face");
+        var prevLine = prev.querySelector(".orbit-line");
+        var line = scene.querySelector(".orbit-line");
+        turn.to(prevFace, { rotateY: -42, autoAlpha: 0, duration: spin, ease: "none" });
+        turn.fromTo(face, { rotateY: 42, autoAlpha: 0 }, {
+          rotateY: 0,
+          autoAlpha: 1,
+          duration: spin,
           ease: "none"
-        });
-        film.to({}, { duration: hold });
+        }, "<");
+        turn.to(prevLine, { autoAlpha: 0, y: -16, duration: 0.35, ease: "none" }, "<");
+        turn.fromTo(line, { autoAlpha: 0, y: 16 }, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.4,
+          ease: "none"
+        }, "<0.22");
+        turn.to({}, { duration: hold });
       });
     }
 
