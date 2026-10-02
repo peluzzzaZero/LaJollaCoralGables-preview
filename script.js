@@ -434,25 +434,19 @@
       });
     }
 
-    document.querySelectorAll(".spread-frame").forEach(function (frame) {
-      var img = frame.querySelector("img");
-      if (!img) return;
-      gsap.fromTo(img, { yPercent: -6 }, {
-        yPercent: 6,
+    gsap.utils.toArray(".story-card").forEach(function (card) {
+      var copy = card.querySelector(".story-card-copy");
+      if (!copy) return;
+      gsap.fromTo(copy, { y: 28, autoAlpha: 0 }, {
+        y: 0,
+        autoAlpha: 1,
         ease: "none",
         scrollTrigger: {
-          trigger: frame,
-          start: "top bottom",
-          end: "bottom top",
+          trigger: card,
+          start: "top 65%",
+          end: "top 28%",
           scrub: true
         }
-      });
-    });
-    document.querySelectorAll(".spread-copy").forEach(function (copy) {
-      gsap.fromTo(copy, { y: 28 }, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: copy, start: "top 88%", end: "top 60%", scrub: true }
       });
     });
 

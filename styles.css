@@ -462,41 +462,54 @@ p:last-child { margin-bottom: 0; }
   margin: 0;
 }
 
-/* —— 4. Photographs drift inside their frames. The picture stays whole. —— */
-.spread {
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: clamp(1.5rem, 4vw, 4.5rem);
-  align-items: center;
-  padding: clamp(3.5rem, 8vh, 6rem) clamp(1.25rem, 5vw, 4.5rem);
-  background: var(--cream);
+/* —— 4. One evening. Each scene is a page. The next page covers it. —— */
+.evening { position: relative; background: var(--cream-deep); }
+.story-card {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--cream-deep);
 }
-.spread:nth-child(even) { background: var(--paper); }
-.spread--flip .spread-frame { order: 2; }
-.spread-frame {
+.story-card-sheet {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--paper);
+}
+.story-card:nth-child(even) .story-card-sheet { background: var(--cream); }
+.story-card-photo {
   position: relative;
   margin: 0;
-  height: min(72vh, 38rem);
+  min-height: 0;
   overflow: hidden;
 }
-.spread-frame img {
+.story-card-photo img {
   position: absolute;
-  left: 0;
-  top: -12%;
+  inset: 0;
   width: 100%;
-  height: 124%;
+  height: 100%;
+  max-width: none;
   object-fit: cover;
   object-position: center 42%;
 }
-.spread-copy h3 {
-  font-size: clamp(2rem, 3.4vw, 2.8rem);
-  margin-bottom: 0.45rem;
+.story-card-copy {
+  padding: 1.35rem clamp(1.25rem, 6vw, 4.5rem) 1.7rem;
+  max-width: 48rem;
 }
-.spread-copy p { color: var(--ink-soft); margin: 0; font-size: 1.15rem; line-height: 1.55; }
+.story-card-copy h3 {
+  font-size: clamp(2.15rem, 3.2vw, 3rem);
+  margin-bottom: 0.4rem;
+}
+.story-card-copy p {
+  color: var(--ink-soft);
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
 @media (max-width: 800px) {
-  .spread { grid-template-columns: 1fr; gap: 1rem; padding: 2.25rem 1rem 2.5rem; }
-  .spread--flip .spread-frame { order: -1; }
-  .spread-frame { height: 58vh; }
+  .story-card-copy { padding: 1rem 1.1rem 1.25rem; }
 }
 
 /* —— 4b. Events list —— */
@@ -1266,4 +1279,6 @@ html.has-gsap .editorial.reveal .editorial-media img {
   html.js .editorial.reveal .editorial-media img { transform: none; }
   .hero-video, .hero-fallback { transition: none; }
   .scroll-hint span { animation: none; }
+  .story-card { position: relative; height: auto; min-height: 70vh; }
+  .story-card-sheet { height: auto; min-height: 70vh; }
 }
