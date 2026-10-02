@@ -47,28 +47,26 @@
 
 <main>
 
-  <!-- 1. HERO -->
-  <div class="hero-track">
-  <section class="section hero" id="hero" aria-label="Hero">
-    <div class="hero-media">
-      <!-- PENDING: venue video from Epic Lux — <video> slot ready; poster = static fallback -->
-      <video class="hero-video" poster="assets/brand/hero-facade.jpg" muted loop playsinline preload="none" aria-hidden="true">
-        <!-- <source src="assets/venue-loop.mp4" type="video/mp4" /> -->
-      </video>
-      <img class="hero-fallback" src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" />
-      <div class="hero-scrim" aria-hidden="true"></div>
+  <!-- 1. One façade turns with the scroll. Each line appears under it. -->
+  <section class="section hero film" id="hero" aria-label="Hero" data-motion="yaw">
+    <div class="film-stage">
+      <figure class="film-object">
+        <img class="film-face" src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" />
+      </figure>
+      <div class="film-copy">
+        <p class="hero-script">La Jolla</p>
+        <p class="hero-est" data-i18n="hero.est">Coral Gables · Est. 1928</p>
+        <div class="film-beats">
+          <h1 class="film-beat hero-title" data-i18n="hero.title">A jewel in Coral Gables</h1>
+          <p class="film-beat" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
+          <p class="film-beat film-beat--quote" data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
+          <p class="film-beat" data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
+          <p class="film-beat" data-i18n="alcazar.body">Step upstairs and into another era. Layered in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from private clubs, classic whiskey rooms, and the timeless elegance of Kentucky racing culture. Designed for cocktails, private dinners, intimate celebrations, and distinctive gatherings, the space feels secluded, sophisticated, and entirely its own.</p>
+        </div>
+        <a class="btn btn-sage" href="#quote" data-i18n="hero.cta">Request a private quote</a>
+      </div>
     </div>
-    <div class="hero-content">
-      <p class="hero-script">La Jolla</p>
-      <p class="hero-est" data-i18n="hero.est">Coral Gables · Est. 1928</p>
-      <h1 class="hero-title" data-i18n="hero.title">A jewel in Coral Gables</h1>
-      <a class="btn btn-cream" href="#quote" data-i18n="hero.cta">Request a private quote</a>
-    </div>
-    <a class="scroll-hint" href="#history" aria-label="Scroll to history">
-      <span aria-hidden="true"></span>
-    </a>
   </section>
-  </div>
 
   <!-- 2. OUR HISTORY -->
   <section class="section history" id="history" aria-labelledby="history-title">
@@ -102,23 +100,6 @@
         <h2 id="events-title" class="section-title" data-i18n="events.title">A space for every vision</h2>
         <p class="section-intro" data-i18n="events.lede">From life's biggest milestones to business, entertainment and creative productions, La Jolla offers a versatile setting for experiences of every scale and style. If you can envision it, let's explore how we can bring it to life.</p>
       </header>
-    </div>
-
-    <div class="orbit" id="evening">
-      <div class="orbit-stage">
-        <figure class="orbit-object">
-          <img class="orbit-face" src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" />
-        </figure>
-        <div class="orbit-copy">
-          <p class="eyebrow" data-i18n="alcazar.eyebrow">Curated · Vintage 1928</p>
-          <div class="orbit-beats">
-            <p class="orbit-beat" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
-            <p class="orbit-beat orbit-beat--quote" data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
-            <p class="orbit-beat" data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
-            <p class="orbit-beat" data-i18n="alcazar.body">Step upstairs and into another era. Layered in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from private clubs, classic whiskey rooms, and the timeless elegance of Kentucky racing culture. Designed for cocktails, private dinners, intimate celebrations, and distinctive gatherings, the space feels secluded, sophisticated, and entirely its own.</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="wrap">

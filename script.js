@@ -405,48 +405,38 @@
       else target.scrollIntoView({ block: "start" });
     });
 
-    var hero = document.querySelector(".hero");
-    if (hero) {
-      var heroTl = gsap.timeline({
-        scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: true }
-      });
-      heroTl.fromTo(".hero-media", { yPercent: 0, scale: 1 }, { yPercent: -6, scale: 1, ease: "none", duration: 1 }, 0);
-      heroTl.fromTo(".hero-content", { y: 0, autoAlpha: 1 }, { y: -28, autoAlpha: 0, ease: "none", duration: 1 }, 0);
-      heroTl.fromTo(".scroll-hint", { autoAlpha: 1 }, { autoAlpha: 0, ease: "none", duration: 0.3 }, 0);
-    }
-
-    var orbit = document.querySelector(".orbit");
-    if (orbit) {
-      var face = orbit.querySelector(".orbit-face");
-      var beats = gsap.utils.toArray(orbit.querySelectorAll(".orbit-beat"));
+    var film = document.querySelector(".film");
+    if (film) {
+      var face = film.querySelector(".film-face");
+      var beats = gsap.utils.toArray(film.querySelectorAll(".film-beat"));
       if (face && beats.length) {
         var turn = gsap.timeline({
           scrollTrigger: {
-            trigger: orbit,
+            trigger: film,
             start: "top top",
-            end: "+=400%",
+            end: "+=300%",
             pin: true,
             scrub: true,
             anticipatePin: 1
           }
         });
         var span = beats.length;
-        var fade = 0.45;
-        turn.fromTo(face, { rotateY: -16 }, { rotateY: 16, ease: "none", duration: span }, 0);
+        turn.fromTo(face, { rotateY: -32 }, { rotateY: 32, ease: "none", duration: span }, 0);
         beats.forEach(function (beat, i) {
           if (i === 0) {
-            gsap.set(beat, { autoAlpha: 1 });
+            gsap.set(beat, { autoAlpha: 1, y: 0 });
           } else {
-            gsap.set(beat, { autoAlpha: 0 });
-            turn.fromTo(beat, { autoAlpha: 0 }, {
+            gsap.set(beat, { autoAlpha: 0, y: 12 });
+            turn.fromTo(beat, { autoAlpha: 0, y: 12 }, {
               autoAlpha: 1,
+              y: 0,
               ease: "none",
-              duration: fade,
+              duration: 0.14,
               immediateRender: false
-            }, i - fade);
+            }, i);
           }
           if (i < beats.length - 1) {
-            turn.to(beat, { autoAlpha: 0, ease: "none", duration: fade }, (i + 1) - fade);
+            turn.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.14 }, i + 0.84);
           }
         });
       }

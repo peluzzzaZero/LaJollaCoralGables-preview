@@ -267,6 +267,99 @@ p:last-child { margin-bottom: 0; }
   text-decoration-thickness: 1px;
 }
 
+
+/* —— Opening film: one façade turns, one line at a time. —— */
+.hero.film {
+  position: relative;
+  top: auto;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: block;
+  color: var(--ink);
+  background: var(--cream);
+  overflow: visible;
+}
+.film-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.85rem;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(var(--header-h) + 0.75rem) clamp(1rem, 4vw, 2.5rem) 1.35rem;
+  background: var(--cream);
+}
+.film-object {
+  perspective: 1400px;
+  margin: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.film-face {
+  height: min(58vh, 34rem, calc(100dvh - var(--header-h) - 16rem));
+  width: auto;
+  max-width: min(88vw, 26rem);
+  object-fit: cover;
+  object-position: center 40%;
+  transform-origin: center center;
+  box-shadow: 0 22px 48px rgba(44, 36, 30, 0.14);
+}
+.film-copy {
+  width: min(42rem, 100%);
+  text-align: center;
+  flex: 0 0 auto;
+}
+.hero.film .hero-script { color: var(--ink); margin-bottom: 0.2rem; }
+.hero.film .hero-est { color: var(--ink-soft); margin-bottom: 0.65rem; }
+.hero.film .hero-title {
+  color: var(--ink);
+  margin: 0;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+}
+.film-beat {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+  line-height: 1.45;
+}
+.film-beat + .film-beat { margin-top: 0.75rem; }
+.film-beat--quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  line-height: 1.35;
+  color: var(--ink);
+}
+.film-copy .btn { margin-top: 0.95rem; }
+html.has-gsap .hero.film {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+html.has-gsap .film-stage {
+  height: 100%;
+  min-height: 0;
+}
+html.has-gsap .film-beats { display: grid; }
+html.has-gsap .film-beat {
+  grid-area: 1 / 1;
+  margin-top: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+html.has-gsap .film-beat:first-child {
+  opacity: 1;
+  visibility: visible;
+}
+html.has-gsap .film-face { transform: rotateY(-32deg); }
+
 /* —— 1. Hero —— */
 .hero-track { height: 168vh; }
 .hero {
@@ -1323,4 +1416,21 @@ html.has-gsap .editorial.reveal .editorial-media img {
   }
   .orbit-beat + .orbit-beat,
   html.has-gsap .orbit-beat + .orbit-beat { margin-top: 1.35rem; }
+  .hero.film,
+  html.has-gsap .hero.film { height: auto; overflow: visible; }
+  .film-stage,
+  html.has-gsap .film-stage { height: auto; min-height: 0; }
+  .film-face,
+  html.has-gsap .film-face { transform: none; }
+  .film-beats,
+  html.has-gsap .film-beats { display: block; }
+  .film-beat,
+  html.has-gsap .film-beat {
+    grid-area: auto;
+    opacity: 1;
+    visibility: visible;
+    position: static;
+  }
+  .film-beat + .film-beat,
+  html.has-gsap .film-beat + .film-beat { margin-top: 0.75rem; }
 }
