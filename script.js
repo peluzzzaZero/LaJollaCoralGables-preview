@@ -407,9 +407,9 @@
 
     var film = document.querySelector(".film");
     if (film) {
-      var face = film.querySelector(".film-face");
+      var card = film.querySelector(".film-card");
       var beats = gsap.utils.toArray(film.querySelectorAll(".film-beat"));
-      if (face && beats.length) {
+      if (card && beats.length) {
         var turn = gsap.timeline({
           scrollTrigger: {
             trigger: film,
@@ -421,7 +421,7 @@
           }
         });
         var span = beats.length;
-        turn.fromTo(face, { rotateY: -32 }, { rotateY: 32, ease: "none", duration: span }, 0);
+        turn.fromTo(card, { rotateY: -62, transformPerspective: 460 }, { rotateY: -34, transformPerspective: 460, ease: "none", duration: span }, 0);
         beats.forEach(function (beat, i) {
           if (i === 0) {
             gsap.set(beat, { autoAlpha: 1, y: 0 });
