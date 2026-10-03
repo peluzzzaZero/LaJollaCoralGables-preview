@@ -415,7 +415,7 @@
           scrollTrigger: {
             trigger: reel,
             start: "top top",
-            end: "+=240%",
+            end: "+=170%",
             pin: true,
             scrub: true,
             anticipatePin: 1
@@ -433,19 +433,19 @@
             reelTl.fromTo(shot, { autoAlpha: 0 }, {
               autoAlpha: 1,
               ease: "none",
-              duration: 0.42,
+              duration: 0.18,
               immediateRender: false
-            }, i - 0.28);
+            }, i - 0.1);
           }
           reelTl.fromTo(img, { scale: 1.04, objectPosition: fromPos }, {
-            scale: 1.38,
+            scale: 1.16,
             objectPosition: toPos,
             ease: "none",
             duration: 1.2,
             immediateRender: false
           }, Math.max(0, i - 0.16));
           if (i < shots.length - 1) {
-            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.42 }, i + 0.78);
+            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.18 }, i + 0.86);
           }
         });
         beats.forEach(function (beat, i) {
@@ -453,16 +453,16 @@
             gsap.set(beat, { autoAlpha: 1, y: 0 });
           } else {
             gsap.set(beat, { autoAlpha: 0, y: 14 });
-            reelTl.fromTo(beat, { autoAlpha: 0, y: 14 }, {
+            reelTl.fromTo(beat, { autoAlpha: 0, y: 10 }, {
               autoAlpha: 1,
               y: 0,
               ease: "none",
-              duration: 0.22,
+              duration: 0.12,
               immediateRender: false
-            }, i + 0.12);
+            }, i + 0.02);
           }
           if (i < beats.length - 1) {
-            reelTl.to(beat, { autoAlpha: 0, y: -10, ease: "none", duration: 0.16 }, i + 0.72);
+            reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.1 }, i + 0.7);
           }
         });
         if (cta) {

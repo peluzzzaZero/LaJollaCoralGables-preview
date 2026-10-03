@@ -300,8 +300,8 @@ p:last-child { margin-bottom: 0; }
 .reel-caption {
   position: relative;
   z-index: 2;
-  width: min(36rem, calc(100% - 2.5rem));
-  margin: -7.5rem auto 0;
+  width: min(40rem, calc(100vw - 3rem));
+  margin: 1.25rem auto 0;
   padding: 0 0 2.5rem;
   text-align: center;
 }
@@ -327,16 +327,29 @@ p:last-child { margin-bottom: 0; }
 html.has-gsap .hero.reel {
   height: 100vh;
   height: 100dvh;
+  min-height: 100dvh;
+  display: block;
+  place-items: stretch;
+  position: relative;
+  top: auto;
   overflow: hidden;
 }
-html.has-gsap .reel-stage,
+html.has-gsap .reel-stage {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  min-height: 0;
+}
 html.has-gsap .reel-shots {
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  height: auto;
   min-height: 0;
 }
 html.has-gsap .reel-shot {
   position: absolute;
   inset: 0;
+  margin: 0;
   opacity: 0;
   visibility: hidden;
 }
@@ -345,26 +358,33 @@ html.has-gsap .reel-shot:first-child {
   visibility: visible;
 }
 html.has-gsap .reel-shot img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   max-width: none;
+  object-fit: cover;
   transform: scale(1.05);
   transform-origin: center center;
 }
-html.has-gsap .reel-stage::after {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 46%;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(to top, rgba(44, 36, 30, 0.62), rgba(44, 36, 30, 0));
-}
 html.has-gsap .reel-caption {
   position: absolute;
-  left: 0; right: 0; bottom: 0;
-  margin: 0 auto 1.35rem;
-  padding: 0 1.25rem 0.4rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  transform: none;
+  width: 100%;
+  margin: 0;
+  padding: 0.85rem 8vw 1rem;
+  background: rgba(242, 238, 227, 0.96);
+  z-index: 3;
+}
+html.has-gsap .reel-beat,
+html.has-gsap .hero.reel .reel-beat:first-child,
+html.has-gsap .reel-beat--quote {
+  color: var(--ink);
+  text-shadow: none;
 }
 html.has-gsap .reel-beats { display: grid; }
 html.has-gsap .reel-beat {
@@ -1441,6 +1461,7 @@ html.has-gsap .editorial.reveal .editorial-media img {
   html.has-gsap .reel-stage,
   .reel-shots,
   html.has-gsap .reel-shots { height: auto; min-height: 0; }
+  html.has-gsap .reel-stage::before,
   html.has-gsap .reel-stage::after { display: none; }
   .reel-shot,
   html.has-gsap .reel-shot {
