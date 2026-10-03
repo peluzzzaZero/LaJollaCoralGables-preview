@@ -90,7 +90,7 @@
       "testimonial.title": "Testimonial",
       "testimonial.quote": "A guest reflection will appear here.",
       "gallery.eyebrow": "Gallery",
-      "gallery.title": "Spaces & moments",
+      "gallery.title": "Gallery",
       "gallery.stationery": "Stationery",
       "gallery.stripe": "Monogram",
       "gallery.oval": "Oval monogram",
@@ -103,7 +103,7 @@
       "gallery.lockupBallroom": "Ballroom & catering",
       "gallery.welcome": "Welcome",
       "team.eyebrow": "Our Team",
-      "team.title": "Here for your celebration",
+      "team.title": "Our Team",
       "team.julie.role": "Executive Director",
       "team.pat.role": "Managing Director",
       "quote.eyebrow": "Private quote",
@@ -244,7 +244,7 @@
       "testimonial.title": "Testimonio",
       "testimonial.quote": "Aquí aparecerá la reflexión de un invitado.",
       "gallery.eyebrow": "Galería",
-      "gallery.title": "Espacios y momentos",
+      "gallery.title": "Galería",
       "gallery.stationery": "Papelería",
       "gallery.stripe": "Monograma",
       "gallery.oval": "Monograma oval",
@@ -257,7 +257,7 @@
       "gallery.lockupBallroom": "Ballroom & catering",
       "gallery.welcome": "Welcome",
       "team.eyebrow": "Nuestro equipo",
-      "team.title": "Aquí para su celebración",
+      "team.title": "Nuestro equipo",
       "team.julie.role": "Executive Director",
       "team.pat.role": "Managing Director",
       "quote.eyebrow": "Cotización privada",
@@ -415,13 +415,15 @@
           scrollTrigger: {
             trigger: reel,
             start: "top top",
-            end: "+=320%",
+            end: "+=460%",
             pin: true,
             scrub: true,
             anticipatePin: 1
           }
         });
+        var step = 1.4;
         shots.forEach(function (shot, i) {
+          var at = i * step;
           var img = shot.querySelector("img");
           var fromPos = img.getAttribute("data-from") || "50% 50%";
           var toPos = img.getAttribute("data-to") || "50% 40%";
@@ -434,9 +436,9 @@
             reelTl.fromTo(shot, { autoAlpha: 0 }, {
               autoAlpha: 1,
               ease: "none",
-              duration: 0.36,
+              duration: 0.34,
               immediateRender: false
-            }, i - 0.2);
+            }, at - 0.06);
           }
           reelTl.fromTo(img, {
             scale: 1.06,
@@ -447,24 +449,25 @@
             objectPosition: toPos,
             transformOrigin: toPos,
             ease: "none",
-            duration: 0.72,
+            duration: 0.36,
             immediateRender: false
-          }, i);
+          }, at);
           if (i < shots.length - 1) {
-            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.36 }, i + 0.78);
+            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.22 }, at + 1.16);
           }
         });
         beats.forEach(function (beat, i) {
-          gsap.set(beat, { autoAlpha: 0, y: 12 });
-          reelTl.fromTo(beat, { autoAlpha: 0, y: 12 }, {
+          var at = i * step;
+          gsap.set(beat, { autoAlpha: 0, y: 16 });
+          reelTl.fromTo(beat, { autoAlpha: 0, y: 16 }, {
             autoAlpha: 1,
             y: 0,
             ease: "none",
-            duration: 0.14,
+            duration: 0.16,
             immediateRender: false
-          }, i + 0.5);
+          }, at + 0.4);
           if (i < beats.length - 1) {
-            reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.12 }, i + 0.8);
+            reelTl.to(beat, { autoAlpha: 0, y: -10, ease: "none", duration: 0.1 }, at + 1.18);
           }
         });
         if (cta) {
@@ -479,12 +482,47 @@
       }
     }
 
+    var history = document.querySelector(".history");
+    if (history) {
+      var historyPhoto = history.querySelector(".history-photo img");
+      var historyLines = gsap.utils.toArray(history.querySelectorAll(".history-line"));
+      var historyRule = history.querySelector(".history-rule");
+      var historyTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: history,
+          start: "top top",
+          end: "+=110%",
+          pin: true,
+          scrub: true,
+          anticipatePin: 1
+        }
+      });
+      if (historyPhoto) {
+        gsap.set(historyPhoto, { scale: 3.05, objectPosition: "0% 100%", transformOrigin: "0% 100%" });
+        historyTl.fromTo(historyPhoto, { scale: 3.05 }, {
+          scale: 3.35,
+          ease: "none",
+          duration: 1
+        }, 0);
+      }
+      if (historyRule) {
+        gsap.set(historyRule, { scaleX: 0, transformOrigin: "left center" });
+        historyTl.to(historyRule, { scaleX: 1, ease: "none", duration: 0.28 }, 0.06);
+      }
+      historyLines.forEach(function (line, i) {
+        if (i < 2) return;
+        gsap.set(line, { autoAlpha: 0, y: 18 });
+        historyTl.to(line, { autoAlpha: 1, y: 0, ease: "none", duration: 0.18 }, 0.2 + (i - 2) * 0.22);
+      });
+    }
+
     var alcazarVisual = document.querySelector(".alcazar-visual");
     if (alcazarVisual) {
-      gsap.fromTo(alcazarVisual, { y: 40 }, {
+      gsap.fromTo(alcazarVisual, { y: 28, scale: 1 }, {
         y: 0,
+        scale: 1.06,
         ease: "none",
-        scrollTrigger: { trigger: ".alcazar", start: "top 82%", end: "top 48%", scrub: true }
+        scrollTrigger: { trigger: ".alcazar", start: "top 80%", end: "bottom 55%", scrub: true }
       });
     }
 
@@ -497,7 +535,57 @@
       });
     });
 
-    gsap.utils.toArray(".section-head, .event-types li, .team-card").forEach(function (el) {
+    var moment = document.querySelector("#moment");
+    if (moment) {
+      var momentImg = moment.querySelector(".quote-bleed-media img");
+      var momentText = moment.querySelector(".quote-bleed-text");
+      var momentTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: moment,
+          start: "top top",
+          end: "+=80%",
+          pin: true,
+          scrub: true,
+          anticipatePin: 1
+        }
+      });
+      if (momentImg) {
+        gsap.set(momentImg, { scale: 1.05, transformOrigin: "center 40%" });
+        momentTl.to(momentImg, { scale: 1.16, ease: "none", duration: 1 }, 0);
+      }
+      if (momentText) {
+        gsap.set(momentText, { autoAlpha: 1, y: 10 });
+        momentTl.to(momentText, { y: 0, ease: "none", duration: 0.2 }, 0);
+      }
+    }
+
+    gsap.utils.toArray(".event-types li").forEach(function (el) {
+      gsap.fromTo(el, { autoAlpha: 0.2, y: 28 }, {
+        autoAlpha: 1,
+        y: 0,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top 90%", end: "top 64%", scrub: true }
+      });
+    });
+
+    gsap.utils.toArray(".rentals-quiet li").forEach(function (el) {
+      gsap.fromTo(el, { autoAlpha: 0.35, y: 16 }, {
+        autoAlpha: 1,
+        y: 0,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top 92%", end: "top 70%", scrub: true }
+      });
+    });
+
+    gsap.utils.toArray(".team-card").forEach(function (el) {
+      gsap.fromTo(el, { y: 18 }, {
+        y: 0,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top 88%", end: "top 58%", scrub: true }
+      });
+    });
+
+    gsap.utils.toArray(".section-head").forEach(function (el) {
       gsap.fromTo(el, { y: 22 }, {
         y: 0,
         ease: "none",

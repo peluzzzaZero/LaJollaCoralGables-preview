@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=reel7" />
+<link rel="stylesheet" href="styles.css?v=reel13" />
 </head>
 <body id="top">
 <!--
@@ -77,11 +77,17 @@
 
   <!-- 2. OUR HISTORY -->
   <section class="section history" id="history" aria-labelledby="history-title">
-    <div class="wrap narrow reveal">
-      <p class="eyebrow" data-i18n="history.eyebrow">Our History</p>
-      <h2 id="history-title" class="section-title" data-i18n="history.title">La Jolla, a jewel in Coral Gables</h2>
-      <p class="lede" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
-      <p class="managed" data-i18n="history.managed">Managed by Epic Lux Management</p>
+    <div class="history-stage">
+      <div class="history-copy">
+        <p class="eyebrow history-line" data-i18n="history.eyebrow">Our History</p>
+        <span class="history-rule" aria-hidden="true"></span>
+        <h2 id="history-title" class="section-title history-line" data-i18n="history.title">La Jolla, a jewel in Coral Gables</h2>
+        <p class="lede history-line" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
+        <p class="managed history-line" data-i18n="history.managed">Managed by Epic Lux Management</p>
+      </div>
+      <figure class="history-photo">
+        <img src="assets/brand/hero-facade.jpg" alt="Ivy, blue pots, and the brick entry at 301 Alcazar Avenue." width="1081" height="1351" />
+      </figure>
     </div>
   </section>
 
@@ -180,10 +186,6 @@
         <p class="section-intro" data-i18n="rentals.intro">From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Inquire for rentals, custom packages and full-service event production.</p>
       </header>
 
-      <header class="section-head reveal">
-        <h2 class="section-title" data-i18n="rentals.servicesTitle">Everything your event needs</h2>
-        <p class="section-intro" data-i18n="rentals.servicesLede">From a single service to complete event production, our team brings together the elements needed to transform your vision into an unforgettable experience.</p>
-      </header>
       <ul class="rentals-quiet reveal">
         <li><button type="button" class="rentals-quiet-link" data-interest="Planning, coordination and production" data-scroll-quote><span data-i18n="rentals.svc.planning">Planning, coordination &amp; production</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
         <li><button type="button" class="rentals-quiet-link" data-interest="Catering and bar" data-scroll-quote><span data-i18n="rentals.svc.catering">Catering &amp; bar services</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
@@ -208,8 +210,7 @@
   <section class="section brand-reel" id="gallery" aria-labelledby="gallery-title">
     <div class="brand-pin">
       <header class="section-head">
-        <p class="eyebrow" data-i18n="gallery.eyebrow">Gallery</p>
-        <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">Spaces &amp; moments</h2>
+        <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">Gallery</h2>
       </header>
       <div class="brand-viewport">
         <div class="brand-track">
@@ -250,8 +251,7 @@
   <section class="section team" id="team" aria-labelledby="team-title">
     <div class="wrap">
       <header class="section-head reveal">
-        <p class="eyebrow" data-i18n="team.eyebrow">Our Team</p>
-        <h2 id="team-title" class="section-title" data-i18n="team.title">Here for your celebration</h2>
+        <h2 id="team-title" class="section-title" data-i18n="team.title">Our Team</h2>
       </header>
       <div class="team-grid">
         <article class="team-card reveal">
@@ -423,6 +423,6 @@
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
-<script src="script.js?v=reel7"></script>
+<script src="script.js?v=reel13"></script>
 </body>
 </html>
