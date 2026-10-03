@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=yaw4" />
+<link rel="stylesheet" href="styles.css?v=reel1" />
 </head>
 <body id="top">
 <!--
@@ -47,27 +47,31 @@
 
 <main>
 
-  <!-- 1. One façade turns with the scroll. Each line appears under it. -->
-  <section class="section hero film" id="hero" aria-label="Hero" data-motion="yaw4">
-    <div class="film-stage">
-      <div class="film-name">
-        <p class="hero-script">La Jolla</p>
-        <p class="hero-est" data-i18n="hero.est">Coral Gables · Est. 1928</p>
+  <!-- 1. Scroll story: photos blend and zoom, one line on each focus. -->
+  <section class="section hero reel" id="hero" aria-label="Opening" data-motion="reel">
+    <div class="reel-stage">
+      <div class="reel-shots">
+        <figure class="reel-shot">
+          <img src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" data-from="50% 42%" data-to="50% 16%" />
+        </figure>
+        <figure class="reel-shot">
+          <img src="assets/brand/welcome-table.jpg" alt="A set table with the La Jolla welcome card, candles, and glassware." width="1081" height="1351" data-from="50% 32%" data-to="50% 74%" />
+        </figure>
+        <figure class="reel-shot">
+          <img src="assets/brand/mood-card-flowers.jpg" alt="A La Jolla card resting in white and blush hydrangeas." width="1600" height="2133" data-from="50% 55%" data-to="28% 36%" />
+        </figure>
+        <figure class="reel-shot">
+          <img src="assets/brand/flower-plaque.jpg" alt="An oval La Jolla plaque beside white flowers and a window." width="1122" height="1402" data-from="50% 60%" data-to="62% 40%" />
+        </figure>
       </div>
-      <figure class="film-object">
-        <div class="film-card">
-          <img class="film-face" src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" />
+      <div class="reel-caption">
+        <div class="reel-beats">
+          <h1 class="reel-beat" data-i18n="hero.title">A jewel in Coral Gables</h1>
+          <p class="reel-beat" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
+          <p class="reel-beat reel-beat--quote" data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
+          <p class="reel-beat" data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
         </div>
-      </figure>
-      <div class="film-copy">
-        <div class="film-beats">
-          <h1 class="film-beat hero-title" data-i18n="hero.title">A jewel in Coral Gables</h1>
-          <p class="film-beat" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
-          <p class="film-beat film-beat--quote" data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
-          <p class="film-beat" data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
-          <p class="film-beat" data-i18n="alcazar.body">Step upstairs and into another era. Layered in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from private clubs, classic whiskey rooms, and the timeless elegance of Kentucky racing culture. Designed for cocktails, private dinners, intimate celebrations, and distinctive gatherings, the space feels secluded, sophisticated, and entirely its own.</p>
-        </div>
-        <a class="btn btn-sage" href="#quote" data-i18n="hero.cta">Request a private quote</a>
+        <a class="btn btn-sage reel-cta" href="#quote" data-i18n="hero.cta">Request a private quote</a>
       </div>
     </div>
   </section>
@@ -420,6 +424,6 @@
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
-<script src="script.js?v=yaw4"></script>
+<script src="script.js?v=reel1"></script>
 </body>
 </html>

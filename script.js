@@ -405,40 +405,75 @@
       else target.scrollIntoView({ block: "start" });
     });
 
-    var film = document.querySelector(".film");
-    if (film) {
-      var card = film.querySelector(".film-card");
-      var beats = gsap.utils.toArray(film.querySelectorAll(".film-beat"));
-      if (card && beats.length) {
-        var turn = gsap.timeline({
+    var reel = document.querySelector(".reel");
+    if (reel) {
+      var shots = gsap.utils.toArray(reel.querySelectorAll(".reel-shot"));
+      var beats = gsap.utils.toArray(reel.querySelectorAll(".reel-beat"));
+      var cta = reel.querySelector(".reel-cta");
+      if (shots.length && beats.length) {
+        var reelTl = gsap.timeline({
           scrollTrigger: {
-            trigger: film,
+            trigger: reel,
             start: "top top",
-            end: "+=300%",
+            end: "+=240%",
             pin: true,
             scrub: true,
             anticipatePin: 1
           }
         });
-        var span = beats.length;
-        turn.fromTo(card, { rotateY: -62, transformPerspective: 460 }, { rotateY: -34, transformPerspective: 460, ease: "none", duration: span }, 0);
+        shots.forEach(function (shot, i) {
+          var img = shot.querySelector("img");
+          var fromPos = img.getAttribute("data-from") || "50% 50%";
+          var toPos = img.getAttribute("data-to") || "50% 40%";
+          gsap.set(img, { objectPosition: fromPos, scale: 1.04 });
+          if (i === 0) {
+            gsap.set(shot, { autoAlpha: 1 });
+          } else {
+            gsap.set(shot, { autoAlpha: 0 });
+            reelTl.fromTo(shot, { autoAlpha: 0 }, {
+              autoAlpha: 1,
+              ease: "none",
+              duration: 0.42,
+              immediateRender: false
+            }, i - 0.28);
+          }
+          reelTl.fromTo(img, { scale: 1.04, objectPosition: fromPos }, {
+            scale: 1.38,
+            objectPosition: toPos,
+            ease: "none",
+            duration: 1.2,
+            immediateRender: false
+          }, Math.max(0, i - 0.16));
+          if (i < shots.length - 1) {
+            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.42 }, i + 0.78);
+          }
+        });
         beats.forEach(function (beat, i) {
           if (i === 0) {
             gsap.set(beat, { autoAlpha: 1, y: 0 });
           } else {
-            gsap.set(beat, { autoAlpha: 0, y: 12 });
-            turn.fromTo(beat, { autoAlpha: 0, y: 12 }, {
+            gsap.set(beat, { autoAlpha: 0, y: 14 });
+            reelTl.fromTo(beat, { autoAlpha: 0, y: 14 }, {
               autoAlpha: 1,
               y: 0,
               ease: "none",
-              duration: 0.14,
+              duration: 0.22,
               immediateRender: false
-            }, i);
+            }, i + 0.12);
           }
           if (i < beats.length - 1) {
-            turn.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.14 }, i + 0.84);
+            reelTl.to(beat, { autoAlpha: 0, y: -10, ease: "none", duration: 0.16 }, i + 0.72);
           }
         });
+        if (cta) {
+          gsap.set(cta, { autoAlpha: 0 });
+          reelTl.fromTo(cta, { autoAlpha: 0 }, {
+            autoAlpha: 1,
+            ease: "none",
+            duration: 0.2,
+            immediateRender: false
+          }, beats.length - 1 + 0.2);
+        }
       }
     }
 
