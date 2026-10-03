@@ -415,7 +415,7 @@
           scrollTrigger: {
             trigger: reel,
             start: "top top",
-            end: "+=170%",
+            end: "+=320%",
             pin: true,
             scrub: true,
             anticipatePin: 1
@@ -425,7 +425,8 @@
           var img = shot.querySelector("img");
           var fromPos = img.getAttribute("data-from") || "50% 50%";
           var toPos = img.getAttribute("data-to") || "50% 40%";
-          gsap.set(img, { objectPosition: fromPos, scale: 1.04 });
+          var scaleTo = parseFloat(img.getAttribute("data-scale")) || 1.8;
+          gsap.set(img, { objectPosition: fromPos, scale: 1.06, transformOrigin: fromPos });
           if (i === 0) {
             gsap.set(shot, { autoAlpha: 1 });
           } else {
@@ -433,36 +434,37 @@
             reelTl.fromTo(shot, { autoAlpha: 0 }, {
               autoAlpha: 1,
               ease: "none",
-              duration: 0.18,
+              duration: 0.36,
               immediateRender: false
-            }, i - 0.1);
+            }, i - 0.2);
           }
-          reelTl.fromTo(img, { scale: 1.04, objectPosition: fromPos }, {
-            scale: 1.16,
+          reelTl.fromTo(img, {
+            scale: 1.06,
+            objectPosition: fromPos,
+            transformOrigin: fromPos
+          }, {
+            scale: scaleTo,
             objectPosition: toPos,
+            transformOrigin: toPos,
             ease: "none",
-            duration: 1.2,
+            duration: 0.72,
             immediateRender: false
-          }, Math.max(0, i - 0.16));
+          }, i);
           if (i < shots.length - 1) {
-            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.18 }, i + 0.86);
+            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.36 }, i + 0.78);
           }
         });
         beats.forEach(function (beat, i) {
-          if (i === 0) {
-            gsap.set(beat, { autoAlpha: 1, y: 0 });
-          } else {
-            gsap.set(beat, { autoAlpha: 0, y: 14 });
-            reelTl.fromTo(beat, { autoAlpha: 0, y: 10 }, {
-              autoAlpha: 1,
-              y: 0,
-              ease: "none",
-              duration: 0.12,
-              immediateRender: false
-            }, i + 0.02);
-          }
+          gsap.set(beat, { autoAlpha: 0, y: 12 });
+          reelTl.fromTo(beat, { autoAlpha: 0, y: 12 }, {
+            autoAlpha: 1,
+            y: 0,
+            ease: "none",
+            duration: 0.14,
+            immediateRender: false
+          }, i + 0.5);
           if (i < beats.length - 1) {
-            reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.1 }, i + 0.7);
+            reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.12 }, i + 0.8);
           }
         });
         if (cta) {
