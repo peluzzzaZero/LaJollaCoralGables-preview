@@ -491,16 +491,20 @@
         scrollTrigger: {
           trigger: history,
           start: "top top",
-          end: "+=110%",
+          end: "+=90%",
           pin: true,
           scrub: true,
-          anticipatePin: 1
+          anticipatePin: 1,
+          invalidateOnRefresh: true
         }
       });
       if (historyPhoto) {
-        gsap.set(historyPhoto, { scale: 3.05, objectPosition: "0% 100%", transformOrigin: "0% 100%" });
-        historyTl.fromTo(historyPhoto, { scale: 3.05 }, {
-          scale: 3.35,
+        gsap.set(historyPhoto, { x: 0, scale: 1, objectPosition: "left bottom" });
+        historyTl.fromTo(historyPhoto, { x: 0 }, {
+          x: function () {
+            var col = historyPhoto.parentElement;
+            return -Math.max(0, (historyPhoto.offsetWidth - col.offsetWidth) / 2);
+          },
           ease: "none",
           duration: 1
         }, 0);
@@ -518,20 +522,19 @@
 
     var alcazarVisual = document.querySelector(".alcazar-visual");
     if (alcazarVisual) {
-      gsap.fromTo(alcazarVisual, { y: 28, scale: 1 }, {
-        y: 0,
-        scale: 1.06,
+      gsap.set(alcazarVisual, { clipPath: "inset(0 0 100% 0)" });
+      gsap.to(alcazarVisual, {
+        clipPath: "inset(0 0 0% 0)",
         ease: "none",
-        scrollTrigger: { trigger: ".alcazar", start: "top 80%", end: "bottom 55%", scrub: true }
+        scrollTrigger: { trigger: ".alcazar", start: "top 78%", end: "top 38%", scrub: true }
       });
     }
 
-    gsap.utils.toArray(".brand-card").forEach(function (card) {
-      gsap.fromTo(card, { y: 32, autoAlpha: 0 }, {
-        y: 0,
-        autoAlpha: 1,
+    gsap.utils.toArray(".brand-card img").forEach(function (img) {
+      gsap.fromTo(img, { scale: 0.9 }, {
+        scale: 1,
         ease: "none",
-        scrollTrigger: { trigger: card, start: "top 92%", end: "top 68%", scrub: true }
+        scrollTrigger: { trigger: img, start: "top 92%", end: "top 58%", scrub: true }
       });
     });
 
@@ -550,8 +553,13 @@
         }
       });
       if (momentImg) {
-        gsap.set(momentImg, { scale: 1.05, transformOrigin: "center 40%" });
-        momentTl.to(momentImg, { scale: 1.16, ease: "none", duration: 1 }, 0);
+        gsap.set(momentImg, { scale: 1.08, objectPosition: "0% 84%", transformOrigin: "left center" });
+        momentTl.to(momentImg, {
+          scale: 1.18,
+          objectPosition: "0% 62%",
+          ease: "none",
+          duration: 1
+        }, 0);
       }
       if (momentText) {
         gsap.set(momentText, { autoAlpha: 1, y: 10 });
@@ -559,39 +567,6 @@
       }
     }
 
-    gsap.utils.toArray(".event-types li").forEach(function (el) {
-      gsap.fromTo(el, { autoAlpha: 0.2, y: 28 }, {
-        autoAlpha: 1,
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top 90%", end: "top 64%", scrub: true }
-      });
-    });
-
-    gsap.utils.toArray(".rentals-quiet li").forEach(function (el) {
-      gsap.fromTo(el, { autoAlpha: 0.35, y: 16 }, {
-        autoAlpha: 1,
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top 92%", end: "top 70%", scrub: true }
-      });
-    });
-
-    gsap.utils.toArray(".team-card").forEach(function (el) {
-      gsap.fromTo(el, { y: 18 }, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top 88%", end: "top 58%", scrub: true }
-      });
-    });
-
-    gsap.utils.toArray(".section-head").forEach(function (el) {
-      gsap.fromTo(el, { y: 22 }, {
-        y: 0,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top 90%", end: "top 68%", scrub: true }
-      });
-    });
 
     if (lenis) {
       ScrollTrigger.addEventListener("refresh", function () { lenis.resize(); });

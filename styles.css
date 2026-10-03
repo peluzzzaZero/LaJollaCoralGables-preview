@@ -591,7 +591,18 @@ html.has-gsap .history {
   overflow: hidden;
 }
 html.has-gsap .history-stage { height: 100%; min-height: 0; }
-html.has-gsap .history-photo { min-height: 0; height: 100%; }
+html.has-gsap .history-photo { position: relative; min-height: 0; height: 100%; }
+html.has-gsap .history-photo img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: auto;
+  height: 420%;
+  max-width: none;
+  object-fit: unset;
+  object-position: left bottom;
+  transform: none;
+}
 @media (max-width: 800px) {
   .history-stage { grid-template-columns: 1fr; }
   .history-photo { min-height: 46vh; }
@@ -959,6 +970,7 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
 }
 .alcazar-copy p { color: var(--ink-soft); margin-bottom: 1.75rem; }
 .alcazar-visual {
+  overflow: hidden;
   width: 100%;
   max-width: 100%;
   min-width: 0;
