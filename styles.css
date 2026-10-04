@@ -1,4 +1,4 @@
-/* La Jolla Coral Gables — editorial release v1.1.0
+/* La Jolla Coral Gables — editorial release v1.2.0
    Brand: sage #6D7B6C, cream #F2EEE3, dark brown ink
    Fonts: Cormorant Garamond · EB Garamond · MonteCarlo (hero script only)
    Approved brand assets. No public prices. */
@@ -318,6 +318,34 @@ html.has-gsap .reel-shot:first-child { opacity: 1; visibility: visible; }
 html.has-gsap .reel-shot img { transform: scale(1.06); }
 html.has-gsap .reel-beat { display: block; position: absolute; inset: 0; opacity: 0; visibility: hidden; }
 html.has-gsap .reel-beat:first-child { opacity: 1; visibility: visible; }
+
+/* Two paths: the place and the services, expressed without package claims. */
+.possibilities { padding-block: clamp(3rem, 5vw, 5rem); background: var(--cream-deep); border-block: 1px solid var(--line); }
+.possibilities-layout { display: grid; grid-template-columns: .9fr 1fr 1fr; gap: 4vw; align-items: start; }
+.possibilities h2 { max-width: 16rem; font-size: clamp(2.2rem, 3.3vw, 3.5rem); line-height: 1.03; }
+.offering-path { display: flex; flex-direction: column; align-self: stretch; position: relative; padding: .3rem 0 1rem; border-bottom: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); }
+.offering-path::after { content: ""; position: absolute; height: 1px; bottom: -1px; left: 0; right: 0; background: var(--sage-deep); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
+.offering-path:hover::after, .offering-path:focus-visible::after { transform: scaleX(1); }
+.path-photo { width: 100%; height: 13rem; object-fit: cover; object-position: 50% 72%; margin-bottom: 1.5rem; }
+.offering-path:nth-of-type(2) .path-photo { object-position: 50% 58%; }
+.path-kicker { font-size: .7rem; text-transform: uppercase; letter-spacing: .16em; color: var(--sage-deep); margin-bottom: 1rem; }
+.offering-path h3 { font-size: clamp(1.8rem, 2.4vw, 2.6rem); line-height: 1.05; max-width: 18rem; }
+.offering-path p { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.5; margin-bottom: 1.5rem; }
+.path-link { display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--sage-deep); font-size: .95rem; margin-top: auto; }
+.offering-path .link-arrow { transition: transform .45s var(--ease); }
+.offering-path:hover .link-arrow { transform: translate(2px, -2px); }
+@media (max-width: 900px) {
+  .possibilities-layout { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .possibilities-layout > header { grid-column: 1 / -1; }
+  .possibilities h2 { max-width: 30rem; margin: 0; }
+}
+@media (max-width: 650px) {
+  .possibilities-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .possibilities h2 { max-width: 20rem; }
+  .offering-path h3 { max-width: 22rem; font-size: 2rem; }
+  .offering-path { padding-bottom: 1.25rem; }
+  .path-photo { height: 14rem; }
+}
 
 /* —— 2. History —— */
 .history { padding-block: clamp(5rem, 10vw, 10rem); }
@@ -793,4 +821,23 @@ html:not(.js) .selection-builder { display: none; }
   .logo-text b { white-space: nowrap; font-size: .88rem; letter-spacing: .01em; }
   .logo-text i { display: none; }
   .lang-btn { font-size: .68rem; letter-spacing: .06em; padding-inline: .2rem; }
+}
+
+/* v1.2 — an inquiry composed like personal correspondence. */
+#quote .quote-panel { background: var(--cream); padding: clamp(1.5rem, 3.4vw, 3rem); border: 1px solid var(--line-soft); outline: 1px solid var(--line-soft); outline-offset: -8px; }
+.inquiry-group { min-width: 0; margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+.inquiry-group + .inquiry-group { margin-top: 1.25rem; }
+.inquiry-group legend { float: left; width: 100%; padding: 0 0 .75rem; margin-bottom: .35rem; font-family: var(--font-display); font-size: 1.85rem; font-style: italic; line-height: 1.2; color: var(--forest); }
+.form-step { display: inline-block; font-family: var(--font-body); font-size: .65rem; font-style: normal; letter-spacing: .08em; vertical-align: middle; color: var(--sage-deep); margin-right: .85rem; }
+#quote .form-row input, #quote .form-row select, #quote .form-row textarea { background: transparent; border: 0; border-bottom: 1px solid var(--line-soft); padding: .6rem .2rem; border-radius: 0; }
+#quote .form-row input:focus, #quote .form-row select:focus, #quote .form-row textarea:focus { border-bottom-color: var(--sage-deep); background: var(--paper); box-shadow: 0 0 0 2px var(--focus); }
+#quote .form-row .is-invalid { border-bottom-color: #8B4513; }
+#quote .form-row label { font-size: .95rem; letter-spacing: .015em; }
+#quote .form-row textarea { resize: vertical; min-height: 7rem; }
+.inquiry-location { font-size: 1rem; color: var(--sage-deep); font-style: italic; margin: 0; padding-bottom: .5rem; border-bottom: 1px solid var(--line-soft); }
+.occasion summary { transition: color .25s ease; }
+.occasion summary:hover h3, .occasion[open] h3 { color: var(--sage-deep); }
+.occasion-toggle { transition: transform .35s var(--ease); }
+@media (prefers-reduced-motion: reduce) {
+  .offering-path::after, .offering-path .link-arrow, .occasion summary, .occasion-toggle { transition: none; }
 }

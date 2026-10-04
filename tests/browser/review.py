@@ -135,7 +135,7 @@ async def review_viewport(browser, base, output, width, height, language):
     assert await page.locator(".team-card").count() == 2
     assert await page.locator("#testimonial").is_hidden()
     assert await page.evaluate("!ScrollTrigger.getAll().some(t => t.trigger.id === 'history' && t.vars.pin)")
-    for section in ("history", "moment", "events", "alcazar", "rentals", "gallery", "team", "quote", "vendors"):
+    for section in ("possibilities", "history", "moment", "events", "alcazar", "rentals", "gallery", "team", "quote", "vendors"):
         await position(page, section)
         await snapshot(page, folder, section)
         for element in await page.locator(f"#{section} .reveal").all():
@@ -232,6 +232,7 @@ async def check_forms(browser, base):
         for field, value in {"q-name": " Browser test ", "q-email": " browser@example.com ", "q-phone": "+13055550100", "q-date": "2027-02-15", "q-guests": "40"}.items():
             await page.locator(f"#{field}").fill(value)
         await page.locator("#q-type").select_option("wedding")
+        await page.locator("#q-location").select_option("exploring")
 
     async def fill_vendor():
         for field, value in {"v-name": " Browser test ", "v-company": "Test company", "v-service": "Test service", "v-email": " browser@example.com "}.items():
@@ -263,6 +264,8 @@ async def check_forms(browser, base):
             await page.locator(f"#{prefix}-send-error").wait_for(state="visible")
             assert await page.locator(f"#{prefix}-success").is_hidden()
             assert await page.locator(f"#{name}").input_value() == "Browser test", "Failure discarded the form"
+            if form == "quote-form":
+                assert await page.locator("#q-location").input_value() == "exploring", "Failure discarded the setting"
             assert await page.locator(f"#{form} button[type=submit]").is_enabled()
             if form == "quote-form":
                 assert await page.locator("#selected-services").input_value() == expected
@@ -283,6 +286,8 @@ async def check_forms(browser, base):
             assert requests[-1]["rentalInterest"] == "Additional written detail"
             assert await page.locator("#selected-services").input_value() == ""
             assert await page.locator("#catalog-selection li").count() == 0
+            assert requests[-1]["eventLocation"] == "exploring"
+            assert await page.locator("#q-location").input_value() == ""
         assert await page.locator(f"#{name}").input_value() == ""
         assert await page.locator(f"#{form} button[type=submit]").is_enabled()
         assert await page.locator(f"#{form}").get_attribute("aria-busy") is None
@@ -445,6 +450,64 @@ async def check_composer(browser, base, output):
     return results
 
 
+async def check_paths(browser, base, output):
+    results = []
+    for width, height in ((390, 844), (768, 1024), (1280, 900)):
+        for language in ("en", "es"):
+            page = await browser.new_page(viewport={"width": width, "height": height})
+            await page.route("https://api.web3forms.com/**", lambda route: route.abort())
+            await page.goto(base, wait_until="networkidle")
+            await page.locator(f'[data-lang="{language}"]').click()
+            assert await page.locator("#q-location").input_value() == "", "Default assumes a setting"
+            assert await page.locator("#q-location").get_attribute("required") is None
+            await page.locator(".arrival-actions .text-link").click()
+            await snapshot(page, output, f"paths-{width}-{language}")
+            title = await page.locator("#possibilities-title").bounding_box()
+            assert title and 68 <= title["y"] < height, "Opening link misses the two offers"
+            for value, target in (("la-jolla", "events"), ("south-florida", "rentals")):
+                link = page.locator(f'.offering-path[data-inquiry-location="{value}"]')
+                await link.focus()
+                await page.keyboard.press("Enter")
+                await snapshot(page, output, f"path-{value}-{width}-{language}")
+                assert await page.locator("#q-location").input_value() == value
+                title = await page.locator(f"#{target}-title").bounding_box()
+                assert title and 68 <= title["y"] < height, f"Path misses {target}"
+            await page.locator('[data-service-id="catering"]').click()
+            await page.locator(".selection-continue").click()
+            await page.locator("#q-location").select_option("exploring")
+            await page.locator("#q-comments").fill("Test vision: keep this wording")
+            await page.locator("#q-type").select_option("other")
+            # Labels translate; explicit corrections, notes and service IDs do not change.
+            other = "en" if language == "es" else "es"
+            await page.locator(f'[data-lang="{other}"]').click()
+            assert await page.locator("#q-location").input_value() == "exploring"
+            assert await page.locator("#q-type").input_value() == "other"
+            assert await page.locator("#q-comments").input_value() == "Test vision: keep this wording"
+            assert await page.locator("#selected-service-ids").input_value() == "catering"
+            setting = await page.locator("#q-location option:checked").text_content()
+            assert setting in await page.locator(".inquiry-location").text_content()
+            await page.locator(f'[data-lang="{language}"]').click()
+            await page.locator('#alcazar a[data-event-type="alcazar"]').click()
+            assert await page.locator("#q-type").input_value() == "alcazar"
+            assert await page.locator("#q-location").input_value() == "la-jolla"
+            await page.locator("#q-location").select_option("south-florida")
+            assert await page.locator("#q-location").input_value() == "south-florida", "Prefill cannot be corrected"
+            await position(page, "quote")
+            await snapshot(page, output, f"correspondence-{width}-{language}")
+            await page.locator(".inquiry-group").first.evaluate("e => window.scrollTo({top:e.getBoundingClientRect().top + scrollY - 90, behavior:'instant'})")
+            await snapshot(page, output, f"contact-fields-{width}-{language}")
+            await page.locator(".inquiry-group").nth(1).evaluate("e => window.scrollTo({top:e.getBoundingClientRect().top + scrollY - 90, behavior:'instant'})")
+            await snapshot(page, output, f"occasion-fields-{width}-{language}")
+            # Browsing without making a venue choice is still a valid inquiry.
+            await page.locator("#q-location").select_option("")
+            assert await page.locator("#q-location").evaluate("e => e.checkValidity()")
+            assert await page.locator(".inquiry-location").is_hidden()
+            assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+            results.append({"width": width, "language": language, "native_paths": "passed", "editable_location": "passed", "optional_location": "passed", "translated_context": "passed"})
+            await page.close()
+    return results
+
+
 async def main(args, base):
     args.output.mkdir(parents=True, exist_ok=True)
     launch = {"headless": True}
@@ -465,11 +528,13 @@ async def main(args, base):
         print("PASS inquiry navigation: service and header, three widths, both languages", flush=True)
         composer = await check_composer(browser, base, args.output)
         print("PASS multi-selection, translation, keyboard removal, occasion context and chapter menu", flush=True)
+        paths = await check_paths(browser, base, args.output)
+        print("PASS two offering paths, editable optional setting and translated inquiry context", flush=True)
         forms = await check_forms(browser, base)
         print("PASS forms: simulated delivery, validation, failure, retry, duplicate submissions", flush=True)
         variants = await check_variants(browser, base, args.output)
         print("PASS resize, reduced motion, missing GSAP, no JavaScript", flush=True)
-        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants, "composer": composer}
+        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants, "composer": composer, "paths": paths}
         (args.output / "results.json").write_text(json.dumps(report, indent=2) + "\n")
         await browser.close()
 

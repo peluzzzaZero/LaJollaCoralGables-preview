@@ -6,7 +6,7 @@
 <title>La Jolla Coral Gables · Est. 1928</title>
 <meta name="description" content="La Jolla, a jewel in Coral Gables. Historic venue for weddings, celebrations, corporate and social events. Managed by Epic Lux Management." />
 <meta name="color-scheme" content="light" />
-<meta name="application-version" content="1.1.0" />
+<meta name="application-version" content="1.2.0" />
 <link rel="icon" href="assets/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=1.1.0" />
+<link rel="stylesheet" href="styles.css?v=1.2.0" />
 </head>
 <body id="top">
 <!--
@@ -72,7 +72,7 @@
         <p class="arrival-description" data-i18n="hero.offer">A historic setting for your celebration. Event services at La Jolla and throughout South Florida.</p>
         <div class="arrival-actions">
           <a class="btn btn-sage" href="#quote" data-i18n="hero.cta">Request a private quote</a>
-          <a class="text-link" href="#events"><span data-i18n="hero.explore">Explore the possibilities</span><span class="link-arrow" aria-hidden="true"> ↗</span></a>
+          <a class="text-link" href="#possibilities"><span data-i18n="hero.explore">Explore the possibilities</span><span class="link-arrow" aria-hidden="true"> ↗</span></a>
         </div>
         <a class="arrival-scroll" href="#history"><span aria-hidden="true">↓</span><span data-i18n="hero.enter">Step inside</span></a>
       </div>
@@ -103,6 +103,30 @@
         </div>
       </div>
       <div class="arrival-footnote"><span>301 Alcazar Avenue</span><span>Coral Gables, Florida</span></div>
+    </div>
+  </section>
+
+  <!-- Two distinct offers, with editable inquiry context. -->
+  <section class="possibilities" id="possibilities" aria-labelledby="possibilities-title">
+    <div class="wrap possibilities-layout">
+      <header>
+        <p class="eyebrow" data-i18n="paths.eyebrow">Consider the possibilities</p>
+        <h2 id="possibilities-title" data-i18n="paths.title">Your occasion. Your setting.</h2>
+      </header>
+      <a class="offering-path" href="#events" data-inquiry-location="la-jolla">
+        <img class="path-photo" src="assets/brand/facade-original.jpg" alt="The entrance and balcony at 301 Alcazar Avenue, Coral Gables." width="675" height="900" loading="lazy" />
+        <span class="path-kicker" data-i18n="paths.houseKicker">At the house</span>
+        <h3 data-i18n="paths.houseTitle">Celebrate at La Jolla</h3>
+        <p data-i18n="paths.houseBody">Weddings, celebrations and gatherings in our historic Coral Gables setting.</p>
+        <span class="path-link"><span data-i18n="paths.houseLink">Explore occasions</span><span class="link-arrow" aria-hidden="true"> ↗</span></span>
+      </a>
+      <a class="offering-path" href="#rentals" data-inquiry-location="south-florida">
+        <img class="path-photo" src="assets/brand/welcome-table.jpg" alt="La Jolla table setting with candles and glassware." width="1081" height="1351" loading="lazy" />
+        <span class="path-kicker" data-i18n="paths.beyondKicker">Beyond the house</span>
+        <h3 data-i18n="paths.beyondTitle">Bring the occasion to you</h3>
+        <p data-i18n="paths.beyondBody">Rentals, design and production for your chosen location in South Florida.</p>
+        <span class="path-link"><span data-i18n="paths.beyondLink">Explore services</span><span class="link-arrow" aria-hidden="true"> ↗</span></span>
+      </a>
     </div>
   </section>
 
@@ -342,56 +366,75 @@
             <a class="text-link" href="#rentals" data-i18n="selection.edit">Explore more services</a>
           </div>
           <p class="inquiry-occasion" hidden></p>
+          <p class="inquiry-location" hidden></p>
           <input type="hidden" name="selectedServices" id="selected-services" />
           <input type="hidden" name="selectedServiceIds" id="selected-service-ids" />
-          <div class="form-row">
-            <label for="q-name"><span data-i18n="form.name">Name</span> <abbr title="required">*</abbr></label>
-            <input type="text" id="q-name" name="name" autocomplete="name" required />
-          </div>
-          <div class="form-row">
-            <label for="q-email"><span data-i18n="form.email">Email</span> <abbr title="required">*</abbr></label>
-            <input type="email" id="q-email" name="email" autocomplete="email" required />
-          </div>
-          <div class="form-row">
-            <label for="q-phone"><span data-i18n="form.phone">Phone</span> <abbr title="required">*</abbr></label>
-            <input type="tel" id="q-phone" name="phone" autocomplete="tel" inputmode="tel" required />
-          </div>
-          <div class="form-row two-col">
-            <div>
-              <label for="q-date"><span data-i18n="form.date">Event date</span> <abbr title="required">*</abbr></label>
-              <input type="date" id="q-date" name="eventDate" required />
+          <fieldset class="inquiry-group">
+            <legend><span class="form-step" aria-hidden="true">01</span><span data-i18n="form.contactGroup">A way to reach you</span></legend>
+            <div class="form-row">
+              <label for="q-name"><span data-i18n="form.name">Name</span> <abbr title="required">*</abbr></label>
+              <input type="text" id="q-name" name="name" autocomplete="name" required />
             </div>
-            <div>
-              <label for="q-guests"><span data-i18n="form.guests">Guest count</span> <abbr title="required">*</abbr></label>
-              <input type="number" id="q-guests" name="guestCount" min="1" max="500" inputmode="numeric" required />
+            <div class="form-row">
+              <label for="q-email"><span data-i18n="form.email">Email</span> <abbr title="required">*</abbr></label>
+              <input type="email" id="q-email" name="email" autocomplete="email" required />
             </div>
-          </div>
-          <div class="form-row">
-            <label for="q-type"><span data-i18n="form.type">Event type</span> <abbr title="required">*</abbr></label>
-            <select id="q-type" name="eventType" required>
-              <option value="" data-i18n="form.typePlaceholder">Select…</option>
-              <option value="wedding" data-i18n="form.typeWedding">Wedding</option>
-              <option value="quince" data-i18n="form.typeQuince">Quinceañera / Sweet Sixteen</option>
-              <option value="social" data-i18n="form.typeSocial">Social celebration</option>
-              <option value="corporate" data-i18n="form.typeCorporate">Corporate event</option>
-              <option value="brand" data-i18n="form.typeBrand">Brand activation / launch</option>
-              <option value="production" data-i18n="form.typeProduction">Production &amp; entertainment</option>
-              <option value="film" data-i18n="form.typeFilm">Film, photo &amp; content</option>
-              <option value="gala" data-i18n="form.typeGala">Gala / fundraiser</option>
-              <option value="dining" data-i18n="form.typeDining">Private dining</option>
-              <option value="alcazar" data-i18n="form.typeAlcazar">The Alcazar Room</option>
-              <option value="rental" data-i18n="form.typeRental">Rentals / services only</option>
-              <option value="other" data-i18n="form.typeOther">Something else</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label for="q-interest"><span data-i18n="form.interest">Additional service details</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
-            <input type="text" id="q-interest" name="rentalInterest" placeholder="Anything else you would like us to know" data-i18n-attr="placeholder" data-i18n="form.interestPh" />
-          </div>
-          <div class="form-row">
-            <label for="q-comments"><span data-i18n="form.comments">Comments</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
-            <textarea id="q-comments" name="comments" rows="4"></textarea>
-          </div>
+            <div class="form-row">
+              <label for="q-phone"><span data-i18n="form.phone">Phone</span> <abbr title="required">*</abbr></label>
+              <input type="tel" id="q-phone" name="phone" autocomplete="tel" inputmode="tel" required />
+            </div>
+          </fieldset>
+          <fieldset class="inquiry-group">
+            <legend><span class="form-step" aria-hidden="true">02</span><span data-i18n="form.occasionGroup">The occasion</span></legend>
+            <div class="form-row">
+              <label for="q-location"><span data-i18n="form.location">Event location</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
+              <select id="q-location" name="eventLocation">
+                <option value="" data-i18n="form.locationPlaceholder">Select a setting…</option>
+                <option value="la-jolla" data-i18n="form.locationHouse">At La Jolla, Coral Gables</option>
+                <option value="south-florida" data-i18n="form.locationBeyond">At another location in South Florida</option>
+                <option value="exploring" data-i18n="form.locationExploring">Still exploring</option>
+              </select>
+            </div>
+            <div class="form-row two-col">
+              <div>
+                <label for="q-date"><span data-i18n="form.date">Event date</span> <abbr title="required">*</abbr></label>
+                <input type="date" id="q-date" name="eventDate" required />
+              </div>
+              <div>
+                <label for="q-guests"><span data-i18n="form.guests">Guest count</span> <abbr title="required">*</abbr></label>
+                <input type="number" id="q-guests" name="guestCount" min="1" max="500" inputmode="numeric" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="q-type"><span data-i18n="form.type">Event type</span> <abbr title="required">*</abbr></label>
+              <select id="q-type" name="eventType" required>
+                <option value="" data-i18n="form.typePlaceholder">Select…</option>
+                <option value="wedding" data-i18n="form.typeWedding">Wedding</option>
+                <option value="quince" data-i18n="form.typeQuince">Quinceañera / Sweet Sixteen</option>
+                <option value="social" data-i18n="form.typeSocial">Social celebration</option>
+                <option value="corporate" data-i18n="form.typeCorporate">Corporate event</option>
+                <option value="brand" data-i18n="form.typeBrand">Brand activation / launch</option>
+                <option value="production" data-i18n="form.typeProduction">Production &amp; entertainment</option>
+                <option value="film" data-i18n="form.typeFilm">Film, photo &amp; content</option>
+                <option value="gala" data-i18n="form.typeGala">Gala / fundraiser</option>
+                <option value="dining" data-i18n="form.typeDining">Private dining</option>
+                <option value="alcazar" data-i18n="form.typeAlcazar">The Alcazar Room</option>
+                <option value="rental" data-i18n="form.typeRental">Rentals / services only</option>
+                <option value="other" data-i18n="form.typeOther">Something else</option>
+              </select>
+            </div>
+          </fieldset>
+          <fieldset class="inquiry-group">
+            <legend><span class="form-step" aria-hidden="true">03</span><span data-i18n="form.detailsGroup">Your vision</span></legend>
+            <div class="form-row">
+              <label for="q-interest"><span data-i18n="form.interest">Additional service details</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
+              <input type="text" id="q-interest" name="rentalInterest" placeholder="Anything else you would like us to know" data-i18n-attr="placeholder" data-i18n="form.interestPh" />
+            </div>
+            <div class="form-row">
+              <label for="q-comments"><span data-i18n="form.comments">Comments</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
+              <textarea id="q-comments" name="comments" rows="4"></textarea>
+            </div>
+          </fieldset>
           <button type="submit" disabled class="btn btn-sage btn-block" data-i18n="form.submit">Submit inquiry</button>
           <div class="confirm-panel" id="form-success" hidden role="status">
             <p class="confirm-eyebrow" data-i18n="form.successEyebrow">La Jolla</p>
@@ -485,6 +528,6 @@
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="script.js?v=1.1.0"></script>
+<script src="script.js?v=1.2.0"></script>
 </body>
 </html>
