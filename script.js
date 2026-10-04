@@ -7,6 +7,25 @@
 
   const I18N = {
     en: {
+      "paths.eyebrow": "Consider the possibilities",
+      "paths.title": "Your occasion. Your setting.",
+      "paths.houseKicker": "At the house",
+      "paths.houseTitle": "Celebrate at La Jolla",
+      "paths.houseBody": "Weddings, celebrations and gatherings in our historic Coral Gables setting.",
+      "paths.houseLink": "Explore occasions",
+      "paths.beyondKicker": "Beyond the house",
+      "paths.beyondTitle": "Bring the occasion to you",
+      "paths.beyondBody": "Rentals, design and production for your chosen location in South Florida.",
+      "paths.beyondLink": "Explore services",
+      "form.contactGroup": "A way to reach you",
+      "form.occasionGroup": "The occasion",
+      "form.detailsGroup": "Your vision",
+      "form.location": "Event location",
+      "form.locationPlaceholder": "Select a setting…",
+      "form.locationHouse": "At La Jolla, Coral Gables",
+      "form.locationBeyond": "At another location in South Florida",
+      "form.locationExploring": "Still exploring",
+      "selection.setting": "Setting",
       "nav.menu": "Explore La Jolla",
       "rentals.select": "Select",
       "rentals.selected": "Selected",
@@ -188,6 +207,25 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "paths.eyebrow": "Explore las posibilidades",
+      "paths.title": "Su ocasión. Su escenario.",
+      "paths.houseKicker": "En nuestra casa",
+      "paths.houseTitle": "Celebre en La Jolla",
+      "paths.houseBody": "Bodas, celebraciones y encuentros en nuestro entorno histórico de Coral Gables.",
+      "paths.houseLink": "Explore las ocasiones",
+      "paths.beyondKicker": "Más allá de la casa",
+      "paths.beyondTitle": "Lleve la ocasión a su espacio",
+      "paths.beyondBody": "Alquileres, diseño y producción en el lugar que elija en South Florida.",
+      "paths.beyondLink": "Explore los servicios",
+      "form.contactGroup": "Cómo contactarle",
+      "form.occasionGroup": "La ocasión",
+      "form.detailsGroup": "Su visión",
+      "form.location": "Lugar del evento",
+      "form.locationPlaceholder": "Elija un escenario…",
+      "form.locationHouse": "En La Jolla, Coral Gables",
+      "form.locationBeyond": "En otro lugar de South Florida",
+      "form.locationExploring": "Aún por decidir",
+      "selection.setting": "Lugar",
       "nav.menu": "Explore La Jolla",
       "rentals.select": "Elegir",
       "rentals.selected": "Elegido",
@@ -574,6 +612,12 @@
     if (stableIds) stableIds.value = ids.join(", ");
     const status = document.getElementById("selection-status");
     if (status) status.textContent = ids.length + " " + dict["selection.count"];
+    const location = document.getElementById("q-location");
+    const setting = document.querySelector(".inquiry-location");
+    if (location && setting) {
+      setting.hidden = !location.value;
+      setting.textContent = location.value ? dict["selection.setting"] + ": " + location.selectedOptions[0].textContent : "";
+    }
     const type = document.getElementById("q-type");
     const note = document.querySelector(".inquiry-occasion");
     if (type && note) {
@@ -584,6 +628,7 @@
 
   function initInquiryComposer() {
     const type = document.getElementById("q-type");
+    const location = document.getElementById("q-location");
     document.querySelectorAll("[data-service-id]").forEach(function (button) {
       button.disabled = false;
       button.addEventListener("click", function () {
@@ -616,12 +661,19 @@
       const occasion = event.target.closest && event.target.closest("[data-event-type]");
       if (occasion && type) {
         type.value = occasion.dataset.eventType;
+        if (location) location.value = "la-jolla";
+        renderInquirySelection();
+      }
+      const path = event.target.closest && event.target.closest("[data-inquiry-location]");
+      if (path && location) {
+        location.value = path.dataset.inquiryLocation;
         renderInquirySelection();
       }
       const vendorLink = event.target.closest && event.target.closest("a[href='#vendors']");
       if (vendorLink) document.getElementById("vendor-details").open = true;
     });
     if (type) type.addEventListener("change", renderInquirySelection);
+    if (location) location.addEventListener("change", renderInquirySelection);
     const form = document.getElementById("quote-form");
     if (form) form.addEventListener("reset", function () {
       selectedServices.clear();

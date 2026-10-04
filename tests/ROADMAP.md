@@ -13,7 +13,7 @@ Purpose: explain the offer from first paint, introduce a stronger rhythm and mak
 
 Review question: can a visitor assemble their actual service interests without being sent straight to the form after each choice?
 
-## v1.1.0 — an inquiry with context (reviewed; publication follows the release pipeline)
+## v1.1.0 — an inquiry with context (published)
 
 - Select multiple services with clear selected states and a useful summary.
 - Carry event/room choices into the inquiry; allow correction before submitting.
@@ -22,9 +22,25 @@ Review question: can a visitor assemble their actual service interests without b
 - Add concise mobile chapter access and give suppliers a secondary disclosure.
 - Review keyboard operation, focus, empty-state layout, payload, translation and success/error behavior.
 
+## v1.2.0 — your occasion, your setting
+
+Purpose: make the two offers easier to understand while refining the invitation to inquire.
+
+- A restrained editorial gateway distinguishes an occasion at La Jolla from services at another location in South Florida.
+- Native links remain useful without JavaScript. With it, the choice supplies an optional, editable inquiry setting.
+- The setting translates without overwriting written notes, is sent in the payload, survives errors and clears after success.
+- Three accessible field groups, a fine double border and ruled controls make the form feel like personal correspondence.
+- Review native keyboard routes, optional/edited context, first paint, translations, narrow screens and form delivery simulations.
+
+Review question: can visitors see enough real evidence of the space and services to make a confident inquiry? Better approved photographs and verified venue details remain the next priority.
+
+## Reference and private workflow
+
+The user supplied an earlier DOCX brief and HTML mockup during this cycle. See BRIEF-ALIGNMENT.md for decisions, asset provenance and the private automation backlog. The brief describes quoting, tours, native contracts, Stripe deposits and an administration panel; these require approved operational inputs and server integrations. None is represented as working on the current static inquiry site. The user supplied 17 smaller RAR volumes after the ZIP transfer limit; all were reconstructed and reviewed. The brand originals are now available locally, including higher-resolution marks and floral/wax-seal artwork. No new room/service photography or venue video was delivered.
+
 ## Later cycles, ranked by usefulness
 
-1. Approved photographic originals and actual space/event photographs. The existing artwork limits detail clarity and evidence of the venue; no invented replacements.
+1. Actual approved space/event and rental/service photography. The supplied original facade improves evidence; the brand-delivery originals can support a measured clarity/loading cycle, but do not replace real room and product photographs.
 2. Verified venue facts (capacity, configuration, amenities and access) when supplied. These would let visitors decide whether the venue suits their event without claiming unsupported facilities.
 3. Pat's final tagline and an approved guest quote, when provided.
 4. Safari/iOS and Android device review; optimize image/font delivery using measured load behavior.
