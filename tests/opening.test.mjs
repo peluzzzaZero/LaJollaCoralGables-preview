@@ -31,16 +31,20 @@ test("MonteCarlo ships from the brand font file", () => {
   assert.match(css, /MonteCarlo-Regular\.ttf/);
 });
 
-test("desktop facade crop stays, and the phone crop keeps the door wordmark out", () => {
-  assert.match(js, /"hero-facade": \{ from: "8% 96%", to: "8% 96%", fromScale: 1\.9, scale: [\d.]+ \}/);
-  assert.match(js, /max-width: 800px[\s\S]{0,220}openingCrops\["hero-facade"\] = \{ from: "0% 100%", to: "0% 100%", fromScale: 4\.2, scale: [\d.]+ \}/);
-  assert.match(css, /img\[src\*="hero-facade"\] \{[^}]*object-position: 8% 96%[^}]*scale\(1\.9\)/);
-  assert.match(css, /@media \(max-width: 800px\) \{[^}]*hero-facade[\s\S]*?object-position: 0% 100%[\s\S]*?scale\(4\.2\)/);
+test("opening copy and inquiry live outside the changing photograph frame", () => {
+  const opening = html.slice(html.indexOf('id="hero"'), html.indexOf('id="history"'));
+  const copyEnd = opening.indexOf('class="arrival-visual"');
+  assert.ok(copyEnd > 0);
+  const copy = opening.slice(0, copyEnd);
+  assert.match(copy, /<h1[^>]*>La <em>Jolla<\/em><\/h1>/);
+  assert.match(copy, /href="#quote"/);
+  assert.match(copy, /data-i18n="hero.offer"/);
+  assert.match(css, /\.arrival-script[^}]*var\(--font-script\)/);
 });
 
-test("Since 1928 stays on the table line, in history, and off the flower shot", () => {
-  assert.match(html, /reel-on--table"[^>]*>Since 1928/);
-  assert.equal(/reel-on--bloom[^>]*>[^<]*Since 1928/.test(html), false);
-  assert.equal(/reel-on--table"\)\) return;/.test(js), false);
+test("1928 remains in the arrival and history without repeating the history paragraph", () => {
+  const opening = html.slice(html.indexOf('id="hero"'), html.indexOf('id="history"'));
+  assert.match(opening, /Est\. 1928/);
+  assert.equal(opening.includes('data-i18n="history.lede"'), false);
   assert.match(html, /class="lede history-line"[^>]*>Since 1928/);
 });

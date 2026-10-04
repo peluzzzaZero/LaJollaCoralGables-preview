@@ -21,7 +21,7 @@ function teamCssOverride() {
 
 function teamScript() {
   const start = js.indexOf('var team = document.querySelector("#team")');
-  const end = js.indexOf("if (lenis)", start);
+  const end = js.indexOf("ScrollTrigger.refresh();", start);
   assert.ok(start !== -1 && end > start, "team GSAP setup");
   return js.slice(start, end);
 }

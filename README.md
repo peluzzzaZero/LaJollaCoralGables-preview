@@ -1,45 +1,32 @@
-# La Jolla Coral Gables preview
+# La Jolla Coral Gables
 
-Static bilingual preview for La Jolla Coral Gables. The page uses the existing brand photographs and marks, GSAP/ScrollTrigger, Lenis, and Web3Forms for inquiry and vendor submissions.
+A bilingual editorial website for La Jolla Coral Gables, using approved brand assets and descriptions. Static HTML, CSS and JavaScript; locally vendored GSAP/ScrollTrigger; native scrolling; Web3Forms inquiries.
 
-## Local preview
+## Preview and checks
 
 ```sh
 python -m http.server 4173
-```
-
-Open http://localhost:4173. No build step is required.
-
-## Working state
-
-The reviewed implementation was merged into `main` through [PR #1](https://github.com/peluzzzaZero/LaJollaCoralGables-preview/pull/1) on 4 October 2026 and published at https://jolla.peluzzza.com. `dev` is synchronized with this release and remains the branch for subsequent work. See [the section roadmap](tests/PLAN.md) and [the visual, functional, and publication review](tests/REVIEW-2026-10-04.md).
-
-The opening presents four photographs with overlapping crossfades and gradual detail zooms. MonteCarlo is used only for the opening's script accent. History follows the pots toward the door and sun tile; on short mobile screens it scrolls naturally so the text and photograph remain accessible. The remaining sections retain the approved copy, ten services, seven gallery plates, and the two directors.
-
-## Checks
-
-Static checks, using Node's built-in test runner:
-
-```sh
+node --check script.js
 node --test tests/*.test.mjs
-```
-
-Browser review, using Python and Playwright:
-
-```sh
 python -m pip install -r tests/browser/requirements.txt
 python -m playwright install chromium ffmpeg
 python tests/browser/review.py --output review-artifacts
 ```
 
-The browser runner starts its own local server. If system Chromium is installed, it uses that executable; otherwise it uses Playwright's installed Chromium. `--browser /path/to/chromium` selects an executable explicitly. In proxy environments it uses the inherited HTTPS proxy and bypasses it for the local server.
+The browser runner starts its own local server. It checks 390, 768 and 1280 px in English and Spanish, saves screenshots and recordings, tests keyboard disclosures, navigation, resizing, a short viewport, changing reduced-motion preferences, missing GSAP and JavaScript-disabled contact alternatives. Email requests are intercepted; no real emails are sent.
 
-It checks 390, 768, and 1280 px in English and Spanish, records the scroll, saves section screenshots and `results.json`, and exercises resizing, a short mobile viewport, reduced motion, and missing JavaScript/GSAP. All Web3Forms submissions are intercepted and simulated: **running the review sends no real email**.
+## Versions and publication
 
-## Remaining content decisions
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0.
 
-- Pat's choice of primary tagline remains pending. Both approved brand plates stay in the gallery.
-- Testimonials remain hidden until an approved guest quote is supplied.
-- Actual inbox delivery through the existing Web3Forms configuration requires a separately authorized real submission; browser tests verify the integration with simulated responses.
+Work follows `feature/*` → pull request to `dev` → review and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
-`CNAME` declares `jolla.peluzzza.com`. GitHub Pages publishes `main` using its generated `pages build and deployment` workflow. The publication checkpoint in the review document records the verified implementation commit and deployment run.
+GitHub Pages publishes `main` at https://jolla.peluzzza.com. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
+
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.0.0 notes](tests/releases/v1.0.0.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+
+## Content requirements
+
+Keep the year 1928, The Alcazar Room, Julie Arias (Executive Director), Patricia Mir (Managing Director), ten services, seven brand plates and their captions. Spanish uses usted. MonteCarlo is an accent. No prices, invented testimonials, biographies, vendors or stand-in café images. No wipes, edge-on tilts, cream overlay bands or transitions through an empty dark frame.
+
+The user authorized rethinking the old composition and scroll timings. Tests for the old exact crops, pinned history and duplicated opening paragraphs have been updated to protect the new behavior; brand and content requirements remain covered. High-resolution approved photography, Pat's final tagline, an approved guest quote and actual inbox confirmation remain external decisions.
