@@ -38,3 +38,16 @@ test('release tags depend on passing review and are restricted to main', () => {
   assert.match(workflow, /gh release create/);
   assert.match(workflow, /test .*git rev-list -n 1/);
 });
+
+
+test('versions increase numerically and reject reused or malformed versions', async () => {
+  const { isNewerVersion } = await import('../scripts/check-version.mjs');
+  for (const [next, previous] of [['1.0.1', '1.0.0'], ['1.1.0', '1.0.9'], ['1.10.0', '1.9.9'], ['2.0.0', '1.99.99']]) assert.ok(isNewerVersion(next, previous));
+  for (const [next, previous] of [['1.0.0', '1.0.0'], ['1.9.0', '1.10.0'], ['0.9.9', '1.0.0'], ['01.1.0', '1.0.0'], ['1.1', '1.0.0']]) assert.equal(isNewerVersion(next, previous), false);
+});
+
+test('all IDs remain unique for labels, native navigation and selected summaries', () => {
+  const ids = Array.from(html.matchAll(/\bid="([^"]+)"/g), match => match[1]);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const [, target] of html.matchAll(/\bfor="([^"]+)"/g)) assert.ok(ids.includes(target), target);
+});
