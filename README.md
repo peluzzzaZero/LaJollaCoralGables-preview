@@ -12,7 +12,7 @@ Open http://localhost:4173. No build step is required.
 
 ## Working state
 
-Continue on `dev`. See [the section roadmap](tests/PLAN.md) and [the latest visual and functional review](tests/REVIEW-2026-10-04.md). `main` remains the previous version until the changes are reviewed and merged.
+The reviewed implementation was merged into `main` through [PR #1](https://github.com/peluzzzaZero/LaJollaCoralGables-preview/pull/1) on 4 October 2026 and published at https://jolla.peluzzza.com. `dev` is synchronized with this release and remains the branch for subsequent work. See [the section roadmap](tests/PLAN.md) and [the visual, functional, and publication review](tests/REVIEW-2026-10-04.md).
 
 The opening presents four photographs with overlapping crossfades and gradual detail zooms. MonteCarlo is used only for the opening's script accent. History follows the pots toward the door and sun tile; on short mobile screens it scrolls naturally so the text and photograph remain accessible. The remaining sections retain the approved copy, ten services, seven gallery plates, and the two directors.
 
@@ -42,4 +42,4 @@ It checks 390, 768, and 1280 px in English and Spanish, records the scroll, save
 - Testimonials remain hidden until an approved guest quote is supplied.
 - Actual inbox delivery through the existing Web3Forms configuration requires a separately authorized real submission; browser tests verify the integration with simulated responses.
 
-`CNAME` declares `jolla.peluzzza.com`; this repository does not contain a deployment workflow or a record of the currently deployed commit.
+`CNAME` declares `jolla.peluzzza.com`. GitHub Pages publishes `main` using its generated `pages build and deployment` workflow. The publication checkpoint in the review document records the verified implementation commit and deployment run.

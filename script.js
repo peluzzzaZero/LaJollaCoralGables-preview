@@ -406,8 +406,7 @@
       var target = document.querySelector(id);
       if (!target) return;
       event.preventDefault();
-      if (lenis) lenis.scrollTo(target, { offset: -8 });
-      else target.scrollIntoView({ block: "start" });
+      scrollToSection(target);
     });
 
     var reel = document.querySelector(".reel");
@@ -799,15 +798,18 @@
     window.addEventListener("resize", onScroll);
   }
 
-  function scrollToQuote() {
-    const quote = document.getElementById("quote");
-    if (!quote) return;
+  function scrollToSection(target) {
+    if (!target) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (window.__ljLenis && !reduced) {
-      window.__ljLenis.scrollTo(quote, { offset: -8 });
+      // Focus, keyboard navigation, or a native scroll can move the document
+      // before Lenis receives its scroll event. Synchronize before measuring.
+      window.__ljLenis.resize();
+      const destination = target.getBoundingClientRect().top + window.scrollY;
+      window.__ljLenis.scrollTo(destination, { offset: -8 });
       return;
     }
-    quote.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
   }
 
   function initHeroVideo() {
@@ -844,7 +846,7 @@
         if (typeSelect && !typeSelect.value) {
           typeSelect.value = "rental";
         }
-        scrollToQuote();
+        scrollToSection(document.getElementById("quote"));
       });
     });
   }
