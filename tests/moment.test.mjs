@@ -14,7 +14,7 @@ function momentSection() {
 
 function momentScript() {
   const start = js.indexOf('var moment = document.querySelector("#moment")');
-  const end = js.indexOf("function initReveal");
+  const end = js.indexOf('var events =', start);
   assert.ok(start !== -1 && end > start, "moment script");
   return js.slice(start, end);
 }

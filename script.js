@@ -1,5 +1,5 @@
 /* La Jolla Coral Gables — page script.
-   Scroll: GSAP ScrollTrigger + Lenis, with a CSS fallback.
+   Scroll: GSAP ScrollTrigger with native scrolling and a readable static fallback.
    Forms post through Web3Forms. No Stripe. */
 
 (function () {
@@ -7,12 +7,27 @@
 
   const I18N = {
     en: {
+      "nav.skip": "Skip to content",
+      "nav.house": "The house",
+      "nav.occasions": "Occasions",
+      "nav.services": "Services",
+      "hero.offer": "A historic setting for your celebration. Event services at La Jolla and throughout South Florida.",
+      "hero.explore": "Explore the possibilities",
+      "hero.enter": "Step inside",
+      "hero.chapter1": "The arrival",
+      "hero.chapter2": "Around the table",
+      "hero.chapter3": "Considered details",
+      "hero.chapter4": "A celebration takes shape",
+      "events.detail": "The details set the tone.",
+      "rentals.short": "From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.",
+      "rentals.more": "More about our services",
+
       "nav.inquire": "Inquire",
       "hero.est": "Coral Gables · Est. 1928",
       "hero.title": "A jewel in Coral Gables",
       "hero.cta": "Request a private quote",
       "history.eyebrow": "Our History",
-      "history.title": "La Jolla, a jewel in Coral Gables",
+      "history.title": "A place with a story",
       "history.lede":
         "Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.",
       "history.managed": "Managed by Epic Lux Management",
@@ -89,8 +104,8 @@
       "testimonial.eyebrow": "Guest voice",
       "testimonial.title": "Testimonial",
       "testimonial.quote": "A guest reflection will appear here.",
-      "gallery.eyebrow": "Gallery",
-      "gallery.title": "Gallery",
+      "gallery.eyebrow": "The La Jolla identity",
+      "gallery.title": "A world of details",
       "gallery.stationery": "Stationery",
       "gallery.stripe": "Monogram",
       "gallery.oval": "Oval monogram",
@@ -161,12 +176,27 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "nav.skip": "Ir al contenido",
+      "nav.house": "La casa",
+      "nav.occasions": "Ocasiones",
+      "nav.services": "Servicios",
+      "hero.offer": "Un entorno histórico para su celebración. Servicios para eventos en La Jolla y en todo el sur de Florida.",
+      "hero.explore": "Explore las posibilidades",
+      "hero.enter": "Entre a descubrirlo",
+      "hero.chapter1": "La llegada",
+      "hero.chapter2": "Alrededor de la mesa",
+      "hero.chapter3": "Detalles cuidados",
+      "hero.chapter4": "Una celebración toma forma",
+      "events.detail": "Los detalles marcan el tono.",
+      "rentals.short": "Desde una renta puntual hasta la producción integral. En La Jolla o en el lugar que usted elija en el sur de Florida.",
+      "rentals.more": "Más sobre nuestros servicios",
+
       "nav.inquire": "Consultar",
       "hero.est": "Coral Gables · Est. 1928",
       "hero.title": "Una joya en Coral Gables",
       "hero.cta": "Solicitar cotización privada",
       "history.eyebrow": "Nuestra historia",
-      "history.title": "La Jolla, una joya en Coral Gables",
+      "history.title": "Un lugar con historia",
       "history.lede":
         "Desde 1928, La Jolla ha acogido celebraciones bajo arcos mediterráneos y luz de jardín. Un entorno forjado por la herencia de Coral Gables — íntimo, atemporal y discretamente grandioso.",
       "history.managed": "Gestionado por Epic Lux Management",
@@ -243,8 +273,8 @@
       "testimonial.eyebrow": "Voz de un invitado",
       "testimonial.title": "Testimonio",
       "testimonial.quote": "Aquí aparecerá la reflexión de un invitado.",
-      "gallery.eyebrow": "Galería",
-      "gallery.title": "Galería",
+      "gallery.eyebrow": "La identidad de La Jolla",
+      "gallery.title": "Un mundo de detalles",
       "gallery.stationery": "Papelería",
       "gallery.stripe": "Monograma",
       "gallery.oval": "Monograma oval",
@@ -371,465 +401,108 @@
   }
 
   function initStory() {
-    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced || typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") {
-      initReveal();
-      return;
-    }
-
-    var gsap = window.gsap;
-    var ScrollTrigger = window.ScrollTrigger;
+    if (typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") return;
+    const gsap = window.gsap;
+    const ScrollTrigger = window.ScrollTrigger;
     gsap.registerPlugin(ScrollTrigger);
-    document.documentElement.classList.add("has-gsap");
-
-    var lenis = null;
-    if (typeof window.Lenis !== "undefined") {
-      lenis = new window.Lenis({
-        duration: 1.05,
-        smoothWheel: true,
-        syncTouch: false,
-        autoRaf: false
+    const media = gsap.matchMedia();
+    media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
+      if (context.conditions.reduced) return;
+      document.documentElement.classList.add("has-gsap");
+      const reel = document.querySelector(".reel");
+      const shots = gsap.utils.toArray(".reel-shot");
+      const beats = gsap.utils.toArray(".reel-beat");
+      const index = document.querySelector(".reel-index");
+      const progress = document.querySelector(".reel-progress i");
+      const desktop = context.conditions.desktop;
+      const openingCrops = {
+        "hero-facade": { position: "50% 70%", scale: 1.06 },
+        "welcome-table": { position: "50% 50%", scale: 1.06 },
+        "mood-card-flowers": { position: "50% 65%", scale: 1.06 },
+        "flower-plaque": { position: "50% 50%", scale: 1.06 }
+      };
+      // Copy and inquiry never animate away. Only the framed photographs change.
+      const reelTl = gsap.timeline({ scrollTrigger: {
+        trigger: reel, start: "top top", end: desktop ? "+=160%" : "bottom top",
+        pin: desktop, scrub: true, anticipatePin: 1,
+        onUpdate: function (self) {
+          const current = Math.min(3, Math.floor(self.progress * 4));
+          if (index) index.textContent = "0" + (current + 1) + " / 04";
+        }
+      }});
+      shots.forEach(function (shot, i) {
+        const img = shot.querySelector("img");
+        const key = Object.keys(openingCrops).find(function (name) { return img.src.includes(name); });
+        const crop = openingCrops[key];
+        gsap.set(shot, { autoAlpha: i === 0 ? 1 : 0, zIndex: i + 1 });
+        gsap.set(beats[i], { autoAlpha: i === 0 ? 1 : 0 });
+        reelTl.fromTo(img, { scale: crop.scale, objectPosition: crop.position }, { scale: 1.12, ease: "none", duration: 1, immediateRender: false }, i);
+        if (i > 0) {
+          reelTl.to(shot, { autoAlpha: 1, ease: "power3.out", duration: .22 }, i);
+          reelTl.to(shots[i - 1], { autoAlpha: 0, ease: "power3.in", duration: .22 }, i);
+          reelTl.to(beats[i - 1], { autoAlpha: 0, duration: .08 }, i);
+          reelTl.to(beats[i], { autoAlpha: 1, duration: .08 }, i + .08);
+        }
       });
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add(function (time) {
-        lenis.raf(time * 1000);
-      });
-      gsap.ticker.lagSmoothing(0);
-      window.__ljLenis = lenis;
-    }
+      if (progress) reelTl.fromTo(progress, { scaleX: .05 }, { scaleX: 1, duration: 4, ease: "none" }, 0);
+      reelTl.fromTo(reel, { "--light-x": "-12%" }, { "--light-x": "18%", duration: 4, ease: "none" }, 0);
 
+      var history = document.querySelector(".history");
+      const historyPhoto = history.querySelector(".history-photo img");
+      // Tight lower facade crop protects the printed wordmark. The history now scrolls naturally.
+      gsap.fromTo(historyPhoto, { scale: 3.55, objectPosition: "2% 100%", transformOrigin: "2% 100%" }, {
+        scale: 3.35, objectPosition: "52% 100%", transformOrigin: "52% 100%", ease: "none",
+        scrollTrigger: { trigger: history, start: "top 85%", end: "bottom 20%", scrub: true }
+      });
+      var alcazarVisual = document.querySelector("#alcazar");
+      const alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
+      gsap.fromTo(alcazarMark, { scale: .94 }, { scale: 1, ease: "none",
+        scrollTrigger: { trigger: alcazarVisual, start: "top 80%", end: "bottom 55%", scrub: true }
+      });
+      gsap.fromTo(alcazarVisual, { "--light-x": "-10%" }, { "--light-x": "16%", ease: "none",
+        scrollTrigger: { trigger: alcazarVisual, start: "top bottom", end: "bottom top", scrub: true }
+      });
+      gsap.utils.toArray(".brand-card img").forEach(function (img) {
+        gsap.fromTo(img, { scale: 0.96 }, { scale: 1, ease: "none",
+          scrollTrigger: { trigger: img, start: "top 92%", end: "top 58%", scrub: true }
+        });
+      });
+      var moment = document.querySelector("#moment");
+      gsap.fromTo(moment.querySelector(".quote-bleed-media img"), { scale: 1.4, objectPosition: "100% 90%", transformOrigin: "50% 100%" }, {
+        scale: 1.5, objectPosition: "25% 90%", ease: "none",
+        scrollTrigger: { trigger: moment, start: "top bottom", end: "bottom top", scrub: true }
+      });
+      // All commercial sections remain opaque, including when animations cannot run.
+      var events = document.querySelector("#events");
+      var rentals = document.querySelector("#rentals");
+      var team = document.querySelector("#team");
+      var quote = document.querySelector("#quote");
+      var vendors = document.querySelector("#vendors");
+      [events, rentals, team, quote, vendors].forEach(function (section) {
+        gsap.set(section.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      });
+      ScrollTrigger.refresh();
+      return function () { document.documentElement.classList.remove("has-gsap"); };
+    });
+    // Native scroll keeps touch, focus and keyboard positions in the same coordinate system.
     document.addEventListener("click", function (event) {
-      var link = event.target && event.target.closest ? event.target.closest("a[href^='#']") : null;
+      const link = event.target.closest && event.target.closest("a[href^='#']");
       if (!link) return;
-      var id = link.getAttribute("href");
-      if (!id || id.length < 2) return;
-      var target = document.querySelector(id);
+      const target = document.getElementById(link.getAttribute("href").slice(1));
       if (!target) return;
       event.preventDefault();
       scrollToSection(target);
     });
-
-    var reel = document.querySelector(".reel");
-    if (reel) {
-      var reelMedia = gsap.matchMedia();
-      reelMedia.add({ mobile: "(max-width: 800px)", desktop: "(min-width: 801px)" }, function () {
-        var shots = gsap.utils.toArray(reel.querySelectorAll(".reel-shot"));
-        var beats = gsap.utils.toArray(reel.querySelectorAll(".reel-beat"));
-        var cta = reel.querySelector(".reel-cta");
-        if (shots.length && beats.length) {
-          var reelTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: reel,
-              start: "top top",
-              end: "+=460%",
-              pin: true,
-              scrub: true,
-              anticipatePin: 1
-            }
-          });
-          var step = 1.4;
-          var cross = 0.18;
-          var lineDelay = 0.2;
-          var zoomDur = 1.26;
-          var openingCrops = {
-            "hero-facade": { from: "8% 96%", to: "8% 96%", fromScale: 1.9, scale: 2.05 },
-            "welcome-table": { from: "100% 50%", to: "100% 50%", fromScale: 6.2, scale: 6.5 },
-            "mood-card-flowers": { from: "2% 90%", to: "2% 90%", fromScale: 1.85, scale: 2.02 },
-            "flower-plaque": { from: "0% 55%", to: "0% 55%", fromScale: 2.6, scale: 2.8 }
-          };
-          if (window.matchMedia("(max-width: 800px)").matches) {
-            openingCrops["hero-facade"] = { from: "0% 100%", to: "0% 100%", fromScale: 4.2, scale: 4.45 };
-          }
-          shots.forEach(function (shot, i) {
-            var at = i * step;
-            var img = shot.querySelector("img");
-            var src = img.getAttribute("src") || "";
-            var crop = null;
-            Object.keys(openingCrops).forEach(function (name) {
-              if (src.indexOf(name) !== -1) crop = openingCrops[name];
-            });
-            var fromPos = (crop && crop.from) || img.getAttribute("data-from") || "50% 50%";
-            var toPos = (crop && crop.to) || img.getAttribute("data-to") || "50% 40%";
-            var scaleFrom = (crop && crop.fromScale) || 1.45;
-            var scaleTo = (crop && crop.scale) || parseFloat(img.getAttribute("data-scale")) || 1.8;
-            gsap.set(img, { objectPosition: fromPos, scale: scaleFrom, transformOrigin: toPos });
-            gsap.set(shot, { zIndex: i + 1 });
-            if (i === 0) {
-              gsap.set(shot, { autoAlpha: 1 });
-            } else {
-              gsap.set(shot, { autoAlpha: 0 });
-              /* Incoming rises 0→1 over the same span the outgoing falls 1→0.
-                 power3 keeps one of them near opaque so the ink field does not show through. */
-              reelTl.fromTo(shot, { autoAlpha: 0 }, {
-                autoAlpha: 1,
-                ease: "power3.out",
-                duration: cross,
-                immediateRender: false
-              }, at);
-            }
-            reelTl.fromTo(img, {
-              scale: scaleFrom,
-              objectPosition: fromPos,
-              transformOrigin: toPos
-            }, {
-              scale: scaleTo,
-              objectPosition: toPos,
-              transformOrigin: toPos,
-              ease: "none",
-              duration: zoomDur,
-              immediateRender: false
-            }, at);
-            if (i < shots.length - 1) {
-              /* Outgoing reaches 0 as the next shot reaches 1. Overlap is only this cross. */
-              reelTl.to(shot, {
-                autoAlpha: 0,
-                ease: "power3.in",
-                duration: cross,
-                immediateRender: false
-              }, at + step);
-            }
-          });
-          beats.forEach(function (beat, i) {
-            var at = i * step;
-            gsap.set(beat, { autoAlpha: i === 0 ? 1 : 0, y: i === 0 ? 0 : 16 });
-            /* Since 1928 is the table line. It fades out before the flower shot. */
-            if (i > 0) {
-              reelTl.fromTo(beat, { autoAlpha: 0, y: 16 }, {
-                autoAlpha: 1,
-                y: 0,
-                ease: "none",
-                duration: 0.12,
-                immediateRender: false
-              }, at + lineDelay);
-            }
-            if (i < beats.length - 1) {
-              /* Hold the line through most of the photo, then let it leave. */
-              reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.1 }, at + 1.26);
-            }
-          });
-          /* Last photo must occupy a full step, or its line sits in the last sliver of the pin. */
-          reelTl.set({}, {}, shots.length * step);
-          if (cta) {
-            gsap.set(cta, { autoAlpha: 0 });
-            reelTl.fromTo(cta, { autoAlpha: 0 }, {
-              autoAlpha: 1,
-              ease: "none",
-              duration: 0.2,
-              immediateRender: false
-            }, (shots.length - 1) * step + lineDelay);
-          }
-        }
-      });
-    }
-
-    var history = document.querySelector(".history");
-    if (history) {
-      var historyMedia = gsap.matchMedia();
-      historyMedia.add({ compact: "(max-width: 800px) and (max-height: 740px)", full: "(min-width: 801px), (min-height: 741px)" }, function (context) {
-        var historyPhoto = history.querySelector(".history-photo img");
-        var historyLines = gsap.utils.toArray(history.querySelectorAll(".history-line"));
-        var historyRule = history.querySelector(".history-rule");
-        var historyTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: history,
-            start: context.conditions.compact ? "top 12%" : "top top",
-            end: context.conditions.compact ? "bottom 70%" : "+=90%",
-            pin: !context.conditions.compact,
-            scrub: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true
-          }
-        });
-        if (historyPhoto) {
-          /* Walk the facade from the blue pots (bottom left) onto the sun tile.
-             Scale stays tight and the window stays low so the painted wordmark never enters. */
-          gsap.set(historyPhoto, {
-            scale: 3.55,
-            objectPosition: "2% 100%",
-            transformOrigin: "2% 100%"
-          });
-          historyTl.fromTo(historyPhoto, {
-            scale: 3.55,
-            objectPosition: "2% 100%",
-            transformOrigin: "2% 100%"
-          }, {
-            scale: 3.35,
-            objectPosition: "52% 100%",
-            transformOrigin: "52% 100%",
-            ease: "none",
-            duration: 1
-          }, 0);
-        }
-        if (historyRule) {
-          gsap.set(historyRule, { scaleX: 0, transformOrigin: "left center" });
-          historyTl.to(historyRule, { scaleX: 1, ease: "none", duration: 0.28 }, 0.06);
-        }
-        historyLines.forEach(function (line, i) {
-          /* Eyebrow, title, and the Since 1928 lede stay readable. Only the managed line may fade in. */
-          if (i < 3) {
-            gsap.set(line, { autoAlpha: 1, y: 0 });
-            return;
-          }
-          gsap.set(line, { autoAlpha: 0, y: 12 });
-          historyTl.to(line, { autoAlpha: 1, y: 0, ease: "none", duration: 0.22 }, 0.4);
-        });
-      });
-    }
-
-    var alcazarVisual = document.querySelector("#alcazar");
-    if (alcazarVisual) {
-      /* Name, body, and the full line drawing stay readable together.
-         No photo wipe and no tilt. */
-      gsap.set(alcazarVisual.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      var alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
-      if (alcazarMark) {
-        /* The awning mark settles as the room name is read. No wipe, no tilt. */
-        gsap.fromTo(alcazarMark, { scale: 0.92, transformOrigin: "50% 50%" }, {
-          scale: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: alcazarVisual,
-            start: "top 78%",
-            end: "top 42%",
-            scrub: true
-          }
-        });
-      }
-    }
-
-    gsap.utils.toArray(".brand-card img").forEach(function (img) {
-      gsap.fromTo(img, { scale: 0.9 }, {
-        scale: 1,
-        ease: "none",
-        scrollTrigger: { trigger: img, start: "top 92%", end: "top 58%", scrub: true }
-      });
-    });
-
-    var moment = document.querySelector("#moment");
-    if (moment) {
-      var momentImg = moment.querySelector(".quote-bleed-media img");
-      var momentText = moment.querySelector(".quote-bleed-text");
-      var momentTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: moment,
-          start: "top top",
-          end: "+=140%",
-          pin: true,
-          scrub: true,
-          anticipatePin: 1
-        }
-      });
-      if (momentImg) {
-        /* The highlight walks across the leaves. Stay in the lower crop so the
-           painted oval remains above the sentence for the whole pin. */
-        gsap.set(momentImg, {
-          scale: 1.32,
-          objectPosition: "100% 90%",
-          transformOrigin: "70% 65%"
-        });
-        momentTl.to(momentImg, {
-          scale: 1.58,
-          objectPosition: "15% 78%",
-          transformOrigin: "70% 65%",
-          ease: "none",
-          duration: 1
-        }, 0);
-      }
-      if (momentText) {
-        gsap.set(momentText, { autoAlpha: 1, y: 0 });
-      }
-    }
-
-    var events = document.querySelector("#events");
-    if (events) {
-      /* Headings and bodies stay fully readable. The rule under the eyebrow
-         is the only motion: it draws across as the section arrives. */
-      gsap.set(events.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      var eventsRule = events.querySelector(".events-rule");
-      if (eventsRule) {
-        gsap.set(eventsRule, { scaleX: 0, transformOrigin: "center center" });
-        gsap.to(eventsRule, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: events,
-            start: "top 82%",
-            end: "top 38%",
-            scrub: true
-          }
-        });
-      }
-    }
-
-    var rentals = document.querySelector("#rentals");
-    if (rentals) {
-      /* Title, intro, the ten names, Inquire, and the closing line stay readable.
-         Not a fade from invisible. */
-      gsap.set(rentals.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      var rentalsRule = rentals.querySelector(".rentals-rule");
-      if (rentalsRule) {
-        gsap.set(rentalsRule, { scaleX: 0, transformOrigin: "left center" });
-        gsap.to(rentalsRule, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: rentals,
-            start: "top 80%",
-            end: "top 48%",
-            scrub: true
-          }
-        });
-      }
-    }
-
-    var team = document.querySelector("#team");
-    if (team) {
-      gsap.set(team.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      var monograms = team.querySelectorAll(".team-photo.monogram");
-      if (monograms.length) {
-        /* Names stay fully readable. The monograms settle while the two cards hold. */
-        gsap.set(monograms, { scale: 0.94, transformOrigin: "50% 60%" });
-        gsap.to(monograms, {
-          scale: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: team,
-            start: "top 72%",
-            end: "top 36%",
-            scrub: true
-          }
-        });
-      }
-    }
-
-    var quote = document.querySelector("#quote");
-    if (quote) {
-      gsap.set(quote.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      var quoteRule = quote.querySelector(".quote-rule");
-      if (quoteRule) {
-        gsap.set(quoteRule, { scaleX: 0, transformOrigin: "center center" });
-        gsap.to(quoteRule, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: quote,
-            start: "top 78%",
-            end: "top 52%",
-            scrub: true
-          }
-        });
-      }
-    }
-
-    var vendors = document.querySelector("#vendors");
-    if (vendors) {
-      gsap.set(vendors.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      var vendorsRule = vendors.querySelector(".vendors-rule");
-      if (vendorsRule) {
-        gsap.set(vendorsRule, { scaleX: 0, transformOrigin: "center center" });
-        gsap.to(vendorsRule, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: vendors,
-            start: "top 78%",
-            end: "top 52%",
-            scrub: true
-          }
-        });
-      }
-    }
-
-    if (lenis) {
-      ScrollTrigger.addEventListener("refresh", function () { lenis.resize(); });
-      lenis.resize();
-    }
-    window.addEventListener("load", function () {
-      ScrollTrigger.refresh();
-      if (lenis) lenis.resize();
-    });
-  }
-
-  function initReveal() {
-    const nodes = document.querySelectorAll(".reveal");
-    const heroTrack = document.querySelector(".hero-track");
-    const moment = document.querySelector(".moment-track");
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      nodes.forEach(function (n) {
-        n.style.setProperty("--p", "1");
-        n.classList.add("is-visible");
-      });
-      if (moment) moment.style.setProperty("--p", "1");
-      return;
-    }
-    let ticking = false;
-    const update = function () {
-      const vh = window.innerHeight || 1;
-      nodes.forEach(function (el) {
-        const top = el.getBoundingClientRect().top;
-        const start = vh * 0.98;
-        const end = vh * 0.52;
-        const p = Math.max(0, Math.min(1, (start - top) / (start - end)));
-        el.style.setProperty("--p", p.toFixed(3));
-        el.classList.toggle("is-visible", p > 0.85);
-      });
-      if (heroTrack) {
-        const rect = heroTrack.getBoundingClientRect();
-        const total = Math.max(heroTrack.offsetHeight - vh, 1);
-        const scrolled = Math.min(Math.max(-rect.top, 0), total);
-        heroTrack.style.setProperty("--hero-p", (scrolled / total).toFixed(3));
-      }
-      if (moment) {
-        const rect = moment.getBoundingClientRect();
-        const total = Math.max(moment.offsetHeight - vh, 1);
-        const scrolled = Math.min(Math.max(-rect.top, 0), total);
-        moment.style.setProperty("--p", (scrolled / total).toFixed(3));
-      }
-      ticking = false;
-    };
-    const onScroll = function () {
-      if (ticking) return;
-      ticking = true;
-      window.requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+    document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
   }
 
   function scrollToSection(target) {
     if (!target) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (window.__ljLenis && !reduced) {
-      // Focus, keyboard navigation, or a native scroll can move the document
-      // before Lenis receives its scroll event. Synchronize before measuring.
-      window.__ljLenis.resize();
-      const destination = target.getBoundingClientRect().top + window.scrollY;
-      window.__ljLenis.scrollTo(destination, { offset: -8 });
-      return;
-    }
-    target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-  }
-
-  function initHeroVideo() {
-    const media = document.querySelector(".hero-media");
-    const video = document.querySelector(".hero-video");
-    if (!media || !video) return;
-    const source = video.getAttribute("src") || video.querySelector("source[src]");
-    if (!source) return;
-
-    media.classList.add("has-video");
-    video.addEventListener("canplay", function () {
-      media.classList.add("is-video-ready");
-      video.play().catch(function () {
-        /* Autoplay may be unavailable; the poster/fallback remains visible. */
-      });
-    }, { once: true });
-    video.addEventListener("error", function () {
-      media.classList.remove("has-video", "is-video-ready");
-    }, { once: true });
-    video.load();
+    const header = document.getElementById("header");
+    const offset = header ? header.getBoundingClientRect().height + 8 : 76;
+    window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: reduced ? "instant" : "smooth" });
   }
 
   function initCatalogPrefill() {
@@ -961,7 +634,6 @@
     initLang();
     applyI18n("en");
     initHeader();
-    initHeroVideo();
     initStory();
     initCatalogPrefill();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");

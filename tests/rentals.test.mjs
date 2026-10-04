@@ -28,7 +28,7 @@ function rentalsSection() {
 
 function rentalsScript() {
   const start = js.indexOf('var rentals = document.querySelector("#rentals")');
-  const end = js.indexOf("if (lenis)", start);
+  const end = js.indexOf("ScrollTrigger.refresh();", start);
   assert.ok(start !== -1 && end > start, "rentals script");
   return js.slice(start, end);
 }

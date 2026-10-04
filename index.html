@@ -6,6 +6,7 @@
 <title>La Jolla Coral Gables · Est. 1928</title>
 <meta name="description" content="La Jolla, a jewel in Coral Gables. Historic venue for weddings, celebrations, corporate and social events. Managed by Epic Lux Management." />
 <meta name="color-scheme" content="light" />
+<meta name="application-version" content="1.0.0" />
 <link rel="icon" href="assets/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
@@ -13,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=reel44" />
+<link rel="stylesheet" href="styles.css?v=1.0.0" />
 </head>
 <body id="top">
 <!--
@@ -22,7 +23,7 @@
   - "ballroom & catering"
   Both noted; neither used as primary until Pat decides.
 -->
-<a class="skip" href="#history">Skip to content</a>
+<a class="skip" href="#history" data-i18n="nav.skip">Skip to content</a>
 
 <header class="site-header" id="header">
   <div class="header-inner">
@@ -34,6 +35,11 @@
       </span>
     </a>
 
+    <nav class="chapter-nav" aria-label="Main navigation">
+      <a href="#history" data-i18n="nav.house">The house</a>
+      <a href="#events" data-i18n="nav.occasions">Occasions</a>
+      <a href="#rentals" data-i18n="nav.services">Services</a>
+    </nav>
     <div class="header-actions">
       <div class="lang" role="group" aria-label="Language">
         <button type="button" class="lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
@@ -47,41 +53,59 @@
 
 <main>
 
-  <!-- 1. Scroll story: photos blend and zoom, one line on each focus. -->
-  <section class="section hero reel" id="hero" aria-label="Opening" data-motion="reel">
-    <div class="reel-stage">
-      <div class="reel-shots">
-        <figure class="reel-shot">
-          <img src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" data-from="50% 46%" data-to="8% 96%" data-scale="1.9" />
-        </figure>
-        <figure class="reel-shot">
-          <img src="assets/brand/welcome-table.jpg" alt="A set table with the La Jolla welcome card, candles, and glassware." width="1081" height="1351" data-from="40% 42%" data-to="100% 12%" data-scale="2.5" />
-        </figure>
-        <figure class="reel-shot">
-          <img src="assets/brand/mood-card-flowers.jpg" alt="A La Jolla card resting in white and blush hydrangeas." width="1600" height="2133" data-from="55% 48%" data-to="2% 90%" data-scale="1.85" />
-        </figure>
-        <figure class="reel-shot">
-          <img src="assets/brand/flower-plaque.jpg" alt="An oval La Jolla plaque beside white flowers and a window." width="1122" height="1402" data-from="68% 46%" data-to="0% 55%" data-scale="2.6" />
-        </figure>
+  <!-- 1. Arrival: the offer is visible throughout a short photographic journey. -->
+  <section class="section hero reel light-field" id="hero" aria-labelledby="hero-title">
+    <div class="reel-stage wrap">
+      <div class="arrival-copy">
+        <p class="eyebrow" data-i18n="hero.est">Coral Gables · Est. 1928</p>
+        <h1 id="hero-title" class="arrival-title">La <em>Jolla</em></h1>
+        <p class="arrival-script" data-i18n="hero.title">A jewel in Coral Gables</p>
+        <p class="arrival-description" data-i18n="hero.offer">A historic setting for your celebration. Event services at La Jolla and throughout South Florida.</p>
+        <div class="arrival-actions">
+          <a class="btn btn-sage" href="#quote" data-i18n="hero.cta">Request a private quote</a>
+          <a class="text-link" href="#events"><span data-i18n="hero.explore">Explore the possibilities</span><span class="link-arrow" aria-hidden="true"> ↗</span></a>
+        </div>
+        <a class="arrival-scroll" href="#history"><span aria-hidden="true">↓</span><span data-i18n="hero.enter">Step inside</span></a>
       </div>
-      <div class="reel-caption">
-        <div class="reel-beats">
-          <h1 class="reel-beat reel-on reel-on--ivy" data-i18n="hero.title">A jewel in Coral Gables</h1>
-          <p class="reel-beat reel-on reel-on--table" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
-          <p class="reel-beat reel-beat--quote reel-on reel-on--bloom" data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
-          <p class="reel-beat reel-on reel-on--roses" data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
+      <div class="arrival-visual">
+        <div class="reel-shots">
+          <figure class="reel-shot">
+            <img src="assets/brand/hero-facade.jpg" alt="La Jolla at 301 Alcazar Avenue, Coral Gables — ivy façade with striped awnings." width="1081" height="1351" fetchpriority="high" />
+          </figure>
+          <figure class="reel-shot">
+            <img src="assets/brand/welcome-table.jpg" alt="A set table with the La Jolla welcome card, candles, and glassware." width="1081" height="1351" />
+          </figure>
+          <figure class="reel-shot">
+            <img src="assets/brand/mood-card-flowers.jpg" alt="A La Jolla card resting in white and blush hydrangeas." width="1600" height="2133" />
+          </figure>
+          <figure class="reel-shot">
+            <img src="assets/brand/flower-plaque.jpg" alt="An oval La Jolla plaque beside white flowers and a window." width="1122" height="1402" />
+          </figure>
+        </div>
+        <div class="reel-caption">
+          <span class="reel-index" aria-hidden="true">01 / 04</span>
+          <div class="reel-beats">
+            <p class="reel-beat" data-i18n="hero.chapter1">The arrival</p>
+            <p class="reel-beat" data-i18n="hero.chapter2">Around the table</p>
+            <p class="reel-beat" data-i18n="hero.chapter3">Considered details</p>
+            <p class="reel-beat" data-i18n="hero.chapter4">A celebration takes shape</p>
+          </div>
+          <span class="reel-progress" aria-hidden="true"><i></i></span>
         </div>
       </div>
+      <div class="arrival-footnote"><span>301 Alcazar Avenue</span><span>Coral Gables, Florida</span></div>
     </div>
   </section>
 
   <!-- 2. OUR HISTORY -->
   <section class="section history" id="history" aria-labelledby="history-title">
-    <div class="history-stage">
+    <div class="history-stage wrap">
       <div class="history-copy">
+        <span class="chapter-number" aria-hidden="true">01 /</span>
+        <span class="history-year" aria-hidden="true">1928</span>
         <p class="eyebrow history-line" data-i18n="history.eyebrow">Our History</p>
         <span class="history-rule" aria-hidden="true"></span>
-        <h2 id="history-title" class="section-title history-line" data-i18n="history.title">La Jolla, a jewel in Coral Gables</h2>
+        <h2 id="history-title" class="section-title history-line" data-i18n="history.title">A place with a story</h2>
         <p class="lede history-line" data-i18n="history.lede">Since 1928, La Jolla has welcomed celebrations beneath Mediterranean arches and garden light. A setting shaped by Coral Gables heritage — intimate, timeless, and quietly grand.</p>
         <p class="managed history-line" data-i18n="history.managed">Managed by Epic Lux Management</p>
       </div>
@@ -108,6 +132,7 @@
   <!-- 3. EVENTS without a scene photograph -->
   <section class="section events" id="events" aria-labelledby="events-title">
     <div class="wrap events-intro">
+      <span class="chapter-number" aria-hidden="true">02 /</span>
       <header class="section-head reveal">
         <p class="eyebrow" data-i18n="events.eyebrow">Events at La Jolla</p>
         <span class="events-rule" aria-hidden="true"></span>
@@ -116,79 +141,82 @@
       </header>
     </div>
 
-    <div class="wrap">
-      <ul class="event-types">
-        <li class="reveal">
-          <h3 data-i18n="events.weddings.title">Weddings</h3>
-          <p data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.quince.title">Quinceañeras &amp; Sweet Sixteens</h3>
-          <p data-i18n="events.quince.body">Celebrate this once-in-a-lifetime milestone with a space that can transform around your theme, traditions and vision—from the grand entrance to the final dance.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.social.title">Social celebrations</h3>
-          <p data-i18n="events.social.body">Birthdays, anniversaries, engagements, baby showers, bridal showers, graduations, reunions and milestone occasions. Whatever you're celebrating, make the space your own.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.brand.title">Brand activations &amp; product launches</h3>
-          <p data-i18n="events.brand.body">A versatile backdrop for launches, pop-ups, showcases, influencer events, experiential marketing and immersive brand experiences.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.film.title">Film, photo &amp; content</h3>
-          <p data-i18n="events.film.body">Photoshoots, commercials, interviews, music videos, film productions and branded content, with multiple spaces and distinctive looks available within one property.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.corporate.title">Corporate events</h3>
-          <p data-i18n="events.corporate.body">Meetings, conferences, holiday parties, awards dinners, networking events, company celebrations and client experiences—with flexible spaces that can transition from business to entertainment.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.productions.title">Productions &amp; entertainment</h3>
-          <p data-i18n="events.productions.body">Live performances, dinner shows, fashion shows, theatrical productions, comedy, music, dance and ticketed experiences—with the flexibility to create something completely original.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.galas.title">Galas &amp; fundraisers</h3>
-          <p data-i18n="events.galas.body">Charity events, nonprofit gatherings, awards ceremonies, auctions and benefit dinners designed around your organization and your guests.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.dining.title">Private dining &amp; intimate events</h3>
-          <p data-i18n="events.dining.body">Rehearsal dinners, private dinners, cocktail receptions, tastings and smaller gatherings for occasions that call for a more intimate experience.</p>
-        </li>
-        <li class="reveal">
-          <h3 data-i18n="events.other.title">Something completely different?</h3>
-          <p data-i18n="events.other.body">Not every event fits neatly into a category—and that's the point. Tell us what you're envisioning and we'll help you make it happen.</p>
-          <a class="text-link" href="#quote" data-i18n="nav.inquire">Inquire</a>
-        </li>
+    <div class="wrap events-body">
+      <figure class="occasion-visual"><img src="assets/brand/mood-card-flowers.jpg" alt="La Jolla card among hydrangeas." width="1600" height="2133" loading="lazy" /><figcaption data-i18n="events.detail">The details set the tone.</figcaption></figure>
+      <ul class="events-list reveal">
+        <li><details class="occasion" name="occasions" open>
+          <summary><span class="occasion-number" aria-hidden="true">01</span><h3 data-i18n="events.weddings.title">Weddings</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.weddings.body">From the ceremony to cocktails, dinner and dancing, La Jolla offers an elegant setting for every part of your wedding day—from intimate celebrations to full receptions.</p><a class="text-link" href="#quote" data-event-type="wedding"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">02</span><h3 data-i18n="events.quince.title">Quinceañeras &amp; Sweet Sixteens</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.quince.body">Celebrate this once-in-a-lifetime milestone with a space that can transform around your theme, traditions and vision—from the grand entrance to the final dance.</p><a class="text-link" href="#quote" data-event-type="quince"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">03</span><h3 data-i18n="events.social.title">Social celebrations</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.social.body">Birthdays, anniversaries, engagements, baby showers, bridal showers, graduations, reunions and milestone occasions. Whatever you're celebrating, make the space your own.</p><a class="text-link" href="#quote" data-event-type="social"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">04</span><h3 data-i18n="events.brand.title">Brand activations &amp; product launches</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.brand.body">A versatile backdrop for launches, pop-ups, showcases, influencer events, experiential marketing and immersive brand experiences.</p><a class="text-link" href="#quote" data-event-type="brand"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">05</span><h3 data-i18n="events.film.title">Film, photo &amp; content</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.film.body">Photoshoots, commercials, interviews, music videos, film productions and branded content, with multiple spaces and distinctive looks available within one property.</p><a class="text-link" href="#quote" data-event-type="film"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">06</span><h3 data-i18n="events.corporate.title">Corporate events</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.corporate.body">Meetings, conferences, holiday parties, awards dinners, networking events, company celebrations and client experiences—with flexible spaces that can transition from business to entertainment.</p><a class="text-link" href="#quote" data-event-type="corporate"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">07</span><h3 data-i18n="events.productions.title">Productions &amp; entertainment</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.productions.body">Live performances, dinner shows, fashion shows, theatrical productions, comedy, music, dance and ticketed experiences—with the flexibility to create something completely original.</p><a class="text-link" href="#quote" data-event-type="production"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">08</span><h3 data-i18n="events.galas.title">Galas &amp; fundraisers</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.galas.body">Charity events, nonprofit gatherings, awards ceremonies, auctions and benefit dinners designed around your organization and your guests.</p><a class="text-link" href="#quote" data-event-type="gala"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">09</span><h3 data-i18n="events.dining.title">Private dining &amp; intimate events</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.dining.body">Rehearsal dinners, private dinners, cocktail receptions, tastings and smaller gatherings for occasions that call for a more intimate experience.</p><a class="text-link" href="#quote" data-event-type="dining"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
+        <li><details class="occasion" name="occasions">
+          <summary><span class="occasion-number" aria-hidden="true">10</span><h3 data-i18n="events.other.title">Something completely different?</h3><span class="occasion-toggle" aria-hidden="true">+</span></summary>
+          <div class="occasion-body"><p data-i18n="events.other.body">Not every event fits neatly into a category—and that's the point. Tell us what you're envisioning and we'll help you make it happen.</p><a class="text-link" href="#quote" data-event-type="other"><span data-i18n="nav.inquire">Inquire</span><span class="link-arrow" aria-hidden="true"> ↗</span></a></div>
+        </details></li>
       </ul>
     </div>
   </section>
 
   <!-- 5. THE ALCAZAR ROOM -->
-  <section class="section alcazar" id="alcazar" aria-labelledby="alcazar-title">
+  <section class="section alcazar light-field" id="alcazar" aria-labelledby="alcazar-title">
     <div class="wrap alcazar-grid reveal">
       <div class="alcazar-copy">
+        <span class="chapter-number" aria-hidden="true">03 /</span>
         <p class="eyebrow" data-i18n="alcazar.eyebrow">Curated · Vintage 1928</p>
         <h2 id="alcazar-title" class="section-title" data-i18n="alcazar.title">The Alcazar Room</h2>
         <p data-i18n="alcazar.body">Step upstairs and into another era. Layered in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from private clubs, classic whiskey rooms, and the timeless elegance of Kentucky racing culture. Designed for cocktails, private dinners, intimate celebrations, and distinctive gatherings, the space feels secluded, sophisticated, and entirely its own.</p>
-        <a class="btn btn-sage" href="#quote" data-i18n="alcazar.cta">Inquire about The Alcazar Room</a>
+        <a class="btn btn-sage" href="#quote" data-event-type="alcazar" data-i18n="alcazar.cta">Inquire about The Alcazar Room</a>
       </div>
       <figure class="alcazar-visual">
-        <img src="assets/brand/awning-mark.jpg" alt="La Jolla awning monogram." loading="lazy" />
+        <img src="assets/brand/awning-mark.jpg" alt="La Jolla awning monogram." width="1600" height="1600" loading="lazy" />
       </figure>
     </div>
   </section>
 
   <!-- 6. RENTALS & SERVICES — no vendor names -->
-  <section class="section rentals" id="rentals" aria-labelledby="rentals-title">
-    <div class="wrap">
+  <section class="section rentals light-field" id="rentals" aria-labelledby="rentals-title">
+    <div class="wrap rentals-layout">
       <header class="section-head reveal">
+        <span class="chapter-number" aria-hidden="true">04 /</span>
         <p class="eyebrow" data-i18n="rentals.eyebrow">Rentals &amp; event services</p>
         <span class="rentals-rule" aria-hidden="true"></span>
         <h2 id="rentals-title" class="section-title" data-i18n="rentals.title">At La Jolla &amp; beyond</h2>
-        <p class="section-intro" data-i18n="rentals.intro">From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Inquire for rentals, custom packages and full-service event production.</p>
+        <p class="section-intro" data-i18n="rentals.short">From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.</p>
+        <details class="services-about"><summary data-i18n="rentals.more">More about our services</summary><p class="section-intro" data-i18n="rentals.intro">From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Inquire for rentals, custom packages and full-service event production.</p></details>
       </header>
 
-      <ul class="rentals-quiet reveal">
+      <div class="rentals-catalog"><ul class="rentals-quiet reveal">
         <li><button type="button" class="rentals-quiet-link" data-interest="Planning, coordination and production" data-scroll-quote><span data-i18n="rentals.svc.planning">Planning, coordination &amp; production</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
         <li><button type="button" class="rentals-quiet-link" data-interest="Catering and bar" data-scroll-quote><span data-i18n="rentals.svc.catering">Catering &amp; bar services</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
         <li><button type="button" class="rentals-quiet-link" data-interest="Florals, design and decor" data-scroll-quote><span data-i18n="rentals.svc.florals">Florals, design &amp; décor</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
@@ -201,6 +229,7 @@
         <li><button type="button" class="rentals-quiet-link" data-interest="Valet, security and event staffing" data-scroll-quote><span data-i18n="rentals.svc.staff">Valet, security &amp; event staffing</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
       </ul>
       <p class="section-intro reveal"><strong data-i18n="rentals.elseTitle">Looking for something else?</strong> <span data-i18n="rentals.elseBody">Every event is different. Tell us what you're envisioning, and our team can source, coordinate and produce additional services to bring your event at La Jolla to life.</span></p>
+      </div>
     </div>
   </section>
 
@@ -210,9 +239,10 @@
 
   <!-- 8. GALLERY — brand plates, shown whole, moved by the scroll -->
   <section class="section brand-reel" id="gallery" aria-labelledby="gallery-title">
-    <div class="brand-pin">
+    <div class="brand-pin wrap">
       <header class="section-head">
-        <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">Gallery</h2>
+        <p class="eyebrow" data-i18n="gallery.eyebrow">The La Jolla identity</p>
+        <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">A world of details</h2>
       </header>
       <div class="brand-viewport">
         <div class="brand-track">
@@ -253,6 +283,7 @@
   <section class="section team" id="team" aria-labelledby="team-title">
     <div class="wrap">
       <header class="section-head reveal">
+        <p class="eyebrow" data-i18n="history.managed">Managed by Epic Lux Management</p>
         <h2 id="team-title" class="section-title" data-i18n="team.title">Our Team</h2>
       </header>
       <div class="team-grid">
@@ -276,15 +307,18 @@
 
   <!-- 10. PRIVATE QUOTE FORM -->
   <section class="section quote" id="quote" aria-labelledby="quote-title">
-    <div class="wrap narrow">
+    <div class="wrap inquiry-layout">
       <header class="section-head reveal">
+        <span class="chapter-number" aria-hidden="true">05 /</span>
         <p class="eyebrow" data-i18n="quote.eyebrow">Private quote</p>
         <span class="quote-rule" aria-hidden="true"></span>
         <h2 id="quote-title" class="section-title" data-i18n="quote.title">Request a private quote</h2>
         <p class="section-intro" data-i18n="quote.intro">Share a few details. We will be in touch.</p>
+        <div class="inquiry-contact"><a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a><a href="tel:+17862908813">786-290-8813</a></div>
       </header>
 
       <div class="quote-panel reveal">
+        <noscript><p>Please contact us at <a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a> or <a href="tel:+17862908813">786-290-8813</a> to discuss your event.</p></noscript>
         <form class="quote-form" id="quote-form" novalidate>
           <div class="form-row">
             <label for="q-name"><span data-i18n="form.name">Name</span> <abbr title="required">*</abbr></label>
@@ -357,6 +391,7 @@
         <p class="section-intro" data-i18n="vendors.intro">Tell us your name, company, service, and email.</p>
       </header>
       <div class="quote-panel reveal">
+        <noscript><p>Please send your vendor inquiry to <a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a>.</p></noscript>
         <form class="quote-form" id="vendor-form" novalidate>
           <div class="form-row">
             <label for="v-name"><span data-i18n="vendors.name">Name</span> <abbr title="required">*</abbr></label>
@@ -427,6 +462,6 @@
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
 <script src="assets/vendor/lenis.min.js"></script>
-<script src="script.js?v=reel45"></script>
+<script src="script.js?v=1.0.0"></script>
 </body>
 </html>

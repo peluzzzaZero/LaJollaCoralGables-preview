@@ -1,3 +1,5 @@
+> Historical roadmap. The user authorized a redesign and versioned improvement cycles on 4 October 2026. See [ROADMAP.md](ROADMAP.md) and [RELEASES.md](RELEASES.md) for current work. The brand/content requirements below remain; the exact old layouts and motion timings are historical.
+
 # La Jolla preview — section work on `dev`
 
 Main stays untouched until every section below has passed its test and a visual review.
