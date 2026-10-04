@@ -37,9 +37,7 @@ test("Since 1928 lede is in #history", () => {
   assert.match(historySection(), /Since 1928/);
 });
 
-test("opening welcome-table starts on the candle detail at scale 6.2", () => {
-  assert.match(
-    js,
-    /"welcome-table":\s*\{\s*from:\s*"100% 50%",\s*to:\s*"100% 50%",\s*fromScale:\s*6\.2,\s*scale:\s*[\d.]+\s*\}/
-  );
+test("history keeps the protected lower facade crop in the static fallback", () => {
+  const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+  assert.match(css, /\.history-photo img[^}]*object-position: 2% 100%[^}]*scale\(3\.55\)/);
 });

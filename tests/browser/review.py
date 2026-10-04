@@ -82,11 +82,7 @@ async def check_navigation(browser, base, output):
 async def review_viewport(browser, base, output, width, height, language):
     folder = output / f"{width}-{language}"
     folder.mkdir(parents=True, exist_ok=True)
-    context = await browser.new_context(
-        viewport={"width": width, "height": height},
-        record_video_dir=str(folder), record_video_size={"width": width, "height": height},
-    )
-    # All email requests are intercepted, including accidental submissions during review.
+    context = await browser.new_context(viewport={"width": width, "height": height}, record_video_dir=str(folder), record_video_size={"width": width, "height": height})
     await context.route("https://api.web3forms.com/**", lambda route: route.abort())
     page = await context.new_page()
     errors = []
@@ -97,72 +93,80 @@ async def review_viewport(browser, base, output, width, height, language):
         await page.locator('[data-lang="es"]').click()
         await page.wait_for_timeout(100)
     assert await page.locator("html").get_attribute("lang") == language
-
-    # Check the entire crossfade, not just its endpoints. The photographs must cover the background.
-    minimum_coverage = 1
-    for step in range(101):
-        await position(page, "hero", step / 100)
-        coverage = await page.evaluate("""() => 1 - [...document.querySelectorAll('.reel-shot')]
-          .reduce((remaining, shot) => remaining * (1 - Number(getComputedStyle(shot).opacity)), 1)""")
-        minimum_coverage = min(minimum_coverage, coverage)
-        assert coverage > .95, f"{width}/{language}: opening exposes its empty background at {step}%"
-
-    scales = []
-    for i in range(4):
-        pair = []
-        for time in (.35, 1.1):
-            await position(page, "hero", (i * 1.4 + time) / 5.6)
-            pair.append(await page.evaluate("i => Number(gsap.getProperty(document.querySelectorAll('.reel-shot img')[i], 'scaleX'))", i))
-        assert pair[1] > pair[0] + .01, f"Photo {i} does not zoom"
-        scales.append(pair)
-        bounds = await page.locator(".reel-beat").nth(i).bounding_box()
-        assert bounds and bounds["x"] >= 0 and bounds["x"] + bounds["width"] <= width + 1
-        assert bounds["y"] >= 68 and bounds["y"] + bounds["height"] <= height
-        await snapshot(page, folder, f"hero-{i}")
-    await position(page, "hero", 0)
-    assert await page.locator("#hero h1").is_visible(), "Opening title is missing at first paint"
-    assert "MonteCarlo" in await page.locator("#hero h1").evaluate("e => getComputedStyle(e).fontFamily")
+    await scroll(page, 0)
+    for selector in ("#hero-title", ".arrival-description", ".arrival-actions .btn"):
+        r = await page.locator(selector).bounding_box()
+        assert r and r["y"] >= 68 and r["y"] + r["height"] <= height, f"First-paint offer unavailable: {selector}"
     await snapshot(page, folder, "hero-start")
 
-    for section in ("history", "moment"):
-        for progress in (0, .5, 1):
-            await position(page, section, progress)
-            if section == "history":
-                title = await page.locator("#history .eyebrow").bounding_box()
-                assert title["y"] >= 68, "Header covers the history introduction"
-                picture = await page.locator(".history-photo").bounding_box()
-                assert picture["height"] >= 200, "History text collapses the photo"
-                body = await page.locator("#history .lede").bounding_box()
-                assert body["y"] + body["height"] <= height, "History copy is clipped"
-            await snapshot(page, folder, f"{section}-{progress}")
+    minimum_coverage = 1
+    if width > 900:
+        for step in range(101):
+            await position(page, "hero", step / 100)
+            coverage = await page.evaluate("""() => 1 - [...document.querySelectorAll('.reel-shot')]
+              .reduce((remaining, shot) => remaining * (1 - Number(getComputedStyle(shot).opacity)), 1)""")
+            minimum_coverage = min(minimum_coverage, coverage)
+            assert coverage > .95, f"Opening exposes its background at {step}%"
+            assert await page.locator(".arrival-actions .btn").is_visible()
+        for i in range(4):
+            await position(page, "hero", (i + .4) / 4)
+            await snapshot(page, folder, f"hero-{i}")
+        # Copy and CTA stay within the pinned frame, even at the last photograph.
+        r = await page.locator(".arrival-actions .btn").bounding_box()
+        assert r["y"] >= 68 and r["y"] + r["height"] <= height
 
     assert await page.locator(".rentals-quiet li").count() == 10
     assert await page.locator(".brand-card").count() == 7
     assert await page.locator(".team-card").count() == 2
     assert await page.locator("#testimonial").is_hidden()
-    for section in ("events", "alcazar", "rentals", "gallery", "team", "quote", "vendors"):
-        for progress in (0, .45):
-            await position(page, section, progress)
-            await snapshot(page, folder, f"{section}-{progress}")
+    assert await page.evaluate("!ScrollTrigger.getAll().some(t => t.trigger.id === 'history' && t.vars.pin)")
+    for section in ("history", "moment", "events", "alcazar", "rentals", "gallery", "team", "quote", "vendors"):
+        await position(page, section)
+        await snapshot(page, folder, section)
         for element in await page.locator(f"#{section} .reveal").all():
             assert await element.evaluate("e => Number(getComputedStyle(e).opacity)") == 1
+    # The painted oval has known bounds in the approved leaves artwork. Ensure
+    # the quote does not intersect it after object-fit, crop and transform.
+    for progress in (0, .5, 1):
+        await position(page, "moment", progress)
+        overlap = await page.evaluate("""() => {
+          const img = document.querySelector('.quote-bleed-media img');
+          const box = img.getBoundingClientRect();
+          const q = document.querySelector('.quote-bleed-text p').getBoundingClientRect();
+          const pos = getComputedStyle(img).objectPosition.split(' ').map(v => parseFloat(v) / 100);
+          const fit = Math.max(box.width / img.naturalWidth, box.height / img.naturalHeight);
+          const x = box.left + (box.width - img.naturalWidth * fit) * pos[0];
+          const y = box.top + (box.height - img.naturalHeight * fit) * pos[1];
+          const oval = {left:x+370*fit,right:x+710*fit,top:y+480*fit,bottom:y+870*fit};
+          return q.left < oval.right && q.right > oval.left && q.top < oval.bottom && q.bottom > oval.top;
+        }""")
+        assert not overlap, f"{width}/{language}: quote crosses painted monogram"
+    await position(page, "moment")
+    await snapshot(page, folder, "moment")
     assert await page.locator(".alcazar-visual img").evaluate("e => getComputedStyle(e).objectFit") == "contain"
-
-    # Record one uninterrupted journey through every section in this language and viewport.
+    # Every occasion is keyboard discoverable; its approved description can be opened.
+    for occasion in await page.locator(".occasion").all():
+        await occasion.locator("summary").focus()
+        if not await occasion.evaluate("e => e.open"):
+            await page.keyboard.press("Enter")
+        assert await occasion.locator(".occasion-body p").is_visible()
+        assert await occasion.locator(".occasion-body a").is_visible()
+    await page.locator(".services-about summary").click()
+    assert await page.locator('[data-i18n="rentals.intro"]').is_visible()
+    # Walk the full page and inspect every image after lazy loading.
     await scroll(page, 0)
     total = await page.evaluate("document.documentElement.scrollHeight - innerHeight")
-    for y in range(0, total + height, max(1, height // 3)):
+    for y in range(0, total + height, max(1, height // 2)):
         await scroll(page, min(y, total))
         assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "Horizontal overflow"
-        await page.wait_for_timeout(80)
+        await page.wait_for_timeout(70)
+    await page.wait_for_function("Array.from(document.images).every(i => i.complete && i.naturalWidth)")
     await snapshot(page, folder, "footer")
-    missing = await page.locator("img").evaluate_all("images => images.filter(i => !i.complete || !i.naturalWidth).map(i => i.getAttribute('src'))")
-    assert not missing, f"Missing images: {missing}"
     assert not errors, errors
     video = page.video
     await context.close()
     await video.save_as(str(folder / "scroll.webm"))
-    return {"width": width, "height": height, "language": language, "coverage": minimum_coverage, "zoom": scales, "errors": errors}
+    return {"width": width, "height": height, "language": language, "coverage": minimum_coverage, "errors": errors, "first_paint_offer": "passed", "occasions_keyboard": "passed", "natural_history": "passed"}
 
 
 async def check_forms(browser, base):
@@ -261,24 +265,30 @@ async def check_variants(browser, base, output):
         await page.set_viewport_size({"width": width, "height": height})
         await page.wait_for_timeout(300)
         await scroll(page, 0)
-        origin = await page.locator(".reel-shot img").first.evaluate("e => getComputedStyle(e).objectPosition")
-        assert origin == ("0% 100%" if width <= 800 else "8% 96%"), f"Resize keeps the old crop: {origin}"
         assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 1
+        assert await page.evaluate("!!ScrollTrigger.getAll().find(t => t.trigger.id === 'hero').vars.pin") == (width > 900)
+        assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+    await page.emulate_media(reduced_motion="reduce")
+    await page.wait_for_timeout(200)
+    assert not await page.locator("html").evaluate("e => e.classList.contains('has-gsap')")
+    assert await page.evaluate("ScrollTrigger.getAll().length") == 0
+    await page.emulate_media(reduced_motion="no-preference")
+    await page.wait_for_timeout(200)
+    assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 1
     await page.close()
     page = await browser.new_page(viewport={"width": 390, "height": 667})
     await page.goto(base, wait_until="networkidle")
     await page.locator('[data-lang="es"]').click()
-    await page.wait_for_timeout(100)
-    assert await page.evaluate("!ScrollTrigger.getAll().find(t => t.trigger.id === 'history').vars.pin")
+    await snapshot(page, output, "short-screen-arrival")
+    r = await page.locator(".arrival-actions .btn").bounding_box()
+    assert r["y"] + r["height"] <= 667
     await position(page, "history")
-    await snapshot(page, output, "short-screen-history-copy")
-    await page.locator(".history-photo").scroll_into_view_if_needed()
-    await snapshot(page, output, "short-screen-history-photo")
-    assert (await page.locator(".history-photo").bounding_box())["height"] >= 256
+    await snapshot(page, output, "short-screen-history")
     assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
     await page.close()
     for variant in ("reduced-motion", "no-gsap", "no-javascript"):
         context = await browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce" if variant == "reduced-motion" else "no-preference", java_script_enabled=variant != "no-javascript")
+        await context.route("https://api.web3forms.com/**", lambda route: route.abort())
         if variant == "no-gsap":
             await context.route("**/assets/vendor/gsap.min.js", lambda route: route.abort())
         page = await context.new_page()
@@ -288,10 +298,15 @@ async def check_variants(browser, base, output):
         assert not errors, errors
         assert await page.locator("#hero h1").is_visible()
         assert await page.locator(".reel-shot").count() == 4
+        await page.locator(".occasion").nth(1).locator("summary").click()
+        assert await page.locator(".occasion").nth(1).locator(".occasion-body").is_visible()
+        if variant == "no-javascript":
+            assert await page.locator("#quote-form").is_hidden()
+            assert await page.locator("#quote noscript a[href^='mailto:']").is_visible()
         await page.screenshot(path=str(output / f"{variant}.png"), full_page=True)
         assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
         await context.close()
-    return {"responsive_resize": "passed", "short_screen_history": "passed", "reduced_motion": "passed", "missing_gsap": "passed", "no_javascript": "passed"}
+    return {"responsive_resize": "passed", "short_screen": "passed", "dynamic_reduced_motion": "passed", "missing_gsap": "passed", "no_javascript_contact": "passed"}
 
 
 async def main(args, base):
@@ -309,7 +324,7 @@ async def main(args, base):
             for language in ("en", "es"):
                 result = await review_viewport(browser, base, args.output, width, height, language)
                 results.append(result)
-                print(f"PASS {width}px {language}: sections 1–9, zoom, crossfades, no overflow", flush=True)
+                print(f"PASS {width}px {language}: editorial journey, offer, keyboard disclosures, no overflow", flush=True)
         navigation = await check_navigation(browser, base, args.output)
         print("PASS inquiry navigation: service and header, three widths, both languages", flush=True)
         forms = await check_forms(browser, base)

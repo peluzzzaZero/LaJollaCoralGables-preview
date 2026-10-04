@@ -15,7 +15,7 @@ function eventsSection() {
 
 function eventsScript() {
   const start = js.indexOf('var events = document.querySelector("#events")');
-  const end = js.indexOf("if (lenis)", start);
+  const end = js.indexOf("ScrollTrigger.refresh();", start);
   assert.ok(start !== -1 && end > start, "events script");
   return js.slice(start, end);
 }

@@ -55,6 +55,6 @@ test("gallery marks are not faded in from nothing", () => {
   const motion = js.slice(start, end);
   assert.equal(/autoAlpha:\s*0\b/.test(motion), false);
   assert.equal(/opacity:\s*0\b/.test(motion), false);
-  assert.match(motion, /scale:\s*0\.9/);
+  assert.match(motion, /scale:\s*0\.96/);
   assert.match(motion, /scale:\s*1\b/);
 });
