@@ -46,6 +46,39 @@ async def snapshot(page, output, name):
     await page.screenshot(path=str(output / f"{name}.png"))
 
 
+async def check_navigation(browser, base, output):
+    results = []
+    for width, height in ((390, 844), (768, 1024), (1280, 900)):
+        for language in ("en", "es"):
+            page = await browser.new_page(viewport={"width": width, "height": height})
+            await page.route("https://api.web3forms.com/**", lambda route: route.abort())
+            await page.goto(base, wait_until="networkidle")
+            if language == "es":
+                await page.locator('[data-lang="es"]').click()
+                await page.wait_for_timeout(100)
+            expected = await page.locator(".rentals-quiet-link span").first.text_content()
+            # Let browser focus/auto-scroll jump to a service from the opening.
+            # The native scroll event may not have reached Lenis when clicked.
+            await page.locator(".rentals-quiet-link").first.click()
+            await page.wait_for_function("""() => {
+              const r = document.getElementById('quote-title').getBoundingClientRect();
+              return r.top >= 68 && r.bottom <= innerHeight;
+            }""", timeout=5000)
+            assert await page.locator("#q-interest").input_value() == expected
+            await snapshot(page, output, f"navigation-{width}-{language}-service")
+            await scroll(page, 0)
+            await page.locator(".inquire-link").click()
+            await page.wait_for_function("""() => {
+              const r = document.getElementById('quote-title').getBoundingClientRect();
+              return r.top >= 68 && r.bottom <= innerHeight;
+            }""", timeout=5000)
+            await snapshot(page, output, f"navigation-{width}-{language}-header")
+            assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+            results.append({"width": width, "language": language, "service": "passed", "header": "passed"})
+            await page.close()
+    return results
+
+
 async def review_viewport(browser, base, output, width, height, language):
     folder = output / f"{width}-{language}"
     folder.mkdir(parents=True, exist_ok=True)
@@ -156,8 +189,20 @@ async def check_forms(browser, base):
     await page.locator('[data-lang="es"]').click()
     expected = await page.locator(".rentals-quiet-link span").first.text_content()
     await page.locator(".rentals-quiet-link").first.click()
+    # A CSS-visible form elsewhere in the document is insufficient: navigation
+    # must actually bring its heading into this viewport after a native jump.
+    await page.wait_for_function("""() => {
+      const r = document.getElementById('quote-title').getBoundingClientRect();
+      return r.top >= 68 && r.bottom <= innerHeight;
+    }""", timeout=5000)
     assert await page.locator("#q-interest").input_value() == expected
     assert await page.locator("#q-type").input_value() == "rental"
+    await scroll(page, 0)
+    await page.locator(".inquire-link").click()
+    await page.wait_for_function("""() => {
+      const r = document.getElementById('quote-title').getBoundingClientRect();
+      return r.top >= 68 && r.bottom <= innerHeight;
+    }""", timeout=5000)
 
     async def fill_quote():
         for field, value in {"q-name": " Browser test ", "q-email": " browser@example.com ", "q-phone": "+13055550100", "q-date": "2027-02-15", "q-guests": "40"}.items():
@@ -206,7 +251,7 @@ async def check_forms(browser, base):
         assert await page.locator(f"#{form} button[type=submit]").is_enabled()
         assert await page.locator(f"#{form}").get_attribute("aria-busy") is None
     await context.close()
-    return {"simulated_requests": len(requests), "real_emails_sent": 0, "validation": "passed", "failure_and_retry": "passed", "timeout": "passed", "invalid_json": "passed", "duplicate_guard": "passed"}
+    return {"simulated_requests": len(requests), "real_emails_sent": 0, "inquiry_in_viewport": "passed", "validation": "passed", "failure_and_retry": "passed", "timeout": "passed", "invalid_json": "passed", "duplicate_guard": "passed"}
 
 
 async def check_variants(browser, base, output):
@@ -265,11 +310,13 @@ async def main(args, base):
                 result = await review_viewport(browser, base, args.output, width, height, language)
                 results.append(result)
                 print(f"PASS {width}px {language}: sections 1–9, zoom, crossfades, no overflow", flush=True)
+        navigation = await check_navigation(browser, base, args.output)
+        print("PASS inquiry navigation: service and header, three widths, both languages", flush=True)
         forms = await check_forms(browser, base)
         print("PASS forms: simulated delivery, validation, failure, retry, duplicate submissions", flush=True)
         variants = await check_variants(browser, base, args.output)
         print("PASS resize, reduced motion, missing GSAP, no JavaScript", flush=True)
-        report = {"viewports": results, "forms": forms, "variants": variants}
+        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants}
         (args.output / "results.json").write_text(json.dumps(report, indent=2) + "\n")
         await browser.close()
 

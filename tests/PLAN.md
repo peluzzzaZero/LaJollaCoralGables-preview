@@ -61,4 +61,12 @@ Codex continued the work on `dev` from `de98c11`. Sections 1–9 have passed the
 
 The opening now actually zooms, presents its first line immediately, keeps the mobile crop on the pots, and uses readable cream captions. MonteCarlo is applied to the opening accent. History clears the fixed header and uses natural scrolling on short mobile screens. Form behavior is checked with intercepted Web3Forms responses, including failure, timeout, retry, and duplicate submission prevention. This is not a confirmation of real inbox delivery.
 
-See [the review and reproduction instructions](REVIEW-2026-10-04.md). Next step: review the `dev` → `main` pull request. Keep the pending tagline and guest quote decisions separate from implementation; do not invent them.
+See [the review and reproduction instructions](REVIEW-2026-10-04.md). Keep the pending tagline and guest quote decisions separate from implementation; do not invent them.
+
+## Publication checkpoint — 2026-10-04
+
+[PR #1](https://github.com/peluzzzaZero/LaJollaCoralGables-preview/pull/1) was merged into `main` at `14eda7e`. [GitHub Pages deployment](https://github.com/peluzzzaZero/LaJollaCoralGables-preview/actions/runs/37200670298) completed successfully. The live HTML, JavaScript, and CSS at https://jolla.peluzzza.com were verified byte-for-byte against the reviewed implementation.
+
+Live Chromium checks confirmed the opening, translated service prefill, desktop inquiry navigation, and both legal pages. Inspecting the mobile capture exposed stale scroll coordinates after a native jump: this was corrected by synchronizing Lenis before calculating destinations. Regression checks now require the inquiry heading inside the viewport at all three widths in both languages, rather than merely checking that the form is present. No real email was sent.
+
+The implementation and publication pass is complete. Remaining items require external input or a separately authorized real email submission: confirm inbox delivery, Pat's primary tagline decision, and an approved guest testimonial. No public prices, invented content, or new imagery should be introduced to close these items.
