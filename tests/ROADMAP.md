@@ -1,6 +1,6 @@
 # La Jolla — continuing design review
 
-## v1.0.0 — editorial visit
+## v1.0.0 — editorial visit (published)
 
 Purpose: explain the offer from first paint, introduce a stronger rhythm and make the brand feel specific to this place.
 
@@ -13,7 +13,7 @@ Purpose: explain the offer from first paint, introduce a stronger rhythm and mak
 
 Review question: can a visitor assemble their actual service interests without being sent straight to the form after each choice?
 
-## v1.1.0 — an inquiry with context
+## v1.1.0 — an inquiry with context (reviewed; publication follows the release pipeline)
 
 - Select multiple services with clear selected states and a useful summary.
 - Carry event/room choices into the inquiry; allow correction before submitting.
@@ -31,3 +31,9 @@ Review question: can a visitor assemble their actual service interests without b
 5. Real inbox delivery, with a separately authorized test submission.
 
 Historical section-by-section instructions are retained in PLAN.md. The current design direction and release policy take precedence over its old presentation choices; brand requirements continue to apply.
+
+## Publication and review checkpoints
+
+v1.0.0 was integrated through PR #3 (feature → dev) and PR #4 (dev → main), at 55433aac. Its annotated tag and GitHub release were created by successful CI run 37203746047; Pages run 37203745470 published it. Live assets match the reviewed tree; navigation passes at 390/768/1280 px in both languages.
+
+The v1.1.0 review exposed narrow intrinsic form controls at 320 px. They now shrink to their grid column, with explicit 320/375 px checks. The selection CTA precedes the list so it stays easy to find. Screenshots wait for native scrolling to settle before recording fixed navigation. Missing-page-script behavior leaves sending disabled and direct contact accessible.
