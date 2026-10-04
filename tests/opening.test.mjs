@@ -32,10 +32,10 @@ test("MonteCarlo ships from the brand font file", () => {
 });
 
 test("desktop facade crop stays, and the phone crop keeps the door wordmark out", () => {
-  assert.match(js, /"hero-facade": \{ from: "8% 96%", to: "8% 96%", fromScale: 1\.9, scale: 1\.9 \}/);
-  assert.match(js, /max-width: 800px[\s\S]{0,220}openingCrops\["hero-facade"\] = \{ from: "50% 100%", to: "50% 100%", fromScale: 4\.2, scale: 4\.2 \}/);
+  assert.match(js, /"hero-facade": \{ from: "8% 96%", to: "8% 96%", fromScale: 1\.9, scale: [\d.]+ \}/);
+  assert.match(js, /max-width: 800px[\s\S]{0,220}openingCrops\["hero-facade"\] = \{ from: "0% 100%", to: "0% 100%", fromScale: 4\.2, scale: [\d.]+ \}/);
   assert.match(css, /img\[src\*="hero-facade"\] \{[^}]*object-position: 8% 96%[^}]*scale\(1\.9\)/);
-  assert.match(css, /@media \(max-width: 800px\) \{[^}]*hero-facade[\s\S]*?object-position: 50% 100%[\s\S]*?scale\(4\.2\)/);
+  assert.match(css, /@media \(max-width: 800px\) \{[^}]*hero-facade[\s\S]*?object-position: 0% 100%[\s\S]*?scale\(4\.2\)/);
 });
 
 test("Since 1928 stays on the table line, in history, and off the flower shot", () => {

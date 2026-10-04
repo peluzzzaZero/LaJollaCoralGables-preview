@@ -339,6 +339,11 @@
       btn.classList.toggle("is-active", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    // Translated paragraphs change section heights and scroll positions.
+    window.requestAnimationFrame(function () {
+      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      if (window.__ljLenis) window.__ljLenis.resize();
+    });
   }
 
   function initLang() {
@@ -407,160 +412,168 @@
 
     var reel = document.querySelector(".reel");
     if (reel) {
-      var shots = gsap.utils.toArray(reel.querySelectorAll(".reel-shot"));
-      var beats = gsap.utils.toArray(reel.querySelectorAll(".reel-beat"));
-      var cta = reel.querySelector(".reel-cta");
-      if (shots.length && beats.length) {
-        var reelTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: reel,
-            start: "top top",
-            end: "+=460%",
-            pin: true,
-            scrub: true,
-            anticipatePin: 1
-          }
-        });
-        var step = 1.4;
-        var cross = 0.18;
-        var lineDelay = 0.2;
-        var zoomDur = 0.28;
-        var openingCrops = {
-          "hero-facade": { from: "8% 96%", to: "8% 96%", fromScale: 1.9, scale: 1.9 },
-          "welcome-table": { from: "100% 50%", to: "100% 50%", fromScale: 6.2, scale: 6.2 },
-          "mood-card-flowers": { from: "2% 90%", to: "2% 90%", fromScale: 1.85, scale: 1.85 },
-          "flower-plaque": { from: "0% 55%", to: "0% 55%", fromScale: 2.6, scale: 2.6 }
-        };
-        if (window.matchMedia("(max-width: 800px)").matches) {
-          openingCrops["hero-facade"] = { from: "50% 100%", to: "50% 100%", fromScale: 4.2, scale: 4.2 };
-        }
-        shots.forEach(function (shot, i) {
-          var at = i * step;
-          var img = shot.querySelector("img");
-          var src = img.getAttribute("src") || "";
-          var crop = null;
-          Object.keys(openingCrops).forEach(function (name) {
-            if (src.indexOf(name) !== -1) crop = openingCrops[name];
+      var reelMedia = gsap.matchMedia();
+      reelMedia.add({ mobile: "(max-width: 800px)", desktop: "(min-width: 801px)" }, function () {
+        var shots = gsap.utils.toArray(reel.querySelectorAll(".reel-shot"));
+        var beats = gsap.utils.toArray(reel.querySelectorAll(".reel-beat"));
+        var cta = reel.querySelector(".reel-cta");
+        if (shots.length && beats.length) {
+          var reelTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: reel,
+              start: "top top",
+              end: "+=460%",
+              pin: true,
+              scrub: true,
+              anticipatePin: 1
+            }
           });
-          var fromPos = (crop && crop.from) || img.getAttribute("data-from") || "50% 50%";
-          var toPos = (crop && crop.to) || img.getAttribute("data-to") || "50% 40%";
-          var scaleFrom = (crop && crop.fromScale) || 1.45;
-          var scaleTo = (crop && crop.scale) || parseFloat(img.getAttribute("data-scale")) || 1.8;
-          gsap.set(img, { objectPosition: fromPos, scale: scaleFrom, transformOrigin: toPos });
-          gsap.set(shot, { zIndex: i + 1 });
-          if (i === 0) {
-            gsap.set(shot, { autoAlpha: 1 });
-          } else {
-            gsap.set(shot, { autoAlpha: 0 });
-            /* Incoming rises 0→1 over the same span the outgoing falls 1→0.
-               power3 keeps one of them near opaque so the ink field does not show through. */
-            reelTl.fromTo(shot, { autoAlpha: 0 }, {
-              autoAlpha: 1,
-              ease: "power3.out",
-              duration: cross,
+          var step = 1.4;
+          var cross = 0.18;
+          var lineDelay = 0.2;
+          var zoomDur = 1.26;
+          var openingCrops = {
+            "hero-facade": { from: "8% 96%", to: "8% 96%", fromScale: 1.9, scale: 2.05 },
+            "welcome-table": { from: "100% 50%", to: "100% 50%", fromScale: 6.2, scale: 6.5 },
+            "mood-card-flowers": { from: "2% 90%", to: "2% 90%", fromScale: 1.85, scale: 2.02 },
+            "flower-plaque": { from: "0% 55%", to: "0% 55%", fromScale: 2.6, scale: 2.8 }
+          };
+          if (window.matchMedia("(max-width: 800px)").matches) {
+            openingCrops["hero-facade"] = { from: "0% 100%", to: "0% 100%", fromScale: 4.2, scale: 4.45 };
+          }
+          shots.forEach(function (shot, i) {
+            var at = i * step;
+            var img = shot.querySelector("img");
+            var src = img.getAttribute("src") || "";
+            var crop = null;
+            Object.keys(openingCrops).forEach(function (name) {
+              if (src.indexOf(name) !== -1) crop = openingCrops[name];
+            });
+            var fromPos = (crop && crop.from) || img.getAttribute("data-from") || "50% 50%";
+            var toPos = (crop && crop.to) || img.getAttribute("data-to") || "50% 40%";
+            var scaleFrom = (crop && crop.fromScale) || 1.45;
+            var scaleTo = (crop && crop.scale) || parseFloat(img.getAttribute("data-scale")) || 1.8;
+            gsap.set(img, { objectPosition: fromPos, scale: scaleFrom, transformOrigin: toPos });
+            gsap.set(shot, { zIndex: i + 1 });
+            if (i === 0) {
+              gsap.set(shot, { autoAlpha: 1 });
+            } else {
+              gsap.set(shot, { autoAlpha: 0 });
+              /* Incoming rises 0→1 over the same span the outgoing falls 1→0.
+                 power3 keeps one of them near opaque so the ink field does not show through. */
+              reelTl.fromTo(shot, { autoAlpha: 0 }, {
+                autoAlpha: 1,
+                ease: "power3.out",
+                duration: cross,
+                immediateRender: false
+              }, at);
+            }
+            reelTl.fromTo(img, {
+              scale: scaleFrom,
+              objectPosition: fromPos,
+              transformOrigin: toPos
+            }, {
+              scale: scaleTo,
+              objectPosition: toPos,
+              transformOrigin: toPos,
+              ease: "none",
+              duration: zoomDur,
               immediateRender: false
             }, at);
-          }
-          reelTl.fromTo(img, {
-            scale: scaleFrom,
-            objectPosition: fromPos,
-            transformOrigin: toPos
-          }, {
-            scale: scaleTo,
-            objectPosition: toPos,
-            transformOrigin: toPos,
-            ease: "none",
-            duration: zoomDur,
-            immediateRender: false
-          }, at);
-          if (i < shots.length - 1) {
-            /* Outgoing reaches 0 as the next shot reaches 1. Overlap is only this cross. */
-            reelTl.to(shot, {
-              autoAlpha: 0,
-              ease: "power3.in",
-              duration: cross,
+            if (i < shots.length - 1) {
+              /* Outgoing reaches 0 as the next shot reaches 1. Overlap is only this cross. */
+              reelTl.to(shot, {
+                autoAlpha: 0,
+                ease: "power3.in",
+                duration: cross,
+                immediateRender: false
+              }, at + step);
+            }
+          });
+          beats.forEach(function (beat, i) {
+            var at = i * step;
+            gsap.set(beat, { autoAlpha: i === 0 ? 1 : 0, y: i === 0 ? 0 : 16 });
+            /* Since 1928 is the table line. It fades out before the flower shot. */
+            if (i > 0) {
+              reelTl.fromTo(beat, { autoAlpha: 0, y: 16 }, {
+                autoAlpha: 1,
+                y: 0,
+                ease: "none",
+                duration: 0.12,
+                immediateRender: false
+              }, at + lineDelay);
+            }
+            if (i < beats.length - 1) {
+              /* Hold the line through most of the photo, then let it leave. */
+              reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.1 }, at + 1.26);
+            }
+          });
+          /* Last photo must occupy a full step, or its line sits in the last sliver of the pin. */
+          reelTl.set({}, {}, shots.length * step);
+          if (cta) {
+            gsap.set(cta, { autoAlpha: 0 });
+            reelTl.fromTo(cta, { autoAlpha: 0 }, {
+              autoAlpha: 1,
+              ease: "none",
+              duration: 0.2,
               immediateRender: false
-            }, at + step);
+            }, (shots.length - 1) * step + lineDelay);
           }
-        });
-        beats.forEach(function (beat, i) {
-          var at = i * step;
-          gsap.set(beat, { autoAlpha: 0, y: 16 });
-          /* Since 1928 is the table line. It fades out before the flower shot. */
-          reelTl.fromTo(beat, { autoAlpha: 0, y: 16 }, {
-            autoAlpha: 1,
-            y: 0,
-            ease: "none",
-            duration: 0.12,
-            immediateRender: false
-          }, at + lineDelay);
-          if (i < beats.length - 1) {
-            /* Hold the line through most of the photo, then let it leave. */
-            reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.1 }, at + 1.26);
-          }
-        });
-        /* Last photo must occupy a full step, or its line sits in the last sliver of the pin. */
-        reelTl.set({}, {}, shots.length * step);
-        if (cta) {
-          gsap.set(cta, { autoAlpha: 0 });
-          reelTl.fromTo(cta, { autoAlpha: 0 }, {
-            autoAlpha: 1,
-            ease: "none",
-            duration: 0.2,
-            immediateRender: false
-          }, (shots.length - 1) * step + lineDelay);
         }
-      }
+      });
     }
 
     var history = document.querySelector(".history");
     if (history) {
-      var historyPhoto = history.querySelector(".history-photo img");
-      var historyLines = gsap.utils.toArray(history.querySelectorAll(".history-line"));
-      var historyRule = history.querySelector(".history-rule");
-      var historyTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: history,
-          start: "top top",
-          end: "+=90%",
-          pin: true,
-          scrub: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true
-        }
-      });
-      if (historyPhoto) {
-        /* Walk the facade from the blue pots (bottom left) onto the sun tile.
-           Scale stays tight and the window stays low so the painted wordmark never enters. */
-        gsap.set(historyPhoto, {
-          scale: 3.55,
-          objectPosition: "2% 100%",
-          transformOrigin: "2% 100%"
+      var historyMedia = gsap.matchMedia();
+      historyMedia.add({ compact: "(max-width: 800px) and (max-height: 740px)", full: "(min-width: 801px), (min-height: 741px)" }, function (context) {
+        var historyPhoto = history.querySelector(".history-photo img");
+        var historyLines = gsap.utils.toArray(history.querySelectorAll(".history-line"));
+        var historyRule = history.querySelector(".history-rule");
+        var historyTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: history,
+            start: context.conditions.compact ? "top 12%" : "top top",
+            end: context.conditions.compact ? "bottom 70%" : "+=90%",
+            pin: !context.conditions.compact,
+            scrub: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true
+          }
         });
-        historyTl.fromTo(historyPhoto, {
-          scale: 3.55,
-          objectPosition: "2% 100%",
-          transformOrigin: "2% 100%"
-        }, {
-          scale: 3.35,
-          objectPosition: "52% 100%",
-          transformOrigin: "52% 100%",
-          ease: "none",
-          duration: 1
-        }, 0);
-      }
-      if (historyRule) {
-        gsap.set(historyRule, { scaleX: 0, transformOrigin: "left center" });
-        historyTl.to(historyRule, { scaleX: 1, ease: "none", duration: 0.28 }, 0.06);
-      }
-      historyLines.forEach(function (line, i) {
-        /* Eyebrow, title, and the Since 1928 lede stay readable. Only the managed line may fade in. */
-        if (i < 3) {
-          gsap.set(line, { autoAlpha: 1, y: 0 });
-          return;
+        if (historyPhoto) {
+          /* Walk the facade from the blue pots (bottom left) onto the sun tile.
+             Scale stays tight and the window stays low so the painted wordmark never enters. */
+          gsap.set(historyPhoto, {
+            scale: 3.55,
+            objectPosition: "2% 100%",
+            transformOrigin: "2% 100%"
+          });
+          historyTl.fromTo(historyPhoto, {
+            scale: 3.55,
+            objectPosition: "2% 100%",
+            transformOrigin: "2% 100%"
+          }, {
+            scale: 3.35,
+            objectPosition: "52% 100%",
+            transformOrigin: "52% 100%",
+            ease: "none",
+            duration: 1
+          }, 0);
         }
-        gsap.set(line, { autoAlpha: 0, y: 12 });
-        historyTl.to(line, { autoAlpha: 1, y: 0, ease: "none", duration: 0.22 }, 0.4);
+        if (historyRule) {
+          gsap.set(historyRule, { scaleX: 0, transformOrigin: "left center" });
+          historyTl.to(historyRule, { scaleX: 1, ease: "none", duration: 0.28 }, 0.06);
+        }
+        historyLines.forEach(function (line, i) {
+          /* Eyebrow, title, and the Since 1928 lede stay readable. Only the managed line may fade in. */
+          if (i < 3) {
+            gsap.set(line, { autoAlpha: 1, y: 0 });
+            return;
+          }
+          gsap.set(line, { autoAlpha: 0, y: 12 });
+          historyTl.to(line, { autoAlpha: 1, y: 0, ease: "none", duration: 0.22 }, 0.4);
+        });
       });
     }
 
@@ -822,7 +835,8 @@
     const typeSelect = document.getElementById("q-type");
     document.querySelectorAll("[data-scroll-quote]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        const value = btn.getAttribute("data-interest") || "";
+        const label = btn.querySelector("[data-i18n]");
+        const value = label ? label.textContent.trim() : btn.getAttribute("data-interest") || "";
         if (interest) {
           interest.value = value;
           interest.focus({ preventScroll: true });
@@ -839,8 +853,11 @@
 
   function sendMail(payload) {
     if (!MAIL_KEY) return Promise.reject(new Error("mail"));
+    const controller = new AbortController();
+    const timeout = window.setTimeout(function () { controller.abort(); }, 15000);
     return fetch("https://api.web3forms.com/submit", {
       method: "POST",
+      signal: controller.signal,
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(Object.assign({
         access_key: MAIL_KEY,
@@ -850,12 +867,12 @@
       }, payload))
     }).then(function (res) {
       return res.json().then(function (data) {
-        if (!res.ok || data.success === false || data.success === "false") {
+        if (!res.ok || (data.success !== true && data.success !== "true")) {
           throw new Error("mail");
         }
         return data;
       });
-    });
+    }).finally(function () { window.clearTimeout(timeout); });
   }
 
   function initLocalForm(formId, successId, errorId, sendErrorId, subject) {
@@ -866,17 +883,23 @@
     const sendError = document.getElementById(sendErrorId);
     const required = form.querySelectorAll("[required]");
     const submit = form.querySelector("[type='submit']");
+    let sending = false;
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      if (sending) return;
       if (success) success.hidden = true;
       if (error) error.hidden = true;
       if (sendError) sendError.hidden = true;
 
       let ok = true;
       required.forEach(function (field) {
+        if (field.type === "text" || field.type === "email" || field.type === "tel") {
+          field.value = field.value.trim();
+        }
         const valid = field.checkValidity();
         field.classList.toggle("is-invalid", !valid);
+        field.setAttribute("aria-invalid", valid ? "false" : "true");
         if (!valid) ok = false;
       });
 
@@ -893,27 +916,34 @@
         payload[field.name] = String(field.value || "").trim();
       });
       if (payload.email) payload.replyto = payload.email;
+      sending = true;
+      form.setAttribute("aria-busy", "true");
       if (submit) submit.disabled = true;
 
       sendMail(payload).then(function () {
         if (success) {
           success.hidden = false;
-          success.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          success.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
         }
         form.reset();
         required.forEach(function (field) {
           field.classList.remove("is-invalid");
+          field.removeAttribute("aria-invalid");
         });
       }).catch(function () {
         if (sendError) sendError.hidden = false;
       }).then(function () {
+        sending = false;
+        form.removeAttribute("aria-busy");
         if (submit) submit.disabled = false;
       });
     });
 
     required.forEach(function (field) {
       const validate = function () {
-        field.classList.toggle("is-invalid", !field.checkValidity());
+        const valid = field.checkValidity();
+        field.classList.toggle("is-invalid", !valid);
+        field.setAttribute("aria-invalid", valid ? "false" : "true");
       };
       field.addEventListener("input", validate);
       field.addEventListener("blur", validate);

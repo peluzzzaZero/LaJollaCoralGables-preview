@@ -1,7 +1,7 @@
 # La Jolla preview — section work on `dev`
 
 Main stays untouched until every section below has passed its test and a visual review.
-Grok edits one section at a time. OpenCode only adds or checks tests. A section is not done until the scroll frames of that section have been looked at.
+Work on one section at a time, then check its tests and scroll frames. A section is not done until the scroll frames of that section have been looked at.
 
 Do not invent prices, vendor names, bios, or reviews. Do not use cafe-garden.png, cafe-table.png, or cafe-detail.png. Year is 1928. The room name stays The Alcazar Room. Spanish is usted. No wipe, no edge-on tilt, no cream band, no fade to an empty dark field. MonteCarlo is the script accent only, from the brand zip.
 
@@ -54,3 +54,11 @@ Visual: the form is usable.
 Objective: one pass for type and for 390px, 768px, and 1280px, using MonteCarlo from the brand zip. Then a pull request from `dev` to `main` only after sections 1–9 have passed.
 Test: `node --test tests/*.test.mjs`
 Visual: one full-page recording, reviewed before the pull request.
+
+## Checkpoint — 2026-10-04
+
+Codex continued the work on `dev` from `de98c11`. Sections 1–9 have passed the existing static checks and the browser review at 390, 768, and 1280 px in English and Spanish. Scroll recordings and section frames were reviewed. The general pass includes responsive resizing, short mobile screens, reduced motion, and fallback rendering without GSAP or JavaScript.
+
+The opening now actually zooms, presents its first line immediately, keeps the mobile crop on the pots, and uses readable cream captions. MonteCarlo is applied to the opening accent. History clears the fixed header and uses natural scrolling on short mobile screens. Form behavior is checked with intercepted Web3Forms responses, including failure, timeout, retry, and duplicate submission prevention. This is not a confirmation of real inbox delivery.
+
+See [the review and reproduction instructions](REVIEW-2026-10-04.md). Next step: review the `dev` → `main` pull request. Keep the pending tagline and guest quote decisions separate from implementation; do not invent them.

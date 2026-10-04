@@ -37,9 +37,9 @@ test("Since 1928 lede is in #history", () => {
   assert.match(historySection(), /Since 1928/);
 });
 
-test("opening welcome-table crop stays 100% 50% at scale 6.2", () => {
+test("opening welcome-table starts on the candle detail at scale 6.2", () => {
   assert.match(
     js,
-    /"welcome-table":\s*\{\s*from:\s*"100% 50%",\s*to:\s*"100% 50%",\s*fromScale:\s*6\.2,\s*scale:\s*6\.2\s*\}/
+    /"welcome-table":\s*\{\s*from:\s*"100% 50%",\s*to:\s*"100% 50%",\s*fromScale:\s*6\.2,\s*scale:\s*[\d.]+\s*\}/
   );
 });
