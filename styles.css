@@ -45,7 +45,7 @@ html {
 body {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   line-height: 1.7;
   color: var(--ink);
   background: var(--cream);
@@ -308,7 +308,7 @@ p:last-child { margin-bottom: 0; }
 .reel-beat {
   margin: 0;
   color: var(--cream);
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   line-height: 1.45;
   text-shadow: 0 1px 12px rgba(44, 36, 30, 0.45);
 }
@@ -317,11 +317,11 @@ p:last-child { margin-bottom: 0; }
 .reel-beat--quote {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  font-size: clamp(2.05rem, 4.2vw, 3rem);
   line-height: 1.2;
   color: var(--cream);
 }
-.reel-beat--quote { font-style: italic; font-weight: 400; font-size: clamp(1.35rem, 2.4vw, 1.85rem); }
+.reel-beat--quote { font-style: italic; font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.2rem); }
 .reel-caption .btn { margin-top: 1.1rem; }
 
 html.has-gsap .hero.reel {
@@ -367,6 +367,34 @@ html.has-gsap .reel-shot img {
   transform: scale(1.05);
   transform-origin: center center;
 }
+/* First paint is the detail crop. A wider start pulls the printed card and the door wordmark into frame. */
+html.has-gsap .reel-shot img[src*="hero-facade"] {
+  object-position: 8% 96%;
+  transform-origin: 8% 96%;
+  transform: scale(1.9);
+}
+@media (max-width: 800px) {
+  html.has-gsap .reel-shot img[src*="hero-facade"] {
+    object-position: 50% 100%;
+    transform-origin: 50% 100%;
+    transform: scale(4.2);
+  }
+}
+html.has-gsap .reel-shot img[src*="welcome-table"] {
+  object-position: 100% 50%;
+  transform-origin: 100% 50%;
+  transform: scale(6.2);
+}
+html.has-gsap .reel-shot img[src*="mood-card-flowers"] {
+  object-position: 2% 90%;
+  transform-origin: 2% 90%;
+  transform: scale(1.85);
+}
+html.has-gsap .reel-shot img[src*="flower-plaque"] {
+  object-position: 0% 55%;
+  transform-origin: 0% 55%;
+  transform: scale(2.6);
+}
 html.has-gsap .reel-caption {
   position: absolute;
   inset: 0;
@@ -375,7 +403,7 @@ html.has-gsap .reel-caption {
   padding: 0;
   background: none;
   transform: none;
-  z-index: 3;
+  z-index: 12;
   pointer-events: none;
 }
 html.has-gsap .reel-beats { position: absolute; inset: 0; display: block; }
@@ -398,10 +426,10 @@ html.has-gsap .reel-on--ivy {
   color: var(--cream);
 }
 html.has-gsap .reel-on--table {
-  left: 50%;
-  top: 10%;
-  max-width: 18rem;
-  font-size: clamp(1.28rem, 2vw, 1.55rem);
+  left: 8%;
+  top: 16%;
+  max-width: 28rem;
+  font-size: clamp(1.45rem, 2.3vw, 1.8rem);
   color: var(--ink);
   text-shadow: 0 0 12px rgba(242, 238, 227, 0.95), 0 1px 2px rgba(242, 238, 227, 0.9);
 }
@@ -421,6 +449,17 @@ html.has-gsap .reel-on--roses {
   font-size: clamp(1.28rem, 2vw, 1.55rem);
   color: var(--ink);
   text-shadow: 0 1px 8px rgba(242, 238, 227, 0.92);
+}
+@media (max-width: 800px) {
+  html.has-gsap .reel-on--ivy,
+  html.has-gsap .reel-on--bloom,
+  html.has-gsap .reel-on--roses,
+  html.has-gsap .reel-on--table {
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+    width: auto;
+  }
 }
 html.has-gsap .reel-cta { opacity: 0; visibility: hidden; }
 
@@ -592,20 +631,27 @@ html.has-gsap .history {
 }
 html.has-gsap .history-stage { height: 100%; min-height: 0; }
 html.has-gsap .history-photo { position: relative; min-height: 0; height: 100%; }
+html.has-gsap .history-copy {
+  position: relative;
+  z-index: 1;
+  background: var(--cream);
+}
 html.has-gsap .history-photo img {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: auto;
-  height: 420%;
-  max-width: none;
-  object-fit: unset;
-  object-position: left bottom;
-  transform: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 2% 100%;
+  transform: scale(3.55);
+  transform-origin: 2% 100%;
 }
 @media (max-width: 800px) {
-  .history-stage { grid-template-columns: 1fr; }
-  .history-photo { min-height: 46vh; }
+  .history-stage { grid-template-columns: minmax(0, 1fr); }
+  .history-photo { min-height: 46vh; min-width: 0; }
+  .history-photo img { min-width: 0; max-width: 100%; }
+  .history .section-title,
+  .history .lede { overflow-wrap: break-word; }
+  html.has-gsap .history-stage { grid-template-rows: auto minmax(0, 1fr); }
+  html.has-gsap .history-copy { padding: 1.75rem 1.35rem 1.1rem; }
 }
 .history-accent {
   width: min(7.5rem, 28vw);
@@ -645,12 +691,13 @@ html.has-gsap .history-photo img {
 .quote-bleed-media img {
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: 0% 78%;
+  object-position: 100% 90%;
 }
 .quote-bleed-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(44, 36, 30, 0.18);
+  background: none;
+  pointer-events: none;
 }
 .quote-bleed-text {
   position: relative;
@@ -758,6 +805,24 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
 
 /* —— 4b. Events list —— */
 .events { background: var(--paper); padding: 0; }
+
+#events .eyebrow { margin-bottom: 0.7rem; }
+#events .events-rule {
+  display: block;
+  width: 4.5rem;
+  height: 1px;
+  margin: 0 auto 1.15rem;
+  background: var(--sage);
+  transform-origin: center center;
+}
+/* Words in this section stay opaque. The only motion is the rule drawing. */
+html.js #events .reveal {
+  opacity: 1;
+  transform: none;
+}
+html.js #events .events-rule {
+  transform: scaleX(var(--p, 0));
+}
 .events-intro { padding: clamp(5.5rem, 12vw, 8.5rem) 0 clamp(2.5rem, 5vw, 3.5rem); }
 .events-intro .section-head { margin-bottom: 0; }
 
@@ -874,8 +939,14 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
     padding: 4.5rem 1.1rem 3rem;
   }
   .chapter--object .chapter-media { height: auto; }
-  .event-types { grid-template-columns: 1fr; gap: 1.8rem; }
+  .event-types {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+    padding-inline: 1.25rem;
+  }
   .event-types li:last-child { max-width: none; }
+  .event-types h3,
+  .event-types p { overflow-wrap: break-word; }
 }
 
 /* —— 4b. Editorial (kept for any leftover rows) —— */
@@ -976,7 +1047,6 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
   min-width: 0;
   margin: 0;
   aspect-ratio: 1;
-  min-height: min(72vh, 38rem);
   position: relative;
   overflow: hidden;
   background: var(--sage);
@@ -986,7 +1056,8 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   padding: 0;
 }
 .alcazar-ornament {
@@ -999,8 +1070,28 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
   .alcazar-grid { grid-template-columns: 1fr; }
   .alcazar-visual { min-height: 0; width: 100%; aspect-ratio: 1; }
 }
+/* Name, body, and the drawing stay opaque. Other sections keep the reveal fade. */
+html.js #alcazar .reveal {
+  opacity: 1;
+  transform: none;
+}
 
 /* —— 6. Rentals —— */
+/* Title, intro, the ten names, Inquire, and the closing line stay fully readable.
+   Other sections keep the reveal fade. */
+html.js #rentals .reveal {
+  opacity: 1;
+  transform: none;
+}
+#rentals .rentals-rule {
+  display: block;
+  width: 4.5rem;
+  height: 1px;
+  margin: 0.35rem 0 1.15rem;
+  background: var(--sage);
+  transform-origin: left center;
+}
+html.js #rentals .rentals-rule { transform: scaleX(var(--p, 0)); }
 .rentals { background: var(--paper); padding-block: clamp(3.25rem, 6vw, 5rem); }
 .rentals .section-head { margin-bottom: 1.35rem; }
 .rentals .section-intro { margin-top: 0.55rem; }
@@ -1091,6 +1182,8 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
 }
 @media (max-width: 800px) {
   .rentals-featured { grid-template-columns: 1fr; max-width: 22rem; margin-inline: auto; }
+  .rentals-quiet { padding-inline: 1.15rem; }
+  .rentals-quiet-link { overflow-wrap: break-word; }
 }
 @media (min-width: 801px) and (max-width: 980px) {
   .rentals-featured { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
@@ -1233,6 +1326,11 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
 }
 
 /* —— 9. Team —— */
+/* Team names and roles stay fully readable. Other sections keep the reveal fade. */
+html.js #team .reveal {
+  opacity: 1;
+  transform: none;
+}
 .team { background: var(--cream); }
 .team-grid {
   display: grid;
@@ -1263,7 +1361,7 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
   padding-left: 0.18em;
 }
 .team-card h3 {
-  font-size: clamp(3.1rem, 5.5vw, 4.4rem);
+  font-size: clamp(3.4rem, 6vw, 4.8rem);
   line-height: 1.05;
   color: var(--ink);
   margin-bottom: 0.45rem;
@@ -1282,6 +1380,26 @@ html.has-gsap .orbit-face { transform: rotateY(-16deg); }
 }
 
 /* —— 10. Quote form —— */
+/* Quote and vendor forms stay fully readable instead of inheriting the shared reveal fade. */
+html.js #quote .reveal {
+  opacity: 1;
+  transform: none;
+}
+html.js #vendors .reveal {
+  opacity: 1;
+  transform: none;
+}
+#quote .quote-rule,
+#vendors .vendors-rule {
+  display: block;
+  width: 4.5rem;
+  height: 1px;
+  margin: 0.35rem auto 1.15rem;
+  background: var(--sage);
+  transform-origin: center center;
+}
+html.js #quote .quote-rule,
+html.js #vendors .vendors-rule { transform: scaleX(var(--p, 0)); }
 .quote {
   background: var(--paper);
   border-top: 1px solid var(--line);
@@ -1480,8 +1598,8 @@ html.js .moment-track .quote-bleed-media img {
   transform: none;
 }
 html.js .moment-track .quote-bleed-text {
-  opacity: calc(0.15 + var(--p, 0) * 0.85);
-  transform: translateY(calc((1 - var(--p, 0)) * 28px));
+  opacity: 1;
+  transform: none;
 }
 html.js .reveal {
   opacity: calc(0.08 + var(--p, 0) * 0.92);
@@ -1521,6 +1639,14 @@ html.has-gsap .editorial.reveal .editorial-media img {
   html.js .reveal,
   html.js .hero-track .hero-content,
   html.js .moment-track .quote-bleed-text { opacity: 1; transform: none; }
+  #events .events-rule,
+  html.js #events .events-rule,
+  #rentals .rentals-rule,
+  html.js #rentals .rentals-rule,
+  #quote .quote-rule,
+  html.js #quote .quote-rule,
+  #vendors .vendors-rule,
+  html.js #vendors .vendors-rule { transform: none; }
   html.js .hero-track .hero-media,
   html.js .moment-track .quote-bleed-media img,
   html.js .editorial.reveal .editorial-media img { transform: none; }
@@ -1584,4 +1710,17 @@ html.has-gsap .editorial.reveal .editorial-media img {
   html.has-gsap .reel-beat + .reel-beat { margin-top: 0.85rem; }
   .reel-cta,
   html.has-gsap .reel-cta { opacity: 1; visibility: visible; }
+}
+
+@media (max-width: 800px) {
+  .quote-bleed-text {
+    margin: 0 1rem 6vh;
+    max-width: calc(100% - 2rem);
+  }
+  .team-grid { grid-template-columns: 1fr; max-width: 20rem; margin-inline: auto; }
+  .team-card h3 { font-size: clamp(2.4rem, 10vw, 3.2rem); }
+  .footer-bottom { padding-inline: 1.25rem; }
+  .footer-tag,
+  .footer-address,
+  .managed { overflow-wrap: anywhere; }
 }

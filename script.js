@@ -422,54 +422,85 @@
           }
         });
         var step = 1.4;
+        var cross = 0.18;
+        var lineDelay = 0.2;
+        var zoomDur = 0.28;
+        var openingCrops = {
+          "hero-facade": { from: "8% 96%", to: "8% 96%", fromScale: 1.9, scale: 1.9 },
+          "welcome-table": { from: "100% 50%", to: "100% 50%", fromScale: 6.2, scale: 6.2 },
+          "mood-card-flowers": { from: "2% 90%", to: "2% 90%", fromScale: 1.85, scale: 1.85 },
+          "flower-plaque": { from: "0% 55%", to: "0% 55%", fromScale: 2.6, scale: 2.6 }
+        };
+        if (window.matchMedia("(max-width: 800px)").matches) {
+          openingCrops["hero-facade"] = { from: "50% 100%", to: "50% 100%", fromScale: 4.2, scale: 4.2 };
+        }
         shots.forEach(function (shot, i) {
           var at = i * step;
           var img = shot.querySelector("img");
-          var fromPos = img.getAttribute("data-from") || "50% 50%";
-          var toPos = img.getAttribute("data-to") || "50% 40%";
-          var scaleTo = parseFloat(img.getAttribute("data-scale")) || 1.8;
-          gsap.set(img, { objectPosition: fromPos, scale: 1.06, transformOrigin: fromPos });
+          var src = img.getAttribute("src") || "";
+          var crop = null;
+          Object.keys(openingCrops).forEach(function (name) {
+            if (src.indexOf(name) !== -1) crop = openingCrops[name];
+          });
+          var fromPos = (crop && crop.from) || img.getAttribute("data-from") || "50% 50%";
+          var toPos = (crop && crop.to) || img.getAttribute("data-to") || "50% 40%";
+          var scaleFrom = (crop && crop.fromScale) || 1.45;
+          var scaleTo = (crop && crop.scale) || parseFloat(img.getAttribute("data-scale")) || 1.8;
+          gsap.set(img, { objectPosition: fromPos, scale: scaleFrom, transformOrigin: toPos });
+          gsap.set(shot, { zIndex: i + 1 });
           if (i === 0) {
             gsap.set(shot, { autoAlpha: 1 });
           } else {
             gsap.set(shot, { autoAlpha: 0 });
+            /* Incoming rises 0→1 over the same span the outgoing falls 1→0.
+               power3 keeps one of them near opaque so the ink field does not show through. */
             reelTl.fromTo(shot, { autoAlpha: 0 }, {
               autoAlpha: 1,
-              ease: "none",
-              duration: 0.34,
+              ease: "power3.out",
+              duration: cross,
               immediateRender: false
-            }, at - 0.06);
+            }, at);
           }
           reelTl.fromTo(img, {
-            scale: 1.06,
+            scale: scaleFrom,
             objectPosition: fromPos,
-            transformOrigin: fromPos
+            transformOrigin: toPos
           }, {
             scale: scaleTo,
             objectPosition: toPos,
             transformOrigin: toPos,
             ease: "none",
-            duration: 0.36,
+            duration: zoomDur,
             immediateRender: false
           }, at);
           if (i < shots.length - 1) {
-            reelTl.to(shot, { autoAlpha: 0, ease: "none", duration: 0.22 }, at + 1.16);
+            /* Outgoing reaches 0 as the next shot reaches 1. Overlap is only this cross. */
+            reelTl.to(shot, {
+              autoAlpha: 0,
+              ease: "power3.in",
+              duration: cross,
+              immediateRender: false
+            }, at + step);
           }
         });
         beats.forEach(function (beat, i) {
           var at = i * step;
           gsap.set(beat, { autoAlpha: 0, y: 16 });
+          /* Since 1928 is the table line. It fades out before the flower shot. */
           reelTl.fromTo(beat, { autoAlpha: 0, y: 16 }, {
             autoAlpha: 1,
             y: 0,
             ease: "none",
-            duration: 0.16,
+            duration: 0.12,
             immediateRender: false
-          }, at + 0.4);
+          }, at + lineDelay);
           if (i < beats.length - 1) {
-            reelTl.to(beat, { autoAlpha: 0, y: -10, ease: "none", duration: 0.1 }, at + 1.18);
+            /* Hold the line through most of the photo, then let it leave. */
+            reelTl.to(beat, { autoAlpha: 0, y: -8, ease: "none", duration: 0.1 }, at + 1.26);
           }
         });
+        /* Last photo must occupy a full step, or its line sits in the last sliver of the pin. */
+        reelTl.set({}, {}, shots.length * step);
         if (cta) {
           gsap.set(cta, { autoAlpha: 0 });
           reelTl.fromTo(cta, { autoAlpha: 0 }, {
@@ -477,7 +508,7 @@
             ease: "none",
             duration: 0.2,
             immediateRender: false
-          }, beats.length - 1 + 0.2);
+          }, (shots.length - 1) * step + lineDelay);
         }
       }
     }
@@ -499,12 +530,21 @@
         }
       });
       if (historyPhoto) {
-        gsap.set(historyPhoto, { x: 0, scale: 1, objectPosition: "left bottom" });
-        historyTl.fromTo(historyPhoto, { x: 0 }, {
-          x: function () {
-            var col = historyPhoto.parentElement;
-            return -Math.max(0, (historyPhoto.offsetWidth - col.offsetWidth) / 2);
-          },
+        /* Walk the facade from the blue pots (bottom left) onto the sun tile.
+           Scale stays tight and the window stays low so the painted wordmark never enters. */
+        gsap.set(historyPhoto, {
+          scale: 3.55,
+          objectPosition: "2% 100%",
+          transformOrigin: "2% 100%"
+        });
+        historyTl.fromTo(historyPhoto, {
+          scale: 3.55,
+          objectPosition: "2% 100%",
+          transformOrigin: "2% 100%"
+        }, {
+          scale: 3.35,
+          objectPosition: "52% 100%",
+          transformOrigin: "52% 100%",
           ease: "none",
           duration: 1
         }, 0);
@@ -514,20 +554,35 @@
         historyTl.to(historyRule, { scaleX: 1, ease: "none", duration: 0.28 }, 0.06);
       }
       historyLines.forEach(function (line, i) {
-        if (i < 2) return;
-        gsap.set(line, { autoAlpha: 0, y: 18 });
-        historyTl.to(line, { autoAlpha: 1, y: 0, ease: "none", duration: 0.18 }, 0.2 + (i - 2) * 0.22);
+        /* Eyebrow, title, and the Since 1928 lede stay readable. Only the managed line may fade in. */
+        if (i < 3) {
+          gsap.set(line, { autoAlpha: 1, y: 0 });
+          return;
+        }
+        gsap.set(line, { autoAlpha: 0, y: 12 });
+        historyTl.to(line, { autoAlpha: 1, y: 0, ease: "none", duration: 0.22 }, 0.4);
       });
     }
 
-    var alcazarVisual = document.querySelector(".alcazar-visual");
+    var alcazarVisual = document.querySelector("#alcazar");
     if (alcazarVisual) {
-      gsap.set(alcazarVisual, { clipPath: "inset(0 0 100% 0)" });
-      gsap.to(alcazarVisual, {
-        clipPath: "inset(0 0 0% 0)",
-        ease: "none",
-        scrollTrigger: { trigger: ".alcazar", start: "top 78%", end: "top 38%", scrub: true }
-      });
+      /* Name, body, and the full line drawing stay readable together.
+         No photo wipe and no tilt. */
+      gsap.set(alcazarVisual.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      var alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
+      if (alcazarMark) {
+        /* The awning mark settles as the room name is read. No wipe, no tilt. */
+        gsap.fromTo(alcazarMark, { scale: 0.92, transformOrigin: "50% 50%" }, {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: alcazarVisual,
+            start: "top 78%",
+            end: "top 42%",
+            scrub: true
+          }
+        });
+      }
     }
 
     gsap.utils.toArray(".brand-card img").forEach(function (img) {
@@ -546,27 +601,132 @@
         scrollTrigger: {
           trigger: moment,
           start: "top top",
-          end: "+=80%",
+          end: "+=140%",
           pin: true,
           scrub: true,
           anticipatePin: 1
         }
       });
       if (momentImg) {
-        gsap.set(momentImg, { scale: 1.08, objectPosition: "0% 84%", transformOrigin: "left center" });
+        /* The highlight walks across the leaves. Stay in the lower crop so the
+           painted oval remains above the sentence for the whole pin. */
+        gsap.set(momentImg, {
+          scale: 1.32,
+          objectPosition: "100% 90%",
+          transformOrigin: "70% 65%"
+        });
         momentTl.to(momentImg, {
-          scale: 1.18,
-          objectPosition: "0% 62%",
+          scale: 1.58,
+          objectPosition: "15% 78%",
+          transformOrigin: "70% 65%",
           ease: "none",
           duration: 1
         }, 0);
       }
       if (momentText) {
-        gsap.set(momentText, { autoAlpha: 1, y: 10 });
-        momentTl.to(momentText, { y: 0, ease: "none", duration: 0.2 }, 0);
+        gsap.set(momentText, { autoAlpha: 1, y: 0 });
       }
     }
 
+    var events = document.querySelector("#events");
+    if (events) {
+      /* Headings and bodies stay fully readable. The rule under the eyebrow
+         is the only motion: it draws across as the section arrives. */
+      gsap.set(events.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      var eventsRule = events.querySelector(".events-rule");
+      if (eventsRule) {
+        gsap.set(eventsRule, { scaleX: 0, transformOrigin: "center center" });
+        gsap.to(eventsRule, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: events,
+            start: "top 82%",
+            end: "top 38%",
+            scrub: true
+          }
+        });
+      }
+    }
+
+    var rentals = document.querySelector("#rentals");
+    if (rentals) {
+      /* Title, intro, the ten names, Inquire, and the closing line stay readable.
+         Not a fade from invisible. */
+      gsap.set(rentals.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      var rentalsRule = rentals.querySelector(".rentals-rule");
+      if (rentalsRule) {
+        gsap.set(rentalsRule, { scaleX: 0, transformOrigin: "left center" });
+        gsap.to(rentalsRule, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: rentals,
+            start: "top 80%",
+            end: "top 48%",
+            scrub: true
+          }
+        });
+      }
+    }
+
+    var team = document.querySelector("#team");
+    if (team) {
+      gsap.set(team.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      var monograms = team.querySelectorAll(".team-photo.monogram");
+      if (monograms.length) {
+        /* Names stay fully readable. The monograms settle while the two cards hold. */
+        gsap.set(monograms, { scale: 0.94, transformOrigin: "50% 60%" });
+        gsap.to(monograms, {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: team,
+            start: "top 72%",
+            end: "top 36%",
+            scrub: true
+          }
+        });
+      }
+    }
+
+    var quote = document.querySelector("#quote");
+    if (quote) {
+      gsap.set(quote.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      var quoteRule = quote.querySelector(".quote-rule");
+      if (quoteRule) {
+        gsap.set(quoteRule, { scaleX: 0, transformOrigin: "center center" });
+        gsap.to(quoteRule, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: quote,
+            start: "top 78%",
+            end: "top 52%",
+            scrub: true
+          }
+        });
+      }
+    }
+
+    var vendors = document.querySelector("#vendors");
+    if (vendors) {
+      gsap.set(vendors.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
+      var vendorsRule = vendors.querySelector(".vendors-rule");
+      if (vendorsRule) {
+        gsap.set(vendorsRule, { scaleX: 0, transformOrigin: "center center" });
+        gsap.to(vendorsRule, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: vendors,
+            start: "top 78%",
+            end: "top 52%",
+            scrub: true
+          }
+        });
+      }
+    }
 
     if (lenis) {
       ScrollTrigger.addEventListener("refresh", function () { lenis.resize(); });
