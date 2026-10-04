@@ -6,7 +6,7 @@ The user's instruction of 4 October 2026 authorizes iterative improvements, feat
 2. Choose a bounded improvement and document its purpose. Work on `feature/<purpose>` from current `dev`.
 3. Run brand/content/syntax tests and the browser review. Look at the actual section screenshots and scroll frames in both languages and multiple widths. Correct issues before integration.
 4. Open a PR to `dev`; inspect its final diff and successful CI. Integrate the feature.
-5. Set the semantic version, metadata and cache keys; include release notes recording changes, verification, limitations and the next useful improvement.
+5. Increase the semantic version (a PR to main verifies it against its exact main base), metadata and cache keys; include release notes recording changes, verification, limitations and the next useful improvement.
 6. Open `dev` → `main`, with the expected reviewed head. Inspect the final diff and successful CI before merging.
 7. On main, CI creates an annotated `vVERSION` tag and a GitHub release after its checks pass. Existing tags may never be moved. Each main integration must have a new version.
 8. Wait for Pages publication, verify bytes/version and exercise the live navigation. Log the release commit, tag, PRs, checks and deployment.

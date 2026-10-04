@@ -6,7 +6,7 @@
 <title>La Jolla Coral Gables · Est. 1928</title>
 <meta name="description" content="La Jolla, a jewel in Coral Gables. Historic venue for weddings, celebrations, corporate and social events. Managed by Epic Lux Management." />
 <meta name="color-scheme" content="light" />
-<meta name="application-version" content="1.0.0" />
+<meta name="application-version" content="1.1.0" />
 <link rel="icon" href="assets/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=1.0.0" />
+<link rel="stylesheet" href="styles.css?v=1.1.0" />
 </head>
 <body id="top">
 <!--
@@ -41,6 +41,15 @@
       <a href="#rentals" data-i18n="nav.services">Services</a>
     </nav>
     <div class="header-actions">
+      <details class="mobile-menu">
+        <summary><span class="menu-lines" aria-hidden="true"></span><span class="sr-only" data-i18n="nav.menu">Explore La Jolla</span></summary>
+        <nav class="mobile-chapters" aria-label="Explore La Jolla">
+          <a href="#history" data-i18n="nav.house">The house</a>
+          <a href="#events" data-i18n="nav.occasions">Occasions</a>
+          <a href="#alcazar">The Alcazar Room</a>
+          <a href="#rentals" data-i18n="nav.services">Services</a>
+        </nav>
+      </details>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" class="lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
         <span class="lang-sep" aria-hidden="true">/</span>
@@ -214,19 +223,26 @@
         <h2 id="rentals-title" class="section-title" data-i18n="rentals.title">At La Jolla &amp; beyond</h2>
         <p class="section-intro" data-i18n="rentals.short">From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.</p>
         <details class="services-about"><summary data-i18n="rentals.more">More about our services</summary><p class="section-intro" data-i18n="rentals.intro">From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Inquire for rentals, custom packages and full-service event production.</p></details>
+        <div class="selection-builder">
+          <p class="selection-eyebrow" data-i18n="selection.title">Your selection</p>
+          <p class="selection-help" data-i18n="selection.help">Choose the services that interest you. You can adjust your selection before sending an inquiry.</p>
+          <a class="btn btn-sage selection-continue" href="#quote" hidden><span data-i18n="selection.continue">Discuss your selection</span><span class="link-arrow" aria-hidden="true"> ↗</span></a>
+          <ul class="selection-list" id="catalog-selection" aria-label="Selected services"></ul>
+          <p class="sr-only" id="selection-status" role="status" aria-live="polite"></p>
+        </div>
       </header>
 
       <div class="rentals-catalog"><ul class="rentals-quiet reveal">
-        <li><button type="button" class="rentals-quiet-link" data-interest="Planning, coordination and production" data-scroll-quote><span data-i18n="rentals.svc.planning">Planning, coordination &amp; production</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Catering and bar" data-scroll-quote><span data-i18n="rentals.svc.catering">Catering &amp; bar services</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Florals, design and decor" data-scroll-quote><span data-i18n="rentals.svc.florals">Florals, design &amp; décor</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Furniture, linens and tabletop" data-scroll-quote><span data-i18n="rentals.svc.furniture">Furniture, linens &amp; tabletop rentals</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Photography and videography" data-scroll-quote><span data-i18n="rentals.svc.photo">Photography &amp; videography</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Entertainment and specialty performers" data-scroll-quote><span data-i18n="rentals.svc.entertainment">Entertainment &amp; specialty performers</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Audio, lighting, AV and staging" data-scroll-quote><span data-i18n="rentals.svc.av">Audio, lighting, AV &amp; staging</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Custom builds, branding and signage" data-scroll-quote><span data-i18n="rentals.svc.builds">Custom builds, branding &amp; signage</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Interactive experiences and photo activations" data-scroll-quote><span data-i18n="rentals.svc.interactive">Interactive experiences &amp; photo activations</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
-        <li><button type="button" class="rentals-quiet-link" data-interest="Valet, security and event staffing" data-scroll-quote><span data-i18n="rentals.svc.staff">Valet, security &amp; event staffing</span><em data-i18n="rentals.inquire">Inquire</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="planning" aria-pressed="false"><span data-i18n="rentals.svc.planning">Planning, coordination &amp; production</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="catering" aria-pressed="false"><span data-i18n="rentals.svc.catering">Catering &amp; bar services</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="florals" aria-pressed="false"><span data-i18n="rentals.svc.florals">Florals, design &amp; décor</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="furniture" aria-pressed="false"><span data-i18n="rentals.svc.furniture">Furniture, linens &amp; tabletop rentals</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="photo" aria-pressed="false"><span data-i18n="rentals.svc.photo">Photography &amp; videography</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="entertainment" aria-pressed="false"><span data-i18n="rentals.svc.entertainment">Entertainment &amp; specialty performers</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="av" aria-pressed="false"><span data-i18n="rentals.svc.av">Audio, lighting, AV &amp; staging</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="builds" aria-pressed="false"><span data-i18n="rentals.svc.builds">Custom builds, branding &amp; signage</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="interactive" aria-pressed="false"><span data-i18n="rentals.svc.interactive">Interactive experiences &amp; photo activations</span><em data-i18n="rentals.select">Select</em></button></li>
+        <li><button type="button" class="rentals-quiet-link" disabled data-service-id="staff" aria-pressed="false"><span data-i18n="rentals.svc.staff">Valet, security &amp; event staffing</span><em data-i18n="rentals.select">Select</em></button></li>
       </ul>
       <p class="section-intro reveal"><strong data-i18n="rentals.elseTitle">Looking for something else?</strong> <span data-i18n="rentals.elseBody">Every event is different. Tell us what you're envisioning, and our team can source, coordinate and produce additional services to bring your event at La Jolla to life.</span></p>
       </div>
@@ -320,6 +336,14 @@
       <div class="quote-panel reveal">
         <noscript><p>Please contact us at <a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a> or <a href="tel:+17862908813">786-290-8813</a> to discuss your event.</p></noscript>
         <form class="quote-form" id="quote-form" novalidate>
+          <div class="inquiry-selection" hidden>
+            <p class="selection-eyebrow" data-i18n="selection.inquiry">Services to discuss</p>
+            <ul class="selection-list" id="inquiry-selection" aria-label="Selected services"></ul>
+            <a class="text-link" href="#rentals" data-i18n="selection.edit">Explore more services</a>
+          </div>
+          <p class="inquiry-occasion" hidden></p>
+          <input type="hidden" name="selectedServices" id="selected-services" />
+          <input type="hidden" name="selectedServiceIds" id="selected-service-ids" />
           <div class="form-row">
             <label for="q-name"><span data-i18n="form.name">Name</span> <abbr title="required">*</abbr></label>
             <input type="text" id="q-name" name="name" autocomplete="name" required />
@@ -361,14 +385,14 @@
             </select>
           </div>
           <div class="form-row">
-            <label for="q-interest"><span data-i18n="form.interest">Rental / service interest</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
-            <input type="text" id="q-interest" name="rentalInterest" placeholder="e.g. Furniture, Lighting" data-i18n-attr="placeholder" data-i18n="form.interestPh" />
+            <label for="q-interest"><span data-i18n="form.interest">Additional service details</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
+            <input type="text" id="q-interest" name="rentalInterest" placeholder="Anything else you would like us to know" data-i18n-attr="placeholder" data-i18n="form.interestPh" />
           </div>
           <div class="form-row">
             <label for="q-comments"><span data-i18n="form.comments">Comments</span> <span class="optional" data-i18n="form.optional">(optional)</span></label>
             <textarea id="q-comments" name="comments" rows="4"></textarea>
           </div>
-          <button type="submit" class="btn btn-sage btn-block" data-i18n="form.submit">Submit inquiry</button>
+          <button type="submit" disabled class="btn btn-sage btn-block" data-i18n="form.submit">Submit inquiry</button>
           <div class="confirm-panel" id="form-success" hidden role="status">
             <p class="confirm-eyebrow" data-i18n="form.successEyebrow">La Jolla</p>
             <h3 class="confirm-title" data-i18n="form.successTitle">Thank you</h3>
@@ -383,11 +407,11 @@
 
   <!-- 11. VENDORS — inquiry delivered through Web3Forms -->
   <section class="section vendors" id="vendors" aria-labelledby="vendors-title">
-    <div class="wrap narrow">
+    <div class="wrap narrow"><details class="vendor-disclosure" id="vendor-details"><summary><span data-i18n="vendors.title">Become a vendor</span><span class="occasion-toggle" aria-hidden="true">+</span></summary>
       <header class="section-head reveal">
         <p class="eyebrow" data-i18n="vendors.eyebrow">Vendors</p>
         <span class="vendors-rule" aria-hidden="true"></span>
-        <h2 id="vendors-title" class="section-title" data-i18n="vendors.title">Become a vendor</h2>
+        <h2 id="vendors-title" class="sr-only" data-i18n="vendors.title">Become a vendor</h2>
         <p class="section-intro" data-i18n="vendors.intro">Tell us your name, company, service, and email.</p>
       </header>
       <div class="quote-panel reveal">
@@ -409,7 +433,7 @@
             <label for="v-email"><span data-i18n="vendors.email">Email</span> <abbr title="required">*</abbr></label>
             <input type="email" id="v-email" name="email" autocomplete="email" required />
           </div>
-          <button type="submit" class="btn btn-sage btn-block" data-i18n="vendors.submit">Send vendor note</button>
+          <button type="submit" disabled class="btn btn-sage btn-block" data-i18n="vendors.submit">Send vendor note</button>
           <div class="confirm-panel" id="vendor-success" hidden role="status">
             <p class="confirm-eyebrow" data-i18n="form.successEyebrow">La Jolla</p>
             <h3 class="confirm-title" data-i18n="vendors.successTitle">Thank you</h3>
@@ -419,7 +443,7 @@
           <p class="form-error" id="vendor-send-error" hidden role="alert" data-i18n="form.sendError">We could not send that. Please email info@lajollacoralgables.com or call 786-290-8813.</p>
         </form>
       </div>
-    </div>
+    </details></div>
   </section>
 
 </main>
@@ -461,7 +485,6 @@
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="assets/vendor/lenis.min.js"></script>
-<script src="script.js?v=1.0.0"></script>
+<script src="script.js?v=1.1.0"></script>
 </body>
 </html>

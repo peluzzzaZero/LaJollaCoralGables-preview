@@ -26,6 +26,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Require a new semantic version before merging to main
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags origin "$BASE_SHA"
+          node scripts/check-version.mjs "$BASE_SHA"
       - name: Brand, content and release checks
         run: |
           node --check script.js

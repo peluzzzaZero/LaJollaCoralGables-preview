@@ -7,6 +7,18 @@
 
   const I18N = {
     en: {
+      "nav.menu": "Explore La Jolla",
+      "rentals.select": "Select",
+      "rentals.selected": "Selected",
+      "selection.title": "Your selection",
+      "selection.help": "Choose the services that interest you. You can adjust your selection before sending an inquiry.",
+      "selection.continue": "Discuss your selection",
+      "selection.inquiry": "Services to discuss",
+      "selection.edit": "Explore more services",
+      "selection.remove": "Remove",
+      "selection.count": "services selected",
+      "selection.regarding": "Regarding",
+
       "nav.skip": "Skip to content",
       "nav.house": "The house",
       "nav.occasions": "Occasions",
@@ -143,9 +155,9 @@
       "form.typeAlcazar": "The Alcazar Room",
       "form.typeRental": "Rentals / services only",
       "form.typeOther": "Something else",
-      "form.interest": "Rental / service interest",
+      "form.interest": "Additional service details",
       "form.optional": "(optional)",
-      "form.interestPh": "e.g. Furniture, Lighting",
+      "form.interestPh": "Anything else you would like us to know",
       "form.comments": "Comments",
       "form.submit": "Submit inquiry",
       "form.successEyebrow": "La Jolla",
@@ -176,6 +188,18 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "nav.menu": "Explore La Jolla",
+      "rentals.select": "Elegir",
+      "rentals.selected": "Elegido",
+      "selection.title": "Su selección",
+      "selection.help": "Elija los servicios que le interesan. Puede ajustar su selección antes de enviar una consulta.",
+      "selection.continue": "Consultar su selección",
+      "selection.inquiry": "Servicios para consultar",
+      "selection.edit": "Explorar más servicios",
+      "selection.remove": "Quitar",
+      "selection.count": "servicios seleccionados",
+      "selection.regarding": "Consulta sobre",
+
       "nav.skip": "Ir al contenido",
       "nav.house": "La casa",
       "nav.occasions": "Ocasiones",
@@ -312,9 +336,9 @@
       "form.typeAlcazar": "The Alcazar Room",
       "form.typeRental": "Solo renta / servicios",
       "form.typeOther": "Otra cosa",
-      "form.interest": "Interés en renta / servicio",
+      "form.interest": "Detalles adicionales de servicios",
       "form.optional": "(opcional)",
-      "form.interestPh": "p. ej. Mobiliario, Iluminación",
+      "form.interestPh": "Algo más que usted desee compartir",
       "form.comments": "Comentarios",
       "form.submit": "Enviar solicitud",
       "form.successEyebrow": "La Jolla",
@@ -347,6 +371,7 @@
   };
 
   let lang = "en";
+  const selectedServices = new Set();
 
   function applyI18n(next) {
     lang = next;
@@ -369,6 +394,8 @@
       btn.classList.toggle("is-active", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    renderInquirySelection();
+    try { localStorage.setItem("lajolla-language", lang); } catch (_) { /* Storage is optional. */ }
     // Translated paragraphs change section heights and scroll positions.
     window.requestAnimationFrame(function () {
       if (window.ScrollTrigger) window.ScrollTrigger.refresh();
@@ -505,22 +532,115 @@
     window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: reduced ? "instant" : "smooth" });
   }
 
-  function initCatalogPrefill() {
-    const interest = document.getElementById("q-interest");
-    const typeSelect = document.getElementById("q-type");
-    document.querySelectorAll("[data-scroll-quote]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        const label = btn.querySelector("[data-i18n]");
-        const value = label ? label.textContent.trim() : btn.getAttribute("data-interest") || "";
-        if (interest) {
-          interest.value = value;
-          interest.focus({ preventScroll: true });
-        }
-        if (typeSelect && !typeSelect.value) {
-          typeSelect.value = "rental";
-        }
-        scrollToSection(document.getElementById("quote"));
+  function serviceLabel(id) {
+    return I18N[lang]["rentals.svc." + id] || I18N.en["rentals.svc." + id] || id;
+  }
+
+  function renderInquirySelection() {
+    const dict = I18N[lang];
+    const ids = Array.from(selectedServices);
+    document.querySelectorAll("[data-service-id]").forEach(function (button) {
+      const selected = selectedServices.has(button.dataset.serviceId);
+      button.setAttribute("aria-pressed", String(selected));
+      const action = button.querySelector("em");
+      const key = selected ? "rentals.selected" : "rentals.select";
+      action.setAttribute("data-i18n", key);
+      action.textContent = dict[key];
+    });
+    ["catalog-selection", "inquiry-selection"].forEach(function (id) {
+      const list = document.getElementById(id);
+      if (!list) return;
+      list.setAttribute("aria-label", dict["selection.inquiry"]);
+      list.replaceChildren();
+      ids.forEach(function (service) {
+        const item = document.createElement("li");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.removeService = service;
+        button.setAttribute("aria-label", dict["selection.remove"] + " " + serviceLabel(service));
+        button.append(document.createTextNode(serviceLabel(service)));
+        const cross = document.createElement("span");
+        cross.setAttribute("aria-hidden", "true");
+        cross.textContent = "×";
+        button.append(cross);
+        item.append(button);
+        list.append(item);
       });
+    });
+    document.querySelectorAll(".selection-continue, .inquiry-selection").forEach(function (node) { node.hidden = !ids.length; });
+    const services = document.getElementById("selected-services");
+    const stableIds = document.getElementById("selected-service-ids");
+    if (services) services.value = ids.map(serviceLabel).join("; ");
+    if (stableIds) stableIds.value = ids.join(", ");
+    const status = document.getElementById("selection-status");
+    if (status) status.textContent = ids.length + " " + dict["selection.count"];
+    const type = document.getElementById("q-type");
+    const note = document.querySelector(".inquiry-occasion");
+    if (type && note) {
+      note.hidden = !type.value;
+      note.textContent = type.value ? dict["selection.regarding"] + ": " + type.selectedOptions[0].textContent : "";
+    }
+  }
+
+  function initInquiryComposer() {
+    const type = document.getElementById("q-type");
+    document.querySelectorAll("[data-service-id]").forEach(function (button) {
+      button.disabled = false;
+      button.addEventListener("click", function () {
+        const position = button.getBoundingClientRect().top;
+        const id = button.dataset.serviceId;
+        if (selectedServices.has(id)) selectedServices.delete(id);
+        else selectedServices.add(id);
+        if (type && !type.value && selectedServices.size) type.value = "rental";
+        renderInquirySelection();
+        const shift = button.getBoundingClientRect().top - position;
+        if (Math.abs(shift) > 1) window.scrollBy({ top: shift, behavior: "instant" });
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      });
+    });
+    document.addEventListener("click", function (event) {
+      const remove = event.target.closest && event.target.closest("[data-remove-service]");
+      if (remove) {
+        const list = remove.closest("ul");
+        const service = remove.dataset.removeService;
+        const before = Array.from(list.querySelectorAll("button"));
+        const index = before.indexOf(remove);
+        selectedServices.delete(service);
+        renderInquirySelection();
+        const remaining = list.querySelectorAll("button");
+        const focus = remaining[Math.min(index, remaining.length - 1)] || (list.id === "catalog-selection"
+          ? document.querySelector('[data-service-id="' + service + '"]') : document.getElementById("q-name"));
+        if (focus) focus.focus({ preventScroll: true });
+        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      }
+      const occasion = event.target.closest && event.target.closest("[data-event-type]");
+      if (occasion && type) {
+        type.value = occasion.dataset.eventType;
+        renderInquirySelection();
+      }
+      const vendorLink = event.target.closest && event.target.closest("a[href='#vendors']");
+      if (vendorLink) document.getElementById("vendor-details").open = true;
+    });
+    if (type) type.addEventListener("change", renderInquirySelection);
+    const form = document.getElementById("quote-form");
+    if (form) form.addEventListener("reset", function () {
+      selectedServices.clear();
+      window.requestAnimationFrame(renderInquirySelection);
+    });
+    renderInquirySelection();
+  }
+
+  function initChapterMenu() {
+    const menu = document.querySelector(".mobile-menu");
+    if (!menu) return;
+    document.addEventListener("click", function (event) {
+      if (!menu.contains(event.target) || event.target.closest("a")) menu.open = false;
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && menu.open) {
+        menu.open = false;
+        menu.querySelector("summary").focus();
+      }
     });
   }
 
@@ -559,6 +679,8 @@
     const required = form.querySelectorAll("[required]");
     const submit = form.querySelector("[type='submit']");
     let sending = false;
+    // The default submit button stays disabled if the page script fails to load.
+    if (submit) submit.disabled = false;
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -632,10 +754,13 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
-    applyI18n("en");
+    let preferred = "en";
+    try { if (localStorage.getItem("lajolla-language") === "es") preferred = "es"; } catch (_) { /* Storage is optional. */ }
+    applyI18n(preferred);
     initHeader();
     initStory();
-    initCatalogPrefill();
+    initInquiryComposer();
+    initChapterMenu();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
     initYear();
