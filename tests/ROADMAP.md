@@ -71,3 +71,7 @@ The v1.1.0 review exposed narrow intrinsic form controls at 320 px. They now shr
 ## v1.4.0 — lighter film integration
 
 Replaces the two large on-page players with discreet links at the facade and one requested modal viewer. Retains both actual films, zero initial video transfer, direct no-script access, translated controls and venue photographs. Next improvements should prioritize useful venue facts and imagery over additional page length or motion.
+
+## v1.5.0 — user-led visual corrections
+
+Replace the rejected history crop, simplify the quote interlude, present brand pieces as a larger native gallery and decouple opening photo selection from scroll. Preserve the explicitly approved offering section and quiet film integration. Earlier crop/pin/tween requirements in historical notes and tests are superseded by these user comments.

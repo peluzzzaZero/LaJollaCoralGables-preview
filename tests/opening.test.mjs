@@ -16,8 +16,8 @@ test("hero reel height is 100dvh", () => {
 });
 
 test("reel names the four opening photos", () => {
-  for (const name of ["hero-facade", "welcome-table", "mood-card-flowers", "flower-plaque"]) {
-    assert.equal(js.includes(name), true, name);
+  for (const name of ["venue/facade", "welcome-table", "mood-card-flowers", "flower-plaque"]) {
+    assert.equal(html.includes(name), true, name);
   }
 });
 
@@ -47,4 +47,10 @@ test("1928 remains in the arrival and history without repeating the history para
   assert.match(opening, /Est\. 1928/);
   assert.equal(opening.includes('data-i18n="history.lede"'), false);
   assert.match(html, /class="lede history-line"[^>]*>Since 1928/);
+});
+
+test("opening photo changes are requested rather than tied to a scroll pin", () => {
+  assert.match(html, /class="reel-controls"/);
+  assert.match(js, /function selectShot/);
+  assert.equal(js.includes('pin: desktop'), false);
 });

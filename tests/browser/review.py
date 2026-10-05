@@ -115,20 +115,18 @@ async def review_viewport(browser, base, output, width, height, language):
     await snapshot(page, folder, "hero-start")
 
     minimum_coverage = 1
-    if width > 900:
-        for step in range(101):
-            await position(page, "hero", step / 100)
-            coverage = await page.evaluate("""() => 1 - [...document.querySelectorAll('.reel-shot')]
-              .reduce((remaining, shot) => remaining * (1 - Number(getComputedStyle(shot).opacity)), 1)""")
-            minimum_coverage = min(minimum_coverage, coverage)
-            assert coverage > .95, f"Opening exposes its background at {step}%"
-            assert await page.locator(".arrival-actions .btn").is_visible()
-        for i in range(4):
-            await position(page, "hero", (i + .4) / 4)
-            await snapshot(page, folder, f"hero-{i}")
-        # Copy and CTA stay within the pinned frame, even at the last photograph.
-        r = await page.locator(".arrival-actions .btn").bounding_box()
-        assert r["y"] >= 68 and r["y"] + r["height"] <= height
+    assert await page.evaluate("!ScrollTrigger.getAll().some(t => t.trigger.id === 'hero' && t.vars.pin)")
+    for index in range(4):
+        await page.locator(f'[data-shot="{index}"]').click()
+        await page.wait_for_timeout(550)
+        assert await page.locator(f'[data-shot="{index}"]').get_attribute("aria-pressed") == "true"
+        assert await page.locator(".reel-shot.is-current img").evaluate("img => img.complete && img.naturalWidth > 0")
+        await snapshot(page, folder, f"hero-{index}")
+    await page.locator('[data-shot="0"]').click()
+    for y in (0, 150, 300):
+        await scroll(page, y)
+        assert await page.locator('[data-shot="0"]').get_attribute("aria-pressed") == "true", "Scrolling changed the entrance photo"
+    await scroll(page, 0)
 
     assert await page.locator(".rentals-quiet li").count() == 10
     assert await page.locator(".brand-card").count() == 7
@@ -140,24 +138,29 @@ async def review_viewport(browser, base, output, width, height, language):
         await snapshot(page, folder, section)
         for element in await page.locator(f"#{section} .reveal").all():
             assert await element.evaluate("e => Number(getComputedStyle(e).opacity)") == 1
-    # The painted oval has known bounds in the approved leaves artwork. Ensure
-    # the quote does not intersect it after object-fit, crop and transform.
-    for progress in (0, .5, 1):
-        await position(page, "moment", progress)
-        overlap = await page.evaluate("""() => {
-          const img = document.querySelector('.quote-bleed-media img');
-          const box = img.getBoundingClientRect();
-          const q = document.querySelector('.quote-bleed-text p').getBoundingClientRect();
-          const pos = getComputedStyle(img).objectPosition.split(' ').map(v => parseFloat(v) / 100);
-          const fit = Math.max(box.width / img.naturalWidth, box.height / img.naturalHeight);
-          const x = box.left + (box.width - img.naturalWidth * fit) * pos[0];
-          const y = box.top + (box.height - img.naturalHeight * fit) * pos[1];
-          const oval = {left:x+370*fit,right:x+710*fit,top:y+480*fit,bottom:y+870*fit};
-          return q.left < oval.right && q.right > oval.left && q.top < oval.bottom && q.bottom > oval.top;
-        }""")
-        assert not overlap, f"{width}/{language}: quote crosses painted monogram"
     await position(page, "moment")
     await snapshot(page, folder, "moment")
+    assert await page.locator(".quote-bleed-media").count() == 0
+    quote_box = await page.locator(".quote-bleed-text p").bounding_box()
+    frame_box = await page.locator(".moment-pin").bounding_box()
+    assert quote_box["x"] >= frame_box["x"] and quote_box["x"] + quote_box["width"] <= frame_box["x"] + frame_box["width"] + 1
+    history_image = page.locator(".history-photo img")
+    assert await history_image.evaluate("img => img.complete && img.naturalWidth === 768 && getComputedStyle(img).objectFit === 'contain'")
+    await position(page, "gallery")
+    track = page.locator(".brand-track")
+    for index, card in enumerate(await page.locator(".brand-card").all()):
+        await track.evaluate("(track, index) => { track.scrollLeft = track.children[index].offsetLeft; }", index)
+        await page.wait_for_timeout(200)
+        await card.locator("img").evaluate("img => img.loading = 'eager'")
+        await page.wait_for_function("index => { const img = document.querySelectorAll('.brand-card img')[index]; return img.complete && img.naturalWidth > 0; }", arg=index)
+    await track.evaluate("track => track.scrollLeft = 0")
+    await page.wait_for_function("!document.querySelector('.gallery-next').disabled && document.querySelector('.gallery-position').textContent.startsWith('01')")
+    await page.locator(".gallery-next").focus()
+    await page.keyboard.press("Enter")
+    await page.wait_for_function("() => { const t = document.querySelector('.brand-track'); return Math.abs(t.scrollLeft - t.children[1].offsetLeft) < 2; }")
+    await snapshot(page, folder, "gallery-next")
+    await page.locator(".gallery-prev").click()
+    await page.wait_for_function("document.querySelector('.brand-track').scrollLeft < 2")
     assert await page.locator(".alcazar-visual img").evaluate("e => getComputedStyle(e).objectFit") == "contain"
     # Every occasion is keyboard discoverable; its approved description can be opened.
     for occasion in await page.locator(".occasion").all():
@@ -552,7 +555,7 @@ async def check_venue_media(browser, base, output):
             assert box["y"] >= 0 and box["y"] + box["height"] <= height + 1
             await page.keyboard.press("Escape")
             assert await viewer.is_hidden()
-            assert await video.evaluate("v => v.paused")
+            await page.wait_for_function("() => { const v = document.querySelector('#film-viewer video'); return v.paused && v.querySelectorAll('source').length === 0; }")
             assert await video.locator("source").count() == 0
             assert await opener.evaluate("el => document.activeElement === el")
             assert await page.evaluate("document.body.style.overflow !== 'hidden'")

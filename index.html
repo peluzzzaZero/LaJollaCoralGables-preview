@@ -6,7 +6,7 @@
 <title>La Jolla Coral Gables · Est. 1928</title>
 <meta name="description" content="La Jolla, a jewel in Coral Gables. Historic venue for weddings, celebrations, corporate and social events. Managed by Epic Lux Management." />
 <meta name="color-scheme" content="light" />
-<meta name="application-version" content="1.4.0" />
+<meta name="application-version" content="1.5.0" />
 <link rel="icon" href="assets/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=1.4.0" />
+<link rel="stylesheet" href="styles.css?v=1.5.0" />
 </head>
 <body id="top">
 <!--
@@ -101,7 +101,12 @@
             <p class="reel-beat" data-i18n="hero.chapter3">Considered details</p>
             <p class="reel-beat" data-i18n="hero.chapter4">A celebration takes shape</p>
           </div>
-          <span class="reel-progress" aria-hidden="true"><i></i></span>
+          <nav class="reel-controls" aria-label="Opening photographs" data-i18n="hero.photos" data-i18n-attr="aria-label">
+            <button type="button" data-shot="0" aria-pressed="true" aria-label="The arrival" data-i18n="hero.chapter1" data-i18n-attr="aria-label">01</button>
+            <button type="button" data-shot="1" aria-pressed="false" aria-label="Around the table" data-i18n="hero.chapter2" data-i18n-attr="aria-label">02</button>
+            <button type="button" data-shot="2" aria-pressed="false" aria-label="Considered details" data-i18n="hero.chapter3" data-i18n-attr="aria-label">03</button>
+            <button type="button" data-shot="3" aria-pressed="false" aria-label="A celebration takes shape" data-i18n="hero.chapter4" data-i18n-attr="aria-label">04</button>
+          </nav>
         </div>
       </div>
       <div class="arrival-footnote"><span>301 Alcazar Avenue</span><span>Coral Gables, Florida</span></div>
@@ -151,7 +156,7 @@
         <p class="managed history-line" data-i18n="history.managed">Managed by Epic Lux Management</p>
       </div>
       <figure class="history-photo">
-        <img src="assets/brand/hero-facade.jpg" alt="Ivy, blue pots, and the brick entry at 301 Alcazar Avenue." width="1081" height="1351" />
+        <img src="assets/venue/architecture.jpg" alt="La Jolla’s ivy-covered corner, arched windows and striped awnings." data-i18n="history.alt" data-i18n-attr="alt" width="768" height="1024" loading="lazy" />
       </figure>
     </div>
   </section>
@@ -204,13 +209,9 @@
     <a class="venue-film-link" href="assets/venue/arrival.mp4" data-i18n="visit.download">Open the film</a>
   </dialog>
 
-  <!-- 3. FULL-BLEED ASPIRATIONAL QUOTE -->
+  <!-- A short, readable pause between the spaces and occasions. -->
   <section class="section quote-bleed moment-track" id="moment" aria-label="Aspirational quote">
     <div class="moment-pin">
-      <div class="quote-bleed-media">
-        <img src="assets/brand/leaves-monogram.jpg" alt="" aria-hidden="true" />
-        <div class="quote-bleed-scrim" aria-hidden="true"></div>
-      </div>
       <blockquote class="quote-bleed-text">
         <img class="quote-bleed-logo" src="assets/brand/logo-lj-oval-cream.png" alt="" width="72" height="86" />
         <p data-i18n="quote.text">“Where every gathering becomes a memory worth keeping.”</p>
@@ -340,8 +341,12 @@
         <p class="eyebrow" data-i18n="gallery.eyebrow">The La Jolla identity</p>
         <h2 id="gallery-title" class="section-title" data-i18n="gallery.title">A world of details</h2>
       </header>
+      <div class="gallery-controls">
+        <p class="gallery-position" aria-live="polite">01 / 07</p>
+        <div><button type="button" class="gallery-prev" data-i18n="gallery.previous" data-i18n-attr="aria-label" aria-label="Previous piece" disabled><span aria-hidden="true">←</span></button><button type="button" class="gallery-next" data-i18n="gallery.next" data-i18n-attr="aria-label" aria-label="Next piece"><span aria-hidden="true">→</span></button></div>
+      </div>
       <div class="brand-viewport">
-        <div class="brand-track">
+        <div class="brand-track" tabindex="0" aria-label="La Jolla brand gallery" data-i18n="gallery.label" data-i18n-attr="aria-label">
           <figure class="brand-card">
             <img src="assets/brand/stationery-sage.jpg" alt="La Jolla sage stationery." width="1081" height="1351" loading="lazy" />
             <figcaption data-i18n="gallery.stationery">Stationery</figcaption>
@@ -584,6 +589,6 @@
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="script.js?v=1.4.0"></script>
+<script src="script.js?v=1.5.0"></script>
 </body>
 </html>

@@ -68,6 +68,11 @@
       "nav.house": "The house",
       "nav.occasions": "Occasions",
       "nav.services": "Services",
+      "hero.photos": "Opening photographs",
+      "history.alt": "La Jolla’s ivy-covered corner, arched windows and striped awnings.",
+      "gallery.label": "La Jolla brand gallery",
+      "gallery.previous": "Previous piece",
+      "gallery.next": "Next piece",
       "hero.offer": "A historic setting for your celebration. Event services at La Jolla and throughout South Florida.",
       "hero.explore": "Explore the possibilities",
       "hero.enter": "Step inside",
@@ -294,6 +299,11 @@
       "nav.house": "La casa",
       "nav.occasions": "Ocasiones",
       "nav.services": "Servicios",
+      "hero.photos": "Fotografías de bienvenida",
+      "history.alt": "La esquina de La Jolla cubierta de hiedra, sus ventanas en arco y toldos de rayas.",
+      "gallery.label": "Galería de identidad de La Jolla",
+      "gallery.previous": "Pieza anterior",
+      "gallery.next": "Siguiente pieza",
       "hero.offer": "Un entorno histórico para su celebración. Servicios para eventos en La Jolla y en todo el sur de Florida.",
       "hero.explore": "Explore las posibilidades",
       "hero.enter": "Entre a descubrirlo",
@@ -526,52 +536,12 @@
     media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
       if (context.conditions.reduced) return;
       document.documentElement.classList.add("has-gsap");
-      const reel = document.querySelector(".reel");
-      const shots = gsap.utils.toArray(".reel-shot");
-      const beats = gsap.utils.toArray(".reel-beat");
-      const index = document.querySelector(".reel-index");
-      const progress = document.querySelector(".reel-progress i");
-      const desktop = context.conditions.desktop;
-      const openingCrops = {
-        "facade": { position: "50% 55%", scale: 1.03 },
-        "hero-facade": { position: "50% 70%", scale: 1.06 },
-        "welcome-table": { position: "50% 50%", scale: 1.06 },
-        "mood-card-flowers": { position: "50% 65%", scale: 1.06 },
-        "flower-plaque": { position: "50% 50%", scale: 1.06 }
-      };
-      // Copy and inquiry never animate away. Only the framed photographs change.
-      const reelTl = gsap.timeline({ scrollTrigger: {
-        trigger: reel, start: "top top", end: desktop ? "+=160%" : "bottom top",
-        pin: desktop, scrub: true, anticipatePin: 1,
-        onUpdate: function (self) {
-          const current = Math.min(3, Math.floor(self.progress * 4));
-          if (index) index.textContent = "0" + (current + 1) + " / 04";
-        }
-      }});
-      shots.forEach(function (shot, i) {
-        const img = shot.querySelector("img");
-        const key = Object.keys(openingCrops).find(function (name) { return img.src.includes(name); });
-        const crop = openingCrops[key] || { position: "50% 50%", scale: 1.03 };
-        gsap.set(shot, { autoAlpha: i === 0 ? 1 : 0, zIndex: i + 1 });
-        gsap.set(beats[i], { autoAlpha: i === 0 ? 1 : 0 });
-        reelTl.fromTo(img, { scale: crop.scale, objectPosition: crop.position }, { scale: 1.12, ease: "none", duration: 1, immediateRender: false }, i);
-        if (i > 0) {
-          reelTl.to(shot, { autoAlpha: 1, ease: "power3.out", duration: .22 }, i);
-          reelTl.to(shots[i - 1], { autoAlpha: 0, ease: "power3.in", duration: .22 }, i);
-          reelTl.to(beats[i - 1], { autoAlpha: 0, duration: .08 }, i);
-          reelTl.to(beats[i], { autoAlpha: 1, duration: .08 }, i + .08);
-        }
+      // The entrance has restrained depth, without pinning or changing photos on scroll.
+      gsap.fromTo(document.querySelector(".reel-shots"), { "--arrival-depth": "0px" }, {
+        "--arrival-depth": "-12px", ease: "none",
+        scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
       });
-      if (progress) reelTl.fromTo(progress, { scaleX: .05 }, { scaleX: 1, duration: 4, ease: "none" }, 0);
-      reelTl.fromTo(reel, { "--light-x": "-12%" }, { "--light-x": "18%", duration: 4, ease: "none" }, 0);
-
-      var history = document.querySelector(".history");
-      const historyPhoto = history.querySelector(".history-photo img");
-      // Tight lower facade crop protects the printed wordmark. The history now scrolls naturally.
-      gsap.fromTo(historyPhoto, { scale: 3.55, objectPosition: "2% 100%", transformOrigin: "2% 100%" }, {
-        scale: 3.35, objectPosition: "52% 100%", transformOrigin: "52% 100%", ease: "none",
-        scrollTrigger: { trigger: history, start: "top 85%", end: "bottom 20%", scrub: true }
-      });
+      // History preserves the complete architectural view.
       var alcazarVisual = document.querySelector("#alcazar");
       const alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
       gsap.fromTo(alcazarMark, { scale: .94 }, { scale: 1, ease: "none",
@@ -579,16 +549,6 @@
       });
       gsap.fromTo(alcazarVisual, { "--light-x": "-10%" }, { "--light-x": "16%", ease: "none",
         scrollTrigger: { trigger: alcazarVisual, start: "top bottom", end: "bottom top", scrub: true }
-      });
-      gsap.utils.toArray(".brand-card img").forEach(function (img) {
-        gsap.fromTo(img, { scale: 0.96 }, { scale: 1, ease: "none",
-          scrollTrigger: { trigger: img, start: "top 92%", end: "top 58%", scrub: true }
-        });
-      });
-      var moment = document.querySelector("#moment");
-      gsap.fromTo(moment.querySelector(".quote-bleed-media img"), { scale: 1.4, objectPosition: "100% 90%", transformOrigin: "50% 100%" }, {
-        scale: 1.5, objectPosition: "25% 90%", ease: "none",
-        scrollTrigger: { trigger: moment, start: "top bottom", end: "bottom top", scrub: true }
       });
       // All commercial sections remain opaque, including when animations cannot run.
       var events = document.querySelector("#events");
@@ -938,6 +898,64 @@
     document.addEventListener("visibilitychange", function () { if (document.hidden) film.pause(); });
   }
 
+  function initPhotoCollections() {
+    const reel = document.querySelector(".arrival-visual");
+    const shots = Array.from(reel.querySelectorAll(".reel-shot"));
+    const beats = Array.from(reel.querySelectorAll(".reel-beat"));
+    const controls = Array.from(reel.querySelectorAll("[data-shot]"));
+    let previousShot = 0;
+    function selectShot(index) {
+      shots.forEach(function (shot, i) {
+        shot.classList.toggle("is-current", i === index);
+        shot.classList.toggle("is-under", i === previousShot && i !== index);
+        shot.setAttribute("aria-hidden", String(i !== index));
+        beats[i].hidden = i !== index;
+        controls[i].setAttribute("aria-pressed", String(i === index));
+      });
+      reel.querySelector(".reel-index").textContent = "0" + (index + 1) + " / 04";
+      previousShot = index;
+    }
+    selectShot(0);
+    reel.classList.add("photos-ready");
+    controls.forEach(function (button) {
+      button.addEventListener("click", function () { selectShot(Number(button.dataset.shot)); });
+    });
+    // A small change of light follows the pointer, never the scroll position.
+    reel.addEventListener("pointermove", function (event) {
+      if (event.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const box = reel.getBoundingClientRect();
+      reel.style.setProperty("--frame-x", ((event.clientX - box.left) / box.width - .5) * 8 + "px");
+      reel.style.setProperty("--frame-y", ((event.clientY - box.top) / box.height - .5) * 8 + "px");
+    });
+    function resetFrame() { reel.style.setProperty("--frame-x", "0px"); reel.style.setProperty("--frame-y", "0px"); }
+    reel.addEventListener("pointerleave", resetFrame);
+    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", resetFrame);
+
+    const gallery = document.querySelector("#gallery");
+    const track = gallery.querySelector(".brand-track");
+    const cards = Array.from(track.querySelectorAll(".brand-card"));
+    const previous = gallery.querySelector(".gallery-prev");
+    const next = gallery.querySelector(".gallery-next");
+    let current = 0;
+    function updateGallery() {
+      const step = cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : 1;
+      current = Math.min(cards.length - 1, Math.max(0, Math.round(track.scrollLeft / step)));
+      previous.disabled = track.scrollLeft <= 1;
+      next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+      gallery.querySelector(".gallery-position").textContent = "0" + (current + 1) + " / 07";
+    }
+    function moveGallery(direction) {
+      const target = Math.min(cards.length - 1, Math.max(0, current + direction));
+      track.scrollTo({ left: cards[target].offsetLeft, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    }
+    previous.addEventListener("click", function () { moveGallery(-1); });
+    next.addEventListener("click", function () { moveGallery(1); });
+    track.addEventListener("scroll", updateGallery, { passive: true });
+    window.addEventListener("resize", updateGallery);
+    gallery.classList.add("gallery-ready");
+    updateGallery();
+  }
+
   function initYear() {
     const y = document.getElementById("year");
     if (y) y.textContent = String(new Date().getFullYear());
@@ -949,6 +967,7 @@
     try { if (localStorage.getItem("lajolla-language") === "es") preferred = "es"; } catch (_) { /* Storage is optional. */ }
     applyI18n(preferred);
     initHeader();
+    initPhotoCollections();
     initStory();
     initInquiryComposer();
     initChapterMenu();
