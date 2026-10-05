@@ -52,9 +52,37 @@ jobs:
           path: review-artifacts
           retention-days: 14
 
+  review-v14:
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install retrospective review dependencies
+        run: |
+          python -m pip install -r tests/browser/requirements.txt
+          python -m playwright install --with-deps chromium ffmpeg
+      - name: Verify immutable v1.4.0 before restoring its missing tag
+        run: python scripts/review-v14.py --output v14-review-artifacts
+      - name: Save retrospective review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v14-retrospective-${{ github.sha }}
+          path: v14-review-artifacts
+          retention-days: 14
+
   release:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: review
+    needs: [review, review-v14]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -68,6 +96,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Restore the missing annotated v1.4.0 tag only after its exact product tree passes review.
+          previous_tag="v1.4.0"
+          previous_commit="ae36e702289cb12b6d2222a2ea1703bc1422c4e5"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git rev-parse "refs/tags/$previous_tag" >/dev/null 2>&1; then
+            test "$(git rev-list -n 1 "$previous_tag")" = "$previous_commit"
+          else
+            git tag -a "$previous_tag" -m "La Jolla $previous_tag — retrospective exact-tree review" "$previous_commit"
+            git push origin "refs/tags/$previous_tag"
+          fi
+          if ! gh release view "$previous_tag" >/dev/null 2>&1; then
+            gh release create "$previous_tag" --verify-tag --title "La Jolla $previous_tag" --notes-file "tests/releases/$previous_tag.md"
+          fi
           version=$(tr -d '\r\n' < VERSION)
           [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
           tag="v$version"

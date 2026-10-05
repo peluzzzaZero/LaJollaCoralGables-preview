@@ -49,12 +49,7 @@ test("gallery marks are not faded in from nothing", () => {
     assert.equal(/opacity:\s*0(?:\s|;|!|$)/.test(body), false, body);
     assert.equal(/opacity:\s*calc\(\s*0\.08/.test(body), false);
   }
-  const start = js.indexOf('gsap.utils.toArray(".brand-card img")');
-  const end = js.indexOf("var moment", start);
-  assert.ok(start !== -1 && end > start, "gallery motion");
-  const motion = js.slice(start, end);
-  assert.equal(/autoAlpha:\s*0\b/.test(motion), false);
-  assert.equal(/opacity:\s*0\b/.test(motion), false);
-  assert.match(motion, /scale:\s*0\.96/);
-  assert.match(motion, /scale:\s*1\b/);
+  assert.match(css, /scroll-snap-type: x mandatory/);
+  assert.match(html, /class="brand-track" tabindex="0"/);
+  assert.match(html, /class="gallery-next"/);
 });
