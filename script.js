@@ -38,6 +38,33 @@
       "selection.count": "services selected",
       "form.planning": "Let's Start Planning",
 
+      "visit.altFacade": "La Jolla facade, ivy, striped awnings and brick entrance at 301 Alcazar Avenue.",
+      "visit.altWide": "La Jolla facade and balcony at 301 Alcazar Avenue, Coral Gables.",
+      "visit.altBallroom": "La Jolla's white ballroom with chandeliers and an open floor.",
+      "visit.altStair": "Curved staircase with a decorative iron railing inside La Jolla.",
+      "visit.altMusic": "An open music score against patterned red wallpaper inside the house.",
+      "visit.altGarden": "Palm trees, ivy and a brick garden path alongside La Jolla.",
+      "visit.altPiano": "A second view of La Jolla's ballroom, with a grand piano and chandeliers.",
+      "nav.visit": "The spaces",
+      "visit.eyebrow": "An invitation inside",
+      "visit.title": "Picture your occasion here.",
+      "visit.intro": "From the light-filled ballroom to the smallest architectural detail, take a closer look at La Jolla.",
+      "visit.ballroom": "The ballroom · a space to make your own",
+      "visit.stair": "A different perspective",
+      "visit.music": "Details with character",
+      "visit.garden": "Garden light",
+      "visit.more": "Another view of the ballroom",
+      "visit.piano": "The ballroom, from another angle",
+      "visit.filmEyebrow": "A moment at the house",
+      "visit.filmTitle": "The approach. The details.",
+      "visit.filmIntro": "Two short glimpses of the facade, its striped awnings and the greenery that frames your arrival.",
+      "visit.cta": "Let's imagine your occasion here",
+      "visit.arrival": "The arrival · 12 seconds",
+      "visit.details": "A closer look · 13 seconds",
+      "visit.download": "Open the film",
+      "visit.filmError": "The film could not load. You can open the file below.",
+      "visit.arrivalLabel": "Arrival at La Jolla",
+      "visit.detailsLabel": "Architectural details of La Jolla",
       "nav.skip": "Skip to content",
       "nav.house": "The house",
       "nav.occasions": "Occasions",
@@ -238,6 +265,33 @@
       "selection.count": "servicios seleccionados",
       "form.planning": "Comencemos a planificar",
 
+      "visit.altFacade": "Fachada de La Jolla, hiedra, toldos de rayas y entrada de ladrillo en 301 Alcazar Avenue.",
+      "visit.altWide": "Fachada y balcón de La Jolla en 301 Alcazar Avenue, Coral Gables.",
+      "visit.altBallroom": "Salón blanco de La Jolla con lámparas de araña y espacio abierto.",
+      "visit.altStair": "Escalera curva con barandilla decorativa de hierro en La Jolla.",
+      "visit.altMusic": "Partitura abierta frente al papel tapiz rojo estampado de la casa.",
+      "visit.altGarden": "Palmeras, hiedra y camino de ladrillo junto a La Jolla.",
+      "visit.altPiano": "Otra vista del salón de La Jolla con piano de cola y lámparas de araña.",
+      "nav.visit": "Los espacios",
+      "visit.eyebrow": "Una invitación a entrar",
+      "visit.title": "Imagine su ocasión aquí.",
+      "visit.intro": "Desde el salón lleno de luz hasta el más pequeño detalle arquitectónico, conozca La Jolla más de cerca.",
+      "visit.ballroom": "El salón · un espacio para hacerlo suyo",
+      "visit.stair": "Otra perspectiva",
+      "visit.music": "Detalles con carácter",
+      "visit.garden": "La luz del jardín",
+      "visit.more": "Otra vista del salón",
+      "visit.piano": "El salón, desde otro ángulo",
+      "visit.filmEyebrow": "Un momento en la casa",
+      "visit.filmTitle": "La llegada. Los detalles.",
+      "visit.filmIntro": "Dos breves recorridos por la fachada, sus toldos de rayas y la vegetación que enmarca su llegada.",
+      "visit.cta": "Imaginemos su ocasión aquí",
+      "visit.arrival": "La llegada · 12 segundos",
+      "visit.details": "Una mirada cercana · 13 segundos",
+      "visit.download": "Abrir el video",
+      "visit.filmError": "No se pudo cargar el video. Puede abrir el archivo a continuación.",
+      "visit.arrivalLabel": "La llegada a La Jolla",
+      "visit.detailsLabel": "Detalles arquitectónicos de La Jolla",
       "nav.skip": "Ir al contenido",
       "nav.house": "La casa",
       "nav.occasions": "Ocasiones",
@@ -481,6 +535,7 @@
       const progress = document.querySelector(".reel-progress i");
       const desktop = context.conditions.desktop;
       const openingCrops = {
+        "facade": { position: "50% 55%", scale: 1.03 },
         "hero-facade": { position: "50% 70%", scale: 1.06 },
         "welcome-table": { position: "50% 50%", scale: 1.06 },
         "mood-card-flowers": { position: "50% 65%", scale: 1.06 },
@@ -498,7 +553,7 @@
       shots.forEach(function (shot, i) {
         const img = shot.querySelector("img");
         const key = Object.keys(openingCrops).find(function (name) { return img.src.includes(name); });
-        const crop = openingCrops[key];
+        const crop = openingCrops[key] || { position: "50% 50%", scale: 1.03 };
         gsap.set(shot, { autoAlpha: i === 0 ? 1 : 0, zIndex: i + 1 });
         gsap.set(beats[i], { autoAlpha: i === 0 ? 1 : 0 });
         reelTl.fromTo(img, { scale: crop.scale, objectPosition: crop.position }, { scale: 1.12, ease: "none", duration: 1, immediateRender: false }, i);
@@ -793,6 +848,37 @@
     });
   }
 
+  function initVenueFilms() {
+    document.querySelectorAll(".venue-more").forEach(function (details) {
+      details.addEventListener("toggle", function () {
+        window.requestAnimationFrame(function () {
+          if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+          if (window.__ljLenis) window.__ljLenis.resize();
+        });
+      });
+    });
+    const films = Array.from(document.querySelectorAll(".venue-film video"));
+    films.forEach(function (film) {
+      const status = film.closest("figure").querySelector(".venue-film-status");
+      const showError = function () { if (status) status.hidden = false; };
+      film.addEventListener("error", showError);
+      film.querySelectorAll("source").forEach(function (source) { source.addEventListener("error", showError); });
+      film.addEventListener("loadeddata", function () { if (status) status.hidden = true; });
+      film.addEventListener("play", function () {
+        films.forEach(function (other) { if (other !== film) other.pause(); });
+      });
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) films.forEach(function (film) { film.pause(); });
+    });
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) { if (!entry.isIntersecting) entry.target.pause(); });
+      }, { threshold: 0 });
+      films.forEach(function (film) { observer.observe(film); });
+    }
+  }
+
   function initYear() {
     const y = document.getElementById("year");
     if (y) y.textContent = String(new Date().getFullYear());
@@ -807,6 +893,7 @@
     initStory();
     initInquiryComposer();
     initChapterMenu();
+    initVenueFilms();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
     initYear();

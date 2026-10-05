@@ -41,6 +41,13 @@ Review question: can visitors see enough real evidence of the space and services
 - Existing #alcazar anchors and internal option values remain compatible; Alcazar Avenue is still the street address.
 - New photographs and exterior videos were subsequently received on 5 October and reviewed locally. The decorated event photograph still needs confirmation of provenance before use as venue evidence.
 
+## v1.3.0 — actual venue photography and films
+
+- Integrate newly supplied original exterior/interior photography and both facade videos.
+- Make the spaces directly discoverable and connect the visual visit to a venue inquiry.
+- Native manual playback, real posters, no initial MP4 transfer and sensible pause behavior.
+- Review media decoding, orientation, fallback, keyboard disclosure, no-script access and responsive layouts.
+
 ## Reference and private workflow
 
 The user supplied an earlier DOCX brief and HTML mockup during this cycle. See BRIEF-ALIGNMENT.md for decisions, asset provenance and the private automation backlog. The brief describes quoting, tours, native contracts, Stripe deposits and an administration panel; these require approved operational inputs and server integrations. None is represented as working on the current static inquiry site. The user supplied 17 smaller RAR volumes after the ZIP transfer limit; all were reconstructed and reviewed. The brand originals are now available locally, including higher-resolution marks and floral/wax-seal artwork. No new room/service photography or venue video was delivered.

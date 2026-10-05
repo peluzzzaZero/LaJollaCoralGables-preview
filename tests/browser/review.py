@@ -135,7 +135,7 @@ async def review_viewport(browser, base, output, width, height, language):
     assert await page.locator(".team-card").count() == 2
     assert await page.locator("#testimonial").is_hidden()
     assert await page.evaluate("!ScrollTrigger.getAll().some(t => t.trigger.id === 'history' && t.vars.pin)")
-    for section in ("possibilities", "history", "moment", "events", "alcazar", "rentals", "gallery", "team", "quote", "vendors"):
+    for section in ("possibilities", "history", "visit", "moment", "events", "alcazar", "rentals", "gallery", "team", "quote", "vendors"):
         await position(page, section)
         await snapshot(page, folder, section)
         for element in await page.locator(f"#{section} .reveal").all():
@@ -168,6 +168,10 @@ async def review_viewport(browser, base, output, width, height, language):
         assert await occasion.locator(".occasion-body a").is_visible()
     await page.locator(".services-about summary").click()
     assert await page.locator('[data-i18n="rentals.intro"]').is_visible()
+    # The additional interior view remains a native keyboard disclosure.
+    await page.locator(".venue-more summary").focus()
+    await page.keyboard.press("Enter")
+    assert await page.locator(".venue-more img").is_visible()
     # Walk the full page and inspect every image after lazy loading.
     await scroll(page, 0)
     total = await page.evaluate("document.documentElement.scrollHeight - innerHeight")
@@ -509,6 +513,77 @@ async def check_paths(browser, base, output):
     return results
 
 
+async def check_venue_media(browser, base, output):
+    results = []
+    for width, height in ((390, 844), (768, 1024), (1280, 900)):
+        for language in ("en", "es"):
+            page = await browser.new_page(viewport={"width": width, "height": height})
+            await page.route("https://api.web3forms.com/**", lambda route: route.abort())
+            requests = []
+            page.on("request", lambda request: requests.append(request.url))
+            await page.goto(base, wait_until="networkidle")
+            assert not any(".mp4" in url for url in requests), "Video transferred before visitor requested playback"
+            await page.locator(f'[data-lang="{language}"]').click()
+            videos = page.locator(".venue-film video")
+            assert await videos.count() == 2
+            for video in await videos.all():
+                assert await video.get_attribute("autoplay") is None
+                assert await video.get_attribute("controls") is not None
+                assert await video.get_attribute("preload") == "none"
+                assert await video.evaluate("v => v.paused && v.muted")
+            assert await videos.first.get_attribute("aria-label") == ("Arrival at La Jolla" if language == "en" else "La llegada a La Jolla")
+            await position(page, "visit")
+            await snapshot(page, output, f"venue-interior-{width}-{language}")
+            for index in range(2):
+                video = videos.nth(index)
+                await video.scroll_into_view_if_needed()
+                await video.evaluate("v => v.play()")
+                await page.wait_for_function("""index => {
+                    const v = document.querySelectorAll('.venue-film video')[index];
+                    return v.currentTime > .2 && v.videoWidth === 480 && v.videoHeight === 854 && v.getVideoPlaybackQuality().totalVideoFrames > 0;
+                }""", arg=index)
+                if index:
+                    assert await videos.first.evaluate("v => v.paused"), "Both films play at once"
+                await snapshot(page, output, f"venue-film-{index}-{width}-{language}")
+                await scroll(page, 0)
+                await page.wait_for_function("index => document.querySelectorAll('.venue-film video')[index].paused", arg=index)
+            await page.locator('[data-i18n="visit.cta"]').click()
+            assert await page.locator("#q-location").input_value() == "la-jolla"
+            assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+            results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "decoded_playback": "passed", "exclusive_playback": "passed", "offscreen_pause": "passed", "venue_inquiry": "passed"})
+            await page.close()
+    # Native playback and the original-photo disclosure remain usable without JS.
+    context = await browser.new_context(java_script_enabled=False, viewport={"width": 390, "height": 844})
+    page = await context.new_page()
+    await page.goto(base, wait_until="networkidle")
+    await page.locator(".venue-more summary").focus()
+    await page.keyboard.press("Enter")
+    assert await page.locator(".venue-more img").is_visible()
+    assert await page.locator(".venue-film video[controls]").count() == 2
+    assert await page.locator(".venue-film-link").count() == 2
+    native_video = page.locator(".venue-film video").first
+    await native_video.scroll_into_view_if_needed()
+    box = await native_video.bounding_box()
+    await native_video.click(position={"x": 18, "y": box["height"] - 18})
+    await page.wait_for_function("() => document.querySelector('.venue-film video').currentTime > .2")
+    await page.screenshot(path=str(output / "venue-no-javascript.png"))
+    await context.close()
+    # A failed film still has its genuine poster and a visible file link.
+    page = await browser.new_page(viewport={"width": 390, "height": 844})
+    await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
+    await page.goto(base, wait_until="networkidle")
+    video = page.locator(".venue-film video").first
+    await video.scroll_into_view_if_needed()
+    await video.evaluate("v => { v.play().catch(() => {}); }")
+    await page.wait_for_function("() => !document.querySelector('.venue-film-status').hidden")
+    assert await page.locator(".venue-film-status").first.is_visible()
+    assert await video.evaluate("v => Boolean(v.poster)")
+    assert await page.locator(".venue-film-link").first.is_visible()
+    await page.screenshot(path=str(output / "venue-video-failure.png"))
+    await page.close()
+    return {"playback": results, "no_javascript": "passed", "failed_video_fallback": "passed"}
+
+
 async def main(args, base):
     args.output.mkdir(parents=True, exist_ok=True)
     launch = {"headless": True}
@@ -531,11 +606,13 @@ async def main(args, base):
         print("PASS multi-selection, translation, keyboard removal, occasion context and chapter menu", flush=True)
         paths = await check_paths(browser, base, args.output)
         print("PASS two offering paths, editable optional setting and translated inquiry context", flush=True)
+        venue_media = await check_venue_media(browser, base, args.output)
+        print("PASS real venue films: decoded playback, manual loading, pause, posters, no-script fallback", flush=True)
         forms = await check_forms(browser, base)
         print("PASS forms: simulated delivery, validation, failure, retry, duplicate submissions", flush=True)
         variants = await check_variants(browser, base, args.output)
         print("PASS resize, reduced motion, missing GSAP, no JavaScript", flush=True)
-        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants, "composer": composer, "paths": paths}
+        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants, "composer": composer, "paths": paths, "venue_media": venue_media}
         (args.output / "results.json").write_text(json.dumps(report, indent=2) + "\n")
         await browser.close()
 
