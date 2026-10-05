@@ -564,7 +564,7 @@ async def check_venue_media(browser, base, output):
     native_video = page.locator(".venue-film video").first
     await native_video.scroll_into_view_if_needed()
     box = await native_video.bounding_box()
-    await native_video.click(position={"x": 18, "y": box["height"] - 18})
+    await native_video.click(position={"x": 25, "y": box["height"] - 45})
     await page.wait_for_function("() => document.querySelector('.venue-film video').currentTime > .2")
     await page.screenshot(path=str(output / "venue-no-javascript.png"))
     await context.close()
