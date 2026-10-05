@@ -862,7 +862,15 @@
       const status = film.closest("figure").querySelector(".venue-film-status");
       const showError = function () { if (status) status.hidden = false; };
       film.addEventListener("error", showError);
-      film.querySelectorAll("source").forEach(function (source) { source.addEventListener("error", showError); });
+      const sources = Array.from(film.querySelectorAll("source"));
+      const failedSources = new Set();
+      film.addEventListener("loadstart", function () { failedSources.clear(); if (status) status.hidden = true; });
+      sources.forEach(function (source) {
+        source.addEventListener("error", function () {
+          failedSources.add(source);
+          if (failedSources.size === sources.length) showError();
+        });
+      });
       film.addEventListener("loadeddata", function () { if (status) status.hidden = true; });
       film.addEventListener("play", function () {
         films.forEach(function (other) { if (other !== film) other.pause(); });

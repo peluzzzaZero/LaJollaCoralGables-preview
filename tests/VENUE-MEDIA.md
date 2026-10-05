@@ -1,6 +1,6 @@
 # Venue media — owner delivery, 5 October 2026
 
-Seven original JPEG photographs and both original facade films supplied in the two new WhatsApp ZIPs. Photo pixels are unedited. Video posters are actual frames extracted at 0.3 seconds; no generated room or architectural imagery is used.
+Seven original JPEG photographs and both original facade films supplied in the two new WhatsApp ZIPs. Photo pixels are unedited. The films include a VP9/WebM fallback encoded from their silent delivery, preserving dimensions and duration. Video posters are actual frames extracted at 0.3 seconds; no generated room or architectural imagery is used.
 
 The empty white ballroom is described simply as the ballroom. The stair/music photos do not establish a photographed identity for The Lexington. The promotional collage and decorated-event photograph are retained locally pending provenance confirmation.
 
@@ -62,3 +62,5 @@ The empty white ballroom is described simply as the ballroom. The stair/music ph
   }
 ]
 ```
+
+The WebM alternatives use VP9 at 480 × 854, 24 fps, with a constrained bitrate. Each video source has a genuine extracted JPEG poster. A source error is shown only after all formats fail, avoiding a false failure message during successful format fallback.

@@ -522,7 +522,7 @@ async def check_venue_media(browser, base, output):
             requests = []
             page.on("request", lambda request: requests.append(request.url))
             await page.goto(base, wait_until="networkidle")
-            assert not any(".mp4" in url for url in requests), "Video transferred before visitor requested playback"
+            assert not any(".mp4" in url or ".webm" in url for url in requests), "Video transferred before visitor requested playback"
             await page.locator(f'[data-lang="{language}"]').click()
             videos = page.locator(".venue-film video")
             assert await videos.count() == 2
@@ -537,7 +537,7 @@ async def check_venue_media(browser, base, output):
             for index in range(2):
                 video = videos.nth(index)
                 await video.scroll_into_view_if_needed()
-                await video.evaluate("v => v.play()")
+                await video.evaluate("async v => { await Promise.race([v.play(), new Promise((_, reject) => setTimeout(() => reject(new Error('Film did not start within 10 seconds')), 10000))]); }")
                 await page.wait_for_function("""index => {
                     const v = document.querySelectorAll('.venue-film video')[index];
                     return v.currentTime > .2 && v.videoWidth === 480 && v.videoHeight === 854 && v.getVideoPlaybackQuality().totalVideoFrames > 0;
@@ -563,16 +563,34 @@ async def check_venue_media(browser, base, output):
     assert await page.locator(".venue-film-link").count() == 2
     native_video = page.locator(".venue-film video").first
     await native_video.scroll_into_view_if_needed()
+    # Page JS is disabled, so poll from Python instead of page rAF/timers.
+    # Use the real native play control after its hover state has appeared.
     await native_video.hover()
     await page.wait_for_timeout(500)
     box = await native_video.bounding_box()
     await native_video.click(position={"x": 25, "y": box["height"] - 45})
-    await page.wait_for_function("() => document.querySelector('.venue-film video').currentTime > .2")
+    for _ in range(40):
+        if await native_video.evaluate("v => v.currentTime > .2 && v.getVideoPlaybackQuality().totalVideoFrames > 0"):
+            break
+        await page.wait_for_timeout(200)
+    assert await native_video.evaluate("v => v.currentTime > .2"), "Native playback without page scripts failed"
     await page.screenshot(path=str(output / "venue-no-javascript.png"))
     await context.close()
+    # The second format decodes when the MP4 source cannot load.
+    page = await browser.new_page(viewport={"width": 390, "height": 844})
+    await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
+    await page.goto(base, wait_until="networkidle")
+    video = page.locator(".venue-film video").first
+    await video.scroll_into_view_if_needed()
+    await video.evaluate("async v => { await Promise.race([v.play(), new Promise((_, reject) => setTimeout(() => reject(new Error('WebM fallback did not start')), 10000))]); }")
+    await page.wait_for_function("() => { const v = document.querySelector('.venue-film video'); return v.currentTime > .2 && v.currentSrc.endsWith('.webm'); }")
+    assert await page.locator(".venue-film-status").first.is_hidden()
+    await snapshot(page, output, "venue-webm-fallback")
+    await page.close()
     # A failed film still has its genuine poster and a visible file link.
     page = await browser.new_page(viewport={"width": 390, "height": 844})
     await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
+    await page.route("**/assets/venue/*.webm", lambda route: route.abort())
     await page.goto(base, wait_until="networkidle")
     video = page.locator(".venue-film video").first
     await video.scroll_into_view_if_needed()
@@ -583,7 +601,7 @@ async def check_venue_media(browser, base, output):
     assert await page.locator(".venue-film-link").first.is_visible()
     await page.screenshot(path=str(output / "venue-video-failure.png"))
     await page.close()
-    return {"playback": results, "no_javascript": "passed", "failed_video_fallback": "passed"}
+    return {"playback": results, "no_javascript": "passed", "failed_video_fallback": "passed", "webm_fallback": "passed"}
 
 
 async def main(args, base):
