@@ -36,7 +36,7 @@
       "selection.edit": "Explore more services",
       "selection.remove": "Remove",
       "selection.count": "services selected",
-      "selection.regarding": "Regarding",
+      "form.planning": "Let's Start Planning",
 
       "nav.skip": "Skip to content",
       "nav.house": "The house",
@@ -97,12 +97,12 @@
       "events.other.title": "Something completely different?",
       "events.other.body":
         "Not every event fits neatly into a category—and that's the point. Tell us what you're envisioning and we'll help you make it happen.",
-      "events.alcazar.link": "Discover The Alcazar Room",
+      "events.alcazar.link": "Discover The Lexington",
       "alcazar.eyebrow": "Curated · Vintage 1928",
-      "alcazar.title": "The Alcazar Room",
+      "alcazar.title": "The Lexington",
       "alcazar.body":
         "Step upstairs and into another era. Layered in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from private clubs, classic whiskey rooms, and the timeless elegance of Kentucky racing culture. Designed for cocktails, private dinners, intimate celebrations, and distinctive gatherings, the space feels secluded, sophisticated, and entirely its own.",
-      "alcazar.cta": "Inquire about The Alcazar Room",
+      "alcazar.cta": "Inquire about The Lexington",
       "rentals.eyebrow": "Rentals & event services",
       "rentals.title": "At La Jolla & beyond",
       "rentals.intro":
@@ -171,7 +171,7 @@
       "form.typeFilm": "Film, photo & content",
       "form.typeGala": "Gala / fundraiser",
       "form.typeDining": "Private dining",
-      "form.typeAlcazar": "The Alcazar Room",
+      "form.typeAlcazar": "The Lexington",
       "form.typeRental": "Rentals / services only",
       "form.typeOther": "Something else",
       "form.interest": "Additional service details",
@@ -236,7 +236,7 @@
       "selection.edit": "Explorar más servicios",
       "selection.remove": "Quitar",
       "selection.count": "servicios seleccionados",
-      "selection.regarding": "Consulta sobre",
+      "form.planning": "Comencemos a planificar",
 
       "nav.skip": "Ir al contenido",
       "nav.house": "La casa",
@@ -297,12 +297,12 @@
       "events.other.title": "¿Algo completamente distinto?",
       "events.other.body":
         "No todo evento cabe en una categoría, y esa es la idea. Cuéntenos lo que imagina y le ayudamos a hacerlo realidad.",
-      "events.alcazar.link": "Descubrir The Alcazar Room",
+      "events.alcazar.link": "Descubrir The Lexington",
       "alcazar.eyebrow": "Curado · Vintage 1928",
-      "alcazar.title": "The Alcazar Room",
+      "alcazar.title": "The Lexington",
       "alcazar.body":
         "Suba y entre en otra época. En verdes profundos, granates y oros cálidos, este salón íntimo se inspira en clubes privados, salas de whiskey clásicas y la elegancia atemporal de la cultura hípica de Kentucky. Pensado para cócteles, cenas privadas, celebraciones íntimas y reuniones singulares, el espacio se siente recogido, sofisticado y enteramente propio.",
-      "alcazar.cta": "Consultar por The Alcazar Room",
+      "alcazar.cta": "Consultar por The Lexington",
       "rentals.eyebrow": "Renta y servicios para eventos",
       "rentals.title": "En La Jolla y más allá",
       "rentals.intro":
@@ -371,7 +371,7 @@
       "form.typeFilm": "Cine, foto y contenido",
       "form.typeGala": "Gala / recaudación",
       "form.typeDining": "Cena privada",
-      "form.typeAlcazar": "The Alcazar Room",
+      "form.typeAlcazar": "The Lexington",
       "form.typeRental": "Solo renta / servicios",
       "form.typeOther": "Otra cosa",
       "form.interest": "Detalles adicionales de servicios",
@@ -617,12 +617,6 @@
     if (location && setting) {
       setting.hidden = !location.value;
       setting.textContent = location.value ? dict["selection.setting"] + ": " + location.selectedOptions[0].textContent : "";
-    }
-    const type = document.getElementById("q-type");
-    const note = document.querySelector(".inquiry-occasion");
-    if (type && note) {
-      note.hidden = !type.value;
-      note.textContent = type.value ? dict["selection.regarding"] + ": " + type.selectedOptions[0].textContent : "";
     }
   }
 

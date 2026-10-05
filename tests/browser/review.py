@@ -409,10 +409,10 @@ async def check_composer(browser, base, output):
             await page.locator('.occasion').first.locator('a[data-event-type="wedding"]').click()
             assert await page.locator("#q-type").input_value() == "wedding"
             await page.locator("#q-type").select_option("corporate")
-            expected = await page.locator('#q-type option[value="corporate"]').text_content()
-            assert expected in await page.locator(".inquiry-occasion").text_content()
+            assert await page.locator(".inquiry-occasion").text_content() == ("Let's Start Planning" if language == "en" else "Comencemos a planificar")
             await page.locator('#alcazar [data-event-type="alcazar"]').click()
             assert await page.locator("#q-type").input_value() == "alcazar"
+            assert await page.locator('#q-type option[value="alcazar"]').text_content() == "The Lexington"
             await page.wait_for_function("""() => { const r = document.getElementById('quote-title').getBoundingClientRect(); return r.top >= 68 && r.bottom <= innerHeight; }""")
             await snapshot(page, output, f"inquiry-selection-{width}-{language}")
             # Add every service to expose cramped summaries and unbounded overflow.
@@ -489,6 +489,7 @@ async def check_paths(browser, base, output):
             await page.locator(f'[data-lang="{language}"]').click()
             await page.locator('#alcazar a[data-event-type="alcazar"]').click()
             assert await page.locator("#q-type").input_value() == "alcazar"
+            assert await page.locator('#q-type option[value="alcazar"]').text_content() == "The Lexington"
             assert await page.locator("#q-location").input_value() == "la-jolla"
             await page.locator("#q-location").select_option("south-florida")
             assert await page.locator("#q-location").input_value() == "south-florida", "Prefill cannot be corrected"
