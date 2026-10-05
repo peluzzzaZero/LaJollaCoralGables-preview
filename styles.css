@@ -841,3 +841,41 @@ html:not(.js) .selection-builder { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .offering-path::after, .offering-path .link-arrow, .occasion summary, .occasion-toggle { transition: none; }
 }
+
+/* A photographic visit: original venue media, quiet framing and native controls. */
+.venue-visit { background: var(--cream); }
+.venue-intro { max-width: 48rem; margin: 0 auto 3rem; text-align: center; }
+.venue-visit figure { margin: 0; }
+.venue-visit img { display: block; width: 100%; height: auto; }
+.venue-visit figcaption { display: flex; gap: 1rem; align-items: baseline; padding: .9rem 0; font-size: 1rem; color: var(--sage-deep); }
+.venue-index { font-size: .75rem; letter-spacing: .12em; }
+.venue-ballroom { border-top: 1px solid var(--line-soft); padding-top: 1rem; }
+.venue-ballroom img { aspect-ratio: 16 / 9; object-fit: contain; }
+.venue-details { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 2rem; margin-top: 2.5rem; align-items: start; }
+.venue-detail-stair { padding-top: 3rem; }
+.venue-more { margin-top: 1rem; border-block: 1px solid var(--line-soft); padding-block: 1rem; }
+.venue-more summary { cursor: pointer; font-style: italic; color: var(--sage-deep); }
+.venue-more figure { max-width: 52rem; margin: 1.5rem auto 0; }
+.venue-films { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 2rem; align-items: center; margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--line-soft); }
+.venue-film-intro .section-title { font-size: clamp(2rem, 3.4vw, 3.4rem); }
+.venue-film-intro p:not(.eyebrow) { margin-block: 1.5rem; }
+.venue-film video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: contain; background: #263b30; }
+.venue-film-link { font-size: .9rem; color: var(--sage-deep); text-underline-offset: .25em; }
+.venue-film:nth-of-type(2) { margin-top: 4rem; }
+@media (max-width: 900px) {
+  .venue-details { gap: 1rem; grid-template-columns: 1fr 1fr; }
+  .venue-detail-stair { grid-column: 1 / -1; padding-top: 0; max-width: 42rem; }
+  .venue-films { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .venue-film-intro { grid-column: 1 / -1; max-width: 36rem; }
+}
+@media (max-width: 480px) {
+  .venue-intro { text-align: left; margin-bottom: 2rem; }
+  .venue-films { grid-template-columns: 1fr; margin-top: 3rem; }
+  .venue-film-intro { grid-column: auto; }
+  .venue-film:nth-of-type(2) { margin-top: 1.5rem; }
+  .venue-film { max-width: 23rem; width: 100%; margin-inline: auto; }
+}
+
+.venue-film-intro .link-arrow { font-family: Arial, sans-serif; }
+
+.venue-film-status { font-size: .95rem; color: var(--sage-deep); margin-block: .75rem; }
