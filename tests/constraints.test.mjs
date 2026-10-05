@@ -15,7 +15,7 @@ test("directors stay", () => {
 });
 
 test("room name stays", () => {
-  assert.match(html, /The Alcazar Room/);
+  assert.match(html, /The Lexington/);
 });
 
 test("no invented cafe shots and no public prices", () => {

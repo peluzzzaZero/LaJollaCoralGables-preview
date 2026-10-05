@@ -1,5 +1,7 @@
 # Supplied brief and homepage reference — 4 October 2026
 
+Latest user correction (5 October 2026): the lounge is **The Lexington**. This supersedes the earlier Alcazar room references below; the address remains 301 Alcazar Avenue. The inquiry introduction is now “Let's Start Planning” rather than a dynamic “Regarding” summary.
+
 The user supplied La_Jolla_Brief_Disenador_Web_ES.docx, La Jolla Homepage Preview.html and a WhatsApp ZIP as reference during the v1.2.0 improvement cycle. The separately supplied DOCX and HTML were read. The original ZIP exceeded the transfer tool's 32 MiB limit; the user then supplied 17 RAR volumes. All volumes downloaded, reconstructed and extracted without errors: 171,121,431 archive bytes, 139 files. The newer brief, designer preview, brand manual, image originals, SVG variants, font license and nested brand ZIP were inspected. The nested ZIP duplicates the extracted brand delivery rather than adding room photographs or video.
 
 ## Direction retained
@@ -31,6 +33,6 @@ A future private workflow needs the following implementation inputs and architec
 
 The brief requests a future real venue video. The existing architectural opening can receive that asset while retaining its photo as poster/fallback; delivery should respect reduced motion, constrained data and video load failure. No empty player or invented video is published before the file exists.
 
-Future spaces should be added only with approved names, imagery and facts. Separate room content from layout, retain the confirmed Alcazar entry, and keep unnamed placeholders in internal planning rather than publishing room claims.
+Future spaces should be added only with approved names, imagery and facts. Separate room content from layout, retain the confirmed The Lexington entry, and keep unnamed placeholders in internal planning rather than publishing room claims.
 
 Remaining source materials include actual room photography, venue video, final biographies/space names/social handles, Google Business access, the final package table and contract. The reconstructed archive supplies the brand identity, graphics and updated references. It does not include a venue video, room/service shoot, final package table or executable contract/calendar/payment integration.
