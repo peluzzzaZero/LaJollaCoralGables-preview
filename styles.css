@@ -327,7 +327,7 @@ html.has-gsap .reel-beat:first-child { opacity: 1; visibility: visible; }
 .offering-path::after { content: ""; position: absolute; height: 1px; bottom: -1px; left: 0; right: 0; background: var(--sage-deep); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
 .offering-path:hover::after, .offering-path:focus-visible::after { transform: scaleX(1); }
 .path-photo { width: 100%; height: 13rem; object-fit: cover; object-position: 50% 72%; margin-bottom: 1.5rem; }
-.offering-path:nth-of-type(2) .path-photo { object-position: 50% 58%; }
+.offering-path[href="#rentals"] .path-photo { object-position: 50% 58%; }
 .path-kicker { font-size: .7rem; text-transform: uppercase; letter-spacing: .16em; color: var(--sage-deep); margin-bottom: 1rem; }
 .offering-path h3 { font-size: clamp(1.8rem, 2.4vw, 2.6rem); line-height: 1.05; max-width: 18rem; }
 .offering-path p { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.5; margin-bottom: 1.5rem; }
@@ -856,26 +856,29 @@ html:not(.js) .selection-builder { display: none; }
 .venue-more { margin-top: 1rem; border-block: 1px solid var(--line-soft); padding-block: 1rem; }
 .venue-more summary { cursor: pointer; font-style: italic; color: var(--sage-deep); }
 .venue-more figure { max-width: 52rem; margin: 1.5rem auto 0; }
-.venue-films { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 2rem; align-items: center; margin-top: 5rem; padding-top: 3rem; border-top: 1px solid var(--line-soft); }
-.venue-film-intro .section-title { font-size: clamp(2rem, 3.4vw, 3.4rem); }
-.venue-film-intro p:not(.eyebrow) { margin-block: 1.5rem; }
-.venue-film video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; object-fit: contain; background: #263b30; }
-.venue-film-link { font-size: .9rem; color: var(--sage-deep); text-underline-offset: .25em; }
-.venue-film:nth-of-type(2) { margin-top: 4rem; }
 @media (max-width: 900px) {
   .venue-details { gap: 1rem; grid-template-columns: 1fr 1fr; }
   .venue-detail-stair { grid-column: 1 / -1; padding-top: 0; max-width: 42rem; }
-  .venue-films { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-  .venue-film-intro { grid-column: 1 / -1; max-width: 36rem; }
 }
 @media (max-width: 480px) {
   .venue-intro { text-align: left; margin-bottom: 2rem; }
-  .venue-films { grid-template-columns: 1fr; margin-top: 3rem; }
-  .venue-film-intro { grid-column: auto; }
-  .venue-film:nth-of-type(2) { margin-top: 1.5rem; }
-  .venue-film { max-width: 23rem; width: 100%; margin-inline: auto; }
 }
 
-.venue-film-intro .link-arrow { font-family: Arial, sans-serif; }
-
+/* Films belong to the facade; a single visitor-requested viewer keeps the page quiet. */
+.house-offer { min-width: 0; }
+.house-films { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin-top: .75rem; }
+.house-films a { padding-block: .65rem; font-size: .95rem; color: var(--sage-deep); text-underline-offset: .25em; }
+.house-films a span[aria-hidden] { font-family: Arial, sans-serif; margin-right: .2rem; }
+.venue-inquiry { margin: 2rem 0 0; text-align: center; }
+.film-viewer { padding: 1rem 1.25rem; border: 1px solid var(--line-soft); background: var(--cream); color: var(--forest); width: min(30rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto; overscroll-behavior: contain; }
+.film-viewer:not([open]) { display: none; }
+.film-viewer::backdrop { background: rgba(21, 35, 28, .72); }
+.film-viewer-head { display: flex; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+.film-viewer h2 { font-size: 1.35rem; font-weight: 400; margin: 0; }
+.film-close { background: transparent; border: 0; border-bottom: 1px solid var(--sage-deep); padding: .65rem .25rem; font: inherit; color: inherit; cursor: pointer; }
+.film-viewer video { display: block; width: auto; height: min(65dvh, 38rem); max-width: 100%; margin-inline: auto; aspect-ratio: 480 / 854; object-fit: contain; background: #263b30; }
+.film-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem 1rem; margin-block: .75rem; }
+.film-choices a { padding-block: .6rem; text-underline-offset: .3em; color: var(--sage-deep); }
+.film-choices a[aria-current="true"] { color: var(--forest); text-decoration-thickness: 2px; }
+.venue-film-link { display: block; text-align: center; font-size: .9rem; color: var(--sage-deep); text-underline-offset: .25em; }
 .venue-film-status { font-size: .95rem; color: var(--sage-deep); margin-block: .75rem; }
