@@ -310,7 +310,7 @@ async def check_variants(browser, base, output):
         await page.wait_for_timeout(300)
         await scroll(page, 0)
         assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 1
-        assert await page.evaluate("!!ScrollTrigger.getAll().find(t => t.trigger.id === 'hero').vars.pin") == (width > 900)
+        assert not await page.evaluate("!!ScrollTrigger.getAll().find(t => t.trigger.id === 'hero').vars.pin")
         assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
     await page.emulate_media(reduced_motion="reduce")
     await page.wait_for_timeout(200)
