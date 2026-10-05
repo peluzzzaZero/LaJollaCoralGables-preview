@@ -563,6 +563,8 @@ async def check_venue_media(browser, base, output):
     assert await page.locator(".venue-film-link").count() == 2
     native_video = page.locator(".venue-film video").first
     await native_video.scroll_into_view_if_needed()
+    await native_video.hover()
+    await page.wait_for_timeout(500)
     box = await native_video.bounding_box()
     await native_video.click(position={"x": 25, "y": box["height"] - 45})
     await page.wait_for_function("() => document.querySelector('.venue-film video').currentTime > .2")
