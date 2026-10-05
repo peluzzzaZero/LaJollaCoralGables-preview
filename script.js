@@ -55,12 +55,11 @@
       "visit.garden": "Garden light",
       "visit.more": "Another view of the ballroom",
       "visit.piano": "The ballroom, from another angle",
-      "visit.filmEyebrow": "A moment at the house",
-      "visit.filmTitle": "The approach. The details.",
-      "visit.filmIntro": "Two short glimpses of the facade, its striped awnings and the greenery that frames your arrival.",
       "visit.cta": "Let's imagine your occasion here",
-      "visit.arrival": "The arrival · 12 seconds",
-      "visit.details": "A closer look · 13 seconds",
+      "visit.filmsLabel": "Short films of the house",
+      "visit.watchArrival": "The arrival · 12s",
+      "visit.watchDetails": "A closer look · 13s",
+      "visit.close": "Close",
       "visit.download": "Open the film",
       "visit.filmError": "The film could not load. You can open the file below.",
       "visit.arrivalLabel": "Arrival at La Jolla",
@@ -282,12 +281,11 @@
       "visit.garden": "La luz del jardín",
       "visit.more": "Otra vista del salón",
       "visit.piano": "El salón, desde otro ángulo",
-      "visit.filmEyebrow": "Un momento en la casa",
-      "visit.filmTitle": "La llegada. Los detalles.",
-      "visit.filmIntro": "Dos breves recorridos por la fachada, sus toldos de rayas y la vegetación que enmarca su llegada.",
       "visit.cta": "Imaginemos su ocasión aquí",
-      "visit.arrival": "La llegada · 12 segundos",
-      "visit.details": "Una mirada cercana · 13 segundos",
+      "visit.filmsLabel": "Breves recorridos por la casa",
+      "visit.watchArrival": "La llegada · 12s",
+      "visit.watchDetails": "Una mirada más cerca · 13s",
+      "visit.close": "Cerrar",
       "visit.download": "Abrir el video",
       "visit.filmError": "No se pudo cargar el video. Puede abrir el archivo a continuación.",
       "visit.arrivalLabel": "La llegada a La Jolla",
@@ -857,34 +855,87 @@
         });
       });
     });
-    const films = Array.from(document.querySelectorAll(".venue-film video"));
-    films.forEach(function (film) {
-      const status = film.closest("figure").querySelector(".venue-film-status");
-      const showError = function () { if (status) status.hidden = false; };
-      film.addEventListener("error", showError);
-      const sources = Array.from(film.querySelectorAll("source"));
-      const failedSources = new Set();
-      film.addEventListener("loadstart", function () { failedSources.clear(); if (status) status.hidden = true; });
-      sources.forEach(function (source) {
-        source.addEventListener("error", function () {
-          failedSources.add(source);
-          if (failedSources.size === sources.length) showError();
+    const viewer = document.getElementById("film-viewer");
+    if (!viewer || typeof viewer.showModal !== "function") return;
+    const film = viewer.querySelector("video");
+    const status = viewer.querySelector(".venue-film-status");
+    const fileLink = viewer.querySelector(".venue-film-link");
+    const choices = Array.from(viewer.querySelectorAll("[data-film]"));
+    const media = {
+      arrival: { stem: "arrival", poster: "arrival-poster", label: "visit.arrivalLabel" },
+      details: { stem: "facade-details", poster: "details-poster", label: "visit.detailsLabel" }
+    };
+    let opener = null;
+    let previousOverflow = "";
+    let generation = 0;
+    film.addEventListener("error", function () { status.hidden = false; });
+    film.addEventListener("loadeddata", function () { status.hidden = true; });
+    document.querySelectorAll("[data-film]").forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button) return;
+        const selected = media[link.dataset.film];
+        if (!selected) return;
+        event.preventDefault();
+        if (!viewer.open) {
+          opener = link;
+          previousOverflow = document.body.style.overflow;
+          viewer.showModal();
+          document.body.style.overflow = "hidden";
+          if (window.__ljLenis) window.__ljLenis.stop();
+        }
+        film.pause();
+        film.replaceChildren();
+        status.hidden = true;
+        film.poster = "assets/venue/" + selected.poster + ".jpg";
+        film.dataset.i18n = selected.label;
+        film.dataset.i18nAttr = "aria-label";
+        film.setAttribute("aria-label", I18N[document.documentElement.lang === "es" ? "es" : "en"][selected.label]);
+        fileLink.href = link.href;
+        choices.forEach(function (choice) { choice.setAttribute("aria-current", String(choice.dataset.film === link.dataset.film)); });
+        const request = ++generation;
+        let failed = 0;
+        ["mp4", "webm"].forEach(function (format) {
+          const source = document.createElement("source");
+          source.src = "assets/venue/" + selected.stem + "." + format;
+          source.type = "video/" + format;
+          source.addEventListener("error", function () {
+            if (request === generation && ++failed === 2) status.hidden = false;
+          });
+          film.appendChild(source);
         });
-      });
-      film.addEventListener("loadeddata", function () { if (status) status.hidden = true; });
-      film.addEventListener("play", function () {
-        films.forEach(function (other) { if (other !== film) other.pause(); });
+        film.load();
+        // Playback follows this explicit click, including when reduced motion is enabled.
+        film.play().catch(function () { /* Native controls allow a retry if playback is restricted. */ });
       });
     });
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) films.forEach(function (film) { film.pause(); });
+    viewer.addEventListener("keydown", function (event) {
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(viewer.querySelectorAll("button, video, a[href]"));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
     });
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) { if (!entry.isIntersecting) entry.target.pause(); });
-      }, { threshold: 0 });
-      films.forEach(function (film) { observer.observe(film); });
-    }
+    viewer.querySelector(".film-close").addEventListener("click", function () { viewer.close(); });
+    viewer.addEventListener("click", function (event) {
+      const box = viewer.getBoundingClientRect();
+      if (event.target === viewer && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) viewer.close();
+    });
+    viewer.addEventListener("close", function () {
+      film.pause();
+      ++generation;
+      film.replaceChildren();
+      film.removeAttribute("src");
+      film.load();
+      status.hidden = true;
+      document.body.style.overflow = previousOverflow;
+      if (window.__ljLenis) window.__ljLenis.start();
+      if (opener) opener.focus({ preventScroll: true });
+    });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) film.pause(); });
   }
 
   function initYear() {

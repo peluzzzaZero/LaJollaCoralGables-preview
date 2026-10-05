@@ -67,3 +67,7 @@ Historical section-by-section instructions are retained in PLAN.md. The current 
 v1.0.0 was integrated through PR #3 (feature → dev) and PR #4 (dev → main), at 55433aac. Its annotated tag and GitHub release were created by successful CI run 37203746047; Pages run 37203745470 published it. Live assets match the reviewed tree; navigation passes at 390/768/1280 px in both languages.
 
 The v1.1.0 review exposed narrow intrinsic form controls at 320 px. They now shrink to their grid column, with explicit 320/375 px checks. The selection CTA precedes the list so it stays easy to find. Screenshots wait for native scrolling to settle before recording fixed navigation. Missing-page-script behavior leaves sending disabled and direct contact accessible.
+
+## v1.4.0 — lighter film integration
+
+Replaces the two large on-page players with discreet links at the facade and one requested modal viewer. Retains both actual films, zero initial video transfer, direct no-script access, translated controls and venue photographs. Next improvements should prioritize useful venue facts and imagery over additional page length or motion.
