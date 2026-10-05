@@ -64,3 +64,7 @@ The empty white ballroom is described simply as the ballroom. The stair/music ph
 ```
 
 The WebM alternatives use VP9 at 480 × 854, 24 fps, with a constrained bitrate. Each video source has a genuine extracted JPEG poster. A source error is shown only after all formats fail, avoiding a false failure message during successful format fallback.
+
+## Presentation update — v1.4.0
+
+Both original films are now reached beside the existing facade offering and share one requested modal player. Source files, extracted posters and original photographs are unchanged. There is no extra video chapter or initial video transfer. Direct links remain usable without scripts.

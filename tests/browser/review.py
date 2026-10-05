@@ -522,86 +522,83 @@ async def check_venue_media(browser, base, output):
             requests = []
             page.on("request", lambda request: requests.append(request.url))
             await page.goto(base, wait_until="networkidle")
-            assert not any(".mp4" in url or ".webm" in url for url in requests), "Video transferred before visitor requested playback"
             await page.locator(f'[data-lang="{language}"]').click()
-            videos = page.locator(".venue-film video")
-            assert await videos.count() == 2
-            for video in await videos.all():
-                assert await video.get_attribute("autoplay") is None
-                assert await video.get_attribute("controls") is not None
-                assert await video.get_attribute("preload") == "none"
-                assert await video.evaluate("v => v.paused && v.muted")
-            assert await videos.first.get_attribute("aria-label") == ("Arrival at La Jolla" if language == "en" else "La llegada a La Jolla")
-            await position(page, "visit")
-            await snapshot(page, output, f"venue-interior-{width}-{language}")
-            for index in range(2):
-                video = videos.nth(index)
-                await video.scroll_into_view_if_needed()
-                await video.evaluate("async v => { await Promise.race([v.play(), new Promise((_, reject) => setTimeout(() => reject(new Error('Film did not start within 10 seconds')), 10000))]); }")
-                await page.wait_for_function("""index => {
-                    const v = document.querySelectorAll('.venue-film video')[index];
-                    return v.currentTime > .2 && v.videoWidth === 480 && v.videoHeight === 854 && v.getVideoPlaybackQuality().totalVideoFrames > 0;
-                }""", arg=index)
-                if index:
-                    assert await videos.first.evaluate("v => v.paused"), "Both films play at once"
-                await snapshot(page, output, f"venue-film-{index}-{width}-{language}")
-                await scroll(page, 0)
-                await page.wait_for_function("index => document.querySelectorAll('.venue-film video')[index].paused", arg=index)
+            viewer = page.locator("#film-viewer")
+            video = viewer.locator("video")
+            assert await viewer.is_hidden()
+            assert await video.locator("source").count() == 0
+            assert not any(".mp4" in url or ".webm" in url for url in requests)
+            await position(page, "possibilities")
+            await snapshot(page, output, f"quiet-films-{width}-{language}")
+            opener = page.locator('.house-films [data-film="arrival"]')
+            await opener.focus()
+            await page.keyboard.press("Enter")
+            assert await viewer.is_visible()
+            assert await video.get_attribute("autoplay") is None
+            assert await video.get_attribute("preload") == "none"
+            assert await video.get_attribute("aria-label") == ("Arrival at La Jolla" if language == "en" else "La llegada a La Jolla")
+            await page.wait_for_function("() => { const v = document.querySelector('#film-viewer video'); return v.currentTime > .2 && v.videoWidth === 480 && v.videoHeight === 854 && v.getVideoPlaybackQuality().totalVideoFrames > 0; }")
+            assert await video.evaluate("v => v.muted")
+            await snapshot(page, output, f"film-arrival-{width}-{language}")
+            # Native modal focus remains inside the viewer, including reverse tabbing.
+            for _ in range(9):
+                await page.keyboard.press("Tab")
+                assert await viewer.evaluate("v => v.contains(document.activeElement)")
+            await viewer.locator('[data-film="details"]').click()
+            await page.wait_for_function("() => { const v = document.querySelector('#film-viewer video'); return v.currentTime > .2 && /facade-details/.test(v.currentSrc) && v.getVideoPlaybackQuality().totalVideoFrames > 0; }")
+            assert await page.locator("video").count() == 1
+            await snapshot(page, output, f"film-details-{width}-{language}")
+            box = await viewer.bounding_box()
+            assert box["y"] >= 0 and box["y"] + box["height"] <= height + 1
+            await page.keyboard.press("Escape")
+            assert await viewer.is_hidden()
+            assert await video.evaluate("v => v.paused")
+            assert await video.locator("source").count() == 0
+            assert await opener.evaluate("el => document.activeElement === el")
+            assert await page.evaluate("document.body.style.overflow !== 'hidden'")
+            await opener.click()
+            await viewer.locator(".film-close").click()
+            assert await viewer.is_hidden()
             await page.locator('[data-i18n="visit.cta"]').click()
             assert await page.locator("#q-location").input_value() == "la-jolla"
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
-            results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "decoded_playback": "passed", "exclusive_playback": "passed", "offscreen_pause": "passed", "venue_inquiry": "passed"})
+            results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "both_films_decoded": "passed", "single_player": "passed", "modal_keyboard_close_focus": "passed", "venue_inquiry": "passed"})
             await page.close()
-    # Native playback and the original-photo disclosure remain usable without JS.
+    # Without scripts the two real file links remain usable, and no player adds page height.
     context = await browser.new_context(java_script_enabled=False, viewport={"width": 390, "height": 844})
     page = await context.new_page()
     await page.goto(base, wait_until="networkidle")
+    assert await page.locator("#film-viewer").is_hidden()
+    links = page.locator(".house-films a")
+    assert await links.count() == 2
+    for link in await links.all():
+        response = await page.request.get(await link.evaluate("el => el.href"))
+        assert response.ok and response.headers["content-type"].startswith("video/")
     await page.locator(".venue-more summary").focus()
     await page.keyboard.press("Enter")
     assert await page.locator(".venue-more img").is_visible()
-    assert await page.locator(".venue-film video[controls]").count() == 2
-    assert await page.locator(".venue-film-link").count() == 2
-    native_video = page.locator(".venue-film video").first
-    await native_video.scroll_into_view_if_needed()
-    # Page JS is disabled, so poll from Python instead of page rAF/timers.
-    # Use the real native play control after its hover state has appeared.
-    await native_video.hover()
-    await page.wait_for_timeout(500)
-    box = await native_video.bounding_box()
-    await native_video.click(position={"x": 25, "y": box["height"] - 45})
-    for _ in range(40):
-        if await native_video.evaluate("v => v.currentTime > .2 && v.getVideoPlaybackQuality().totalVideoFrames > 0"):
-            break
-        await page.wait_for_timeout(200)
-    assert await native_video.evaluate("v => v.currentTime > .2"), "Native playback without page scripts failed"
     await page.screenshot(path=str(output / "venue-no-javascript.png"))
     await context.close()
-    # The second format decodes when the MP4 source cannot load.
-    page = await browser.new_page(viewport={"width": 390, "height": 844})
-    await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
-    await page.goto(base, wait_until="networkidle")
-    video = page.locator(".venue-film video").first
-    await video.scroll_into_view_if_needed()
-    await video.evaluate("async v => { await Promise.race([v.play(), new Promise((_, reject) => setTimeout(() => reject(new Error('WebM fallback did not start')), 10000))]); }")
-    await page.wait_for_function("() => { const v = document.querySelector('.venue-film video'); return v.currentTime > .2 && v.currentSrc.endsWith('.webm'); }")
-    assert await page.locator(".venue-film-status").first.is_hidden()
-    await snapshot(page, output, "venue-webm-fallback")
-    await page.close()
-    # A failed film still has its genuine poster and a visible file link.
-    page = await browser.new_page(viewport={"width": 390, "height": 844})
-    await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
-    await page.route("**/assets/venue/*.webm", lambda route: route.abort())
-    await page.goto(base, wait_until="networkidle")
-    video = page.locator(".venue-film video").first
-    await video.scroll_into_view_if_needed()
-    await video.evaluate("v => { v.play().catch(() => {}); }")
-    await page.wait_for_function("() => !document.querySelector('.venue-film-status').hidden")
-    assert await page.locator(".venue-film-status").first.is_visible()
-    assert await video.evaluate("v => Boolean(v.poster)")
-    assert await page.locator(".venue-film-link").first.is_visible()
-    await page.screenshot(path=str(output / "venue-video-failure.png"))
-    await page.close()
-    return {"playback": results, "no_javascript": "passed", "failed_video_fallback": "passed", "webm_fallback": "passed"}
+    # Both formats failing keeps the genuine poster, readable error and direct file link.
+    for failure in ("mp4", "all"):
+        page = await browser.new_page(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
+        await page.route("https://api.web3forms.com/**", lambda route: route.abort())
+        await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
+        if failure == "all":
+            await page.route("**/assets/venue/*.webm", lambda route: route.abort())
+        await page.goto(base, wait_until="networkidle")
+        await page.locator('.house-films [data-film="arrival"]').click()
+        if failure == "mp4":
+            await page.wait_for_function("() => { const v = document.querySelector('#film-viewer video'); return v.currentTime > .2 && v.currentSrc.endsWith('.webm'); }")
+            assert await page.locator(".venue-film-status").is_hidden()
+        else:
+            await page.locator(".venue-film-status").wait_for(state="visible")
+            assert await page.locator("#film-viewer video").evaluate("v => Boolean(v.poster)")
+            assert await page.locator(".venue-film-link").is_visible()
+        await snapshot(page, output, f"film-fallback-{failure}")
+        await page.locator(".film-close").click()
+        await page.close()
+    return {"playback": results, "no_javascript_file_access": "passed", "failed_video_fallback": "passed", "webm_fallback_reduced_motion": "passed"}
 
 
 async def main(args, base):
