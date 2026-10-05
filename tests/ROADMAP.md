@@ -34,6 +34,13 @@ Purpose: make the two offers easier to understand while refining the invitation 
 
 Review question: can visitors see enough real evidence of the space and services to make a confident inquiry? Better approved photographs and verified venue details remain the next priority.
 
+## v1.2.1 — approved copy corrections
+
+- The lounge is The Lexington throughout navigation, its chapter, inquiry links and bilingual event options.
+- The form introduction is “Let's Start Planning” (Spanish: “Comencemos a planificar”), always visible regardless of the selected event.
+- Existing #alcazar anchors and internal option values remain compatible; Alcazar Avenue is still the street address.
+- New photographs and exterior videos were subsequently received on 5 October and reviewed locally. The decorated event photograph still needs confirmation of provenance before use as venue evidence.
+
 ## Reference and private workflow
 
 The user supplied an earlier DOCX brief and HTML mockup during this cycle. See BRIEF-ALIGNMENT.md for decisions, asset provenance and the private automation backlog. The brief describes quoting, tours, native contracts, Stripe deposits and an administration panel; these require approved operational inputs and server integrations. None is represented as working on the current static inquiry site. The user supplied 17 smaller RAR volumes after the ZIP transfer limit; all were reconstructed and reviewed. The brand originals are now available locally, including higher-resolution marks and floral/wax-seal artwork. No new room/service photography or venue video was delivered.

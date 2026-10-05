@@ -27,11 +27,11 @@ function alcazarScript() {
   return js.slice(start, end);
 }
 
-test("alcazar title is The Alcazar Room", () => {
+test("alcazar title is The Lexington", () => {
   const section = alcazarSection();
   assert.match(
     section,
-    /<h2 id="alcazar-title"[^>]*>The Alcazar Room<\/h2>/
+    /<h2 id="alcazar-title"[^>]*>The Lexington<\/h2>/
   );
 });
 

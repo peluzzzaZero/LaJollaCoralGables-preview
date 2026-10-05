@@ -5,7 +5,7 @@
 Main stays untouched until every section below has passed its test and a visual review.
 Work on one section at a time, then check its tests and scroll frames. A section is not done until the scroll frames of that section have been looked at.
 
-Do not invent prices, vendor names, bios, or reviews. Do not use cafe-garden.png, cafe-table.png, or cafe-detail.png. Year is 1928. The room name stays The Alcazar Room. Spanish is usted. No wipe, no edge-on tilt, no cream band, no fade to an empty dark field. MonteCarlo is the script accent only, from the brand zip.
+Do not invent prices, vendor names, bios, or reviews. Do not use cafe-garden.png, cafe-table.png, or cafe-detail.png. Year is 1928. The room name stays The Lexington. Spanish is usted. No wipe, no edge-on tilt, no cream band, no fade to an empty dark field. MonteCarlo is the script accent only, from the brand zip.
 
 ## 1. Opening `#hero`
 Objective: a presentation. Four photos crossfade and zoom onto pots, a candle, petals, and roses. Each existing line sits on that detail, never on the printed name. Readable at 390px and 1280px. The frame never collapses.
@@ -28,7 +28,7 @@ Test: `node --test tests/events.test.mjs`
 Visual: headings and body can be read.
 
 ## 5. Alcazar `#alcazar`
-Objective: the line drawing completes. The room name stays The Alcazar Room. Not a photo wipe and not a tilt.
+Objective: the line drawing completes. The room name stays The Lexington. Not a photo wipe and not a tilt.
 Test: `node --test tests/alcazar.test.mjs`
 Visual: the drawing is fully there beside the name.
 
