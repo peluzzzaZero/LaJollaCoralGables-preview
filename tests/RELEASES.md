@@ -15,3 +15,7 @@ The user's instruction of 4 October 2026 authorizes iterative improvements, feat
 No invented content, real mail submissions, private user information in review artifacts, arbitrary version bumps or merges merely to increase the release count. The automated browser uses fake contact data and intercepts every email request.
 
 Screenshots and videos live in CI artifacts for 14 days; release notes and review findings remain in Git. Local review evidence is outside the repository. CI success validates behavior, not subjective art direction; visual inspection is still required before merging.
+
+### One-time restoration of v1.4.0
+
+v1.4.0 passed feature/main-PR and public review, but its post-main release gate exposed a browser timing race: the test asserted paused playback immediately after the dialog became closed, before the native asynchronous close event released the player. Its tag was correctly withheld. The v1.5.0 workflow rechecks the immutable v1.4.0 product commit in a temporary worktree, changing exactly that test assertion to wait for paused playback and released sources. It repeats all original static/browser checks. Only after both reviews pass may the release job restore the missing annotated v1.4.0 tag at ae36e702289cb12b6d2222a2ea1703bc1422c4e5 and publish v1.5.0. Product files and existing tags are never altered. Later runs verify the restored tag and skip the old browser review.

@@ -22,7 +22,7 @@ function alcazarCss() {
 
 function alcazarScript() {
   const start = js.indexOf('document.querySelector("#alcazar")');
-  const end = js.indexOf('gsap.utils.toArray(".brand-card img")', start);
+  const end = js.indexOf('// All commercial', start);
   assert.ok(start !== -1 && end > start, "alcazar script");
   return js.slice(start, end);
 }

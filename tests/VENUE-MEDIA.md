@@ -68,3 +68,7 @@ The WebM alternatives use VP9 at 480 × 854, 24 fps, with a constrained bitrate.
 ## Presentation update — v1.4.0
 
 Both original films are now reached beside the existing facade offering and share one requested modal player. Source files, extracted posters and original photographs are unchanged. There is no extra video chapter or initial video transfer. Direct links remain usable without scripts.
+
+## Architecture photograph — v1.5.0
+
+assets/venue/architecture.jpg is an unedited copy of WhatsApp Image 2026-10-05 at 01.55.48 (3).jpeg from the owner's second new ZIP (23.16.25). Original dimensions 768 × 1024; presented with contain at 3:4, with no enlarged crop or fabricated history image.

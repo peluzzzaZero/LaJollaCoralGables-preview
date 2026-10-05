@@ -32,7 +32,7 @@ test('referenced local images, scripts and styles exist', () => {
 
 test('release tags depend on passing review and are restricted to main', () => {
   const workflow = read('.github/workflows/quality-and-release.yml');
-  assert.match(workflow, /needs: review/);
+  assert.match(workflow, /needs: \[review, review-v14\]/);
   assert.match(workflow, /github\.ref == 'refs\/heads\/main'/);
   assert.match(workflow, /git tag -a/);
   assert.match(workflow, /gh release create/);
