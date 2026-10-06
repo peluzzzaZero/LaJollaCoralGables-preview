@@ -7,6 +7,20 @@
 
   const I18N = {
     en: {
+      "cinema.eyebrow": "A sense of place",
+      "cinema.title": "Through the arch.",
+      "cinema.arrivalTitle": "A first impression.",
+      "cinema.arrivalBody": "Ivy, striped awnings, and a welcome that begins at the door.",
+      "cinema.balconyTitle": "Look a little closer.",
+      "cinema.balconyBody": "An iron balcony. Garden light. The details that give the house its character.",
+      "cinema.roomTitle": "Now, imagine your occasion.",
+      "cinema.roomBody": "Inside, a light-filled ballroom becomes the starting point for your celebration.",
+      "cinema.label": "Views of the house",
+      "cinema.arrival": "The arrival",
+      "cinema.balcony": "The balcony",
+      "cinema.room": "The ballroom",
+      "cinema.continue": "Continue to the story ↓",
+
       "paths.eyebrow": "Consider the possibilities",
       "paths.title": "Your occasion. Your setting.",
       "paths.houseKicker": "At the house",
@@ -238,6 +252,20 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "cinema.eyebrow": "El carácter de un lugar",
+      "cinema.title": "Al otro lado del arco.",
+      "cinema.arrivalTitle": "Una primera impresión.",
+      "cinema.arrivalBody": "Hiedra, toldos a rayas y una bienvenida que empieza en la puerta.",
+      "cinema.balconyTitle": "Mira un poco más de cerca.",
+      "cinema.balconyBody": "Un balcón de hierro. La luz del jardín. Los detalles que dan carácter a la casa.",
+      "cinema.roomTitle": "Ahora, imagina tu celebración.",
+      "cinema.roomBody": "Dentro, un salón lleno de luz es el punto de partida para tu celebración.",
+      "cinema.label": "Vistas de la casa",
+      "cinema.arrival": "La llegada",
+      "cinema.balcony": "El balcón",
+      "cinema.room": "El salón",
+      "cinema.continue": "Continúa con la historia ↓",
+
       "paths.eyebrow": "Explore las posibilidades",
       "paths.title": "Su ocasión. Su escenario.",
       "paths.houseKicker": "En nuestra casa",
@@ -527,13 +555,159 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
-  function initStory() {
+  function initCinematicWindow() {
+    const section = document.getElementById("cinema");
+    if (!section) return null;
+    const stage = section.querySelector(".cinema-stage");
+    const frame = section.querySelector(".cinema-aperture");
+    const slot = section.querySelector(".cinema-media");
+    const layers = Array.from(section.querySelectorAll("[data-scene-layer]"));
+    const stories = Array.from(section.querySelectorAll("[data-scene-copy]"));
+    const buttons = Array.from(section.querySelectorAll("[data-scene]"));
+    const videos = Array.from(section.querySelectorAll("[data-cinema-film]"));
+    const positions = [.12, .57, .96];
+    let trigger = null, observer = null, active = 0, loaded = false, loadController = null;
+    const connection = navigator.connection;
+    const saveData = !!(connection && connection.saveData);
+    section.classList.add("cinema-ready");
+
+    function select(index) {
+      if (section.dataset.scene === String(index)) return;
+      active = index;
+      stories.forEach(function (story, i) { story.hidden = i !== index; });
+      buttons.forEach(function (button, i) { button.setAttribute("aria-pressed", String(i === index)); });
+      section.dataset.scene = String(index);
+    }
+    function staticScene(index) {
+      select(index);
+      layers.forEach(function (layer, i) { layer.style.opacity = i === index ? "1" : "0"; });
+      stories.forEach(function (story) { story.style.opacity = "1"; story.style.transform = ""; });
+      frame.style.width = index === 2 ? "100%" : "76%";
+      frame.style.height = index === 2 ? slot.clientWidth * 9 / 16 + "px" : "100%";
+      frame.style.borderRadius = index === 2 ? "6px" : "50% 50% 0 0";
+    }
+    videos.forEach(function (video) {
+      let desired = 0;
+      function seek() {
+        if (video.readyState < 2 || video.seeking || !Number.isFinite(video.duration)) return;
+        const target = Math.min(video.duration - .05, Math.max(0, desired));
+        if (Math.abs(video.currentTime - target) > .035) {
+          try { video.currentTime = target; } catch (_) { /* The poster remains available. */ }
+        }
+      }
+      video.requestFrame = function (fraction) { desired = fraction * (video.duration || 5.3); seek(); };
+      video.addEventListener("seeked", seek);
+      video.addEventListener("loadeddata", function () {
+        video.classList.add("is-decoded");
+        seek();
+      });
+      video.addEventListener("error", function () { video.classList.remove("is-decoded"); });
+    });
+    function loadFilms() {
+      if (loaded || !trigger || saveData) return;
+      loaded = true;
+      const controller = new AbortController();
+      loadController = controller;
+      videos.forEach(function (video) {
+        let attempt = 0;
+        const formats = ["mp4", "webm"].filter(function (format) { return video.canPlayType("video/" + format); });
+        function tryFormat() {
+          if (controller.signal.aborted || attempt >= formats.length) return;
+          const format = formats[attempt++];
+          // Blob URLs permit reliable backward seeking even on hosts without byte-range support.
+          fetch("assets/venue/cinematic/" + video.dataset.cinemaFilm + "." + format, { signal: controller.signal })
+            .then(function (response) { if (!response.ok) throw new Error("film"); return response.blob(); })
+            .then(function (blob) {
+              if (controller.signal.aborted) return;
+              if (video.filmURL) URL.revokeObjectURL(video.filmURL);
+              video.filmURL = URL.createObjectURL(blob);
+              video.dataset.format = format;
+              video.src = video.filmURL;
+              video.preload = "auto";
+              video.load();
+            }).catch(function () { if (!controller.signal.aborted) tryFormat(); });
+        }
+        video.onerror = tryFormat;
+        tryFormat();
+      });
+    }
+    function releaseFilms() {
+      if (loadController) loadController.abort();
+      loadController = null;
+      videos.forEach(function (video) {
+        video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute("src");
+        video.classList.remove("is-decoded"); video.preload = "none"; video.load();
+        if (video.filmURL) URL.revokeObjectURL(video.filmURL);
+        video.filmURL = null; delete video.dataset.format;
+      });
+      loaded = false;
+    }
+    buttons.forEach(function (button, index) {
+      button.addEventListener("click", function () {
+        if (trigger) {
+          window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * positions[index], behavior: "smooth" });
+        } else { staticScene(index); }
+      });
+    });
+    window.addEventListener("resize", function () { if (!trigger) staticScene(active); });
+    staticScene(0);
+    return { animate: function (gsap, ScrollTrigger) {
+      // Short screens, reduced motion and data saving retain deliberate, still-image choices.
+      if (saveData || window.innerHeight < 740) return null;
+      section.classList.add("cinema-scroll");
+      const playhead = { progress: 0 };
+      function render() {
+        const p = playhead.progress;
+        // Covered dissolves keep the arch filled, even while a video seek is pending.
+        const balcony = gsap.utils.clamp(0, 1, (p - .34) / .12);
+        const room = gsap.utils.clamp(0, 1, (p - .76) / .12);
+        layers[0].style.opacity = "1";
+        layers[1].style.opacity = String(balcony);
+        layers[2].style.opacity = String(room);
+        layers[0].style.transform = "scale(" + (1.24 - Math.min(p / .38, 1) * .24) + ")";
+        layers[1].style.transform = "scale(" + (1.12 - gsap.utils.clamp(0, 1, (p - .4) / .36) * .12) + ")";
+        frame.style.width = (76 + room * 24) + "%";
+        frame.style.height = slot.clientHeight + (slot.clientWidth * 9 / 16 - slot.clientHeight) * room + "px";
+        frame.style.borderTopLeftRadius = (50 * (1 - room)) + "%";
+        frame.style.borderTopRightRadius = (50 * (1 - room)) + "%";
+        videos[0].requestFrame(gsap.utils.clamp(0, 1, p / .4));
+        videos[1].requestFrame(gsap.utils.clamp(0, 1, (p - .4) / .38));
+        select(p < .4 ? 0 : p < .82 ? 1 : 2);
+        const entrance = active === 0 ? 1 : gsap.utils.clamp(.35, 1, (p - (active === 1 ? .4 : .82)) / .07);
+        stories[active].style.opacity = String(entrance);
+        stories[active].style.transform = "translateY(" + ((1 - entrance) * 12) + "px)";
+      }
+      const timeline = gsap.to(playhead, { progress: 1, ease: "none", onUpdate: render,
+        scrollTrigger: { id: "cinematic-arch", trigger: section, pin: stage,
+          start: function () { return "top " + document.getElementById("header").offsetHeight; },
+          end: function () { return "+=" + Math.round(window.innerHeight * (window.innerWidth < 650 ? 1.05 : 1.5)); },
+          scrub: .25, invalidateOnRefresh: true, onRefresh: render,
+          onEnter: loadFilms, onEnterBack: loadFilms
+        }
+      });
+      trigger = timeline.scrollTrigger;
+      observer = new IntersectionObserver(function (entries) {
+        if (entries.some(function (entry) { return entry.isIntersecting; })) loadFilms();
+      }, { rootMargin: "180px 0px" });
+      observer.observe(section);
+      render();
+      return function () {
+        observer.disconnect(); observer = null; trigger = null;
+        section.classList.remove("cinema-scroll");
+        releaseFilms();
+        layers.forEach(function (layer) { layer.style.transform = ""; });
+        staticScene(active);
+      };
+    }};
+  }
+
+  function initStory(cinema) {
     if (typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") return;
     const gsap = window.gsap;
     const ScrollTrigger = window.ScrollTrigger;
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
-    media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
+    media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", tall: "(min-height: 740px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
       if (context.conditions.reduced) return;
       document.documentElement.classList.add("has-gsap");
       // The entrance has restrained depth, without pinning or changing photos on scroll.
@@ -541,6 +715,7 @@
         "--arrival-depth": "-12px", ease: "none",
         scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
       });
+      const disposeCinema = cinema && cinema.animate(gsap, ScrollTrigger);
       // History preserves the complete architectural view.
       var alcazarVisual = document.querySelector("#alcazar");
       const alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
@@ -560,7 +735,7 @@
         gsap.set(section.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
       });
       ScrollTrigger.refresh();
-      return function () { document.documentElement.classList.remove("has-gsap"); };
+      return function () { if (disposeCinema) disposeCinema(); document.documentElement.classList.remove("has-gsap"); };
     });
     // Native scroll keeps touch, focus and keyboard positions in the same coordinate system.
     document.addEventListener("click", function (event) {
@@ -968,7 +1143,7 @@
     applyI18n(preferred);
     initHeader();
     initPhotoCollections();
-    initStory();
+    initStory(initCinematicWindow());
     initInquiryComposer();
     initChapterMenu();
     initVenueFilms();

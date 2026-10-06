@@ -72,3 +72,7 @@ Both original films are now reached beside the existing facade offering and shar
 ## Architecture photograph — v1.5.0
 
 assets/venue/architecture.jpg is an unedited copy of WhatsApp Image 2026-10-05 at 01.55.48 (3).jpeg from the owner's second new ZIP (23.16.25). Original dimensions 768 × 1024; presented with contain at 3:4, with no enlarged crop or fabricated history image.
+
+## Cinematic cuts — v1.6.0
+
+`cinematic/arrival` uses the original 01.56.02 film from 0.5 to 5.8 seconds. `cinematic/balcony` uses original 01.56.17 from 4.5 to 9.8 seconds. Both are actual owner-supplied facade footage, autorotated to 480×854, silent 30 fps, H.264 GOP 6; the WebM fallback is 360×640, 24 fps, VP9 GOP 12. Their posters are their actual first frames. These short files serve paused scroll seeking; existing complete films and links are unchanged. Full transfer is deferred until the architectural scene approaches the viewport.

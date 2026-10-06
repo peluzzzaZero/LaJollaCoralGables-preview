@@ -75,3 +75,7 @@ Replaces the two large on-page players with discreet links at the facade and one
 ## v1.5.0 — user-led visual corrections
 
 Replace the rejected history crop, simplify the quote interlude, present brand pieces as a larger native gallery and decouple opening photo selection from scroll. Preserve the explicitly approved offering section and quiet film integration. Earlier crop/pin/tween requirements in historical notes and tests are superseded by these user comments.
+
+## v1.6.0 — an architectural scroll scene
+
+Translate the user's Apple references into one short, reversible GSAP journey using real arrival/balcony footage and the ballroom photograph. Preserve the approved offering cards and v1.5 corrections. A responsive arch changes framing, captions advance with the scene, and three accessible choices or the continuation link give visitors control. Reduced motion, data saving and short screens use still-image choices; film loads are deferred until near the scene. Review decoded forward/reverse frames and covered transitions, rather than equating a scroll effect with a decorative CSS shift.
