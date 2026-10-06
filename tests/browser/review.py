@@ -539,7 +539,7 @@ async def check_cinematic(browser, base, output):
                       return v.readyState >= 2 && !v.seeking && Math.abs(v.currentTime-v.duration*fraction)<.15 && v.getVideoPlaybackQuality().totalVideoFrames>0;
                     }""", arg={"film": film, "fraction": fraction}, timeout=15000)
                     video = page.locator(f'[data-cinema-film="{film}"]')
-                    assert await video.evaluate("v => v.paused && v.muted && v.videoWidth === 480 && v.videoHeight === 854")
+                    assert await video.evaluate("v => v.paused && v.muted && (v.dataset.format === 'mp4' ? v.videoWidth === 480 && v.videoHeight === 854 : v.videoWidth === 360 && v.videoHeight === 640)")
                     times.append(await video.evaluate("v => v.currentTime"))
                 await page.wait_for_timeout(350)
                 box = await page.locator(".cinema-aperture").bounding_box()
