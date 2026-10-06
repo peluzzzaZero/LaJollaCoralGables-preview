@@ -674,7 +674,7 @@
         videos[1].requestFrame(gsap.utils.clamp(0, 1, (p - .4) / .38));
         select(p < .4 ? 0 : p < .82 ? 1 : 2);
         const entrance = active === 0 ? 1 : gsap.utils.clamp(.35, 1, (p - (active === 1 ? .4 : .82)) / .07);
-        stories[active].style.opacity = String(entrance);
+        stories[active].style.opacity = "1";
         stories[active].style.transform = "translateY(" + ((1 - entrance) * 12) + "px)";
       }
       const timeline = gsap.to(playhead, { progress: 1, ease: "none", onUpdate: render,

@@ -546,6 +546,7 @@ async def check_cinematic(browser, base, output):
                 assert 68 <= box["y"] and box["y"] + box["height"] <= height + 1
                 assert box["x"] >= 0 and box["x"] + box["width"] <= width + 1
                 assert await page.locator(f'[data-scene-copy="{scene}"]').is_visible()
+                assert await page.locator(f'[data-scene-copy="{scene}"]').evaluate("e => Number(getComputedStyle(e).opacity) === 1"), "Caption loses readable contrast"
                 assert await page.locator(f'button[data-scene="{scene}"]').get_attribute("aria-pressed") == "true"
                 assert await page.locator('.cinema-layer').first.evaluate("e => Number(getComputedStyle(e).opacity) === 1"), "Arch loses its covered base during transitions"
                 assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
