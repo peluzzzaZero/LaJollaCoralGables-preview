@@ -944,6 +944,7 @@ html:not(.js) .selection-builder { display: none; }
 .title-letter { display: inline-block; }
 .arrival-title > span.title-line { display: block; }
 .scroll-word { display: inline-block; opacity: clamp(.6, calc(var(--reading-progress, 1) * 2 - var(--word-step)), 1); transform: translateY(calc((1 - var(--reading-progress, 1)) * 8px)); }
+.lede .scroll-word, .section-intro .scroll-word { opacity: clamp(.76, calc(var(--reading-progress, 1) * 2 - var(--word-step)), 1); }
 .path-art { display: block; position: relative; height: 13rem; margin-bottom: 1.5rem; isolation: isolate; overflow: clip; }
 .path-art .path-photo { height: 100%; margin: 0; }
 .possibilities-layout > header { position: relative; }

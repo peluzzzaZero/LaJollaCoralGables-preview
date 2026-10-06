@@ -75,6 +75,7 @@ async def check_navigation(browser, base, output):
             await page.locator(".rentals-quiet-link").first.click()
             assert await page.locator(".rentals-quiet-link").first.get_attribute("aria-pressed") == "true"
             await page.locator(".selection-continue").click()
+            await page.wait_for_function("document.activeElement.id === 'quote-title'")
             await page.wait_for_function("""() => {
               const r = document.getElementById('quote-title').getBoundingClientRect();
               return r.top >= 68 && r.bottom <= innerHeight;
@@ -83,6 +84,7 @@ async def check_navigation(browser, base, output):
             await snapshot(page, output, f"navigation-{width}-{language}-service")
             await scroll(page, 0)
             await page.locator(".inquire-link").click()
+            await page.wait_for_function("document.activeElement.id === 'quote-title'")
             await page.wait_for_function("""() => {
               const r = document.getElementById('quote-title').getBoundingClientRect();
               return r.top >= 68 && r.bottom <= innerHeight;
@@ -420,7 +422,13 @@ async def check_composer(browser, base, output):
             await page.locator('#alcazar [data-event-type="alcazar"]').click()
             assert await page.locator("#q-type").input_value() == "alcazar"
             assert await page.locator('#q-type option[value="alcazar"]').text_content() == "The Lexington"
-            await page.wait_for_function("""() => { const r = document.getElementById('quote-title').getBoundingClientRect(); return r.top >= 68 && r.bottom <= innerHeight; }""")
+            try:
+                await page.wait_for_function("""() => { const r = document.getElementById('quote-title').getBoundingClientRect(); return r.top >= 68 && r.bottom <= innerHeight; }""")
+            except Exception:
+                state = await page.evaluate("({scroll:scrollY,active:document.activeElement.id,title:document.getElementById('quote-title').getBoundingClientRect().toJSON(),section:document.getElementById('quote').getBoundingClientRect().toJSON()})")
+                (output / f"navigation-failure-{width}-{language}.json").write_text(json.dumps(state,indent=2))
+                await page.screenshot(path=str(output / f"navigation-failure-{width}-{language}.png"))
+                raise
             await snapshot(page, output, f"inquiry-selection-{width}-{language}")
             # Add every service to expose cramped summaries and unbounded overflow.
             for button in await page.locator("[data-service-id]").all():
@@ -558,10 +566,23 @@ async def check_living_story(browser, base, output):
             await scroll(page, destination)
             await page.wait_for_timeout(650)
             before = await text.locator('.scroll-word').evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))")
+            contrast = await text.evaluate("""el => {
+              const rgb = value => value.match(/[0-9.]+/g).slice(0,3).map(Number);
+              const luminance = color => color.map(c=>c/255).map(c=>c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)).reduce((sum,c,i)=>sum+c*[.2126,.7152,.0722][i],0);
+              let background=el;
+              while (background.parentElement && getComputedStyle(background).backgroundColor==='rgba(0, 0, 0, 0)') background=background.parentElement;
+              const bg=rgb(getComputedStyle(background).backgroundColor);
+              return Math.min(...Array.from(el.querySelectorAll('.scroll-word'), word=>{
+                const fg=rgb(getComputedStyle(word).color), alpha=Number(getComputedStyle(word).opacity);
+                const rendered=fg.map((c,i)=>c*alpha+bg[i]*(1-alpha));
+                return (luminance(bg)+.05)/(luminance(rendered)+.05);
+              }));
+            }""")
+            assert contrast >= 4.5, (width, language, contrast)
             await scroll(page, destination + height*.4)
             await page.wait_for_timeout(650)
             after = await text.locator('.scroll-word').evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))")
-            assert min(before) >= .59 and min(before) < .85 and min(after) > .99, "Text does not reveal with readable contrast"
+            assert min(before) >= .75 and min(before) < .85 and min(after) > .99, "Text does not reveal with readable contrast"
             await snapshot(page, output, f'living-text-{width}-{language}')
             essay = page.locator('.venue-essay')
             destination = await essay.evaluate("e=>e.getBoundingClientRect().top+scrollY-innerHeight*.9")

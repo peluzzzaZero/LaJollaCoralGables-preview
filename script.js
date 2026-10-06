@@ -793,7 +793,7 @@
       const target = document.getElementById(link.getAttribute("href").slice(1));
       if (!target) return;
       event.preventDefault();
-      window.requestAnimationFrame(function () { scrollToSection(target); });
+      scrollToSection(target);
     });
     window.addEventListener("load", function () { ScrollTrigger.refresh(); });
     document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
@@ -802,9 +802,14 @@
   function scrollToSection(target) {
     if (!target) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const header = document.getElementById("header");
-    const offset = header ? header.getBoundingClientRect().height + 8 : 76;
-    window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: reduced ? "instant" : "smooth" });
+    const inquiry = target.id === "quote";
+    // Native positioning honors scroll-padding and avoids stale coordinates during an interrupted scroll.
+    target.scrollIntoView({ block: "start", behavior: reduced || inquiry ? "instant" : "smooth" });
+    if (inquiry) {
+      const title = document.getElementById("quote-title");
+      title.setAttribute("tabindex", "-1");
+      title.focus({ preventScroll: true });
+    }
   }
 
   function serviceLabel(id) {
@@ -1192,9 +1197,10 @@
     applyI18n(preferred);
     initHeader();
     initPhotoCollections();
-    initStory(initCinematicWindow());
     initInquiryComposer();
     initChapterMenu();
+    // Resolve selection and menu layout before positioning or focusing an anchor.
+    initStory(initCinematicWindow());
     initVenueFilms();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
