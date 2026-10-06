@@ -537,7 +537,8 @@ async def check_living_story(browser, base, output):
             assert await page.locator(".title-letter").count() == 7
             assert await page.locator(".paths-decoration").get_attribute("aria-hidden") == "true"
             assert (ROOT / "assets/editorial/hydrangea-study.webp").stat().st_size < 12000
-            assert await page.locator("#history #cinema").count() == 1, "The films are separated from the house story"
+            assert await page.locator("main > #cinema").count() == 1, "The approved film scene must remain its own chapter"
+            assert await page.locator("#cinema").evaluate("e => {const probe=document.createElement('span');probe.style.color='var(--sage-deep)';e.append(probe);const expected=getComputedStyle(probe).color;probe.remove();return getComputedStyle(e).backgroundColor===expected;}")
             assert await page.locator("#visit .venue-ballroom").count() == 0, "The giant duplicate ballroom returned"
             await scroll(page, 0)
             await page.wait_for_timeout(900)
@@ -546,20 +547,30 @@ async def check_living_story(browser, base, output):
             await page.wait_for_timeout(600)
             end_type = await page.locator(".title-line").first.evaluate("e => gsap.getProperty(e,'x')")
             assert end_type < start_type - 1, "The opening typography does not respond to scroll"
-            for art in await page.locator(".path-art").all():
+            for side, art in enumerate(await page.locator(".path-art").all()):
                 destination = await art.evaluate("e => e.getBoundingClientRect().top+scrollY-innerHeight*.93")
                 await scroll(page, destination)
                 await page.wait_for_timeout(700)
-                before = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(gsap.getProperty(e,'y')))")
+                before = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(getComputedStyle(e).opacity))")
+                await snapshot(page, output, f"aligned-panels-entry-{width}-{language}-{side}")
                 await scroll(page, destination + height*.5)
                 await page.wait_for_timeout(700)
-                after = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(gsap.getProperty(e,'y')))")
-                assert max(abs(v) for v in before) > 8 and max(abs(v) for v in after) < .2, "Photographic panels do not assemble"
-                assert await art.locator('.path-photo').evaluate("e=>e.complete && e.naturalWidth>0 && Number(getComputedStyle(e).opacity)===1")
+                after = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(getComputedStyle(e).opacity))")
+                assert min(before) < .2 and min(after) > .99, "Aligned photographic panels do not reveal"
+                assert await art.locator('.photo-shard').evaluate_all("es=>es.every(e=>getComputedStyle(e).transform==='none')"), "Photographic strips displace parts of the building"
+                assert await art.evaluate("""art => {
+                  const base=art.querySelector('.path-photo'), frame=base.getBoundingClientRect(), style=getComputedStyle(base);
+                  return Array.from(art.querySelectorAll('.photo-shard img')).every(image=>{
+                    const r=image.getBoundingClientRect(), s=getComputedStyle(image);
+                    return image.complete && image.currentSrc===base.currentSrc && s.objectFit===style.objectFit && s.objectPosition===style.objectPosition && ['x','y','width','height'].every(key=>Math.abs(r[key]-frame[key])<.1);
+                  });
+                }"""), "Photo strips do not share the complete original framing"
+                await snapshot(page, output, f"aligned-panels-complete-{width}-{language}-{side}")
+                assert await art.locator('.path-photo').evaluate("e=>e.complete && e.naturalWidth>0 && Number(getComputedStyle(e).opacity)>=.75")
                 await scroll(page, destination)
                 await page.wait_for_timeout(700)
-                reverse = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(gsap.getProperty(e,'y')))")
-                assert max(abs(a-b) for a,b in zip(before,reverse)) < 1
+                reverse = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(getComputedStyle(e).opacity))")
+                assert max(abs(a-b) for a,b in zip(before,reverse)) < .05
             assert await page.locator('.paths-decoration').evaluate('e=>e.complete && e.naturalWidth===320')
             text = page.locator('.history-copy [data-i18n="history.lede"]')
             destination = await text.evaluate("e=>e.getBoundingClientRect().top+scrollY-innerHeight*.88")
@@ -604,7 +615,7 @@ async def check_living_story(browser, base, output):
             await page.wait_for_function("ScrollTrigger.getAll().length === 0")
             assert await text.locator('.scroll-word').evaluate_all("es=>es.every(e=>Number(getComputedStyle(e).opacity)===1)")
             assert await page.locator('.photo-shard').evaluate_all("es=>es.every(e=>getComputedStyle(e).transform==='none')")
-            results.append({"width":width,"language":language,"type_scroll":"passed","photo_assembly_reverse":"passed","readable_word_fade_translation":"passed","real_photo_essay":"passed","reduced_cleanup":"passed"})
+            results.append({"width":width,"language":language,"type_scroll":"passed","aligned_photo_reveal_reverse":"passed","readable_word_fade_translation":"passed","real_photo_essay":"passed","reduced_cleanup":"passed"})
             await page.close()
     return results
 
