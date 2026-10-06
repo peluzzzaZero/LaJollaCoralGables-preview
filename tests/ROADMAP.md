@@ -87,3 +87,7 @@ The client liked the actual film animation but found its arch-themed chapter for
 ## v1.7.1 — preserve approved effects
 
 The client corrected v1.7: restore the independent sage-green video scene before history and keep the actual forward/reverse video/zoom/opening effect. Replace displaced photographic strips with aligned progressive reveals; preserve typography and authentic venue assets. Treat the approved cinematic behavior as a baseline for future refinements.
+
+## v1.8.0 — cinematic continuity
+
+The client's Runway reference informs shot-to-detail pacing and restrained presentation. Keep the approved real-film engine and green stage; add readable chapter words and reversible position traces. All offering photograph layers share a single camera move. Replace the tilted interior collage with upright depth and numbered captions, preserving complete real views. No new media, pin or scene length. Next review: live pacing and useful verified venue/service information.

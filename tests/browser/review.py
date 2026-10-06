@@ -551,10 +551,13 @@ async def check_living_story(browser, base, output):
                 destination = await art.evaluate("e => e.getBoundingClientRect().top+scrollY-innerHeight*.93")
                 await scroll(page, destination)
                 await page.wait_for_timeout(700)
+                depth_before = await art.locator(".path-composition").evaluate("e=>Number(gsap.getProperty(e,'scaleX'))")
                 before = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(getComputedStyle(e).opacity))")
                 await snapshot(page, output, f"aligned-panels-entry-{width}-{language}-{side}")
                 await scroll(page, destination + height*.5)
                 await page.wait_for_timeout(700)
+                depth_after = await art.locator(".path-composition").evaluate("e=>Number(gsap.getProperty(e,'scaleX'))")
+                assert depth_before>1.03 and abs(depth_after-1)<.001, (depth_before,depth_after)
                 after = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(getComputedStyle(e).opacity))")
                 assert min(before) < .2 and min(after) > .99, "Aligned photographic panels do not reveal"
                 assert await art.locator('.photo-shard').evaluate_all("es=>es.every(e=>getComputedStyle(e).transform==='none')"), "Photographic strips displace parts of the building"
@@ -596,14 +599,16 @@ async def check_living_story(browser, base, output):
             assert min(before) >= .75 and min(before) < .85 and min(after) > .99, "Text does not reveal with readable contrast"
             await snapshot(page, output, f'living-text-{width}-{language}')
             essay = page.locator('.venue-essay')
-            destination = await essay.evaluate("e=>e.getBoundingClientRect().top+scrollY-innerHeight*.9")
-            await scroll(page,destination)
-            await page.wait_for_timeout(700)
-            before = await essay.locator('figure').evaluate_all("es=>es.map(e=>Number(gsap.getProperty(e,'rotation')))")
-            await scroll(page,destination+height*.6)
-            await page.wait_for_timeout(700)
-            after = await essay.locator('figure').evaluate_all("es=>es.map(e=>Number(gsap.getProperty(e,'rotation')))")
-            assert max(abs(v) for v in before)>1 and max(abs(v) for v in after)<.1, (width, language, before, after, destination)
+            for photo in await essay.locator('figure').all():
+                timing = await photo.evaluate("e=>{const t=ScrollTrigger.getAll().find(t=>t.trigger===e);return {start:t.start,end:t.end};}")
+                await scroll(page,timing['start']+(timing['end']-timing['start'])*.02)
+                await page.wait_for_timeout(700)
+                before = await photo.evaluate("e=>({y:Number(gsap.getProperty(e,'y')),scale:Number(gsap.getProperty(e,'scaleX'))})")
+                await scroll(page,timing['end']+2)
+                await page.wait_for_timeout(700)
+                after = await photo.evaluate("e=>({y:Number(gsap.getProperty(e,'y')),scale:Number(gsap.getProperty(e,'scaleX'))})")
+                assert before['y']>10 and after['y']<.2 and before['scale']<.99 and after['scale']>.999, (width, language, before, after)
+                assert await photo.evaluate("e=>Number(gsap.getProperty(e,'rotation'))===0"), "Architectural photographs should remain upright"
             assert await essay.locator('img').evaluate_all("es=>es.every(e=>e.complete && e.naturalWidth>0 && getComputedStyle(e).objectFit==='contain')")
             await snapshot(page, output, f'living-photos-{width}-{language}')
             # Switching language rebuilds only the translated words, preserving their reading progress.
@@ -614,7 +619,7 @@ async def check_living_story(browser, base, output):
             await page.emulate_media(reduced_motion="reduce")
             await page.wait_for_function("ScrollTrigger.getAll().length === 0")
             assert await text.locator('.scroll-word').evaluate_all("es=>es.every(e=>Number(getComputedStyle(e).opacity)===1)")
-            assert await page.locator('.photo-shard').evaluate_all("es=>es.every(e=>getComputedStyle(e).transform==='none')")
+            assert await page.locator('.photo-shard,.path-composition,.venue-detail').evaluate_all("es=>es.every(e=>getComputedStyle(e).transform==='none')")
             results.append({"width":width,"language":language,"type_scroll":"passed","aligned_photo_reveal_reverse":"passed","readable_word_fade_translation":"passed","real_photo_essay":"passed","reduced_cleanup":"passed"})
             await page.close()
     return results
@@ -652,12 +657,34 @@ async def check_cinematic(browser, base, output):
                 assert await page.locator(f'[data-scene-copy="{scene}"]').is_visible()
                 assert await page.locator(f'[data-scene-copy="{scene}"]').evaluate("e => Number(getComputedStyle(e).opacity) === 1"), "Caption loses readable contrast"
                 assert await page.locator(f'button[data-scene="{scene}"]').get_attribute("aria-pressed") == "true"
+                bounds = [0, .4, .82, 1]
+                traces = await page.locator('button[data-scene]').evaluate_all("es=>es.map(e=>Number(e.style.getPropertyValue('--scene-progress')))")
+                expected = [max(0,min(1,(progress-bounds[i])/(bounds[i+1]-bounds[i]))) for i in range(3)]
+                assert max(abs(a-b) for a,b in zip(traces,expected))<.04, (traces,expected)
+                assert await page.locator(f'[data-scene-copy="{scene}"] .scroll-word').evaluate_all("es=>es.length>3 && es.every(e=>Number(getComputedStyle(e).opacity)>=.9)"), "Cinematic words must stay readable"
+
                 assert await page.locator('.cinema-layer').first.evaluate("e => Number(getComputedStyle(e).opacity) === 1"), "Arch loses its covered base during transitions"
                 assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
                 await snapshot(page, output, f"cinema-{width}-{language}-{progress}-{len(times)}")
                 if scene == "2":
                     assert abs(box["width"] / box["height"] - 16/9) < .03, "Final ballroom is cropped"
             assert times[1] > times[0] + 1.5 and abs(times[-1] - times[0]) < .15, "Footage does not advance and reverse with scroll"
+            # A newly entered caption reveals while retaining normal-text contrast.
+            await position(page, 'cinema', .415)
+            await page.wait_for_timeout(500)
+            words = page.locator('[data-scene-copy="1"] .scroll-word')
+            before = await words.evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))")
+            assert min(before)>=.9 and min(before)<.99, before
+            contrast = await words.evaluate_all("""words=>{
+              const rgb=c=>c.match(/[0-9.]+/g).slice(0,3).map(Number);
+              const lum=rgb=>rgb.map(c=>c/255).map(c=>c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)).reduce((s,c,i)=>s+c*[.2126,.7152,.0722][i],0);
+              const bg=rgb(getComputedStyle(document.getElementById('cinema')).backgroundColor);
+              return Math.min(...words.map(w=>{const alpha=Number(getComputedStyle(w).opacity),fg=rgb(getComputedStyle(w).color).map((c,i)=>c*alpha+bg[i]*(1-alpha));return (lum(fg)+.05)/(lum(bg)+.05);}));
+            }""")
+            assert contrast>=4.5, contrast
+            await position(page, 'cinema', .52)
+            await page.wait_for_timeout(500)
+            assert min(await words.evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))"))>.99
             # Chapters can be selected by keyboard without dragging or waiting through the scene.
             button = page.locator('button[data-scene="2"]')
             await button.focus()
