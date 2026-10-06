@@ -83,3 +83,7 @@ Translate the user's Apple references into one short, reversible GSAP journey us
 ## v1.7.0 — a continuous house story
 
 The client liked the actual film animation but found its arch-themed chapter forced and the adjacent blocks too static. Letterforms, photographic panel assembly and readable staged word fades now extend the motion language. History contains the film scene and leads to a shorter assembled photographic essay; the repeated giant ballroom is removed. Earlier strict one-hero-trigger expectations are superseded by two unpinned opening treatments. The approved offers and authentic brand/venue evidence remain intact. Next: assess live pacing, gather verified venue facts and approved service/event imagery.
+
+## v1.7.1 — preserve approved effects
+
+The client corrected v1.7: restore the independent sage-green video scene before history and keep the actual forward/reverse video/zoom/opening effect. Replace displaced photographic strips with aligned progressive reveals; preserve typography and authentic venue assets. Treat the approved cinematic behavior as a baseline for future refinements.

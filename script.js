@@ -744,12 +744,11 @@
       const disposeCinema = cinema && cinema.animate(gsap, ScrollTrigger);
       gsap.fromTo(".paths-decoration", { y: 14, rotation: -4 }, { y: 0, rotation: 0, ease: "none",
         scrollTrigger: { trigger: "#possibilities", start: "top 90%", end: "top 45%", scrub: .35 } });
-      // Each original photograph assembles from three clipped panels; the full image remains underneath.
-      document.querySelectorAll(".path-art").forEach(function (art, side) {
-        gsap.fromTo(art.querySelectorAll(".photo-shard"), {
-          x: function (i) { return (i - 1) * (side ? -16 : 16); },
-          y: function (i) { return [24, -18, 32][i]; }
-        }, { x: 0, y: 0, stagger: .12, ease: "none",
+      // Aligned photographic layers reveal detail without displaced copies of the facade.
+      document.querySelectorAll(".path-art").forEach(function (art) {
+        gsap.set(art.querySelector(".path-photo"), { opacity: .75 });
+        gsap.fromTo(art.querySelectorAll(".photo-shard"), { opacity: 0 }, {
+          opacity: 1, stagger: .12, ease: "none",
           scrollTrigger: { trigger: art, start: "top 95%", end: "top 48%", scrub: .35 } });
       });
       document.querySelectorAll("[data-scroll-text]").forEach(function (text) {
