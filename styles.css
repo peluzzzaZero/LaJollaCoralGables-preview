@@ -887,3 +887,55 @@ html:not(.js) .selection-builder { display: none; }
 
 @media (max-width: 650px) { .reel-controls button { min-width: 2.75rem; } }
 @media (prefers-reduced-motion: reduce) { .photos-ready .reel-shots img { transform: scale(1.025); } }
+
+/* A real architectural film, framed like a window rather than an embedded player. */
+.cinema { background: var(--sage-deep); color: var(--cream); overflow: clip; }
+.cinema-stage { position: relative; display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem 5vw; align-items: center; padding-block: 4rem 2rem; }
+.cinema-copy .eyebrow { color: var(--cream); opacity: .8; }
+.cinema-copy h2 { font-size: clamp(3.1rem, 5.5vw, 5.8rem); line-height: .98; font-weight: 400; max-width: 25rem; margin-bottom: 2rem; }
+.cinema-story h3 { font-size: clamp(1.6rem, 2.3vw, 2.3rem); line-height: 1.1; font-weight: 400; margin-bottom: .8rem; }
+.cinema-story p { font-size: 1.1rem; line-height: 1.5; max-width: 23rem; }
+.cinema-story { margin-bottom: 1.5rem; }
+.cinema-inquiry { color: var(--cream); font-size: 1rem; }
+.cinema-media { position: relative; height: min(66svh, 40rem); display: grid; place-items: center; min-width: 0; }
+.cinema-aperture { width: 76%; height: 100%; position: relative; border-radius: 50% 50% 0 0; overflow: hidden; background: var(--sage-deep); isolation: isolate; }
+.cinema-layer { position: absolute; inset: 0; }
+.cinema-layer:not(:first-child) { opacity: 0; }
+.cinema-layer img, .cinema-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cinema-layer video { opacity: 0; pointer-events: none; }
+.cinema-layer video.is-decoded { opacity: 1; }
+.cinema-coordinate { position: absolute; bottom: -1.8rem; font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; opacity: .75; }
+.cinema-bottom { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 1.5rem; align-items: center; margin-top: 1.5rem; }
+.cinema-controls { display: none; }
+.cinema-ready .cinema-controls { display: flex; gap: 1rem; }
+.cinema-controls button { position: relative; border: 0; border-top: 1px solid #f2eee34d; background: transparent; color: inherit; padding: .8rem 0; min-height: 44px; cursor: pointer; font: inherit; font-size: .95rem; text-align: left; }
+.cinema-controls button > span:first-child { font-size: .65rem; margin-right: .6rem; opacity: .7; }
+.cinema-controls button[aria-pressed="true"] { border-color: var(--cream); }
+.cinema-controls button[aria-pressed="true"]::before { content: ""; position: absolute; height: 2px; width: 100%; left: 0; top: -2px; background: var(--cream); }
+.cinema-skip { color: var(--cream); font-size: .9rem; text-underline-offset: .3em; white-space: nowrap; }
+.cinema-scroll .cinema-stage { height: calc(100svh - var(--header-h)); padding-block: 2.5rem 1.5rem; }
+.cinema-scroll .cinema-stories { min-height: 10.5rem; }
+.cinema-ready .cinema-story[hidden] { display: none; }
+.cinema-scroll .cinema-bottom { margin-top: 0; }
+@media (max-width: 650px) {
+  .cinema-stage { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-block: 3rem 2rem; }
+  .cinema-copy h2 { font-size: 2.7rem; max-width: none; margin-bottom: 1rem; }
+  .cinema-story h3 { font-size: 1.6rem; margin-bottom: .4rem; }
+  .cinema-story p { font-size: 1rem; margin-bottom: 0; }
+  .cinema-story { margin-bottom: .8rem; }
+  .cinema-inquiry { font-size: .95rem; }
+  .cinema-media { height: 25rem; width: min(100%, 23rem); margin-inline: auto; }
+  .cinema-aperture { width: 76%; }
+  .cinema-coordinate { display: none; }
+  .cinema-bottom { flex-direction: column; align-items: stretch; gap: .5rem; margin-top: 0; }
+  .cinema-ready .cinema-controls { justify-content: space-between; gap: .5rem; }
+  .cinema-controls button { font-size: .85rem; }
+  .cinema-controls button > span:first-child { margin-right: .3rem; }
+  .cinema-skip { font-size: .8rem; text-align: right; }
+  .cinema-scroll .cinema-stage { padding-block: 1.5rem 1rem; grid-template-rows: auto minmax(0, 1fr) auto; gap: 1rem; }
+  .cinema-scroll .cinema-stories { min-height: 5.8rem; }
+  .cinema-scroll .cinema-media { height: 100%; max-height: 26rem; }
+}
+
+.cinema h2, .cinema h3 { color: var(--cream); }
+.cinema a:hover, .cinema a:focus-visible { color: var(--cream); }
