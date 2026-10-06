@@ -309,7 +309,7 @@ async def check_variants(browser, base, output):
         await page.set_viewport_size({"width": width, "height": height})
         await page.wait_for_timeout(300)
         await scroll(page, 0)
-        assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 1
+        assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 2
         assert not await page.evaluate("!!ScrollTrigger.getAll().find(t => t.trigger.id === 'hero').vars.pin")
         assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
     await page.emulate_media(reduced_motion="reduce")
@@ -318,7 +318,7 @@ async def check_variants(browser, base, output):
     assert await page.evaluate("ScrollTrigger.getAll().length") == 0
     await page.emulate_media(reduced_motion="no-preference")
     await page.wait_for_timeout(200)
-    assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 1
+    assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.trigger.id === 'hero').length") == 2
     await page.close()
     page = await browser.new_page(viewport={"width": 390, "height": 667})
     await page.goto(base, wait_until="networkidle")
@@ -516,6 +516,78 @@ async def check_paths(browser, base, output):
     return results
 
 
+async def check_living_story(browser, base, output):
+    results = []
+    for width, height in ((390, 844), (768, 1024), (838, 884), (1280, 900)):
+        for language in ("en", "es"):
+            page = await browser.new_page(viewport={"width": width, "height": height})
+            await page.route("https://api.web3forms.com/**", lambda route: route.abort())
+            await page.goto(base, wait_until="networkidle")
+            await page.evaluate("document.fonts.ready")
+            await page.locator(f'[data-lang="{language}"]').click()
+            assert await page.locator("#hero-title").get_attribute("aria-label") == "La Jolla"
+            assert await page.locator(".title-letter").count() == 7
+            assert await page.locator(".paths-decoration").get_attribute("aria-hidden") == "true"
+            assert (ROOT / "assets/editorial/hydrangea-study.webp").stat().st_size < 12000
+            assert await page.locator("#history #cinema").count() == 1, "The films are separated from the house story"
+            assert await page.locator("#visit .venue-ballroom").count() == 0, "The giant duplicate ballroom returned"
+            await scroll(page, 0)
+            await page.wait_for_timeout(900)
+            start_type = await page.locator(".title-line").first.evaluate("e => gsap.getProperty(e,'x')")
+            await scroll(page, 250)
+            await page.wait_for_timeout(600)
+            end_type = await page.locator(".title-line").first.evaluate("e => gsap.getProperty(e,'x')")
+            assert end_type < start_type - 1, "The opening typography does not respond to scroll"
+            for art in await page.locator(".path-art").all():
+                destination = await art.evaluate("e => e.getBoundingClientRect().top+scrollY-innerHeight*.93")
+                await scroll(page, destination)
+                await page.wait_for_timeout(700)
+                before = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(gsap.getProperty(e,'y')))")
+                await scroll(page, destination + height*.5)
+                await page.wait_for_timeout(700)
+                after = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(gsap.getProperty(e,'y')))")
+                assert max(abs(v) for v in before) > 8 and max(abs(v) for v in after) < .2, "Photographic panels do not assemble"
+                assert await art.locator('.path-photo').evaluate("e=>e.complete && e.naturalWidth>0 && Number(getComputedStyle(e).opacity)===1")
+                await scroll(page, destination)
+                await page.wait_for_timeout(700)
+                reverse = await art.locator(".photo-shard").evaluate_all("es => es.map(e=>Number(gsap.getProperty(e,'y')))")
+                assert max(abs(a-b) for a,b in zip(before,reverse)) < 1
+            assert await page.locator('.paths-decoration').evaluate('e=>e.complete && e.naturalWidth===320')
+            text = page.locator('.history-copy [data-i18n="history.lede"]')
+            destination = await text.evaluate("e=>e.getBoundingClientRect().top+scrollY-innerHeight*.88")
+            await scroll(page, destination)
+            await page.wait_for_timeout(650)
+            before = await text.locator('.scroll-word').evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))")
+            await scroll(page, destination + height*.4)
+            await page.wait_for_timeout(650)
+            after = await text.locator('.scroll-word').evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))")
+            assert min(before) >= .59 and min(before) < .85 and min(after) > .99, "Text does not reveal with readable contrast"
+            await snapshot(page, output, f'living-text-{width}-{language}')
+            essay = page.locator('.venue-essay')
+            destination = await essay.evaluate("e=>e.getBoundingClientRect().top+scrollY-innerHeight*.9")
+            await scroll(page,destination)
+            await page.wait_for_timeout(700)
+            before = await essay.locator('figure').evaluate_all("es=>es.map(e=>Number(gsap.getProperty(e,'rotation')))")
+            await scroll(page,destination+height*.6)
+            await page.wait_for_timeout(700)
+            after = await essay.locator('figure').evaluate_all("es=>es.map(e=>Number(gsap.getProperty(e,'rotation')))")
+            assert max(abs(v) for v in before)>1 and max(abs(v) for v in after)<.1, (width, language, before, after, destination)
+            assert await essay.locator('img').evaluate_all("es=>es.every(e=>e.complete && e.naturalWidth>0 && getComputedStyle(e).objectFit==='contain')")
+            await snapshot(page, output, f'living-photos-{width}-{language}')
+            # Switching language rebuilds only the translated words, preserving their reading progress.
+            await page.locator(f'[data-lang="{"es" if language=="en" else "en"}"]').click()
+            assert await text.locator('.scroll-word').count() > 10
+            assert (await text.text_content()).startswith('Desde 1928' if language=='en' else 'Since 1928')
+            assert await page.evaluate("document.documentElement.scrollWidth<=innerWidth+1")
+            await page.emulate_media(reduced_motion="reduce")
+            await page.wait_for_function("ScrollTrigger.getAll().length === 0")
+            assert await text.locator('.scroll-word').evaluate_all("es=>es.every(e=>Number(getComputedStyle(e).opacity)===1)")
+            assert await page.locator('.photo-shard').evaluate_all("es=>es.every(e=>getComputedStyle(e).transform==='none')")
+            results.append({"width":width,"language":language,"type_scroll":"passed","photo_assembly_reverse":"passed","readable_word_fade_translation":"passed","real_photo_essay":"passed","reduced_cleanup":"passed"})
+            await page.close()
+    return results
+
+
 async def check_cinematic(browser, base, output):
     results = []
     for width, height in ((390, 844), (768, 1024), (838, 884), (1280, 900)):
@@ -561,7 +633,7 @@ async def check_cinematic(browser, base, output):
             await page.wait_for_function("document.getElementById('cinema').dataset.scene === '2'")
             await snapshot(page, output, f"cinema-keyboard-{width}-{language}")
             await page.locator(".cinema-skip").click()
-            await page.wait_for_function("() => { const r=document.getElementById('history-title').getBoundingClientRect();return r.top >= 68 && r.top < innerHeight; }")
+            await page.wait_for_function("() => { const r=document.getElementById('visit-title').getBoundingClientRect();return r.top >= 68 && r.top < innerHeight; }")
             await position(page, "cinema", .56)
             await page.locator(".cinema-inquiry").click()
             assert await page.locator("#q-location").input_value() == "la-jolla"
@@ -727,13 +799,15 @@ async def main(args, base):
         print("PASS two offering paths, editable optional setting and translated inquiry context", flush=True)
         venue_media = await check_venue_media(browser, base, args.output)
         print("PASS real venue films: decoded playback, manual loading, pause, posters, no-script fallback", flush=True)
+        living_story = await check_living_story(browser, base, args.output)
+        print("PASS living story: type, reversible photo layers, readable text fades, translation and reduced motion", flush=True)
         cinematic = await check_cinematic(browser, base, args.output)
         print("PASS cinematic scene: decoded forward/reverse frames, chapters, fallbacks", flush=True)
         forms = await check_forms(browser, base)
         print("PASS forms: simulated delivery, validation, failure, retry, duplicate submissions", flush=True)
         variants = await check_variants(browser, base, args.output)
         print("PASS resize, reduced motion, missing GSAP, no JavaScript", flush=True)
-        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants, "composer": composer, "paths": paths, "venue_media": venue_media, "cinematic": cinematic}
+        report = {"viewports": results, "navigation": navigation, "forms": forms, "variants": variants, "composer": composer, "paths": paths, "venue_media": venue_media, "cinematic": cinematic, "living_story": living_story}
         (args.output / "results.json").write_text(json.dumps(report, indent=2) + "\n")
         await browser.close()
 

@@ -76,3 +76,9 @@ assets/venue/architecture.jpg is an unedited copy of WhatsApp Image 2026-10-05 a
 ## Cinematic cuts — v1.6.0
 
 `cinematic/arrival` uses the original 01.56.02 film from 0.5 to 5.8 seconds. `cinematic/balcony` uses original 01.56.17 from 4.5 to 9.8 seconds. Both are actual owner-supplied facade footage, autorotated to 480×854, silent 30 fps, H.264 GOP 6; the WebM fallback is 360×640, 24 fps, VP9 GOP 12. Their posters are their actual first frames. These short files serve paused scroll seeking; existing complete films and links are unchanged. Full transfer is deferred until the architectural scene approaches the viewport.
+
+## Continuous story — v1.7.0
+
+All venue and brand pixels remain unchanged. Offering panels use three clipped views of each existing photograph over its complete base image, so framing/scroll animation requires no generated scene or new media download. History and the real film sequence share a continuous chapter; the ballroom is no longer repeated as a giant photograph immediately afterward. The architectural details assemble into a shorter photo essay. Without the page script, all three cinema stills are displayed naturally, including the complete actual ballroom.
+
+The user additionally requested Venice AI Cloud for light supporting images while protecting the building. One original hydrangea engraving was generated through Venice SD35 (seed 1928), reviewed, and encoded as a 320×320 WebP of 6,658 bytes. It is a decorative botanical accent in the offering header, excluded from assistive technology; no venue photograph, brand mark, architecture, space or rental inventory is synthesized or replaced. The original generated PNG is retained outside Git in the local review evidence.
