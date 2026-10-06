@@ -36,7 +36,8 @@ test("opening copy and inquiry live outside the changing photograph frame", () =
   const copyEnd = opening.indexOf('class="arrival-visual"');
   assert.ok(copyEnd > 0);
   const copy = opening.slice(0, copyEnd);
-  assert.match(copy, /<h1[^>]*>La <em>Jolla<\/em><\/h1>/);
+  assert.match(copy, /<h1[^>]*aria-label="La Jolla"/);
+  assert.equal((copy.match(/class="title-letter"/g) || []).length, 7);
   assert.match(copy, /href="#quote"/);
   assert.match(copy, /data-i18n="hero.offer"/);
   assert.match(css, /\.arrival-script[^}]*var\(--font-script\)/);

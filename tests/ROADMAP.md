@@ -79,3 +79,7 @@ Replace the rejected history crop, simplify the quote interlude, present brand p
 ## v1.6.0 — an architectural scroll scene
 
 Translate the user's Apple references into one short, reversible GSAP journey using real arrival/balcony footage and the ballroom photograph. Preserve the approved offering cards and v1.5 corrections. A responsive arch changes framing, captions advance with the scene, and three accessible choices or the continuation link give visitors control. Reduced motion, data saving and short screens use still-image choices; film loads are deferred until near the scene. Review decoded forward/reverse frames and covered transitions, rather than equating a scroll effect with a decorative CSS shift.
+
+## v1.7.0 — a continuous house story
+
+The client liked the actual film animation but found its arch-themed chapter forced and the adjacent blocks too static. Letterforms, photographic panel assembly and readable staged word fades now extend the motion language. History contains the film scene and leads to a shorter assembled photographic essay; the repeated giant ballroom is removed. Earlier strict one-hero-trigger expectations are superseded by two unpinned opening treatments. The approved offers and authentic brand/venue evidence remain intact. Next: assess live pacing, gather verified venue facts and approved service/event imagery.

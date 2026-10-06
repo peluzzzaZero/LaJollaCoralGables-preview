@@ -8,7 +8,7 @@
   const I18N = {
     en: {
       "cinema.eyebrow": "A sense of place",
-      "cinema.title": "Through the arch.",
+      "cinema.title": "A closer look at the house.",
       "cinema.arrivalTitle": "A first impression.",
       "cinema.arrivalBody": "Ivy, striped awnings, and a welcome that begins at the door.",
       "cinema.balconyTitle": "Look a little closer.",
@@ -19,7 +19,7 @@
       "cinema.arrival": "The arrival",
       "cinema.balcony": "The balcony",
       "cinema.room": "The ballroom",
-      "cinema.continue": "Continue to the story ↓",
+      "cinema.continue": "Explore the spaces ↓",
 
       "paths.eyebrow": "Consider the possibilities",
       "paths.title": "Your occasion. Your setting.",
@@ -253,7 +253,7 @@
     },
     es: {
       "cinema.eyebrow": "El carácter de un lugar",
-      "cinema.title": "Al otro lado del arco.",
+      "cinema.title": "Una mirada más cercana a la casa.",
       "cinema.arrivalTitle": "Una primera impresión.",
       "cinema.arrivalBody": "Hiedra, toldos a rayas y una bienvenida que empieza en la puerta.",
       "cinema.balconyTitle": "Mira un poco más de cerca.",
@@ -264,7 +264,7 @@
       "cinema.arrival": "La llegada",
       "cinema.balcony": "El balcón",
       "cinema.room": "El salón",
-      "cinema.continue": "Continúa con la historia ↓",
+      "cinema.continue": "Explora los espacios ↓",
 
       "paths.eyebrow": "Explore las posibilidades",
       "paths.title": "Su ocasión. Su escenario.",
@@ -522,6 +522,7 @@
       btn.classList.toggle("is-active", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
+    prepareScrollWords();
     renderInquirySelection();
     try { localStorage.setItem("lajolla-language", lang); } catch (_) { /* Storage is optional. */ }
     // Translated paragraphs change section heights and scroll positions.
@@ -701,8 +702,26 @@
     }};
   }
 
+  function prepareScrollWords() {
+    document.querySelectorAll("[data-scroll-text]").forEach(function (element) {
+      if (element.querySelector(".scroll-word")) return;
+      const parts = element.textContent.split(/(\s+)/);
+      const count = parts.filter(function (part) { return part.trim(); }).length;
+      let index = 0;
+      element.replaceChildren();
+      parts.forEach(function (part) {
+        if (!part.trim()) { element.append(document.createTextNode(part)); return; }
+        const word = document.createElement("span");
+        word.className = "scroll-word"; word.textContent = part;
+        word.style.setProperty("--word-step", String(index++ / Math.max(1, count - 1)));
+        element.append(word);
+      });
+    });
+  }
+
   function initStory(cinema) {
     if (typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") return;
+    prepareScrollWords();
     const gsap = window.gsap;
     const ScrollTrigger = window.ScrollTrigger;
     gsap.registerPlugin(ScrollTrigger);
@@ -715,8 +734,38 @@
         "--arrival-depth": "-12px", ease: "none",
         scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
       });
+      // Letterforms breathe independently while the offer and inquiry stay readable.
+      gsap.fromTo(".title-letter", { y: 14, opacity: .65 }, { y: 0, opacity: 1,
+        duration: .8, stagger: .045, ease: "power2.out" });
+      gsap.to(".arrival-title .title-line", { x: function (i) { return i ? 10 : -10; },
+        y: -8, ease: "none", scrollTrigger: { id: "arrival-type", trigger: "#hero",
+          start: "top top", end: "bottom 35%", scrub: .35 } });
+      // Register the upstream pin before downstream text/photo triggers so their positions include its space.
       const disposeCinema = cinema && cinema.animate(gsap, ScrollTrigger);
-      // History preserves the complete architectural view.
+      gsap.fromTo(".paths-decoration", { y: 14, rotation: -4 }, { y: 0, rotation: 0, ease: "none",
+        scrollTrigger: { trigger: "#possibilities", start: "top 90%", end: "top 45%", scrub: .35 } });
+      // Each original photograph assembles from three clipped panels; the full image remains underneath.
+      document.querySelectorAll(".path-art").forEach(function (art, side) {
+        gsap.fromTo(art.querySelectorAll(".photo-shard"), {
+          x: function (i) { return (i - 1) * (side ? -16 : 16); },
+          y: function (i) { return [24, -18, 32][i]; }
+        }, { x: 0, y: 0, stagger: .12, ease: "none",
+          scrollTrigger: { trigger: art, start: "top 95%", end: "top 48%", scrub: .35 } });
+      });
+      document.querySelectorAll("[data-scroll-text]").forEach(function (text) {
+        gsap.fromTo(text, { "--reading-progress": 0 }, { "--reading-progress": 1,
+          ease: "none", scrollTrigger: { trigger: text, start: "top 90%", end: "top 52%", scrub: .3 } });
+      });
+      gsap.fromTo(".history-year", { y: 24, opacity: .65 }, { y: 0, opacity: 1, ease: "none",
+        scrollTrigger: { trigger: ".history-stage", start: "top 90%", end: "top 45%", scrub: .35 } });
+      gsap.fromTo(".history-photo", { y: 36, rotation: 3 }, { y: 0, rotation: 0, ease: "none",
+        scrollTrigger: { trigger: ".history-stage", start: "top 90%", end: "top 40%", scrub: .35 } });
+      document.querySelectorAll(".venue-essay .venue-detail").forEach(function (photo, i) {
+        gsap.fromTo(photo, { y: [52, -30, 70][i], rotation: [-4, 3, 4][i] }, {
+          y: 0, rotation: 0, ease: "none", scrollTrigger: { trigger: ".venue-essay",
+            start: "top 92%", end: "top 35%", scrub: .4 } });
+      });
+      // Original architecture and brand artwork retain their complete views.
       var alcazarVisual = document.querySelector("#alcazar");
       const alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
       gsap.fromTo(alcazarMark, { scale: .94 }, { scale: 1, ease: "none",
@@ -753,9 +802,14 @@
   function scrollToSection(target) {
     if (!target) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const header = document.getElementById("header");
-    const offset = header ? header.getBoundingClientRect().height + 8 : 76;
-    window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: reduced ? "instant" : "smooth" });
+    const inquiry = target.id === "quote";
+    // Native positioning honors scroll-padding and avoids stale coordinates during an interrupted scroll.
+    target.scrollIntoView({ block: "start", behavior: reduced || inquiry ? "instant" : "smooth" });
+    if (inquiry) {
+      const title = document.getElementById("quote-title");
+      title.setAttribute("tabindex", "-1");
+      title.focus({ preventScroll: true });
+    }
   }
 
   function serviceLabel(id) {
@@ -1143,9 +1197,10 @@
     applyI18n(preferred);
     initHeader();
     initPhotoCollections();
-    initStory(initCinematicWindow());
     initInquiryComposer();
     initChapterMenu();
+    // Resolve selection and menu layout before positioning or focusing an anchor.
+    initStory(initCinematicWindow());
     initVenueFilms();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
