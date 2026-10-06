@@ -939,3 +939,81 @@ html:not(.js) .selection-builder { display: none; }
 
 .cinema h2, .cinema h3 { color: var(--cream); }
 .cinema a:hover, .cinema a:focus-visible { color: var(--cream); }
+
+/* v1.7: one house story, with type and photographic layers instead of isolated chapters. */
+.title-letter { display: inline-block; }
+.arrival-title > span.title-line { display: block; }
+.scroll-word { display: inline-block; opacity: clamp(.6, calc(var(--reading-progress, 1) * 2 - var(--word-step)), 1); transform: translateY(calc((1 - var(--reading-progress, 1)) * 8px)); }
+.path-art { display: block; position: relative; height: 13rem; margin-bottom: 1.5rem; isolation: isolate; overflow: clip; }
+.path-art .path-photo { height: 100%; margin: 0; }
+.possibilities-layout > header { position: relative; }
+.paths-decoration { display: block; width: 10rem; height: auto; margin-top: 1rem; mix-blend-mode: multiply; mask-image: radial-gradient(ellipse at 55% 43%, #000 35%, transparent 73%); pointer-events: none; }
+.photo-shard { position: absolute; inset: 0; pointer-events: none; }
+.photo-shard img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 72%; }
+.offering-path[href="#rentals"] .photo-shard img { object-position: 50% 58%; }
+.photo-shard[data-photo-shard="0"] { clip-path: inset(0 66.5% 0 0); }
+.photo-shard[data-photo-shard="1"] { clip-path: inset(0 33% 0 33%); }
+.photo-shard[data-photo-shard="2"] { clip-path: inset(0 0 0 66.5%); }
+.house-story { padding-block: 5rem 0; background: var(--paper); }
+.house-story .history-stage { grid-template-columns: minmax(0, 1.6fr) minmax(0, .75fr); gap: 7vw; padding-bottom: 3rem; }
+.house-story .history-copy { grid-column: 1; }
+.house-story .history-photo { grid-column: 2; width: 100%; max-width: 23rem; justify-self: end; }
+.house-story .history .section-title, .house-story .history-copy .section-title { font-size: clamp(3.6rem, 6.5vw, 7rem); max-width: 43rem; }
+.house-story .history-year { font-size: clamp(4rem, 6vw, 6.5rem); margin-bottom: .2em; }
+.house-story .chapter-number, .house-story .history-rule { display: none; }
+.house-story .history-copy .lede { font-size: clamp(1.2rem, 2vw, 1.65rem); max-width: 39rem; }
+.house-story .cinema { background: transparent; color: var(--ink); border-top: 1px solid var(--line-soft); }
+.house-story .cinema-stage { padding-top: 2.5rem; }
+.house-story .cinema h3 { color: var(--ink); font-size: clamp(2.5rem, 4vw, 4.5rem); max-width: 26rem; }
+.house-story .cinema-story p { font-size: 1.15rem; }
+.house-story .cinema-copy .eyebrow, .house-story .cinema a { color: var(--sage-deep); }
+.house-story .cinema-controls button { border-color: var(--line); }
+.house-story .cinema-controls button[aria-pressed="true"] { border-color: var(--sage-deep); }
+.house-story .cinema-controls button[aria-pressed="true"]::before { background: var(--sage-deep); }
+.house-story .cinema-scroll .cinema-stories { min-height: 14rem; }
+.cinema:not(.cinema-ready) .cinema-media { height: auto; width: 100%; }
+.cinema:not(.cinema-ready) .cinema-aperture { display: grid; gap: 1rem; width: 100%; height: auto; border-radius: 0; background: transparent; }
+.cinema:not(.cinema-ready) .cinema-layer { position: relative; opacity: 1; }
+.cinema:not(.cinema-ready) .cinema-layer img { position: relative; height: auto; object-fit: contain; }
+.cinema:not(.cinema-ready) .cinema-layer video, .cinema:not(.cinema-ready) .cinema-coordinate { display: none; }
+.venue-visit { padding-block: 5rem 4rem; background: var(--paper); }
+.venue-visit.light-field::before { display: none; }
+.venue-intro { max-width: 53rem; margin-bottom: 2.5rem; }
+.venue-intro .section-title { font-size: clamp(3rem, 5.5vw, 5.8rem); line-height: 1; }
+.venue-essay { position: relative; margin: 0; grid-template-columns: 1.6fr .75fr .8fr; gap: 1.5rem; align-items: center; padding-block: 2rem 1rem; }
+.venue-essay .venue-detail-stair { padding: 0; }
+.venue-essay .venue-detail:nth-child(2) { align-self: start; margin-top: 3rem; }
+.venue-essay .venue-detail:nth-child(3) { margin-top: 6rem; }
+.venue-essay img { object-fit: contain; }
+.venue-essay figcaption { font-style: italic; font-size: 1rem; line-height: 1.25; }
+.venue-more { margin-top: 2rem; }
+@media (max-width: 900px) {
+  .possibilities-layout > header { padding-right: 8rem; }
+  .paths-decoration { position: absolute; top: -1.2rem; right: 0; width: 7rem; margin: 0; }
+  .house-story .history-stage { gap: 2.5rem; grid-template-columns: 1.3fr .8fr; }
+  .venue-essay { grid-template-columns: 1.5fr .8fr .8fr; gap: 1rem; }
+  .venue-essay .venue-detail-stair { grid-column: auto; }
+}
+@media (max-width: 650px) {
+  .possibilities-layout > header { padding-right: 4.5rem; }
+  .paths-decoration { top: 0; width: 4.5rem; }
+  .arrival-title > span.title-line { display: inline; }
+  .path-art { height: 14rem; }
+  .house-story { padding-top: 3.5rem; }
+  .house-story .history-stage { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; padding-bottom: 2rem; }
+  .house-story .history-photo { grid-column: 1; grid-row: 2; max-width: 16rem; justify-self: end; }
+  .house-story .history-copy .section-title { font-size: 3.5rem; }
+  .house-story .history-year { font-size: 4rem; }
+  .house-story .cinema h3 { font-size: 2rem; margin-bottom: .5rem; }
+  .house-story .cinema-story p { font-size: 1rem; }
+  .house-story .cinema-scroll .cinema-stories { min-height: 6.6rem; }
+  .venue-intro { text-align: center; }
+  .venue-intro .section-title { font-size: 3rem; }
+  .venue-essay { grid-template-columns: 1fr 1fr; gap: .75rem 1rem; padding-top: 0; }
+  .venue-essay .venue-detail-stair { grid-column: 1 / -1; width: 92%; }
+  .venue-essay .venue-detail:nth-child(2) { margin-top: 0; }
+  .venue-essay .venue-detail:nth-child(3) { margin-top: 2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-word { opacity: 1; transform: none; }
+}
