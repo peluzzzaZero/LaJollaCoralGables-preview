@@ -582,7 +582,8 @@
     function staticScene(index) {
       select(index);
       layers.forEach(function (layer, i) { layer.style.opacity = i === index ? "1" : "0"; });
-      stories.forEach(function (story) { story.style.opacity = "1"; story.style.transform = ""; });
+      stories.forEach(function (story) { story.style.opacity = "1"; story.style.transform = ""; story.style.removeProperty("--reading-progress"); });
+      buttons.forEach(function (button) { button.style.removeProperty("--scene-progress"); });
       frame.style.width = index === 2 ? "100%" : "76%";
       frame.style.height = index === 2 ? slot.clientWidth * 9 / 16 + "px" : "100%";
       frame.style.borderRadius = index === 2 ? "6px" : "50% 50% 0 0";
@@ -674,6 +675,12 @@
         videos[0].requestFrame(gsap.utils.clamp(0, 1, p / .4));
         videos[1].requestFrame(gsap.utils.clamp(0, 1, (p - .4) / .38));
         select(p < .4 ? 0 : p < .82 ? 1 : 2);
+        // Type and chapter traces accompany the original film timing, without changing its frames.
+        const bounds = [0, .4, .82, 1];
+        buttons.forEach(function (button, i) {
+          button.style.setProperty("--scene-progress", String(gsap.utils.clamp(0, 1, (p - bounds[i]) / (bounds[i + 1] - bounds[i]))));
+        });
+        stories[active].style.setProperty("--reading-progress", String(gsap.utils.clamp(0, 1, (p - bounds[active]) / .09)));
         const entrance = active === 0 ? 1 : gsap.utils.clamp(.35, 1, (p - (active === 1 ? .4 : .82)) / .07);
         stories[active].style.opacity = "1";
         stories[active].style.transform = "translateY(" + ((1 - entrance) * 12) + "px)";
@@ -750,19 +757,23 @@
         gsap.fromTo(art.querySelectorAll(".photo-shard"), { opacity: 0 }, {
           opacity: 1, stagger: .12, ease: "none",
           scrollTrigger: { trigger: art, start: "top 95%", end: "top 48%", scrub: .35 } });
+        // Every layer shares one camera move, preserving alignment throughout the reveal.
+        gsap.fromTo(art.querySelector(".path-composition"), { scale: 1.045 }, {
+          scale: 1, ease: "none", scrollTrigger: { trigger: art,
+            start: "top 95%", end: "top 48%", scrub: .35 } });
       });
-      document.querySelectorAll("[data-scroll-text]").forEach(function (text) {
+      document.querySelectorAll("[data-scroll-text]:not(.cinema-story *)").forEach(function (text) {
         gsap.fromTo(text, { "--reading-progress": 0 }, { "--reading-progress": 1,
           ease: "none", scrollTrigger: { trigger: text, start: "top 90%", end: "top 52%", scrub: .3 } });
       });
       gsap.fromTo(".history-year", { y: 24, opacity: .65 }, { y: 0, opacity: 1, ease: "none",
         scrollTrigger: { trigger: ".history-stage", start: "top 90%", end: "top 45%", scrub: .35 } });
-      gsap.fromTo(".history-photo", { y: 36, rotation: 3 }, { y: 0, rotation: 0, ease: "none",
+      gsap.fromTo(".history-photo", { y: 24, scale: .97 }, { y: 0, scale: 1, ease: "none",
         scrollTrigger: { trigger: ".history-stage", start: "top 90%", end: "top 40%", scrub: .35 } });
       document.querySelectorAll(".venue-essay .venue-detail").forEach(function (photo, i) {
-        gsap.fromTo(photo, { y: [52, -30, 70][i], rotation: [-4, 3, 4][i] }, {
-          y: 0, rotation: 0, ease: "none", scrollTrigger: { trigger: ".venue-essay",
-            start: "top 92%", end: "top 35%", scrub: .4 } });
+        gsap.fromTo(photo, { y: [24, 38, 52][i], scale: .97 }, {
+          y: 0, scale: 1, ease: "none", scrollTrigger: { trigger: photo,
+            start: "top 92%", end: "top 45%", scrub: .4 } });
       });
       // Original architecture and brand artwork retain their complete views.
       var alcazarVisual = document.querySelector("#alcazar");
