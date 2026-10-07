@@ -91,3 +91,7 @@ The client corrected v1.7: restore the independent sage-green video scene before
 ## v1.8.0 — cinematic continuity
 
 The client's Runway reference informs shot-to-detail pacing and restrained presentation. Keep the approved real-film engine and green stage; add readable chapter words and reversible position traces. All offering photograph layers share a single camera move. Replace the tilted interior collage with upright depth and numbered captions, preserving complete real views. No new media, pin or scene length. Next review: live pacing and useful verified venue/service information.
+
+## v1.9.0 — a full-screen house journey
+
+Replace the rejected small cinema with the newly supplied continuous approach filling the viewport. Five chapters explain the house, occasions, The Lexington, off-site services and planning; four film-only pauses separate them. Small complete photographs accumulate and reverse with the scroll. The old arch, three-shot sequence and short-pin expectations are superseded by this explicit request. Preserve the original full films, offering photograph assembly and native inquiry routes. Next review: live reading pace, mobile crop and verified venue/service information.

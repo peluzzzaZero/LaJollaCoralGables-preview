@@ -6,7 +6,7 @@
 <title>La Jolla Coral Gables · Est. 1928</title>
 <meta name="description" content="La Jolla, a jewel in Coral Gables. Historic venue for weddings, celebrations, corporate and social events. Managed by Epic Lux Management." />
 <meta name="color-scheme" content="light" />
-<meta name="application-version" content="1.8.0" />
+<meta name="application-version" content="1.9.0" />
 <link rel="icon" href="assets/favicon.ico" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 <script>document.documentElement.classList.add("js");</script>
-<link rel="stylesheet" href="styles.css?v=1.8.0" />
+<link rel="stylesheet" href="styles.css?v=1.9.0" />
 </head>
 <body id="top">
 <!--
@@ -158,49 +158,72 @@
     </div>
   </section>
 
-  <!-- A short, reversible architectural scene made from the owner's real films. -->
+  <!-- Full-screen scroll journey from the newly supplied film, paired with actual venue photographs. -->
   <section class="cinema" id="cinema" aria-labelledby="cinema-title">
-    <div class="cinema-stage wrap">
-      <div class="cinema-copy">
-        <p class="eyebrow" data-i18n="visit.eyebrow">An invitation inside</p>
-        <h2 id="cinema-title" class="sr-only" data-i18n="cinema.title">A closer look at the house.</h2>
-        <div class="cinema-stories">
-          <div class="cinema-story" data-scene-copy="0">
-            <h3 data-scroll-text data-i18n="cinema.arrivalTitle">A first impression.</h3>
-            <p data-scroll-text data-i18n="cinema.arrivalBody">Ivy, striped awnings, and a welcome that begins at the door.</p>
-          </div>
-          <div class="cinema-story" data-scene-copy="1">
-            <h3 data-scroll-text data-i18n="cinema.balconyTitle">Look a little closer.</h3>
-            <p data-scroll-text data-i18n="cinema.balconyBody">An iron balcony. Garden light. The details that give the house its character.</p>
-          </div>
-          <div class="cinema-story" data-scene-copy="2">
-            <h3 data-scroll-text data-i18n="cinema.roomTitle">Now, imagine your occasion.</h3>
-            <p data-scroll-text data-i18n="cinema.roomBody">Inside, a light-filled ballroom becomes the starting point for your celebration.</p>
-          </div>
-        </div>
-        <a class="text-link cinema-inquiry" href="#quote" data-inquiry-location="la-jolla"><span data-i18n="form.planning">Let's Start Planning</span><span class="link-arrow" aria-hidden="true"> ↗</span></a>
+    <div class="cinema-stage">
+      <div class="cinema-media" aria-hidden="true">
+        <img src="assets/venue/cinematic/journey-poster.jpg" alt="" width="1280" height="720" loading="lazy" />
+        <video muted playsinline preload="none" tabindex="-1" data-cinema-film="journey"></video>
       </div>
-      <div class="cinema-media">
-        <div class="cinema-aperture">
-          <div class="cinema-layer" data-scene-layer="0">
-            <img src="assets/venue/cinematic/arrival-poster.jpg" alt="" width="480" height="854" loading="lazy" />
-            <video muted playsinline preload="none" aria-hidden="true" tabindex="-1" data-cinema-film="arrival"></video>
-          </div>
-          <div class="cinema-layer" data-scene-layer="1">
-            <img src="assets/venue/cinematic/balcony-poster.jpg" alt="" width="480" height="854" loading="lazy" />
-            <video muted playsinline preload="none" aria-hidden="true" tabindex="-1" data-cinema-film="balcony"></video>
-          </div>
-          <div class="cinema-layer" data-scene-layer="2">
-            <img src="assets/venue/ballroom.jpg" alt="" width="1024" height="576" loading="lazy" />
-          </div>
-        </div>
-        <span class="cinema-coordinate" aria-hidden="true">301 Alcazar Avenue · Coral Gables</span>
+      <h2 id="cinema-title" class="sr-only" data-i18n="journey.title">The house. Your occasion. A world of possibilities.</h2>
+      <div class="cinema-stories">
+        <article class="cinema-story" data-scene-copy="0">
+          <p class="eyebrow" data-i18n="journey.place.kicker">The house</p>
+          <h3 data-i18n="journey.place.title">A story rooted in Coral Gables.</h3>
+          <p data-i18n="journey.place.body">Mediterranean arches, ivy and garden light. A historic setting, established in 1928, at 301 Alcazar Avenue.</p>
+          <a class="text-link" href="#history"><span data-i18n="journey.place.link">Discover the house</span><span aria-hidden="true"> ↗</span></a>
+        </article>
+        <article class="cinema-story" data-scene-copy="1">
+          <p class="eyebrow" data-i18n="journey.occasion.kicker">Your occasion</p>
+          <h3 data-i18n="journey.occasion.title">A setting to make your own.</h3>
+          <p data-i18n="journey.occasion.body">Weddings, milestone celebrations, private dining and corporate gatherings. Start with a light-filled ballroom; shape the occasion around your guests.</p>
+          <a class="text-link" href="#events"><span data-i18n="journey.occasion.link">Explore occasions</span><span aria-hidden="true"> ↗</span></a>
+        </article>
+        <article class="cinema-story" data-scene-copy="2">
+          <p class="eyebrow" data-i18n="journey.lexington.kicker">The Lexington</p>
+          <h3 data-i18n="journey.lexington.title">An intimate change of scene.</h3>
+          <p data-i18n="journey.lexington.body">Deep greens, wine reds and warm golds. An upstairs lounge for cocktails, private dinners and distinctive, smaller gatherings.</p>
+          <a class="text-link" href="#alcazar"><span data-i18n="journey.lexington.link">Meet The Lexington</span><span aria-hidden="true"> ↗</span></a>
+        </article>
+        <article class="cinema-story" data-scene-copy="3">
+          <p class="eyebrow" data-i18n="journey.beyond.kicker">Beyond the house</p>
+          <h3 data-i18n="journey.beyond.title">Bring the occasion to you.</h3>
+          <p data-i18n="journey.beyond.body">Rentals, design and production for your chosen location in South Florida. Furniture, lighting, florals, tableware and the details that bring your vision together.</p>
+          <a class="text-link" href="#rentals"><span data-i18n="journey.beyond.link">Explore services</span><span aria-hidden="true"> ↗</span></a>
+        </article>
+        <article class="cinema-story cinema-finale" data-scene-copy="4">
+          <p class="eyebrow" data-i18n="journey.finale.kicker">Imagine the possibilities</p>
+          <h3 data-i18n="journey.finale.title">Your story starts here.</h3>
+          <p data-i18n="journey.finale.body">At La Jolla or at your chosen location. Tell us the occasion, your date and what you have in mind. We will help you explore the possibilities.</p>
+          <a class="text-link cinema-inquiry" href="#quote"><span data-i18n="form.planning">Let's Start Planning</span><span aria-hidden="true"> ↗</span></a>
+        </article>
+      </div>
+      <div class="cinema-details">
+        <a class="cinema-detail" data-scene-detail="0" href="#history">
+          <img src="assets/venue/architecture.jpg" alt="Ivy-covered architecture at La Jolla." data-i18n="history.alt" data-i18n-attr="alt" width="768" height="1024" loading="lazy" />
+          <span><span class="detail-number" aria-hidden="true">01</span><span data-i18n="journey.place.kicker">The house</span><span aria-hidden="true"> ↗</span></span>
+        </a>
+        <a class="cinema-detail" data-scene-detail="1" href="#events">
+          <img src="assets/venue/ballroom.jpg" alt="The light-filled ballroom at La Jolla." data-i18n="visit.altBallroom" data-i18n-attr="alt" width="1024" height="576" loading="lazy" />
+          <span><span class="detail-number" aria-hidden="true">02</span><span data-i18n="journey.occasion.kicker">Your occasion</span><span aria-hidden="true"> ↗</span></span>
+        </a>
+        <a class="cinema-detail" data-scene-detail="2" href="#alcazar">
+          <img src="assets/venue/music-detail.jpg" alt="A music detail inside La Jolla." data-i18n="visit.altMusic" data-i18n-attr="alt" width="768" height="1024" loading="lazy" />
+          <span><span class="detail-number" aria-hidden="true">03</span><span data-i18n="journey.lexington.kicker">The Lexington</span><span aria-hidden="true"> ↗</span></span>
+        </a>
+        <a class="cinema-detail" data-scene-detail="3" href="#rentals">
+          <img src="assets/brand/welcome-table.jpg" alt="La Jolla brand table styling." width="1081" height="1351" loading="lazy" />
+          <span><span class="detail-number" aria-hidden="true">04</span><span data-i18n="journey.beyond.kicker">Beyond the house</span><span aria-hidden="true"> ↗</span></span>
+        </a>
       </div>
       <div class="cinema-bottom">
-        <nav class="cinema-controls" data-i18n="cinema.label" data-i18n-attr="aria-label" aria-label="Views of the house">
-          <button type="button" data-scene="0" aria-pressed="true"><span aria-hidden="true">01</span><span data-i18n="cinema.arrival">The arrival</span></button>
-          <button type="button" data-scene="1" aria-pressed="false"><span aria-hidden="true">02</span><span data-i18n="cinema.balcony">The balcony</span></button>
-          <button type="button" data-scene="2" aria-pressed="false"><span aria-hidden="true">03</span><span data-i18n="cinema.room">The ballroom</span></button>
+        <nav class="cinema-controls" data-i18n="journey.label" data-i18n-attr="aria-label" aria-label="Explore the story">
+
+          <button type="button" data-scene="0" aria-pressed="false"><span aria-hidden="true">01</span><span data-i18n="journey.place.kicker">The house</span></button>
+          <button type="button" data-scene="1" aria-pressed="false"><span aria-hidden="true">02</span><span data-i18n="journey.occasion.kicker">Your occasion</span></button>
+          <button type="button" data-scene="2" aria-pressed="false"><span aria-hidden="true">03</span><span data-i18n="journey.lexington.kicker">The Lexington</span></button>
+          <button type="button" data-scene="3" aria-pressed="false"><span aria-hidden="true">04</span><span data-i18n="journey.beyond.kicker">Beyond the house</span></button>
+          <button type="button" data-scene="4" aria-pressed="false"><span aria-hidden="true">05</span><span data-i18n="form.planning">Let's Start Planning</span></button>
         </nav>
         <a class="cinema-skip" href="#visit" data-i18n="cinema.continue">Explore the spaces ↓</a>
       </div>
@@ -651,6 +674,6 @@
 
 <script src="assets/vendor/gsap.min.js"></script>
 <script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="script.js?v=1.8.0"></script>
+<script src="script.js?v=1.9.0"></script>
 </body>
 </html>

@@ -636,114 +636,109 @@ async def check_cinematic(browser, base, output):
             await page.goto(base, wait_until="networkidle")
             await page.locator(f'[data-lang="{language}"]').click()
             assert not any("/cinematic/" in url and url.endswith((".mp4", ".webm")) for url in transfers), "Film transferred on first paint"
-            assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.vars.id === 'cinematic-arch').length") == 1
-            assert await page.evaluate("() => { const t=ScrollTrigger.getById('cinematic-arch');return t.end-t.start <= innerHeight*1.51; }")
+            assert await page.evaluate("ScrollTrigger.getAll().filter(t => t.vars.id === 'cinematic-journey').length") == 1
             times = []
-            for progress, scene, film, fraction in ((.12, "0", "arrival", .3), (.28, "0", "arrival", .7), (.56, "1", "balcony", .16/.38), (.72, "1", "balcony", .32/.38), (.96, "2", None, None), (.12, "0", "arrival", .3)):
+            for progress, scene, count in ((.02, "-1", 0), (.16, "0", 1), (.29, "-1", 0), (.39, "1", 2), (.62, "2", 3), (.82, "3", 4), (.97, "4", 4), (.16, "0", 1)):
                 await position(page, "cinema", progress)
                 await page.wait_for_function("scene => document.getElementById('cinema').dataset.scene === scene", arg=scene)
-                if film:
-                    await page.wait_for_function("""({film, fraction}) => {
-                      const v=document.querySelector('[data-cinema-film="'+film+'"]');
-                      return v.readyState >= 2 && !v.seeking && Math.abs(v.currentTime-v.duration*fraction)<.15 && v.getVideoPlaybackQuality().totalVideoFrames>0;
-                    }""", arg={"film": film, "fraction": fraction}, timeout=15000)
-                    video = page.locator(f'[data-cinema-film="{film}"]')
-                    assert await video.evaluate("v => v.paused && v.muted && (v.dataset.format === 'mp4' ? v.videoWidth === 480 && v.videoHeight === 854 : v.videoWidth === 360 && v.videoHeight === 640)")
-                    times.append(await video.evaluate("v => v.currentTime"))
-                await page.wait_for_timeout(350)
-                box = await page.locator(".cinema-aperture").bounding_box()
-                assert 68 <= box["y"] and box["y"] + box["height"] <= height + 1
-                assert box["x"] >= 0 and box["x"] + box["width"] <= width + 1
-                assert await page.locator(f'[data-scene-copy="{scene}"]').is_visible()
-                assert await page.locator(f'[data-scene-copy="{scene}"]').evaluate("e => Number(getComputedStyle(e).opacity) === 1"), "Caption loses readable contrast"
-                assert await page.locator(f'button[data-scene="{scene}"]').get_attribute("aria-pressed") == "true"
-                bounds = [0, .4, .82, 1]
-                traces = await page.locator('button[data-scene]').evaluate_all("es=>es.map(e=>Number(e.style.getPropertyValue('--scene-progress')))")
-                expected = [max(0,min(1,(progress-bounds[i])/(bounds[i+1]-bounds[i]))) for i in range(3)]
-                assert max(abs(a-b) for a,b in zip(traces,expected))<.04, (traces,expected)
-                assert await page.locator(f'[data-scene-copy="{scene}"] .scroll-word').evaluate_all("es=>es.length>3 && es.every(e=>Number(getComputedStyle(e).opacity)>=.9)"), "Cinematic words must stay readable"
-
-                assert await page.locator('.cinema-layer').first.evaluate("e => Number(getComputedStyle(e).opacity) === 1"), "Arch loses its covered base during transitions"
+                await page.wait_for_function("""fraction => {
+                  const v=document.querySelector('[data-cinema-film="journey"]');
+                  return v.readyState >= 2 && !v.seeking && Math.abs(v.currentTime-v.duration*fraction)<.15 && v.getVideoPlaybackQuality().totalVideoFrames>0;
+                }""", arg=progress, timeout=15000)
+                video = page.locator('[data-cinema-film="journey"]')
+                assert await video.evaluate("v => v.paused && v.muted && (v.dataset.format === 'mp4' ? v.videoWidth === 1280 && v.videoHeight === 720 : v.videoWidth === 960 && v.videoHeight === 540)")
+                times.append(await video.evaluate("v=>v.currentTime"))
+                await page.wait_for_timeout(400)
+                box = await page.locator('.cinema-media').bounding_box()
+                assert abs(box['x'])<1 and abs(box['y'])<1 and abs(box['width']-width)<1 and abs(box['height']-height)<2, (width,box)
+                assert await page.locator('.cinema-detail:visible').count() == count, "Detail composition must build and reverse"
+                assert await page.locator('.cinema-detail:visible img').evaluate_all("es=>es.every(e=>e.complete&&e.naturalWidth>0&&getComputedStyle(e).objectFit==='contain')")
+                if scene == '-1':
+                    assert await page.locator('.cinema-story:visible').count() == 0, "Breathing interval is covered by copy"
+                    assert await page.locator('button[data-scene][aria-pressed="true"]').count() == 0
+                else:
+                    story=page.locator(f'[data-scene-copy="{scene}"]')
+                    assert await story.is_visible()
+                    assert await story.evaluate("e=>Number(getComputedStyle(e).opacity)>.99"), "Chapter must be fully readable during its reading interval"
+                    assert await page.locator(f'button[data-scene="{scene}"]').get_attribute('aria-pressed') == 'true'
+                    r=await story.bounding_box()
+                    assert r['y']>=68 and r['y']+r['height']<height-44, (width,language,r)
+                    for detail in await page.locator('.cinema-detail:visible').all():
+                        d=await detail.bounding_box()
+                        assert d['x']>=0 and d['x']+d['width']<=width+1 and d['y']>=68 and d['y']+d['height']<height-44
+                        assert r['x']+r['width']<=d['x'] or d['x']+d['width']<=r['x'] or r['y']+r['height']<=d['y'] or d['y']+d['height']<=r['y'], "Copy and photographs overlap"
                 assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
                 await snapshot(page, output, f"cinema-{width}-{language}-{progress}-{len(times)}")
-                if scene == "2":
-                    assert abs(box["width"] / box["height"] - 16/9) < .03, "Final ballroom is cropped"
-            assert times[1] > times[0] + 1.5 and abs(times[-1] - times[0]) < .15, "Footage does not advance and reverse with scroll"
-            # A newly entered caption reveals while retaining normal-text contrast.
-            await position(page, 'cinema', .415)
-            await page.wait_for_timeout(500)
-            words = page.locator('[data-scene-copy="1"] .scroll-word')
-            before = await words.evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))")
-            assert min(before)>=.9 and min(before)<.99, before
-            contrast = await words.evaluate_all("""words=>{
-              const rgb=c=>c.match(/[0-9.]+/g).slice(0,3).map(Number);
-              const lum=rgb=>rgb.map(c=>c/255).map(c=>c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4)).reduce((s,c,i)=>s+c*[.2126,.7152,.0722][i],0);
-              const bg=rgb(getComputedStyle(document.getElementById('cinema')).backgroundColor);
-              return Math.min(...words.map(w=>{const alpha=Number(getComputedStyle(w).opacity),fg=rgb(getComputedStyle(w).color).map((c,i)=>c*alpha+bg[i]*(1-alpha));return (lum(fg)+.05)/(lum(bg)+.05);}));
-            }""")
-            assert contrast>=4.5, contrast
-            await position(page, 'cinema', .52)
-            await page.wait_for_timeout(500)
-            assert min(await words.evaluate_all("es=>es.map(e=>Number(getComputedStyle(e).opacity))"))>.99
-            # Chapters can be selected by keyboard without dragging or waiting through the scene.
-            button = page.locator('button[data-scene="2"]')
-            await button.focus()
-            await page.keyboard.press("Enter")
-            await page.wait_for_function("document.getElementById('cinema').dataset.scene === '2'")
-            await snapshot(page, output, f"cinema-keyboard-{width}-{language}")
-            await page.locator(".cinema-skip").click()
-            await page.wait_for_function("() => { const r=document.getElementById('visit-title').getBoundingClientRect();return r.top >= 68 && r.top < innerHeight; }")
-            await position(page, "cinema", .56)
-            await page.locator(".cinema-inquiry").click()
-            assert await page.locator("#q-location").input_value() == "la-jolla"
-            await page.wait_for_function("() => { const r=document.getElementById('quote-title').getBoundingClientRect();return r.top >= 68 && r.top < innerHeight; }")
-            results.append({"width": width, "language": language, "deferred_transfer": "passed", "decoded_forward_reverse": "passed", "paused_silent": "passed", "covered_frame": "passed", "keyboard_skip_inquiry": "passed"})
+            assert times[-2]>4.7 and abs(times[-1]-times[1])<.15, "The complete film must advance and reverse"
+            for gap in (.51, .73, .92):
+                await position(page, 'cinema', gap)
+                await page.wait_for_function("document.getElementById('cinema').dataset.scene==='-1'")
+                assert await page.locator('.cinema-story:visible,.cinema-detail:visible').count()==0
+            await position(page,'cinema',.999)
+            await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film]');return !v.seeking&&v.currentTime>=v.duration-.16;}")
+            await page.locator('button[data-scene="2"]').focus()
+            await page.keyboard.press('Enter')
+            await page.wait_for_function("document.getElementById('cinema').dataset.scene==='2'")
+            await page.locator('.cinema-skip').click()
+            await page.wait_for_function("()=>{const r=document.getElementById('visit-title').getBoundingClientRect();return r.top>=68&&r.top<innerHeight;}")
+            await position(page,'cinema',.97)
+            await page.wait_for_function("document.getElementById('cinema').dataset.scene==='4'")
+            await page.locator('.cinema-inquiry').click()
+            await page.wait_for_function("document.activeElement.id==='quote-title'")
+            results.append({"width":width,"language":language,"full_screen":"passed","complete_decoded_forward_reverse":"passed","five_chapters_and_film_only_intervals":"passed","cumulative_small_photos_and_reverse":"passed","no_overlapping_copy":"passed","keyboard_skip_inquiry":"passed"})
             await page.close()
-    # Transport/format failures retain actual photographs and native navigation.
-    for failure in ("mp4", "all"):
-        page = await browser.new_page(viewport={"width": 838, "height": 884})
-        await page.route("**/assets/venue/cinematic/*.mp4", lambda route: route.abort())
-        if failure == "all":
-            await page.route("**/assets/venue/cinematic/*.webm", lambda route: route.abort())
-        await page.goto(base, wait_until="networkidle")
-        await position(page, "cinema", .56)
-        if failure == "mp4":
-            await page.wait_for_function("""() => { const v=document.querySelector('[data-cinema-film="balcony"]');return v.dataset.format==='webm' && v.readyState>=2 && !v.seeking && v.currentTime>1; }""")
+    for failure in ('mp4','all'):
+        page=await browser.new_page(viewport={"width":838,"height":884})
+        await page.route('https://api.web3forms.com/**',lambda route:route.abort())
+        await page.route('**/assets/venue/cinematic/*.mp4',lambda route:route.abort())
+        if failure=='all':
+            await page.route('**/assets/venue/cinematic/*.webm',lambda route:route.abort())
+        await page.goto(base,wait_until='networkidle')
+        await position(page,'cinema',.62)
+        if failure=='mp4':
+            await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film]');return v.dataset.format==='webm'&&v.readyState>=2&&!v.seeking&&v.currentTime>2;}")
         else:
-            await page.wait_for_timeout(500)
-            assert await page.locator('[data-scene-layer="1"] img').evaluate("i => i.complete && i.naturalWidth > 0")
-            assert await page.locator('[data-scene-layer="1"] video').evaluate("v => Number(getComputedStyle(v).opacity) === 0")
-        await snapshot(page, output, f"cinema-fallback-{failure}")
-        await page.emulate_media(reduced_motion="reduce")
-        await page.wait_for_function("!ScrollTrigger.getById('cinematic-arch')")
-        assert await page.locator('.cinema-layer video').evaluate_all("videos => videos.every(v => !v.getAttribute('src') && v.paused)")
+            await page.wait_for_timeout(800)
+            assert await page.locator('.cinema-media>img').evaluate('i=>i.complete&&i.naturalWidth>0')
+            assert await page.locator('.cinema-media>video').evaluate('v=>Number(getComputedStyle(v).opacity)===0')
+        await snapshot(page,output,f'cinema-fallback-{failure}')
+        await page.emulate_media(reduced_motion='reduce')
+        await page.wait_for_function("!ScrollTrigger.getById('cinematic-journey')")
+        assert await page.locator('.cinema-media>video').evaluate("v=>!v.getAttribute('src')&&v.paused")
+        assert await page.locator('.cinema-story:visible').count()==5
         await page.locator('button[data-scene="2"]').click()
-        assert await page.locator('[data-scene-copy="2"]').is_visible()
+        assert await page.locator('[data-scene-copy="2"]').evaluate('e=>document.activeElement===e')
         await page.close()
-    for variant in ("reduced", "short", "save-data", "no-gsap", "no-page-script", "no-javascript"):
-        context = await browser.new_context(viewport={"width": 390, "height": 667 if variant == "short" else 844}, reduced_motion="reduce" if variant == "reduced" else "no-preference", java_script_enabled=variant != "no-javascript")
-        if variant == "save-data":
-            await context.add_init_script("Object.defineProperty(navigator, 'connection', { value: {saveData:true} });")
-        if variant == "no-gsap":
-            await context.route("**/*gsap*", lambda route: route.abort())
-            await context.route("**/*ScrollTrigger*", lambda route: route.abort())
-        if variant == "no-page-script":
-            await context.route("**/script.js*", lambda route: route.abort())
+    for variant in ('reduced','short','tiny','save-data','no-gsap','no-page-script','no-javascript'):
+        height=667 if variant=='short' else 540 if variant=='tiny' else 844
+        context=await browser.new_context(viewport={"width":390,"height":height},reduced_motion='reduce' if variant=='reduced' else 'no-preference',java_script_enabled=variant!='no-javascript')
+        if variant=='save-data':
+            await context.add_init_script("Object.defineProperty(navigator,'connection',{value:{saveData:true}});")
+        if variant=='no-gsap':
+            await context.route('**/*gsap*',lambda route:route.abort())
+            await context.route('**/*ScrollTrigger*',lambda route:route.abort())
+        if variant=='no-page-script':
+            await context.route('**/script.js*',lambda route:route.abort())
         transfers=[]
         page=await context.new_page()
-        page.on("request",lambda request: transfers.append(request.url))
-        await page.goto(base,wait_until="networkidle")
-        await page.locator("#cinema-title").scroll_into_view_if_needed()
-        assert not any("/cinematic/" in url and url.endswith((".mp4", ".webm")) for url in transfers)
-        if variant not in ("no-page-script", "no-javascript"):
-            await page.locator('button[data-scene="2"]').click()
-            assert await page.locator('[data-scene-copy="2"]').is_visible()
+        await page.route('https://api.web3forms.com/**',lambda route:route.abort())
+        page.on('request',lambda request:transfers.append(request.url))
+        await page.goto(base,wait_until='networkidle')
+        if variant=='short':
+            await position(page,'cinema',.82)
+            await page.wait_for_function("document.getElementById('cinema').dataset.scene==='3'")
+            r=await page.locator('[data-scene-copy="3"]').bounding_box()
+            d=await page.locator('.cinema-details').bounding_box()
+            assert r['y']+r['height']<d['y'], ('short',r,d)
         else:
-            assert await page.locator('.cinema-story:visible').count() == 3
-        assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
-        await page.screenshot(path=str(output / f"cinema-{variant}.png"))
+            await page.locator('#cinema-title').scroll_into_view_if_needed()
+            assert not any('/cinematic/' in url and url.endswith(('.mp4','.webm')) for url in transfers)
+            assert await page.locator('.cinema-story:visible').count()==5
+            assert await page.locator('.cinema-detail:visible').count()==4
+        assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
+        await page.screenshot(path=str(output/f'cinema-{variant}.png'))
         await context.close()
-    return {"scenes":results, "format_failure_and_posters":"passed", "reduced_short_data_no_gsap_no_script":"passed", "real_emails_sent":0}
+    return {"scenes":results,"format_failure_and_posters":"passed","reduced_short_data_no_gsap_no_script":"passed","real_emails_sent":0}
 
 
 async def check_venue_media(browser, base, output):

@@ -7,6 +7,27 @@
 
   const I18N = {
     en: {
+      "journey.title": "The house. Your occasion. A world of possibilities.",
+      "journey.label": "Explore the story",
+      "journey.place.kicker": "The house",
+      "journey.place.title": "A story rooted in Coral Gables.",
+      "journey.place.body": "Mediterranean arches, ivy and garden light. A historic setting, established in 1928, at 301 Alcazar Avenue.",
+      "journey.place.link": "Discover the house",
+      "journey.occasion.kicker": "Your occasion",
+      "journey.occasion.title": "A setting to make your own.",
+      "journey.occasion.body": "Weddings, milestone celebrations, private dining and corporate gatherings. Start with a light-filled ballroom; shape the occasion around your guests.",
+      "journey.occasion.link": "Explore occasions",
+      "journey.lexington.kicker": "The Lexington",
+      "journey.lexington.title": "An intimate change of scene.",
+      "journey.lexington.body": "Deep greens, wine reds and warm golds. An upstairs lounge for cocktails, private dinners and distinctive, smaller gatherings.",
+      "journey.lexington.link": "Meet The Lexington",
+      "journey.beyond.kicker": "Beyond the house",
+      "journey.beyond.title": "Bring the occasion to you.",
+      "journey.beyond.body": "Rentals, design and production for your chosen location in South Florida. Furniture, lighting, florals, tableware and the details that bring your vision together.",
+      "journey.beyond.link": "Explore services",
+      "journey.finale.kicker": "Imagine the possibilities",
+      "journey.finale.title": "Your story starts here.",
+      "journey.finale.body": "At La Jolla or at your chosen location. Tell us the occasion, your date and what you have in mind. We will help you explore the possibilities.",
       "cinema.eyebrow": "A sense of place",
       "cinema.title": "A closer look at the house.",
       "cinema.arrivalTitle": "A first impression.",
@@ -252,6 +273,27 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "journey.title": "La casa. Su celebración. Un mundo de posibilidades.",
+      "journey.label": "Explore la historia",
+      "journey.place.kicker": "La casa",
+      "journey.place.title": "Una historia que nace en Coral Gables.",
+      "journey.place.body": "Arcos mediterráneos, hiedra y luz de jardín. Un entorno histórico de 1928 en el 301 de Alcazar Avenue.",
+      "journey.place.link": "Descubra la casa",
+      "journey.occasion.kicker": "Su celebración",
+      "journey.occasion.title": "Un espacio para hacerlo suyo.",
+      "journey.occasion.body": "Bodas, celebraciones especiales, cenas privadas y encuentros corporativos. Un salón lleno de luz como punto de partida para una ocasión pensada para sus invitados.",
+      "journey.occasion.link": "Explore las celebraciones",
+      "journey.lexington.kicker": "The Lexington",
+      "journey.lexington.title": "Un ambiente más íntimo.",
+      "journey.lexington.body": "Verdes profundos, tonos vino y dorados cálidos. Un salón en la planta superior para cócteles, cenas privadas y encuentros íntimos con carácter.",
+      "journey.lexington.link": "Conozca The Lexington",
+      "journey.beyond.kicker": "Más allá de la casa",
+      "journey.beyond.title": "Lleve la ocasión a su espacio.",
+      "journey.beyond.body": "Alquileres, diseño y producción en el lugar que elija en el sur de Florida. Mobiliario, iluminación, flores, vajilla y los detalles que dan forma a su idea.",
+      "journey.beyond.link": "Explore los servicios",
+      "journey.finale.kicker": "Imagine las posibilidades",
+      "journey.finale.title": "Su historia empieza aquí.",
+      "journey.finale.body": "En La Jolla o en el lugar que elija. Cuéntenos la ocasión, la fecha y lo que tiene en mente. Le ayudaremos a explorar las posibilidades.",
       "cinema.eyebrow": "El carácter de un lugar",
       "cinema.title": "Una mirada más cercana a la casa.",
       "cinema.arrivalTitle": "Una primera impresión.",
@@ -560,33 +602,28 @@
     const section = document.getElementById("cinema");
     if (!section) return null;
     const stage = section.querySelector(".cinema-stage");
-    const frame = section.querySelector(".cinema-aperture");
-    const slot = section.querySelector(".cinema-media");
-    const layers = Array.from(section.querySelectorAll("[data-scene-layer]"));
     const stories = Array.from(section.querySelectorAll("[data-scene-copy]"));
+    const details = Array.from(section.querySelectorAll("[data-scene-detail]"));
     const buttons = Array.from(section.querySelectorAll("[data-scene]"));
     const videos = Array.from(section.querySelectorAll("[data-cinema-film]"));
-    const positions = [.12, .57, .96];
-    let trigger = null, observer = null, active = 0, loaded = false, loadController = null;
-    const connection = navigator.connection;
-    const saveData = !!(connection && connection.saveData);
-    section.classList.add("cinema-ready");
+    const positions = [.16, .39, .62, .82, .97];
+    // Every chapter has a reading interval; the gaps deliberately leave only the film.
+    const chapters = [[.08, .25], [.32, .48], [.55, .70], [.76, .90], [.94, 1.01]];
+    const arrivals = [.08, .32, .55, .76];
+    let trigger = null, observer = null, loaded = false, loadController = null;
+    const saveData = !!(navigator.connection && navigator.connection.saveData);
 
-    function select(index) {
-      if (section.dataset.scene === String(index)) return;
-      active = index;
-      stories.forEach(function (story, i) { story.hidden = i !== index; });
-      buttons.forEach(function (button, i) { button.setAttribute("aria-pressed", String(i === index)); });
-      section.dataset.scene = String(index);
+    function setAvailable(element, available) {
+      element.hidden = !available;
+      element.inert = !available;
     }
-    function staticScene(index) {
-      select(index);
-      layers.forEach(function (layer, i) { layer.style.opacity = i === index ? "1" : "0"; });
-      stories.forEach(function (story) { story.style.opacity = "1"; story.style.transform = ""; story.style.removeProperty("--reading-progress"); });
-      buttons.forEach(function (button) { button.style.removeProperty("--scene-progress"); });
-      frame.style.width = index === 2 ? "100%" : "76%";
-      frame.style.height = index === 2 ? slot.clientWidth * 9 / 16 + "px" : "100%";
-      frame.style.borderRadius = index === 2 ? "6px" : "50% 50% 0 0";
+    function resetPresentation() {
+      section.dataset.scene = "all";
+      section.style.removeProperty("--chapter-ink");
+      stories.concat(details).forEach(function (element) {
+        setAvailable(element, true); element.style.opacity = ""; element.style.transform = "";
+      });
+      buttons.forEach(function (button) { button.setAttribute("aria-pressed", "false"); button.style.removeProperty("--scene-progress"); });
     }
     videos.forEach(function (video) {
       let desired = 0;
@@ -597,7 +634,7 @@
           try { video.currentTime = target; } catch (_) { /* The poster remains available. */ }
         }
       }
-      video.requestFrame = function (fraction) { desired = fraction * (video.duration || 5.3); seek(); };
+      video.requestFrame = function (fraction) { desired = fraction * (video.duration || 5.04); seek(); };
       video.addEventListener("seeked", seek);
       video.addEventListener("loadeddata", function () {
         video.classList.add("is-decoded");
@@ -648,48 +685,50 @@
       button.addEventListener("click", function () {
         if (trigger) {
           window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * positions[index], behavior: "smooth" });
-        } else { staticScene(index); }
+        } else {
+          stories[index].scrollIntoView({ behavior: "auto", block: "center" });
+          stories[index].setAttribute("tabindex", "-1");
+          stories[index].focus({ preventScroll: true });
+        }
       });
     });
-    window.addEventListener("resize", function () { if (!trigger) staticScene(active); });
-    staticScene(0);
+    resetPresentation();
     return { animate: function (gsap, ScrollTrigger) {
-      // Short screens, reduced motion and data saving retain deliberate, still-image choices.
-      if (saveData || window.innerHeight < 740) return null;
+      if (saveData || window.innerHeight < 600) return null;
       section.classList.add("cinema-scroll");
       const playhead = { progress: 0 };
+      const clamp = gsap.utils.clamp(0, 1);
       function render() {
         const p = playhead.progress;
-        // Covered dissolves keep the arch filled, even while a video seek is pending.
-        const balcony = gsap.utils.clamp(0, 1, (p - .34) / .12);
-        const room = gsap.utils.clamp(0, 1, (p - .76) / .12);
-        layers[0].style.opacity = "1";
-        layers[1].style.opacity = String(balcony);
-        layers[2].style.opacity = String(room);
-        layers[0].style.transform = "scale(" + (1.24 - Math.min(p / .38, 1) * .24) + ")";
-        layers[1].style.transform = "scale(" + (1.12 - gsap.utils.clamp(0, 1, (p - .4) / .36) * .12) + ")";
-        frame.style.width = (76 + room * 24) + "%";
-        frame.style.height = slot.clientHeight + (slot.clientWidth * 9 / 16 - slot.clientHeight) * room + "px";
-        frame.style.borderTopLeftRadius = (50 * (1 - room)) + "%";
-        frame.style.borderTopRightRadius = (50 * (1 - room)) + "%";
-        videos[0].requestFrame(gsap.utils.clamp(0, 1, p / .4));
-        videos[1].requestFrame(gsap.utils.clamp(0, 1, (p - .4) / .38));
-        select(p < .4 ? 0 : p < .82 ? 1 : 2);
-        // Type and chapter traces accompany the original film timing, without changing its frames.
-        const bounds = [0, .4, .82, 1];
-        buttons.forEach(function (button, i) {
-          button.style.setProperty("--scene-progress", String(gsap.utils.clamp(0, 1, (p - bounds[i]) / (bounds[i + 1] - bounds[i]))));
+        const current = chapters.findIndex(function (range) { return p >= range[0] && p < range[1]; });
+        section.dataset.scene = String(current);
+        const range = chapters[current];
+        const fade = range ? Math.min(clamp((p - range[0]) / .025), current === 4 ? 1 : clamp((range[1] - p) / .025)) : 0;
+        section.style.setProperty("--chapter-ink", String(fade));
+        stories.forEach(function (story, i) {
+          setAvailable(story, i === current);
+          story.style.opacity = String(fade);
+          story.style.transform = "translateY(" + ((1 - fade) * 16) + "px)";
         });
-        stories[active].style.setProperty("--reading-progress", String(gsap.utils.clamp(0, 1, (p - bounds[active]) / .09)));
-        const entrance = active === 0 ? 1 : gsap.utils.clamp(.35, 1, (p - (active === 1 ? .4 : .82)) / .07);
-        stories[active].style.opacity = "1";
-        stories[active].style.transform = "translateY(" + ((1 - entrance) * 12) + "px)";
+        details.forEach(function (detail, i) {
+          const appearance = clamp((p - arrivals[i]) / .05);
+          // Gathered details remain after their chapter, then disappear briefly in the film-only gaps.
+          const visible = current !== -1 && appearance > 0;
+          setAvailable(detail, visible);
+          detail.style.opacity = String(appearance * fade);
+          detail.style.transform = "translateY(" + ((1 - appearance) * 24) + "px)";
+        });
+        buttons.forEach(function (button, i) {
+          button.setAttribute("aria-pressed", String(i === current));
+          button.style.setProperty("--scene-progress", String(clamp((p - chapters[i][0]) / (chapters[i][1] - chapters[i][0]))));
+        });
+        videos[0].requestFrame(p);
       }
       const timeline = gsap.to(playhead, { progress: 1, ease: "none", onUpdate: render,
-        scrollTrigger: { id: "cinematic-arch", trigger: section, pin: stage,
-          start: function () { return "top " + document.getElementById("header").offsetHeight; },
-          end: function () { return "+=" + Math.round(window.innerHeight * (window.innerWidth < 650 ? 1.05 : 1.5)); },
-          scrub: .25, invalidateOnRefresh: true, onRefresh: render,
+        scrollTrigger: { id: "cinematic-journey", trigger: section, pin: stage,
+          start: "top top",
+          end: function () { return "+=" + Math.round(window.innerHeight * 4.5); },
+          scrub: .3, invalidateOnRefresh: true, onRefresh: render,
           onEnter: loadFilms, onEnterBack: loadFilms
         }
       });
@@ -702,9 +741,7 @@
       return function () {
         observer.disconnect(); observer = null; trigger = null;
         section.classList.remove("cinema-scroll");
-        releaseFilms();
-        layers.forEach(function (layer) { layer.style.transform = ""; });
-        staticScene(active);
+        releaseFilms(); resetPresentation();
       };
     }};
   }
@@ -733,7 +770,7 @@
     const ScrollTrigger = window.ScrollTrigger;
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
-    media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", tall: "(min-height: 740px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
+    media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", tall: "(min-height: 600px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
       if (context.conditions.reduced) return;
       document.documentElement.classList.add("has-gsap");
       // The entrance has restrained depth, without pinning or changing photos on scroll.
