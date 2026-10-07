@@ -1,0 +1,26 @@
+{
+  "source": "WhatsApp Video 2026-10-07 at 04.08.31.mp4",
+  "source_sha256": "093ccc41f7335994b4beddfcf6e23aa8d1d271cc325d00f55f5bb9e4d6dafd42",
+  "source_bytes": 19523900,
+  "source_dimensions": [
+    1920,
+    1080
+  ],
+  "source_duration_seconds": 5.041667,
+  "provenance": "User-supplied cinematic approach. No independently verified aerial capture provenance; paired still photographs are actual approved venue images. No new architecture is generated or painted by this release.",
+  "delivery": "Silent paused video, lazily fetched only near the cinematic scene; complete forward/backward seeks; one supported format per successful load.",
+  "assets": {
+    "journey.mp4": {
+      "bytes": 2938648,
+      "sha256": "dba6f9a6be3ed35f6854803e4253fd35e5b7601644b1d860b0f39b69684c991c"
+    },
+    "journey.webm": {
+      "bytes": 2261223,
+      "sha256": "1db537e6dc936a62363577b8f84c8154cc14f4e24eb3cc13c83b23a0066198c1"
+    },
+    "journey-poster.jpg": {
+      "bytes": 232453,
+      "sha256": "8b02ff68c474dbac8649764c317885b3f92fc6412606fc60137f515409e63edf"
+    }
+  }
+}
