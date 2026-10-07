@@ -675,7 +675,7 @@ async def check_cinematic(browser, base, output):
                 await page.wait_for_function("document.getElementById('cinema').dataset.scene==='-1'")
                 assert await page.locator('.cinema-story:visible,.cinema-detail:visible').count()==0
             await position(page,'cinema',.999)
-            await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film]');return !v.seeking&&v.currentTime>=v.duration-.16;}")
+            await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film]');return !v.seeking&&v.currentTime>=v.duration-.04;}")
             await page.locator('button[data-scene="2"]').focus()
             await page.keyboard.press('Enter')
             await page.wait_for_function("document.getElementById('cinema').dataset.scene==='2'")

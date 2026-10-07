@@ -629,7 +629,7 @@
       let desired = 0;
       function seek() {
         if (video.readyState < 2 || video.seeking || !Number.isFinite(video.duration)) return;
-        const target = Math.min(video.duration - .05, Math.max(0, desired));
+        const target = Math.min(video.duration - .001, Math.max(0, desired));
         if (Math.abs(video.currentTime - target) > .035) {
           try { video.currentTime = target; } catch (_) { /* The poster remains available. */ }
         }
