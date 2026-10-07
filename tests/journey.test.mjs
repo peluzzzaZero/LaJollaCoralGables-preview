@@ -16,3 +16,10 @@ test('the supplied cinematic film ships within its delivery budget with auditabl
     assert.equal(createHash('sha256').update(bytes).digest('hex'), manifest.assets[name].sha256);
   }
 });
+
+test('temporary preview pages request no indexing until the production launch', () => {
+  for (const name of ['index.html', 'privacy.html', 'terms.html']) {
+    const html = readFileSync(new URL(`../${name}`, import.meta.url), 'utf8');
+    assert.match(html, /<meta name="robots" content="noindex, nofollow, noarchive"\s*\/>/, name);
+  }
+});
