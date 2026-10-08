@@ -30,9 +30,11 @@ test("MonteCarlo from the brand zip is the script font", () => {
 });
 
 test("opening frame cannot collapse", () => {
-  assert.match(css, /\.hero\.reel[\s\S]{0,180}100dvh/);
+  assert.match(css, /\.cinema-scroll \.cinema-stage[^}]*height: 100svh/);
 });
 
 test("inquiry form is present", () => {
-  assert.match(html, /<form[\s\S]+<\/form>/);
+  const planning = readFileSync(new URL("../planning.html", import.meta.url), "utf8");
+  assert.match(planning, /<form[\s\S]+<\/form>/);
+  assert.equal(html.includes("<form"), false);
 });

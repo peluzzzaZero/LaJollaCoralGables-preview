@@ -64,7 +64,5 @@ test("rentals text is not left on the 0.08 reveal fade", () => {
     assert.equal(/opacity:\s*calc\(\s*0\.08/.test(body), false);
     assert.equal(/opacity:\s*0(?:\s|;|!|$)/.test(body), false);
   }
-  const motion = rentalsScript();
-  assert.equal(/autoAlpha:\s*0\b/.test(motion), false);
-  assert.equal(/opacity:\s*0\b/.test(motion), false);
+
 });

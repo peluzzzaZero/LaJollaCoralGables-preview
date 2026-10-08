@@ -48,7 +48,7 @@ test("alcazar drawing is the awning-mark bitmap", () => {
 test("alcazar does not wipe with a clip-path inset or tilt with rotateY", () => {
   const section = alcazarSection();
   const style = alcazarCss();
-  const motion = alcazarScript();
+  const motion = js.slice(js.indexOf("function initCinematicWindow"), js.indexOf("function prepareScrollWords"));
   for (const source of [section, style, motion]) {
     assert.equal(/rotateY/.test(source), false, source.slice(0, 80));
     assert.equal(/rotateX/.test(source), false, source.slice(0, 80));

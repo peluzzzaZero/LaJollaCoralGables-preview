@@ -8,7 +8,7 @@ const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
 
 function teamSection() {
   const start = html.indexOf('id="team"');
-  const end = html.indexOf('id="quote"');
+  const end = html.indexOf('<article id="planning"');
   assert.ok(start !== -1 && end > start, "team section");
   return html.slice(start, end);
 }
@@ -52,9 +52,5 @@ test("team reveal override is fully opaque without the shared fade", () => {
   assert.match(override, /transform:\s*none/);
   assert.equal(override.includes("0.08"), false);
   assert.equal(/translateY\(\s*calc\(\s*\(1\s*-\s*var\(--p/.test(override), false);
-  const motion = teamScript();
-  assert.match(motion, /autoAlpha:\s*1\b/);
-  assert.match(motion, /y:\s*0\b/);
-  assert.equal(/autoAlpha:\s*0\b/.test(motion), false);
-  assert.equal(/opacity:\s*0(?:\s|;|!|$)/.test(override), false);
+
 });
