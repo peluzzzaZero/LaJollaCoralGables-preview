@@ -249,6 +249,14 @@
       "form.interestPh": "Anything else you would like us to know",
       "form.comments": "Comments",
       "form.submit": "Submit inquiry",
+      "form.sending": "Sending inquiry…",
+      "form.emailDraft": "Email this inquiry",
+      "form.emailHelp": "Your email app will open with your details. Please send the email to complete your inquiry.",
+      "form.bookingNotice": "Your preferred event date is a request. Availability and visits are confirmed by our team.",
+      "form.rateLimit": "Please wait before trying again, or email your inquiry below.",
+      "form.networkError": "The connection was interrupted. Your details are still here. You can retry or email your inquiry below.",
+      "form.providerError": "Online sending is unavailable. Your details are still here. Please email your inquiry below or call 786-290-8813.",
+
       "form.successEyebrow": "La Jolla",
       "form.successTitle": "Thank you",
       "form.successBody": "Your request has been sent. We will be in touch.",
@@ -519,6 +527,14 @@
       "form.interestPh": "Algo más que usted desee compartir",
       "form.comments": "Comentarios",
       "form.submit": "Enviar solicitud",
+      "form.sending": "Enviando solicitud…",
+      "form.emailDraft": "Enviar esta solicitud por correo",
+      "form.emailHelp": "Se abrirá su aplicación de correo con sus datos. Envíe el mensaje para completar la solicitud.",
+      "form.bookingNotice": "La fecha de evento indicada es una solicitud. Nuestro equipo confirma disponibilidad y visitas.",
+      "form.rateLimit": "Espere antes de volver a intentarlo o envíe su solicitud por correo a continuación.",
+      "form.networkError": "La conexión se interrumpió. Sus datos siguen aquí. Puede reintentar o enviar su solicitud por correo a continuación.",
+      "form.providerError": "El envío en línea no está disponible. Sus datos siguen aquí. Envíe su solicitud por correo a continuación o llame al 786-290-8813.",
+
       "form.successEyebrow": "La Jolla",
       "form.successTitle": "Gracias",
       "form.successBody": "Su solicitud ha sido enviada. Le responderemos.",
@@ -1018,13 +1034,39 @@
         botcheck: ""
       }, payload))
     }).then(function (res) {
-      return res.json().then(function (data) {
+      return res.json().catch(function () {
+        const error = new Error("mail");
+        error.status = res.status;
+        throw error;
+      }).then(function (data) {
         if (!res.ok || (data.success !== true && data.success !== "true")) {
-          throw new Error("mail");
+          // Keep diagnostics free of submitted contact data and provider echoes.
+          const error = new Error("mail");
+          error.status = res.status;
+          throw error;
         }
         return data;
       });
     }).finally(function () { window.clearTimeout(timeout); });
+  }
+
+  function formText(key) { return (I18N[lang] || I18N.en)[key] || I18N.en[key]; }
+
+  function inquiryDraft(form, subject) {
+    const lines = [subject, ""];
+    Array.prototype.forEach.call(form.elements, function (field) {
+      if (!field.name || field.type === "submit" || field.type === "button" || field.type === "hidden") return;
+      const value = String(field.value || "").trim();
+      if (!value) return;
+      const label = form.querySelector('label[for="' + field.id + '"]');
+      const title = label ? label.textContent.trim().replace(/\s+/g, " ") : field.name;
+      const text = field.tagName === "SELECT" ? field.options[field.selectedIndex].textContent.trim() : value;
+      lines.push(title + ": " + text);
+    });
+    const services = form.querySelector('[name="selectedServices"]');
+    if (services && services.value) lines.push(formText("selection.title") + ": " + services.value);
+    return "mailto:info@lajollacoralgables.com?subject=" + encodeURIComponent(subject)
+      + "&body=" + encodeURIComponent(lines.join("\n"));
   }
 
   function initLocalForm(formId, successId, errorId, sendErrorId, subject) {
@@ -1033,8 +1075,16 @@
     const success = document.getElementById(successId);
     const error = document.getElementById(errorId);
     const sendError = document.getElementById(sendErrorId);
+    const recovery = form.querySelector(".inquiry-recovery");
+    const draft = form.querySelector(".inquiry-email-draft");
+    if (draft) draft.addEventListener("click", function () {
+      // Build only on an explicit click; no personal details in page links/storage.
+      draft.href = inquiryDraft(form, subject);
+      window.setTimeout(function () { draft.href = "mailto:info@lajollacoralgables.com"; }, 0);
+    });
     const required = form.querySelectorAll("[required]");
     const submit = form.querySelector("[type='submit']");
+    const submitLabel = submit && submit.dataset.i18n;
     let sending = false;
     // The default submit button stays disabled if the page script fails to load.
     if (submit) submit.disabled = false;
@@ -1045,6 +1095,7 @@
       if (success) success.hidden = true;
       if (error) error.hidden = true;
       if (sendError) sendError.hidden = true;
+      if (recovery) recovery.hidden = true;
 
       let ok = true;
       required.forEach(function (field) {
@@ -1072,7 +1123,7 @@
       if (payload.email) payload.replyto = payload.email;
       sending = true;
       form.setAttribute("aria-busy", "true");
-      if (submit) submit.disabled = true;
+      if (submit) { submit.disabled = true; submit.dataset.i18n = "form.sending"; submit.textContent = formText("form.sending"); }
 
       sendMail(payload).then(function () {
         if (success) {
@@ -1084,12 +1135,23 @@
           field.classList.remove("is-invalid");
           field.removeAttribute("aria-invalid");
         });
-      }).catch(function () {
-        if (sendError) sendError.hidden = false;
+      }).catch(function (failure) {
+        const status = Number(failure.status) || 0;
+        const key = status === 429 ? "form.rateLimit" : status ? "form.providerError" : "form.networkError";
+        if (sendError) {
+          sendError.dataset.i18n = key;
+          sendError.textContent = formText(key);
+          sendError.dataset.deliveryStatus = String(status);
+          sendError.hidden = false;
+          sendError.scrollIntoView({ behavior: "auto", block: "nearest" });
+        }
+        // HTTP status only: never log the provider's response/data, which echoes PII.
+        form.dispatchEvent(new CustomEvent("inquiry-delivery-error", { bubbles: true, detail: { status: status } }));
+        if (recovery) recovery.hidden = false;
       }).then(function () {
         sending = false;
         form.removeAttribute("aria-busy");
-        if (submit) submit.disabled = false;
+        if (submit) { submit.disabled = false; submit.dataset.i18n = submitLabel; submit.textContent = formText(submitLabel); }
       });
     });
 

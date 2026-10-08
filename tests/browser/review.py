@@ -104,6 +104,7 @@ async def check_forms(browser, base):
             await page.locator('[data-service-id="planning"]').click()
             await page.locator(".selection-continue").click()
         await page.locator("#q-interest").fill("Additional written detail")
+        await page.locator("#q-comments").fill("Celebración & detalles? #sí + private note")
         for field, value in {"q-name": " Browser test ", "q-email": " browser@example.com ", "q-phone": "+13055550100", "q-date": "2027-02-15", "q-guests": "40"}.items():
             await page.locator(f"#{field}").fill(value)
         await page.locator("#q-type").select_option("wedding")
@@ -130,7 +131,7 @@ async def check_forms(browser, base):
         assert await page.locator(f"#{name}").get_attribute("aria-invalid") == "true"
         await fill()
 
-        failures = [( {"success": False}, 200, "json"), ({}, 200, "json"), ({"success": True}, 503, "json"), ({}, 200, "offline"), ({}, 200, "invalid-json")]
+        failures = [( {"success": False, "message": "<script>private-contact@example.com</script>"}, 400, "json"), ({"success": False}, 429, "json"), ( {"success": False}, 200, "json"), ({}, 200, "json"), ({"success": True}, 503, "json"), ({}, 200, "offline"), ({}, 200, "invalid-json")]
         if form == "quote-form":
             failures.append(({}, 200, "timeout"))
         for bad_response, bad_status, bad_mode in failures:
@@ -142,6 +143,28 @@ async def check_forms(browser, base):
             if form == "quote-form":
                 assert await page.locator("#q-location").input_value() == "exploring", "Failure discarded the setting"
             assert await page.locator(f"#{form} button[type=submit]").is_enabled()
+            assert await page.locator(f"#{form} .inquiry-recovery").is_visible()
+            assert "private-contact@example.com" not in await page.locator(f"#{prefix}-send-error").text_content()
+            # Explicit recovery builds a draft with current values, safely encoded.
+            await page.locator(f"#{form} .inquiry-email-draft").evaluate("a => a.addEventListener('click', e => e.preventDefault())")
+            draft = await page.locator(f"#{form} .inquiry-email-draft").evaluate("a => { a.click(); return a.href; }")
+            from urllib.parse import urlsplit, parse_qs
+            parsed = urlsplit(draft)
+            assert parsed.path == "info@lajollacoralgables.com"
+            body = parse_qs(parsed.query)["body"][0]
+            assert "Browser test" in body
+            assert "browser@example.com" in body
+            if form == "quote-form":
+                assert "Celebración & detalles? #sí + private note" in body
+                assert expected in body
+                assert "2027-02-15" in body
+                assert "Additional written detail" in body
+                assert "+13055550100" in body
+            else:
+                assert "Test company" in body and "Test service" in body
+            await page.wait_for_timeout(20)
+            assert await page.locator(f"#{form} .inquiry-email-draft").get_attribute("href") == "mailto:info@lajollacoralgables.com"
+
             if form == "quote-form":
                 assert await page.locator("#selected-services").input_value() == expected
                 assert await page.locator("#q-interest").input_value() == "Additional written detail"
@@ -152,6 +175,7 @@ async def check_forms(browser, base):
         await page.locator(f"#{prefix}-success").wait_for(state="visible")
         await page.wait_for_timeout(200)
         assert len(requests) == count + 1, "Duplicate submission was sent"
+        assert await page.locator(f"#{form} .inquiry-recovery").is_hidden()
         assert requests[-1]["email"] == "browser@example.com"
         assert requests[-1]["replyto"] == "browser@example.com"
         assert requests[-1]["ccemail"] == "info@lajollacoralgables.com"
