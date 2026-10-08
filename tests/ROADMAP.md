@@ -95,3 +95,7 @@ The client's Runway reference informs shot-to-detail pacing and restrained prese
 ## v1.9.0 — a full-screen house journey
 
 Replace the rejected small cinema with the newly supplied continuous approach filling the viewport. Five chapters explain the house, occasions, The Lexington, off-site services and planning; four film-only pauses separate them. Small complete photographs accumulate and reverse with the scroll. The old arch, three-shot sequence and short-pin expectations are superseded by this explicit request. Preserve the original full films, offering photograph assembly and native inquiry routes. Next review: live reading pace, mobile crop and verified venue/service information.
+
+## v1.10.0 — distinct cinematic compositions
+
+Keep the approved full-screen scrub effect and extend it to three real shots. Alternate shorter, readable panels between positions; show a relevant complete photograph per chapter and gather the four details in the finale. Review all three complete films and reverse seeks, deferred shot loads, readable mobile placement and native alternatives. The fixed text column and repeated intermediate photo grid are superseded by the latest user feedback. GoDaddy is installed but its personal account is not connected; DNS stays pending.

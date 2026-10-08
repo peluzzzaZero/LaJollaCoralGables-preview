@@ -1,0 +1,59 @@
+{
+  "provenance": "Existing approved user-supplied shots; original approach unchanged. Portrait arrival/balcony use real close detail crops on wide screens, not fabricated landscape scenes.",
+  "assets": {
+    "journey.mp4": {
+      "bytes": 2938648,
+      "sha256": "dba6f9a6be3ed35f6854803e4253fd35e5b7601644b1d860b0f39b69684c991c",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "duration_seconds": 5.041667
+    },
+    "journey.webm": {
+      "bytes": 2261223,
+      "sha256": "1db537e6dc936a62363577b8f84c8154cc14f4e24eb3cc13c83b23a0066198c1",
+      "dimensions": [
+        960,
+        540
+      ],
+      "duration_seconds": 5.042
+    },
+    "arrival.mp4": {
+      "bytes": 726318,
+      "sha256": "18ea89e925a8e007e3f3677f4d2bb83908b3fb98742fc208de5582e3a6b0b846",
+      "dimensions": [
+        480,
+        854
+      ],
+      "duration_seconds": 5.3
+    },
+    "arrival.webm": {
+      "bytes": 526801,
+      "sha256": "88ae8a2df107fff666bf2cd6b229f4b652f9e615403855ecbb0a3eeda3ba1dd1",
+      "dimensions": [
+        360,
+        640
+      ],
+      "duration_seconds": 5.292
+    },
+    "balcony.mp4": {
+      "bytes": 728322,
+      "sha256": "c19fe89cd10c9b11989b34722b1603c5a99eb76e198a8ea194c0e09accf1dbde",
+      "dimensions": [
+        480,
+        854
+      ],
+      "duration_seconds": 5.3
+    },
+    "balcony.webm": {
+      "bytes": 492884,
+      "sha256": "35189c73c0ca99351b81e0ae5dcdf5f2b82a968be3d26c0b3c44492a9fe7732c",
+      "dimensions": [
+        360,
+        640
+      ],
+      "duration_seconds": 5.292
+    }
+  }
+}
