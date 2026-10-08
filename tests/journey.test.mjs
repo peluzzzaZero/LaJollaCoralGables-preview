@@ -23,3 +23,20 @@ test('temporary preview pages request no indexing until the production launch', 
     assert.match(html, /<meta name="robots" content="noindex, nofollow, noarchive"\s*\/>/, name);
   }
 });
+
+test('the three actual shots stay within a combined delivery budget with unchanged asset hashes', () => {
+  const root = new URL('../assets/venue/cinematic/', import.meta.url);
+  const manifest = JSON.parse(readFileSync(new URL('sequence-source.json', root), 'utf8'));
+  let mp4Bytes = 0, webmBytes = 0;
+  for (const name of ['journey', 'arrival', 'balcony']) {
+    for (const format of ['mp4', 'webm']) {
+      const filename = `${name}.${format}`, bytes = readFileSync(new URL(filename, root));
+      assert.equal(bytes.length, manifest.assets[filename].bytes);
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), manifest.assets[filename].sha256);
+      assert.ok(manifest.assets[filename].duration_seconds >= 5);
+      if (format === 'mp4') mp4Bytes += bytes.length; else webmBytes += bytes.length;
+    }
+  }
+  assert.ok(mp4Bytes < 4_400_000);
+  assert.ok(webmBytes < 3_700_000);
+});

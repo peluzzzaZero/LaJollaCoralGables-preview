@@ -10,24 +10,24 @@
       "journey.title": "The house. Your occasion. A world of possibilities.",
       "journey.label": "Explore the story",
       "journey.place.kicker": "The house",
-      "journey.place.title": "A story rooted in Coral Gables.",
-      "journey.place.body": "Mediterranean arches, ivy and garden light. A historic setting, established in 1928, at 301 Alcazar Avenue.",
+      "journey.place.title": "A historic house. A personal welcome.",
+      "journey.place.body": "Mediterranean arches, ivy and garden light, since 1928. Find La Jolla at 301 Alcazar Avenue, in the heart of Coral Gables.",
       "journey.place.link": "Discover the house",
       "journey.occasion.kicker": "Your occasion",
-      "journey.occasion.title": "A setting to make your own.",
-      "journey.occasion.body": "Weddings, milestone celebrations, private dining and corporate gatherings. Start with a light-filled ballroom; shape the occasion around your guests.",
+      "journey.occasion.title": "Make room for your occasion.",
+      "journey.occasion.body": "Weddings, celebrations, private dinners and corporate gatherings in our light-filled ballroom. Shape the setting around your guests.",
       "journey.occasion.link": "Explore occasions",
       "journey.lexington.kicker": "The Lexington",
-      "journey.lexington.title": "An intimate change of scene.",
-      "journey.lexington.body": "Deep greens, wine reds and warm golds. An upstairs lounge for cocktails, private dinners and distinctive, smaller gatherings.",
+      "journey.lexington.title": "A more intimate setting.",
+      "journey.lexington.body": "Our upstairs lounge, in deep greens, wine tones and warm golds. The Lexington welcomes cocktails, private dinners and smaller gatherings.",
       "journey.lexington.link": "Meet The Lexington",
       "journey.beyond.kicker": "Beyond the house",
-      "journey.beyond.title": "Bring the occasion to you.",
-      "journey.beyond.body": "Rentals, design and production for your chosen location in South Florida. Furniture, lighting, florals, tableware and the details that bring your vision together.",
+      "journey.beyond.title": "Your vision. Your location.",
+      "journey.beyond.body": "Rentals, design and production throughout South Florida. Furniture, lighting, florals and tableware, brought together for the location you choose.",
       "journey.beyond.link": "Explore services",
       "journey.finale.kicker": "Imagine the possibilities",
-      "journey.finale.title": "Your story starts here.",
-      "journey.finale.body": "At La Jolla or at your chosen location. Tell us the occasion, your date and what you have in mind. We will help you explore the possibilities.",
+      "journey.finale.title": "Let's plan something memorable.",
+      "journey.finale.body": "At La Jolla or beyond. Tell us your occasion, your date and your ideas; we will help you explore the possibilities.",
       "cinema.eyebrow": "A sense of place",
       "cinema.title": "A closer look at the house.",
       "cinema.arrivalTitle": "A first impression.",
@@ -276,24 +276,24 @@
       "journey.title": "La casa. Su celebración. Un mundo de posibilidades.",
       "journey.label": "Explore la historia",
       "journey.place.kicker": "La casa",
-      "journey.place.title": "Una historia que nace en Coral Gables.",
-      "journey.place.body": "Arcos mediterráneos, hiedra y luz de jardín. Un entorno histórico de 1928 en el 301 de Alcazar Avenue.",
+      "journey.place.title": "Una casa histórica. Una bienvenida personal.",
+      "journey.place.body": "Arcos mediterráneos, hiedra y luz de jardín desde 1928. Encuentre La Jolla en el 301 de Alcazar Avenue, en el corazón de Coral Gables.",
       "journey.place.link": "Descubra la casa",
       "journey.occasion.kicker": "Su celebración",
-      "journey.occasion.title": "Un espacio para hacerlo suyo.",
-      "journey.occasion.body": "Bodas, celebraciones especiales, cenas privadas y encuentros corporativos. Un salón lleno de luz como punto de partida para una ocasión pensada para sus invitados.",
+      "journey.occasion.title": "Un espacio para su celebración.",
+      "journey.occasion.body": "Bodas, celebraciones, cenas privadas y encuentros corporativos en nuestro salón lleno de luz. Un espacio pensado alrededor de sus invitados.",
       "journey.occasion.link": "Explore las celebraciones",
       "journey.lexington.kicker": "The Lexington",
       "journey.lexington.title": "Un ambiente más íntimo.",
-      "journey.lexington.body": "Verdes profundos, tonos vino y dorados cálidos. Un salón en la planta superior para cócteles, cenas privadas y encuentros íntimos con carácter.",
+      "journey.lexington.body": "Nuestro salón en la planta superior, entre verdes profundos, tonos vino y dorados cálidos. The Lexington acoge cócteles, cenas privadas y encuentros íntimos.",
       "journey.lexington.link": "Conozca The Lexington",
       "journey.beyond.kicker": "Más allá de la casa",
-      "journey.beyond.title": "Lleve la ocasión a su espacio.",
-      "journey.beyond.body": "Alquileres, diseño y producción en el lugar que elija en el sur de Florida. Mobiliario, iluminación, flores, vajilla y los detalles que dan forma a su idea.",
+      "journey.beyond.title": "Su idea. Su espacio.",
+      "journey.beyond.body": "Alquileres, diseño y producción en el sur de Florida. Mobiliario, iluminación, flores y vajilla para dar forma al lugar que elija.",
       "journey.beyond.link": "Explore los servicios",
       "journey.finale.kicker": "Imagine las posibilidades",
-      "journey.finale.title": "Su historia empieza aquí.",
-      "journey.finale.body": "En La Jolla o en el lugar que elija. Cuéntenos la ocasión, la fecha y lo que tiene en mente. Le ayudaremos a explorar las posibilidades.",
+      "journey.finale.title": "Planeemos algo memorable.",
+      "journey.finale.body": "En La Jolla o en el lugar que elija. Cuéntenos la ocasión, la fecha y sus ideas; le ayudaremos a explorar las posibilidades.",
       "cinema.eyebrow": "El carácter de un lugar",
       "cinema.title": "Una mirada más cercana a la casa.",
       "cinema.arrivalTitle": "Una primera impresión.",
@@ -606,11 +606,13 @@
     const details = Array.from(section.querySelectorAll("[data-scene-detail]"));
     const buttons = Array.from(section.querySelectorAll("[data-scene]"));
     const videos = Array.from(section.querySelectorAll("[data-cinema-film]"));
-    const positions = [.16, .39, .62, .82, .97];
+    const layers = Array.from(section.querySelectorAll("[data-film-layer]"));
+    const positions = [.15, .32, .54, .79, .97];
     // Every chapter has a reading interval; the gaps deliberately leave only the film.
-    const chapters = [[.08, .25], [.32, .48], [.55, .70], [.76, .90], [.94, 1.01]];
-    const arrivals = [.08, .32, .55, .76];
-    let trigger = null, observer = null, loaded = false, loadController = null;
+    const chapters = [[.07, .22], [.25, .40], [.46, .63], [.72, .86], [.92, 1.01]];
+    const films = [[0, .34], [.34, .67], [.67, .90]];
+    const filmStates = videos.map(function () { return { loaded: false, controller: null }; });
+    let trigger = null, observer = null, nearby = false;
     const saveData = !!(navigator.connection && navigator.connection.saveData);
 
     function setAvailable(element, available) {
@@ -619,7 +621,9 @@
     }
     function resetPresentation() {
       section.dataset.scene = "all";
+      delete section.dataset.film;
       section.style.removeProperty("--chapter-ink");
+      layers.forEach(function (layer) { layer.style.opacity = ""; });
       stories.concat(details).forEach(function (element) {
         setAvailable(element, true); element.style.opacity = ""; element.style.transform = "";
       });
@@ -629,12 +633,12 @@
       let desired = 0;
       function seek() {
         if (video.readyState < 2 || video.seeking || !Number.isFinite(video.duration)) return;
-        const target = Math.min(video.duration - .001, Math.max(0, desired));
-        if (Math.abs(video.currentTime - target) > .035) {
+        const target = Math.min(video.duration - .001, Math.max(0, desired * video.duration));
+        if (Math.abs(video.currentTime - target) > .012) {
           try { video.currentTime = target; } catch (_) { /* The poster remains available. */ }
         }
       }
-      video.requestFrame = function (fraction) { desired = fraction * (video.duration || 5.04); seek(); };
+      video.requestFrame = function (fraction) { desired = fraction; seek(); };
       video.addEventListener("seeked", seek);
       video.addEventListener("loadeddata", function () {
         video.classList.add("is-decoded");
@@ -642,44 +646,43 @@
       });
       video.addEventListener("error", function () { video.classList.remove("is-decoded"); });
     });
-    function loadFilms() {
-      if (loaded || !trigger || saveData) return;
-      loaded = true;
+    function loadFilm(index) {
+      if (!trigger || saveData || !videos[index] || filmStates[index].loaded) return;
+      const state = filmStates[index], video = videos[index];
+      state.loaded = true;
       const controller = new AbortController();
-      loadController = controller;
-      videos.forEach(function (video) {
-        let attempt = 0;
-        const formats = ["mp4", "webm"].filter(function (format) { return video.canPlayType("video/" + format); });
-        function tryFormat() {
-          if (controller.signal.aborted || attempt >= formats.length) return;
-          const format = formats[attempt++];
-          // Blob URLs permit reliable backward seeking even on hosts without byte-range support.
-          fetch("assets/venue/cinematic/" + video.dataset.cinemaFilm + "." + format, { signal: controller.signal })
-            .then(function (response) { if (!response.ok) throw new Error("film"); return response.blob(); })
-            .then(function (blob) {
-              if (controller.signal.aborted) return;
-              if (video.filmURL) URL.revokeObjectURL(video.filmURL);
-              video.filmURL = URL.createObjectURL(blob);
-              video.dataset.format = format;
-              video.src = video.filmURL;
-              video.preload = "auto";
-              video.load();
-            }).catch(function () { if (!controller.signal.aborted) tryFormat(); });
-        }
-        video.onerror = tryFormat;
-        tryFormat();
-      });
+      state.controller = controller;
+      let attempt = 0;
+      const formats = ["mp4", "webm"].filter(function (format) { return video.canPlayType("video/" + format); });
+      function tryFormat() {
+        if (controller.signal.aborted || attempt >= formats.length) return;
+        const format = formats[attempt++];
+        // Blob URLs permit reliable backward seeking even on hosts without byte-range support.
+        fetch("assets/venue/cinematic/" + video.dataset.cinemaFilm + "." + format, { signal: controller.signal })
+          .then(function (response) { if (!response.ok) throw new Error("film"); return response.blob(); })
+          .then(function (blob) {
+            if (controller.signal.aborted) return;
+            if (video.filmURL) URL.revokeObjectURL(video.filmURL);
+            video.filmURL = URL.createObjectURL(blob);
+            video.dataset.format = format;
+            video.src = video.filmURL;
+            video.preload = "auto";
+            video.load();
+          }).catch(function () { if (!controller.signal.aborted) tryFormat(); });
+      }
+      video.onerror = tryFormat;
+      tryFormat();
     }
     function releaseFilms() {
-      if (loadController) loadController.abort();
-      loadController = null;
-      videos.forEach(function (video) {
+      videos.forEach(function (video, index) {
+        const state = filmStates[index];
+        if (state.controller) state.controller.abort();
+        state.controller = null; state.loaded = false;
         video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute("src");
         video.classList.remove("is-decoded"); video.preload = "none"; video.load();
         if (video.filmURL) URL.revokeObjectURL(video.filmURL);
         video.filmURL = null; delete video.dataset.format;
       });
-      loaded = false;
     }
     buttons.forEach(function (button, index) {
       button.addEventListener("click", function () {
@@ -711,35 +714,45 @@
           story.style.transform = "translateY(" + ((1 - fade) * 16) + "px)";
         });
         details.forEach(function (detail, i) {
-          const appearance = clamp((p - arrivals[i]) / .05);
-          // Gathered details remain after their chapter, then disappear briefly in the film-only gaps.
-          const visible = current !== -1 && appearance > 0;
+          // One relevant photograph supports each reading; the finale gathers the four memories.
+          const visible = current === i || current === 4;
           setAvailable(detail, visible);
-          detail.style.opacity = String(appearance * fade);
-          detail.style.transform = "translateY(" + ((1 - appearance) * 24) + "px)";
+          detail.style.opacity = String(fade);
+          detail.style.transform = "translateY(" + ((1 - fade) * 14) + "px)";
         });
         buttons.forEach(function (button, i) {
           button.setAttribute("aria-pressed", String(i === current));
           button.style.setProperty("--scene-progress", String(clamp((p - chapters[i][0]) / (chapters[i][1] - chapters[i][0]))));
         });
-        videos[0].requestFrame(p);
+        const film = p < .34 ? 0 : p < .67 ? 1 : p < .90 ? 2 : 0;
+        const reprise = clamp((p - .90) / .025);
+        section.dataset.film = String(film);
+        videos.forEach(function (video, i) {
+          const span = films[i];
+          video.requestFrame(i === 0 && p >= .90 ? .8 + .2 * clamp((p - .90) / .10) : clamp((p - span[0]) / (span[1] - span[0])));
+          // Fetch only the active shot and the next shot shortly before its transition.
+          if ((nearby || (trigger && trigger.isActive)) && (i === film || (i === film + 1 && p >= span[0] - .06))) loadFilm(i);
+          const opacity = i === 0 ? 1 : clamp((p - span[0] + .015) / .03);
+          layers[i].style.opacity = String(i === 0 ? 1 : opacity * (1 - reprise));
+        });
       }
       const timeline = gsap.to(playhead, { progress: 1, ease: "none", onUpdate: render,
         scrollTrigger: { id: "cinematic-journey", trigger: section, pin: stage,
           start: "top top",
-          end: function () { return "+=" + Math.round(window.innerHeight * 4.5); },
+          end: function () { return "+=" + Math.round(window.innerHeight * 5.5); },
           scrub: .3, invalidateOnRefresh: true, onRefresh: render,
-          onEnter: loadFilms, onEnterBack: loadFilms
+          onEnter: render, onEnterBack: render
         }
       });
       trigger = timeline.scrollTrigger;
       observer = new IntersectionObserver(function (entries) {
-        if (entries.some(function (entry) { return entry.isIntersecting; })) loadFilms();
+        nearby = entries.some(function (entry) { return entry.isIntersecting; });
+        if (nearby) render();
       }, { rootMargin: "180px 0px" });
       observer.observe(section);
       render();
       return function () {
-        observer.disconnect(); observer = null; trigger = null;
+        observer.disconnect(); observer = null; trigger = null; nearby = false;
         section.classList.remove("cinema-scroll");
         releaseFilms(); resetPresentation();
       };
