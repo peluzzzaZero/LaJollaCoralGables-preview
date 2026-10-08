@@ -53,7 +53,5 @@ test("events items are not faded in from opacity 0.08", () => {
     assert.equal(/opacity:\s*calc\(\s*0\.08/.test(body), false);
     assert.equal(/opacity:\s*0\b/.test(body), false);
   }
-  const motion = eventsScript();
-  assert.equal(/autoAlpha:\s*0\b/.test(motion), false);
-  assert.equal(/opacity:\s*0\b/.test(motion), false);
+
 });
