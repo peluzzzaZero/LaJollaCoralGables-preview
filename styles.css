@@ -1171,3 +1171,9 @@ html { scrollbar-gutter: stable; }
 @media (min-width: 651px) and (max-width: 1000px) {
   .motion-page .cinema-scroll[data-scene="8"] .cinema-detail { width: 15%; }
 }
+
+/* Inquiry recovery keeps the visitor's written details available after rejection. */
+.inquiry-booking-notice, .inquiry-recovery p { font-size: .9rem; line-height: 1.6; }
+.inquiry-booking-notice { margin: 0 0 1.8rem; }
+.inquiry-recovery { margin-top: 1rem; }
+.inquiry-recovery p { margin: .8rem 0 0; }
