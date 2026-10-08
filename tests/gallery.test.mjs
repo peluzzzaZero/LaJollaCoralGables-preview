@@ -50,6 +50,6 @@ test("gallery marks are not faded in from nothing", () => {
     assert.equal(/opacity:\s*calc\(\s*0\.08/.test(body), false);
   }
   assert.match(css, /scroll-snap-type: x mandatory/);
-  assert.match(html, /class="brand-track" tabindex="0"/);
+  assert.match(html, /class="brand-track"[^>]*tabindex="0"/);
   assert.match(html, /class="gallery-next"/);
 });

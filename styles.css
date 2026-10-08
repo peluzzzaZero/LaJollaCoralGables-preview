@@ -1063,3 +1063,111 @@ html:not(.js) .selection-builder { display: none; }
   .scroll-word { opacity: 1; transform: none; }
   .cinema-story .scroll-word, .venue-essay .scroll-word { opacity: 1; transform: none; }
 }
+
+/* v1.11: every public chapter belongs to one full-screen film timeline. */
+html { scrollbar-gutter: stable; }
+.motion-page .cinema { min-height: 100svh; }
+.motion-page .cinema-story h1 { font-family: var(--font-display); font-size: clamp(3.5rem, 7vw, 7rem); font-weight: 400; line-height: .95; margin: 0 0 .6rem; }
+.motion-page .motion-tagline { font-family: MonteCarlo, cursive; font-size: 2rem !important; color: var(--sage-deep); }
+.motion-paths { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-block: .8rem; }
+.motion-paths a { color: var(--sage-deep); text-underline-offset: .25em; min-height: 44px; display: inline-flex; align-items: center; }
+.chapter-more { margin-block: .8rem; }
+.chapter-more > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: .8rem; color: var(--sage-deep); text-decoration: underline; text-underline-offset: .3em; }
+.chapter-more > summary::after { content: '+'; font-size: 1.3rem; margin-left: auto; }
+.chapter-more[open] > summary::after { content: '−'; }
+.chapter-body { padding-top: 1.5rem; }
+.chapter-body .wrap { width: 100%; max-width: none; padding-inline: 0; }
+.chapter-close { font: inherit; color: var(--sage-deep); background: var(--cream); border: 1px solid var(--sage); min-height: 44px; padding: .5rem 1rem; cursor: pointer; display: block; margin: 0 0 1.5rem auto; }
+.chapter-body .history-stage, .chapter-body .alcazar-grid, .chapter-body .rentals-layout { min-height: 0; }
+.chapter-body .section-head { position: static; }
+.chapter-body .section-title { font-size: clamp(2rem, 4vw, 3rem); }
+.chapter-body .brand-track { max-width: 100%; }
+.chapter-body .team-card { min-width: 0; }
+.motion-quote { margin: 0 0 1rem; }
+.motion-quote .quote-bleed-logo { display: none; }
+.motion-quote p { font-size: 1.15rem; font-style: italic; color: var(--sage-deep); }
+.motion-page .cinema-controls { gap: .7rem; }
+.motion-page .cinema-controls button > span:nth-child(2) { display: none; }
+.motion-page .cinema-controls button { min-width: 44px; text-align: center; }
+.motion-page .cinema-controls button > span:first-child { font-size: .8rem; margin: 0; }
+.motion-page .cinema-scroll .cinema-story { top: auto; bottom: 18%; left: 6%; right: auto; translate: none; }
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="1"],
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="3"],
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="6"] { top: 16%; bottom: auto; right: 6%; left: auto; }
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="2"],
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="5"] { top: 16%; bottom: auto; }
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="4"],
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="7"] { right: 6%; left: auto; }
+.motion-page .cinema-scroll .cinema-story[data-scene-copy="8"] { top: 43%; bottom: auto; left: 50%; translate: -50% -50%; width: min(46%, 39rem); text-align: center; }
+.motion-page .cinema-scroll .cinema-detail[data-scene-detail] { top: 20%; bottom: auto; right: 6%; left: auto; }
+.motion-page .cinema-scroll .cinema-detail[data-scene-detail="1"],
+.motion-page .cinema-scroll .cinema-detail[data-scene-detail="3"],
+.motion-page .cinema-scroll .cinema-detail[data-scene-detail="4"],
+.motion-page .cinema-scroll .cinema-detail[data-scene-detail="6"],
+.motion-page .cinema-scroll .cinema-detail[data-scene-detail="7"] { left: 6%; right: auto; bottom: 18%; top: auto; }
+.motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="0"] { left: 5%; right: auto; top: 16%; bottom: auto; }
+.motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="3"] { right: 5%; left: auto; top: 16%; bottom: auto; }
+.motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="4"] { left: 5%; right: auto; bottom: 16%; top: auto; }
+.motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="5"] { right: 5%; left: auto; bottom: 16%; top: auto; }
+.reading-details { overflow: hidden; }
+.motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) { inset: 90px 6% 90px !important; width: auto !important; max-width: 70rem; margin-inline: auto; translate: none !important; transform: none !important; z-index: 5; padding: 1.5rem 2rem; overflow: auto; overscroll-behavior: contain; }
+.cinema-story:has(.chapter-more[open]) > :not(.chapter-more) { display: none; }
+.chapter-more[open] > summary { position: sticky; top: -1px; background: var(--cream); z-index: 2; padding: .4rem 0; }
+.planning-page main { padding-top: 68px; }
+.planning-page .quote { padding-top: 3rem; }
+@media (max-width: 1000px) {
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="8"] { width: 54%; }
+}
+@media (max-width: 650px) {
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy] { left: 5% !important; right: 5% !important; width: auto; top: max(5.5rem, 14svh); bottom: auto; translate: none; }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="1"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="3"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="6"] { top: auto; bottom: max(6.5rem, 16svh); }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="8"] { width: auto; top: 39%; translate: 0 -50%; }
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail] { right: 5%; left: auto; top: auto; bottom: max(6.5rem, 16svh); }
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="1"],
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="3"],
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="6"] { left: 5%; right: auto; top: max(5.5rem, 14svh); bottom: auto; }
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail] { top: auto; bottom: max(6.5rem, 16svh); left: 5%; right: auto; width: 21%; }
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="3"] { left: 28%; }
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="4"] { left: 51%; }
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail[data-scene-detail="5"] { left: 74%; }
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail img { height: 3.2rem; }
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail > span { font-size: .6rem; }
+  .motion-page .cinema-bottom { flex-wrap: wrap; gap: .15rem; bottom: max(.5rem, env(safe-area-inset-bottom)); }
+  .motion-page .cinema-controls { gap: 0; width: 100%; flex-basis: 100%; }
+  .motion-page .cinema-controls button { min-width: 0; min-height: 44px; flex: 1; }
+  .motion-page .cinema-skip { margin-left: auto; min-height: 32px; }
+  .motion-page .cinema-scroll .cinema-story h1 { font-size: 3.5rem; }
+  .motion-page .cinema-scroll .motion-tagline { font-size: 1.6rem !important; }
+  .motion-page .cinema-scroll .motion-paths { gap: 0 .8rem; font-size: .85rem; }
+  .motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) { inset: 80px 5% 95px !important; padding: 1rem; }
+  .chapter-body .history-stage, .chapter-body .alcazar-grid, .chapter-body .rentals-layout, .chapter-body .events-body { display: block; }
+  .chapter-body .team-grid { grid-template-columns: 1fr; }
+  .chapter-body .history-photo { margin-top: 1.5rem; }
+}
+@media (max-width: 650px) and (max-height: 740px) {
+  .motion-page .cinema-scroll .cinema-story { padding: .8rem; }
+  .motion-page .cinema-scroll .cinema-story h1 { font-size: 2.8rem; }
+  .motion-page .cinema-scroll .cinema-story h3 { font-size: 1.6rem; }
+  .motion-page .cinema-scroll .cinema-story .eyebrow { margin-bottom: .5rem; }
+  .motion-page .cinema-scroll .cinema-story > p:not(.eyebrow) { font-size: .9rem; margin-bottom: .4rem; line-height: 1.35; }
+  .motion-page .cinema-scroll .motion-tagline { font-size: 1.4rem !important; }
+  .motion-page .cinema-scroll .motion-paths { margin: 0; }
+  .motion-page .cinema-scroll .cinema-detail img { height: 3.2rem; }
+  .motion-page .cinema-scroll .cinema-detail { width: 6rem; }
+  .motion-page .motion-quote p { font-size: .95rem; }
+}
+
+.motion-page #hero > .text-link { margin-right: 1rem; }
+.photo-open { overflow: hidden; }
+.photo-viewer { border: 0; background: var(--cream); color: var(--ink); padding: 1.5rem; width: min(90vw, 68rem); max-height: 90svh; margin: auto; }
+.photo-viewer::backdrop { background: #15241dc9; }
+.photo-viewer-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.photo-viewer h2 { font: 400 1.5rem var(--font-display); }
+.photo-close { font: inherit; min-height: 44px; padding: .5rem 1rem; color: var(--sage-deep); background: transparent; border: 1px solid var(--line-soft); cursor: pointer; }
+.photo-viewer > img { display: block; width: 100%; height: min(65svh, 42rem); object-fit: contain; }
+.photo-caption { font-size: .95rem; margin-top: 1rem; }
+@media (min-width: 651px) and (max-width: 1000px) {
+  .motion-page .cinema-scroll[data-scene="8"] .cinema-detail { width: 15%; }
+}

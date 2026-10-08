@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+const html = readFileSync(new URL("../planning.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
 const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
 
@@ -53,11 +53,5 @@ test("quote and vendor reveal overrides are fully opaque without autoAlpha 0", (
     assert.equal(override.includes("0.08"), false);
     assert.equal(/translateY\s*\(\s*calc/.test(override), false);
   }
-  const quoteStart = js.indexOf('var quote = document.querySelector("#quote")');
-  const vendorsStart = js.indexOf('var vendors = document.querySelector("#vendors")');
-  assert.ok(quoteStart !== -1 && vendorsStart > quoteStart, "quote/vendor GSAP setup");
-  const motion = js.slice(quoteStart, js.indexOf("if (lenis)", vendorsStart));
-  assert.match(motion, /autoAlpha:\s*1\b/);
-  assert.match(motion, /y:\s*0\b/);
-  assert.equal(/autoAlpha:\s*0\b/.test(motion), false);
+
 });

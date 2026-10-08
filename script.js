@@ -7,6 +7,10 @@
 
   const I18N = {
     en: {
+      "motion.team.body": "Julie Arias, Executive Director, and Patricia Mir, Managing Director. A personal team to help you shape your occasion.",
+      "motion.details.body": "From the welcome at the table to the smallest finishing touch. Discover the details that give La Jolla its character.",
+      "motion.close": "Close details",
+      "motion.more": "Discover more",
       "journey.title": "The house. Your occasion. A world of possibilities.",
       "journey.label": "Explore the story",
       "journey.place.kicker": "The house",
@@ -273,6 +277,10 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "motion.team.body": "Julie Arias, directora ejecutiva, y Patricia Mir, directora general. Un equipo cercano que le ayudará a dar forma a su celebración.",
+      "motion.details.body": "Desde la bienvenida en la mesa hasta el último toque. Descubra los detalles que dan carácter a La Jolla.",
+      "motion.close": "Cerrar detalles",
+      "motion.more": "Descubra más",
       "journey.title": "La casa. Su celebración. Un mundo de posibilidades.",
       "journey.label": "Explore la historia",
       "journey.place.kicker": "La casa",
@@ -542,6 +550,16 @@
 
   let lang = "en";
   const selectedServices = new Set();
+  const allowedServices = ["planning", "catering", "florals", "furniture", "photo", "entertainment", "av", "builds", "interactive", "staff"];
+  let inquiryContext = { type: "", location: "" };
+  try {
+    const saved = JSON.parse(sessionStorage.getItem("lajolla-inquiry") || "{}");
+    (saved.services || []).filter(id => allowedServices.includes(id)).forEach(id => selectedServices.add(id));
+    inquiryContext = { type: typeof saved.type === "string" ? saved.type : "", location: typeof saved.location === "string" ? saved.location : "" };
+  } catch (_) { /* Direct contact and forms work without browser storage. */ }
+  function saveInquiryContext() {
+    try { sessionStorage.setItem("lajolla-inquiry", JSON.stringify({ services: Array.from(selectedServices), type: inquiryContext.type, location: inquiryContext.location })); } catch (_) {}
+  }
 
   function applyI18n(next) {
     lang = next;
@@ -569,7 +587,7 @@
     try { localStorage.setItem("lajolla-language", lang); } catch (_) { /* Storage is optional. */ }
     // Translated paragraphs change section heights and scroll positions.
     window.requestAnimationFrame(function () {
-      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+      if (window.ScrollTrigger && !document.body.classList.contains("reading-details")) window.ScrollTrigger.refresh();
       if (window.__ljLenis) window.__ljLenis.resize();
     });
   }
@@ -607,9 +625,9 @@
     const buttons = Array.from(section.querySelectorAll("[data-scene]"));
     const videos = Array.from(section.querySelectorAll("[data-cinema-film]"));
     const layers = Array.from(section.querySelectorAll("[data-film-layer]"));
-    const positions = [.15, .32, .54, .79, .97];
+    const positions = [.035, .155, .265, .375, .485, .595, .705, .815, .965];
     // Every chapter has a reading interval; the gaps deliberately leave only the film.
-    const chapters = [[.07, .22], [.25, .40], [.46, .63], [.72, .86], [.92, 1.01]];
+    const chapters = [[0, .10], [.12, .21], [.23, .32], [.34, .43], [.45, .54], [.56, .65], [.67, .76], [.78, .87], [.92, 1.01]];
     const films = [[0, .34], [.34, .67], [.67, .90]];
     const filmStates = videos.map(function () { return { loaded: false, controller: null }; });
     let trigger = null, observer = null, nearby = false;
@@ -684,17 +702,31 @@
         video.filmURL = null; delete video.dataset.format;
       });
     }
-    buttons.forEach(function (button, index) {
-      button.addEventListener("click", function () {
-        if (trigger) {
-          window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * positions[index], behavior: "smooth" });
-        } else {
-          stories[index].scrollIntoView({ behavior: "auto", block: "center" });
-          stories[index].setAttribute("tabindex", "-1");
-          stories[index].focus({ preventScroll: true });
-        }
-      });
-    });
+    function goTo(index, focus) {
+      if (index < 0 || !stories[index]) return;
+      closeChapterDetails();
+      if (trigger) {
+        const top = trigger.start + (trigger.end - trigger.start) * positions[index];
+        window.scrollTo({ top: top, behavior: focus ? "instant" : "smooth" });
+        if (focus) { trigger.update(); trigger.animation.progress(positions[index]); }
+      } else stories[index].scrollIntoView({ behavior: "auto", block: "start" });
+      if (focus) {
+        stories[index].setAttribute("tabindex", "-1");
+        // The browser processes a native fragment after load. Focus after the rendered chapter settles.
+        requestAnimationFrame(function () { requestAnimationFrame(function () {
+          if (!stories[index].hidden && !stories[index].inert) stories[index].focus({ preventScroll: true });
+        }); });
+      }
+    }
+    window.__ljStory = { goTo: goTo, chapterIds: stories.map(story => story.id) };
+    buttons.forEach(function (button, index) { button.addEventListener("click", function () { goTo(index, false); }); });
+    function restoreHash() {
+      const id = location.hash.slice(1);
+      const index = stories.findIndex(story => story.id === id || (id === "possibilities" && story.id === "hero") || (id === "quote" && story.id === "planning"));
+      if (index >= 0) goTo(index, true);
+    }
+    window.addEventListener("hashchange", restoreHash);
+    window.addEventListener("load", function () { window.setTimeout(restoreHash, 100); });
     resetPresentation();
     return { animate: function (gsap, ScrollTrigger) {
       if (saveData || window.innerHeight < 600) return null;
@@ -706,16 +738,17 @@
         const current = chapters.findIndex(function (range) { return p >= range[0] && p < range[1]; });
         section.dataset.scene = String(current);
         const range = chapters[current];
-        const fade = range ? Math.min(clamp((p - range[0]) / .025), current === 4 ? 1 : clamp((range[1] - p) / .025)) : 0;
+        const fade = range ? Math.min(current === 0 ? 1 : clamp((p - range[0]) / .015), current === 8 ? 1 : clamp((range[1] - p) / .025)) : 0;
         section.style.setProperty("--chapter-ink", String(fade));
         stories.forEach(function (story, i) {
+          if (i !== current) { const more = story.querySelector(".chapter-more"); if (more && more.open) { more.open = false; closeChapterDetails(); } }
           setAvailable(story, i === current);
           story.style.opacity = String(fade);
           story.style.transform = "translateY(" + ((1 - fade) * 16) + "px)";
         });
         details.forEach(function (detail, i) {
           // One relevant photograph supports each reading; the finale gathers the four memories.
-          const visible = current === i || current === 4;
+          const visible = current === i || (current === 8 && [0,3,4,5].includes(i));
           setAvailable(detail, visible);
           detail.style.opacity = String(fade);
           detail.style.transform = "translateY(" + ((1 - fade) * 14) + "px)";
@@ -731,7 +764,7 @@
           const span = films[i];
           video.requestFrame(i === 0 && p >= .90 ? .8 + .2 * clamp((p - .90) / .10) : clamp((p - span[0]) / (span[1] - span[0])));
           // Fetch only the active shot and the next shot shortly before its transition.
-          if ((nearby || (trigger && trigger.isActive)) && (i === film || (i === film + 1 && p >= span[0] - .06))) loadFilm(i);
+          if (p > .002 && (nearby || (trigger && trigger.isActive)) && (i === film || (i === film + 1 && p >= span[0] - .06))) loadFilm(i);
           const opacity = i === 0 ? 1 : clamp((p - span[0] + .015) / .03);
           layers[i].style.opacity = String(i === 0 ? 1 : opacity * (1 - reprise));
         });
@@ -739,7 +772,7 @@
       const timeline = gsap.to(playhead, { progress: 1, ease: "none", onUpdate: render,
         scrollTrigger: { id: "cinematic-journey", trigger: section, pin: stage,
           start: "top top",
-          end: function () { return "+=" + Math.round(window.innerHeight * 5.5); },
+          end: function () { return "+=" + Math.round(window.innerHeight * 10); },
           scrub: .3, invalidateOnRefresh: true, onRefresh: render,
           onEnter: render, onEnterBack: render
         }
@@ -776,77 +809,40 @@
     });
   }
 
-  function initStory(cinema) {
-    if (typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") return;
-    prepareScrollWords();
-    const gsap = window.gsap;
-    const ScrollTrigger = window.ScrollTrigger;
-    gsap.registerPlugin(ScrollTrigger);
-    const media = gsap.matchMedia();
-    media.add({ desktop: "(min-width: 901px)", mobile: "(max-width: 900px)", tall: "(min-height: 600px)", reduced: "(prefers-reduced-motion: reduce)" }, function (context) {
-      if (context.conditions.reduced) return;
-      document.documentElement.classList.add("has-gsap");
-      // The entrance has restrained depth, without pinning or changing photos on scroll.
-      gsap.fromTo(document.querySelector(".reel-shots"), { "--arrival-depth": "0px" }, {
-        "--arrival-depth": "-12px", ease: "none",
-        scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
+  function closeChapterDetails() {
+    document.querySelectorAll(".chapter-more[open]").forEach(more => { more.open = false; });
+    document.body.classList.remove("reading-details");
+  }
+  function initChapterDetails() {
+    document.querySelectorAll(".chapter-more").forEach(function (more) {
+      const close = document.createElement("button");
+      close.type = "button"; close.className = "chapter-close"; close.dataset.i18n = "motion.close";
+      close.textContent = I18N[lang]["motion.close"];
+      more.querySelector(".chapter-body").prepend(close);
+      close.addEventListener("click", function () { closeChapterDetails(); more.querySelector("summary").focus({ preventScroll: true }); });
+      more.addEventListener("toggle", function () {
+        if (more.open) {
+          document.querySelectorAll(".chapter-more").forEach(other => { if (other !== more) other.open = false; });
+        }
+        document.body.classList.toggle("reading-details", !!document.querySelector(".cinema-scroll .chapter-more[open]"));
       });
-      // Letterforms breathe independently while the offer and inquiry stay readable.
-      gsap.fromTo(".title-letter", { y: 14, opacity: .65 }, { y: 0, opacity: 1,
-        duration: .8, stagger: .045, ease: "power2.out" });
-      gsap.to(".arrival-title .title-line", { x: function (i) { return i ? 10 : -10; },
-        y: -8, ease: "none", scrollTrigger: { id: "arrival-type", trigger: "#hero",
-          start: "top top", end: "bottom 35%", scrub: .35 } });
-      // Register the upstream pin before downstream text/photo triggers so their positions include its space.
-      const disposeCinema = cinema && cinema.animate(gsap, ScrollTrigger);
-      gsap.fromTo(".paths-decoration", { y: 14, rotation: -4 }, { y: 0, rotation: 0, ease: "none",
-        scrollTrigger: { trigger: "#possibilities", start: "top 90%", end: "top 45%", scrub: .35 } });
-      // Aligned photographic layers reveal detail without displaced copies of the facade.
-      document.querySelectorAll(".path-art").forEach(function (art) {
-        gsap.set(art.querySelector(".path-photo"), { opacity: .75 });
-        gsap.fromTo(art.querySelectorAll(".photo-shard"), { opacity: 0 }, {
-          opacity: 1, stagger: .12, ease: "none",
-          scrollTrigger: { trigger: art, start: "top 95%", end: "top 48%", scrub: .35 } });
-        // Every layer shares one camera move, preserving alignment throughout the reveal.
-        gsap.fromTo(art.querySelector(".path-composition"), { scale: 1.045 }, {
-          scale: 1, ease: "none", scrollTrigger: { trigger: art,
-            start: "top 95%", end: "top 48%", scrub: .35 } });
-      });
-      document.querySelectorAll("[data-scroll-text]:not(.cinema-story *)").forEach(function (text) {
-        gsap.fromTo(text, { "--reading-progress": 0 }, { "--reading-progress": 1,
-          ease: "none", scrollTrigger: { trigger: text, start: "top 90%", end: "top 52%", scrub: .3 } });
-      });
-      gsap.fromTo(".history-year", { y: 24, opacity: .65 }, { y: 0, opacity: 1, ease: "none",
-        scrollTrigger: { trigger: ".history-stage", start: "top 90%", end: "top 45%", scrub: .35 } });
-      gsap.fromTo(".history-photo", { y: 24, scale: .97 }, { y: 0, scale: 1, ease: "none",
-        scrollTrigger: { trigger: ".history-stage", start: "top 90%", end: "top 40%", scrub: .35 } });
-      document.querySelectorAll(".venue-essay .venue-detail").forEach(function (photo, i) {
-        gsap.fromTo(photo, { y: [24, 38, 52][i], scale: .97 }, {
-          y: 0, scale: 1, ease: "none", scrollTrigger: { trigger: photo,
-            start: "top 92%", end: "top 45%", scrub: .4 } });
-      });
-      // Original architecture and brand artwork retain their complete views.
-      var alcazarVisual = document.querySelector("#alcazar");
-      const alcazarMark = alcazarVisual.querySelector(".alcazar-visual img");
-      gsap.fromTo(alcazarMark, { scale: .94 }, { scale: 1, ease: "none",
-        scrollTrigger: { trigger: alcazarVisual, start: "top 80%", end: "bottom 55%", scrub: true }
-      });
-      gsap.fromTo(alcazarVisual, { "--light-x": "-10%" }, { "--light-x": "16%", ease: "none",
-        scrollTrigger: { trigger: alcazarVisual, start: "top bottom", end: "bottom top", scrub: true }
-      });
-      // All commercial sections remain opaque, including when animations cannot run.
-      var events = document.querySelector("#events");
-      var rentals = document.querySelector("#rentals");
-      var team = document.querySelector("#team");
-      var quote = document.querySelector("#quote");
-      var vendors = document.querySelector("#vendors");
-      [events, rentals, team, quote, vendors].forEach(function (section) {
-        gsap.set(section.querySelectorAll(".reveal"), { autoAlpha: 1, y: 0 });
-      });
-      ScrollTrigger.refresh();
-      return function () { if (disposeCinema) disposeCinema(); document.documentElement.classList.remove("has-gsap"); };
     });
-    // Native scroll keeps touch, focus and keyboard positions in the same coordinate system.
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !document.querySelector("dialog[open]")) { const more = document.querySelector(".chapter-more[open]"); if (more) { closeChapterDetails(); more.querySelector("summary").focus({ preventScroll: true }); } }
+    });
+  }
+  function initStory(cinema) {
+    if (window.gsap && window.ScrollTrigger && cinema) {
+      gsap.registerPlugin(ScrollTrigger);
+      const media = gsap.matchMedia();
+      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px)", function () {
+        const dispose = cinema.animate(gsap, ScrollTrigger);
+        ScrollTrigger.refresh();
+        return function () { closeChapterDetails(); if (dispose) dispose(); };
+      });
+      window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+      document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
+    }
     document.addEventListener("click", function (event) {
       const link = event.target.closest && event.target.closest("a[href^='#']");
       if (!link) return;
@@ -855,12 +851,14 @@
       event.preventDefault();
       scrollToSection(target);
     });
-    window.addEventListener("load", function () { ScrollTrigger.refresh(); });
-    document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
   }
 
   function scrollToSection(target) {
     if (!target) return;
+    if (window.__ljStory) {
+      const index = window.__ljStory.chapterIds.indexOf(target.id);
+      if (index >= 0) { history.replaceState(null, "", "#" + target.id); window.__ljStory.goTo(index, true); return; }
+    }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const inquiry = target.id === "quote";
     // Native positioning honors scroll-padding and avoids stale coordinates during an interrupted scroll.
@@ -879,6 +877,7 @@
   function renderInquirySelection() {
     const dict = I18N[lang];
     const ids = Array.from(selectedServices);
+    saveInquiryContext();
     document.querySelectorAll("[data-service-id]").forEach(function (button) {
       const selected = selectedServices.has(button.dataset.serviceId);
       button.setAttribute("aria-pressed", String(selected));
@@ -925,6 +924,8 @@
   function initInquiryComposer() {
     const type = document.getElementById("q-type");
     const location = document.getElementById("q-location");
+    if (type && Array.from(type.options).some(o => o.value === inquiryContext.type)) type.value = inquiryContext.type;
+    if (location && Array.from(location.options).some(o => o.value === inquiryContext.location)) location.value = inquiryContext.location;
     document.querySelectorAll("[data-service-id]").forEach(function (button) {
       button.disabled = false;
       button.addEventListener("click", function () {
@@ -932,11 +933,17 @@
         const id = button.dataset.serviceId;
         if (selectedServices.has(id)) selectedServices.delete(id);
         else selectedServices.add(id);
+        if (selectedServices.size && !inquiryContext.type) inquiryContext.type = "rental";
         if (type && !type.value && selectedServices.size) type.value = "rental";
         renderInquirySelection();
         const shift = button.getBoundingClientRect().top - position;
-        if (Math.abs(shift) > 1) window.scrollBy({ top: shift, behavior: "instant" });
-        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        const chapter = button.closest(".cinema-scroll .cinema-story");
+        if (Math.abs(shift) > 1) {
+          if (chapter) chapter.scrollTop += shift;
+          else window.scrollBy({ top: shift, behavior: "instant" });
+        }
+        // Choices expand inside the reader; they do not change the film timeline's document height.
+        if (!chapter && window.ScrollTrigger) window.ScrollTrigger.refresh();
       });
     });
     document.addEventListener("click", function (event) {
@@ -952,27 +959,29 @@
         const focus = remaining[Math.min(index, remaining.length - 1)] || (list.id === "catalog-selection"
           ? document.querySelector('[data-service-id="' + service + '"]') : document.getElementById("q-name"));
         if (focus) focus.focus({ preventScroll: true });
-        if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+        if (window.ScrollTrigger && !document.body.classList.contains("reading-details")) window.ScrollTrigger.refresh();
       }
       const occasion = event.target.closest && event.target.closest("[data-event-type]");
-      if (occasion && type) {
-        type.value = occasion.dataset.eventType;
+      if (occasion) {
+        inquiryContext.type = occasion.dataset.eventType; inquiryContext.location = "la-jolla";
+        if (type) type.value = occasion.dataset.eventType;
         if (location) location.value = "la-jolla";
         renderInquirySelection();
       }
       const path = event.target.closest && event.target.closest("[data-inquiry-location]");
-      if (path && location) {
-        location.value = path.dataset.inquiryLocation;
+      if (path) {
+        inquiryContext.location = path.dataset.inquiryLocation;
+        if (location) location.value = path.dataset.inquiryLocation;
         renderInquirySelection();
       }
       const vendorLink = event.target.closest && event.target.closest("a[href='#vendors']");
       if (vendorLink) document.getElementById("vendor-details").open = true;
     });
-    if (type) type.addEventListener("change", renderInquirySelection);
-    if (location) location.addEventListener("change", renderInquirySelection);
+    if (type) type.addEventListener("change", function () { inquiryContext.type = type.value; renderInquirySelection(); });
+    if (location) location.addEventListener("change", function () { inquiryContext.location = location.value; renderInquirySelection(); });
     const form = document.getElementById("quote-form");
     if (form) form.addEventListener("reset", function () {
-      selectedServices.clear();
+      selectedServices.clear(); inquiryContext = { type: "", location: "" }; saveInquiryContext();
       window.requestAnimationFrame(renderInquirySelection);
     });
     renderInquirySelection();
@@ -1099,7 +1108,7 @@
     document.querySelectorAll(".venue-more").forEach(function (details) {
       details.addEventListener("toggle", function () {
         window.requestAnimationFrame(function () {
-          if (window.ScrollTrigger) window.ScrollTrigger.refresh();
+          if (window.ScrollTrigger && !document.body.classList.contains("reading-details")) window.ScrollTrigger.refresh();
           if (window.__ljLenis) window.__ljLenis.resize();
         });
       });
@@ -1188,40 +1197,10 @@
   }
 
   function initPhotoCollections() {
-    const reel = document.querySelector(".arrival-visual");
-    const shots = Array.from(reel.querySelectorAll(".reel-shot"));
-    const beats = Array.from(reel.querySelectorAll(".reel-beat"));
-    const controls = Array.from(reel.querySelectorAll("[data-shot]"));
-    let previousShot = 0;
-    function selectShot(index) {
-      shots.forEach(function (shot, i) {
-        shot.classList.toggle("is-current", i === index);
-        shot.classList.toggle("is-under", i === previousShot && i !== index);
-        shot.setAttribute("aria-hidden", String(i !== index));
-        beats[i].hidden = i !== index;
-        controls[i].setAttribute("aria-pressed", String(i === index));
-      });
-      reel.querySelector(".reel-index").textContent = "0" + (index + 1) + " / 04";
-      previousShot = index;
-    }
-    selectShot(0);
-    reel.classList.add("photos-ready");
-    controls.forEach(function (button) {
-      button.addEventListener("click", function () { selectShot(Number(button.dataset.shot)); });
-    });
-    // A small change of light follows the pointer, never the scroll position.
-    reel.addEventListener("pointermove", function (event) {
-      if (event.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const box = reel.getBoundingClientRect();
-      reel.style.setProperty("--frame-x", ((event.clientX - box.left) / box.width - .5) * 8 + "px");
-      reel.style.setProperty("--frame-y", ((event.clientY - box.top) / box.height - .5) * 8 + "px");
-    });
-    function resetFrame() { reel.style.setProperty("--frame-x", "0px"); reel.style.setProperty("--frame-y", "0px"); }
-    reel.addEventListener("pointerleave", resetFrame);
-    window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", resetFrame);
-
     const gallery = document.querySelector("#gallery");
+    if (!gallery) return;
     const track = gallery.querySelector(".brand-track");
+    if (!track) return;
     const cards = Array.from(track.querySelectorAll(".brand-card"));
     const previous = gallery.querySelector(".gallery-prev");
     const next = gallery.querySelector(".gallery-next");
@@ -1240,9 +1219,36 @@
     previous.addEventListener("click", function () { moveGallery(-1); });
     next.addEventListener("click", function () { moveGallery(1); });
     track.addEventListener("scroll", updateGallery, { passive: true });
+    const disclosure = track.closest(".chapter-more");
+    if (disclosure) disclosure.addEventListener("toggle", function () { if (disclosure.open) requestAnimationFrame(updateGallery); });
     window.addEventListener("resize", updateGallery);
     gallery.classList.add("gallery-ready");
     updateGallery();
+  }
+
+  function initPhotoViewer() {
+    const viewer = document.getElementById("photo-viewer");
+    if (!viewer || !viewer.showModal) return;
+    const image = viewer.querySelector("img"), caption = viewer.querySelector(".photo-caption");
+    let opener = null;
+    document.querySelectorAll("[data-photo-view]").forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button) return;
+        event.preventDefault(); opener = link;
+        const source = link.querySelector("img");
+        image.src = source.src; image.alt = source.alt;
+        caption.textContent = source.alt;
+        viewer.showModal(); document.body.classList.add("photo-open");
+      });
+    });
+    viewer.addEventListener("keydown", function (event) {
+      if (event.key === "Tab") { event.preventDefault(); viewer.querySelector(".photo-close").focus(); }
+    });
+    viewer.querySelector(".photo-close").addEventListener("click", function () { viewer.close(); });
+    viewer.addEventListener("close", function () {
+      document.body.classList.remove("photo-open"); image.removeAttribute("src");
+      if (opener && !opener.hidden) opener.focus({ preventScroll: true });
+    });
   }
 
   function initYear() {
@@ -1257,13 +1263,27 @@
     applyI18n(preferred);
     initHeader();
     initPhotoCollections();
+    initPhotoViewer();
     initInquiryComposer();
     initChapterMenu();
+    initChapterDetails();
     // Resolve selection and menu layout before positioning or focusing an anchor.
     initStory(initCinematicWindow());
     initVenueFilms();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
     initYear();
+    if (document.body.classList.contains("planning-page")) {
+      const title = document.getElementById("quote-title");
+      title.setAttribute("tabindex", "-1"); title.focus({ preventScroll: true });
+      function openPlanningAnchor() {
+        if (location.hash === "#vendors") {
+          document.getElementById("vendor-details").open = true;
+          document.getElementById("vendors").scrollIntoView({ block: "start" });
+        }
+      }
+      window.addEventListener("hashchange", openPlanningAnchor);
+      openPlanningAnchor();
+    }
   });
 })();
