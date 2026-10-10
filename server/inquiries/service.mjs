@@ -59,7 +59,7 @@ export function createInquiryService({ store, mailer, origins, rateSecret, now =
     const fingerprint = hash(JSON.stringify(inquiry));
     const time = now();
     try {
-      let row = store.get(key);
+      let row = await store.get(key);
       if (row && row.fingerprint !== fingerprint) return response(409, { success:false, code:'idempotency_conflict' }, origin);
       if (row?.state === 'accepted') return response(200, { success:true, reference:row.reference, mailStatus:'accepted', bookingConfirmed:false }, origin);
       if (row && ['sending','uncertain'].includes(row.state)) return response(409, { success:false, reference:row.reference, code:'delivery_requires_review' }, origin);
@@ -68,22 +68,22 @@ export function createInquiryService({ store, mailer, origins, rateSecret, now =
       for (const [bucket, limit, windowMs] of [
         [hash(rateSecret + ':' + remoteIp),10,600000], ['global-mail',25,60000]
       ]) {
-        const rate = store.rate(bucket, time, limit, windowMs);
+        const rate = await store.rate(bucket, time, limit, windowMs);
         if (!rate.allowed) return response(429, { success:false, code:'rate_limited' }, origin, rate.retryAfter);
       }
-      row = store.create(key, fingerprint, inquiry, time);
+      row = await store.create(key, fingerprint, inquiry, time);
       if (row.fingerprint !== fingerprint) return response(409, { success:false, code:'idempotency_conflict' }, origin);
-      if (!store.claim(key, time)) return response(409, { success:false, reference:row.reference, code:'delivery_requires_review' }, origin);
+      if (!await store.claim(key, time)) return response(409, { success:false, reference:row.reference, code:'delivery_requires_review' }, origin);
       try {
         await mailer.send(row.reference, inquiry);
-        store.settle(key,'accepted');
-        store.purge(time);
+        await store.settle(key,'accepted');
+        await store.purge(time);
         return response(200, { success:true, reference:row.reference, mailStatus:'accepted', bookingConfirmed:false }, origin);
       } catch (error) {
         const known = error instanceof MailFailure;
         const uncertain = !known || error.uncertain;
         const delay = known ? error.retryAfter : 60;
-        store.settle(key, uncertain ? 'uncertain' : 'retryable', time + delay*1000);
+        await store.settle(key, uncertain ? 'uncertain' : 'retryable', time + delay*1000);
         return response(503, { success:false, reference:row.reference, code:uncertain ? 'delivery_requires_review' : 'delivery_unavailable' }, origin, delay);
       }
     } catch {
