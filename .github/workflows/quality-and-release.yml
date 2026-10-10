@@ -36,7 +36,7 @@ jobs:
       - name: Brand, content and release checks
         run: |
           node --check script.js
-          node --test tests/*.test.mjs
+          node --test tests/*.test.mjs server/inquiries/tests/*.test.mjs
           git diff --check
       - name: Install browser review dependencies
         run: |

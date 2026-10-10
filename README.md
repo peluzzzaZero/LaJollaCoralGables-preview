@@ -34,3 +34,7 @@ The user authorized rethinking the old composition and scroll timings. Tests for
 The homepage now presents all approved public content within one nine-chapter full-screen film timeline. Expanded native chapter disclosures retain complete details. Inquiry and vendor forms live at `planning.html`; same-tab service choices and language follow the visitor without saving contact fields. Reduced motion, short screens, SaveData and unavailable JavaScript retain a readable native document.
 
 Inquiry recovery: after a rejected online submission, planning.html retains the written details and offers a complete email draft to the business inbox. This manual action opens the visitor's mail app and does not automatically send it. Actual Web3Forms delivery is currently unresolved; its legacy primary recipient/account must be verified. Appointment and space booking require a connected real calendar; see [the delivery and calendar integration requirements](tests/INQUIRY-AND-CALENDAR.md).
+
+## First-party mail service under development
+
+The client rejected Web3Forms' free monthly submission cap on 10 October 2026. The unactivated server prototype in [server/inquiries](server/inquiries/README.md) uses the business's Microsoft 365 account directly, private durable storage and idempotency. It is not connected to the published forms. Microsoft application authorization, compatible hosting, actual inbox receipt and frontend activation remain required. Run its isolated checks with `node --test server/inquiries/tests/*.test.mjs`; no test sends real mail.
