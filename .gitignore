@@ -2,3 +2,12 @@ __pycache__/
 *.pyc
 .venv/
 review-artifacts/
+
+# Private inquiry-service runtime; never serve or commit contact data/secrets.
+private-data/
+.env
+.env.*
+!.env.example
+
+node_modules/
+npm-debug.log*
