@@ -4,6 +4,8 @@ This service belongs to the La Jolla project. It receives quote/vendor data, sto
 
 **Current state:** tested server prototype on a feature branch. No Microsoft credentials, real Graph delivery, public endpoint, calendar integration or frontend switch is configured. The live website remains v1.11.1. The v1.11.2 Web3Forms PR is paused after the client's quota objection; its one authorized provider-accepted technical test does not verify Graph or inbox receipt.
 
+The client prefers future GoDaddy hosting, but explicitly withholds authorization to replace the production website. Prepare and verify mail first. [Spanish activation guide](ACTIVACION_ES.md) covers app registration, mailbox-scoped authorization and an operator-only technical test. `verify-mail.mjs --send-technical-test <UUID>` can send one marked real email when deliberately invoked with private runtime credentials; reuse its key and durable database on retry. It never claims inbox receipt and is never run by automated CI with a real provider.
+
 ## Request and acceptance
 
 POST `/api/inquiries` with JSON, an allowed Origin and a UUID `Idempotency-Key`. The body contains `kind: "quote"` or `kind: "vendor"`, followed by the existing planning-page named fields. The complete record is committed before asking Microsoft to send the message. Caller-provided sender, recipient, CC and URLs are rejected. Sender and recipient are fixed server-side; the visitor's email is used only for reply-to. The email is plain text and explicitly says the preferred date does not confirm a booking.
