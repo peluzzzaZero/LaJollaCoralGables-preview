@@ -256,10 +256,11 @@
       "form.rateLimit": "Please wait before trying again, or email your inquiry below.",
       "form.networkError": "The connection was interrupted. Your details are still here. You can retry or email your inquiry below.",
       "form.providerError": "Online sending is unavailable. Your details are still here. Please email your inquiry below or call 786-290-8813.",
+      "form.deliveryReview": "Your inquiry was saved, but email delivery needs review. Please contact our team with this reference: ",
 
       "form.successEyebrow": "La Jolla",
       "form.successTitle": "Thank you",
-      "form.successBody": "Your request has been sent. We will be in touch.",
+      "form.successBody": "Your request has been submitted. Our team will confirm availability; this is not a confirmed booking.",
       "form.error": "Please complete the required fields.",
       "form.sendError": "We could not send that. Please email info@lajollacoralgables.com or call 786-290-8813.",
       "vendors.eyebrow": "Vendors",
@@ -534,10 +535,11 @@
       "form.rateLimit": "Espere antes de volver a intentarlo o envíe su solicitud por correo a continuación.",
       "form.networkError": "La conexión se interrumpió. Sus datos siguen aquí. Puede reintentar o enviar su solicitud por correo a continuación.",
       "form.providerError": "El envío en línea no está disponible. Sus datos siguen aquí. Envíe su solicitud por correo a continuación o llame al 786-290-8813.",
+      "form.deliveryReview": "Su solicitud se guardó, pero es necesario revisar el envío del correo. Contacte con nuestro equipo con esta referencia: ",
 
       "form.successEyebrow": "La Jolla",
       "form.successTitle": "Gracias",
-      "form.successBody": "Su solicitud ha sido enviada. Le responderemos.",
+      "form.successBody": "Su solicitud ha sido enviada. Nuestro equipo confirmará la disponibilidad; esto no confirma una reserva.",
       "form.sendError": "No pudimos enviarla. Escriba a info@lajollacoralgables.com o llame al 786-290-8813.",
       "form.error": "Complete los campos obligatorios.",
       "vendors.eyebrow": "Proveedores",
@@ -589,7 +591,7 @@
       if (attr) {
         el.setAttribute(attr, dict[key]);
       } else {
-        el.textContent = dict[key];
+        el.textContent = dict[key] + (key === "form.deliveryReview" ? el.dataset.deliveryReference || "" : "");
       }
     });
 
@@ -1052,8 +1054,34 @@
 
   function formText(key) { return (I18N[lang] || I18N.en)[key] || I18N.en[key]; }
 
+  function nativeInquiry(payload, kind) {
+    const fields = kind === "vendor" ? ["name", "email", "company", "service"]
+      : ["name", "email", "phone", "eventDate", "guestCount", "eventType", "eventLocation", "selectedServices", "selectedServiceIds", "rentalInterest", "comments"];
+    const result = { kind: kind };
+    fields.forEach(function (field) { result[field] = payload[field] || ""; });
+    return result;
+  }
+
+  function sendNativeMail(payload, key) {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(function () { controller.abort(); }, 40000);
+    return fetch("/api/inquiries", { method: "POST", signal: controller.signal,
+      headers: { "Content-Type": "application/json", "Idempotency-Key": key }, body: JSON.stringify(payload)
+    }).then(function (res) {
+      return res.json().catch(function () { throw new Error("mail"); }).then(function (data) {
+        if (!res.ok || data.success !== true || data.mailStatus !== "accepted") {
+          const failure = new Error("mail"); failure.status = res.status;
+          if (data.code === "delivery_requires_review" && /^LJ-[a-f\d-]{36}$/i.test(data.reference || "")) failure.reviewReference = data.reference;
+          throw failure;
+        }
+        return data;
+      });
+    }).finally(function () { window.clearTimeout(timeout); });
+  }
+
   function inquiryDraft(form, subject) {
     const lines = [subject, ""];
+    if (/^LJ-[a-f\d-]{36}$/i.test(form.dataset.deliveryReference || "")) lines.push("Reference: " + form.dataset.deliveryReference, "");
     Array.prototype.forEach.call(form.elements, function (field) {
       if (!field.name || field.type === "submit" || field.type === "button" || field.type === "hidden") return;
       const value = String(field.value || "").trim();
@@ -1086,6 +1114,7 @@
     const submit = form.querySelector("[type='submit']");
     const submitLabel = submit && submit.dataset.i18n;
     let sending = false;
+    let attempt;
     // The default submit button stays disabled if the page script fails to load.
     if (submit) submit.disabled = false;
 
@@ -1125,22 +1154,37 @@
       form.setAttribute("aria-busy", "true");
       if (submit) { submit.disabled = true; submit.dataset.i18n = "form.sending"; submit.textContent = formText("form.sending"); }
 
-      sendMail(payload).then(function () {
+      const native = document.documentElement.dataset.inquiryTransport === "native";
+      let delivery;
+      if (native) {
+        delivery = Promise.resolve().then(function () {
+          const inquiry = nativeInquiry(payload, formId === "vendor-form" ? "vendor" : "quote");
+          const signature = JSON.stringify(inquiry);
+          // Only in-memory identity: no contact details or tokens in browser storage.
+          if (!attempt || attempt.signature !== signature) attempt = { signature: signature, key: window.crypto.randomUUID() };
+          return sendNativeMail(inquiry, attempt.key);
+        });
+      } else delivery = sendMail(payload);
+      delivery.then(function () {
         if (success) {
           success.hidden = false;
           success.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
         }
         form.reset();
+        attempt = undefined;
+        delete form.dataset.deliveryReference;
         required.forEach(function (field) {
           field.classList.remove("is-invalid");
           field.removeAttribute("aria-invalid");
         });
       }).catch(function (failure) {
         const status = Number(failure.status) || 0;
-        const key = status === 429 ? "form.rateLimit" : status ? "form.providerError" : "form.networkError";
+        const key = failure.reviewReference ? "form.deliveryReview" : status === 429 ? "form.rateLimit" : status ? "form.providerError" : "form.networkError";
         if (sendError) {
           sendError.dataset.i18n = key;
-          sendError.textContent = formText(key);
+          sendError.textContent = formText(key) + (failure.reviewReference || "");
+          sendError.dataset.deliveryReference = failure.reviewReference || "";
+          if (failure.reviewReference) form.dataset.deliveryReference = failure.reviewReference;
           sendError.dataset.deliveryStatus = String(status);
           sendError.hidden = false;
           sendError.scrollIntoView({ behavior: "auto", block: "nearest" });

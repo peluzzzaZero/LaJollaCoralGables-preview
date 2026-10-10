@@ -24,6 +24,10 @@ test('npm start serves the web on the assigned port with native mail disabled an
     const base=`http://127.0.0.1:${port}`;
     const health=await fetch(base+'/healthz'); assert.equal(health.status,200);assert.deepEqual(await health.json(),{status:'ok',mailEnabled:false});
     for(const path of ['/','/planning.html','/privacy.html','/terms.html','/styles.css?v=1.12.0','/script.js?v=1.12.0','/assets/vendor/gsap.min.js'])assert.equal((await fetch(base+path)).status,200,path);
+    const planning = await fetch(base+'/planning.html');
+    assert.match(await planning.text(), /data-inquiry-transport="native"/);
+    assert.equal(planning.headers.get('cache-control'), 'no-store');
+    assert.equal((await fetch(base+'/admin/mail')).status,404);
     for(const path of ['/.env','/package.json','/package-lock.json','/.git/config','/server/app.mjs','/server/inquiries/.env.example','/private-data/inquiries.sqlite','/assets/%2e%2e/.env','/assets/../server/app.mjs','/%00'])assert.equal((await fetch(base+path)).status,404,path);
     const api=await fetch(base+'/api/inquiries',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});assert.equal(api.status,503);assert.deepEqual(await api.json(),{success:false,code:'service_not_enabled'});
     assert.equal(existsSync(database),false); assert.equal(output.includes('FAKE-PRIVATE-VALUE'),false);assert.equal(errors.includes('FAKE-PRIVATE-VALUE'),false);
