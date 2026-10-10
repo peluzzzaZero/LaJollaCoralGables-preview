@@ -1017,7 +1017,9 @@
     });
   }
 
-  var MAIL_KEY = "c13b3e4c-b71b-4df0-84b0-ce0b91be3b84";
+  // Public form key created by the business account (info@lajollacoralgables.com).
+  // Web3Forms binds its primary recipient to this key; no paid CC is needed.
+  var MAIL_KEY = "aec8511b-344f-4b56-bfd6-0b56e746f21b";
 
   function sendMail(payload) {
     if (!MAIL_KEY) return Promise.reject(new Error("mail"));
@@ -1030,7 +1032,6 @@
       body: JSON.stringify(Object.assign({
         access_key: MAIL_KEY,
         from_name: "La Jolla",
-        ccemail: "info@lajollacoralgables.com",
         botcheck: ""
       }, payload))
     }).then(function (res) {

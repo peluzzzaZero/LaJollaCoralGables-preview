@@ -35,9 +35,11 @@ test("vendor form keeps name, company, service, and email", () => {
   }
 });
 
-test("sendMail keeps Web3Forms endpoint and cc email", () => {
+test("sendMail uses the business-owned Web3Forms key without paid recipient overrides", () => {
   assert.match(js, /https:\/\/api\.web3forms\.com\/submit/);
-  assert.match(js, /ccemail:\s*["']info@lajollacoralgables\.com["']/);
+  assert.match(js, /var MAIL_KEY = "aec8511b-344f-4b56-bfd6-0b56e746f21b"/);
+  assert.equal(js.includes("c13b3e4c-b71b-4df0-84b0-ce0b91be3b84"), false);
+  assert.equal(/\bccemail\s*:/.test(js), false);
 });
 
 test("quote and vendor sections contain no dollar sign", () => {

@@ -178,7 +178,8 @@ async def check_forms(browser, base):
         assert await page.locator(f"#{form} .inquiry-recovery").is_hidden()
         assert requests[-1]["email"] == "browser@example.com"
         assert requests[-1]["replyto"] == "browser@example.com"
-        assert requests[-1]["ccemail"] == "info@lajollacoralgables.com"
+        assert requests[-1]["access_key"] == "aec8511b-344f-4b56-bfd6-0b56e746f21b"
+        assert "ccemail" not in requests[-1], "Paid CC must not override the business-owned form's primary recipient"
         if form == "quote-form":
             assert requests[-1]["selectedServices"] == expected
             assert requests[-1]["selectedServiceIds"] == "planning"
