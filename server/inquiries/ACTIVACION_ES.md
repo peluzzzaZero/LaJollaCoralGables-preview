@@ -18,6 +18,8 @@ En **Aplicaciones empresariales**, abrir esa misma aplicación y anotar su **Id.
 
 El administrador debe tener los permisos de Exchange requeridos. GoDaddy permite entrar a Exchange desde **Correo y Office → Admin → Avanzado**. Si no tiene el rol necesario, resolverlo con el administrador del negocio o GoDaddy, sin desactivar MFA.
 
+La conexión remota mediante código de dispositivo fue bloqueada con el error Microsoft 530035 («Access has been blocked by security defaults»). Mantener Security Defaults y MFA activados; no repetir ese flujo ni comprar Azure para desbloquearlo. La autorización de Exchange todavía no se ha aplicado. El cliente requiere todos sus pasos en el navegador, sin instalar o ejecutar nada en su PC; los comandos siguientes corresponden al operador en un entorno compatible.
+
 Usar PowerShell de Exchange Online, iniciado con el administrador del negocio. Los siguientes comandos son una guía para revisión, no se han ejecutado en la cuenta. Sustituir únicamente los dos identificadores indicados y revisar si existen objetos o asignaciones previas antes de crear otros.
 
 ```powershell
@@ -41,9 +43,11 @@ Este servicio no requiere leer el correo ni acceder al calendario. Los permisos 
 
 ## 3. Configurar un entorno de pruebas privado
 
-Hace falta Node >=22.13 y almacenamiento privado persistente para SQLite. La captura de GoDaddy muestra el constructor gratuito, que no proporciona ese entorno. Confirmar alojamiento compatible antes de contratar o activar costes. GitHub Pages sirve la web, pero no ejecuta este servidor.
+Hace falta Node >=22.13 y almacenamiento privado persistente para SQLite. Las nuevas capturas de GoDaddy muestran un asistente de despliegue Node.js. Antes de activar el correo, comprobar Node >=22.13 y que el almacenamiento privado sobrevive a reinicios y redespliegues. El constructor gratuito mostrado previamente no demuestra estas capacidades. Confirmar alojamiento compatible antes de contratar o activar costes. GitHub Pages sirve la web, pero no ejecuta este servidor.
 
-En la configuración privada del servidor, establecer las variables de `.env.example`. El secreto de la aplicación se crea y guarda por ese canal privado, con su fecha de caducidad y plan de rotación. No va en Git, JavaScript del navegador, capturas ni mensajes. El archivo de secretos y la base de datos deben estar fuera de la carpeta pública, con permisos restringidos. No hay todavía un panel de credenciales publicado.
+El servidor web se inicia con `npm start`, respeta el `PORT` del alojamiento y mantiene `INQUIRY_ENABLED=false` por defecto. Su `/healthz` solo comprueba que el proceso funciona; no demuestra recepción de correo.
+
+En la configuración privada del servidor, establecer las variables de `.env.example`. El secreto de la aplicación se crea y guarda por ese canal privado, con su fecha de caducidad y plan de rotación. No va en Git, JavaScript del navegador, capturas ni mensajes. El archivo de secretos y la base de datos deben estar fuera de la carpeta pública, con permisos restringidos. Los secretos pueden introducirse directamente en el asistente privado de GoDaddy. Si un secreto se comparte en el chat, revocarlo en Entra y sustituirlo directamente en GoDaddy antes de usarlo; no copiar su valor al código o a esta guía.
 
 Para esta prueba no es necesario cambiar DNS ni conectar los formularios públicos. La base de datos debe persistir entre intentos: nunca usar `:memory:` para una prueba real.
 

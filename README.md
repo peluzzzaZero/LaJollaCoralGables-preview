@@ -17,13 +17,13 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current cinematic release is 1.11.1. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.12.0. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `dev` → review and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
 GitHub Pages publishes `main` at https://jolla.peluzzza.com. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.11.1 notes](tests/releases/v1.11.1.md) and [the latest review](tests/reviews/v1.11.1.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.12.0 notes](tests/releases/v1.12.0.md) and [the latest review](tests/reviews/v1.12.0.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Content requirements
 
@@ -38,3 +38,9 @@ Inquiry recovery: after a rejected online submission, planning.html retains the 
 ## First-party mail service under development
 
 The client rejected Web3Forms' free monthly submission cap on 10 October 2026. The unactivated server prototype in [server/inquiries](server/inquiries/README.md) uses the business's Microsoft 365 account directly, private durable storage and idempotency. It is not connected to the published forms. Microsoft application authorization, compatible hosting, actual inbox receipt and frontend activation remain required. Run its isolated checks with `node --test server/inquiries/tests/*.test.mjs`; no test sends real mail.
+
+## Node hosting preview
+
+GoDaddy needs the root `package.json`. Use Node 22.13 or later within the declared range (Node 24 recommended), install with `npm ci`, build with `npm run build`, and start with `npm start`. The server uses the platform-assigned `PORT` and listens on `0.0.0.0`. `GET /healthz` reports process health and whether native mail is enabled, not authorization or inbox delivery. Only approved public pages/assets are served; private files and source directories are denied. HTTP byte ranges retain video seeking.
+
+Native mail is disabled by default (`INQUIRY_ENABLED=false`); no Microsoft credential or writable SQLite database is required to preview the web server. Merely adding Microsoft environment variables does not enable it. Public forms still use their existing delivery configuration. Before enabling native mail, verify mailbox-scoped authorization, actual technical receipt, persistent private storage surviving redeploys, HTTPS/origins, the private rate secret and the frontend adapter. The GoDaddy screenshots confirm a Node deployment wizard, not the supported Node version, persistent volume, paid plan or a successful deployment. Do not replace the old production website or change its domain until expressly authorized.
