@@ -5,9 +5,11 @@ The client requested notification to info@lajollacoralgables.com, appointment sc
 ## Verified configuration and remaining input
 
 - DNS MX resolves to lajollacoralgables-com.mail.protection.outlook.com. The tenant verification TXT is NETORGFT21116605.onmicrosoft.com. This indicates Microsoft 365 routing; it does not establish mailbox existence, owner access or a Bookings license.
-- The site's original key predates the redesign and has no documented verified primary recipient. `ccemail` targets the business address, but Web3Forms documents it as a paid feature. Keep this distinction explicit; changing/removing CC without confirming the primary recipient could misroute leads.
-- Public-origin CORS preflight succeeds. A deliberately filled honeypot returns HTTP 400 with the expected rejection and no email dispatch. This verifies connectivity and bot rejection, not successful delivery or the key's recipient.
-- Need access to the existing Web3Forms account or a business-owned delivery configuration, plus confirmation that the business inbox actually receives a clearly identified delivery test. Never publish private mail credentials.
+- On 10 October 2026 the client signed into Web3Forms as info@lajollacoralgables.com, created a form for the temporary planning page, and supplied its public access key. v1.11.2 replaces the undocumented legacy key for both inquiry and vendor forms. The primary recipient is associated with the business-owned key; the paid `ccemail` option is removed.
+- The exact cause of the legacy key's failures remains unknown. Replacing it with a verified business-owned configuration avoids relying on that account or an unverified primary recipient.
+- Website email delivery uses Web3Forms directly and does not require a ChatGPT Outlook connection or the mailbox password. A ChatGPT connection alone cannot authorize unattended website mail/calendar access.
+- Automated tests intercept every provider request and send no email. An explicitly authorized technical delivery test is separate and clearly labeled as not an actual inquiry/reservation. Provider acceptance alone does not establish inbox receipt; see the current release review.
+- A future domain migration must update the form website URL and any domain allowlist, then repeat delivery verification before switching traffic. The recipient remains the business inbox.
 
 ## Proposed booking workflow for review
 

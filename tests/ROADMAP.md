@@ -107,3 +107,7 @@ The client explicitly requested that all information belong to the film motion a
 ## v1.11.1 — inquiry recovery and booking dependency
 
 A client screenshot establishes a real submission failure. Keep fields and selected services after rejection and provide an explicit complete email draft to the business address. Expose safe HTTP status categories for diagnosis, never echoed contact data. Keep the approved one-motion homepage. The root provider/account failure is still pending verification; calendar automation now requires verified business access, real availability and conflict-safe booking rather than merely accepting a preferred event date. See INQUIRY-AND-CALENDAR.md.
+
+## v1.11.2 — business-owned inquiry delivery
+
+Replace the legacy key with the public form key created by the client while signed in as info@lajollacoralgables.com. Inquiry and vendor notes use the business inbox as the key's primary recipient, without the paid CC setting. Keep reply-to, complete service selections, safe failure handling, duplicate-submit guard and manual recovery. Confirm provider acceptance separately from actual inbox receipt with an authorized non-booking technical test. Next: connect the real business calendar and establish staff/space availability before enabling bookings.
