@@ -18,6 +18,19 @@ jobs:
   review:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: FAKE-ISOLATED-TEST-PASSWORD
+          MYSQL_DATABASE: lajolla_test
+        ports:
+          - 13316:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,7 +51,7 @@ jobs:
           node --check script.js
           npm ci --ignore-scripts --no-audit --no-fund
           npm run build
-          npm test
+          MAIL_MYSQL_TEST=true npm test
           git diff --check
       - name: Install browser review dependencies
         run: |
@@ -46,6 +59,23 @@ jobs:
           python -m playwright install --with-deps chromium ffmpeg
       - name: Responsive, accessibility and simulated form review
         run: python tests/browser/review.py --output review-artifacts
+      - name: Native Node forms with intercepted delivery only
+        run: |
+          INQUIRY_ENABLED=false MAIL_SETUP_ENABLED=false PORT=13317 HOST=127.0.0.1 npm start > /tmp/lajolla-node-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time, urllib.request
+          for attempt in range(30):
+              try:
+                  urllib.request.urlopen('http://127.0.0.1:13317/healthz', timeout=1)
+                  break
+              except Exception:
+                  time.sleep(.2)
+          else:
+              raise RuntimeError('Node preview did not start')
+          PY
+          python tests/browser/native-forms.py --base http://127.0.0.1:13317 --output review-artifacts/native
       - name: Save screenshots, recordings and results
         if: always()
         uses: actions/upload-artifact@v4

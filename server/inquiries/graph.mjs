@@ -7,13 +7,14 @@ export class MailFailure extends Error {
   }
 }
 
-export function createGraphMailer(config, fetchImpl = globalThis.fetch) {
+export function createGraphMailer(config, fetchImpl = globalThis.fetch, delegatedAuthorization) {
   let token; let expiresAt = 0; let acquiring;
   const uuid = /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i;
   const configured = uuid.test(config.tenantId || '')
     && uuid.test(config.clientId || '') && !!config.clientSecret;
   const request = (url, options) => fetchImpl(url, { ...options, redirect: 'error', signal: AbortSignal.timeout(10000) });
   async function acquireToken() {
+    if (delegatedAuthorization) return delegatedAuthorization.acquireToken();
     if (!configured) throw new MailFailure('mail_not_configured');
     if (token && expiresAt > Date.now()) return token;
     if (acquiring) return acquiring;
@@ -53,7 +54,7 @@ export function createGraphMailer(config, fetchImpl = globalThis.fetch) {
       }, saveToSentItems: true };
       let response;
       try {
-        response = await request(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(BUSINESS_MAILBOX)}/sendMail`, {
+        response = await request(delegatedAuthorization ? 'https://graph.microsoft.com/v1.0/me/sendMail' : `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(BUSINESS_MAILBOX)}/sendMail`, {
           method: 'POST', headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
@@ -62,7 +63,7 @@ export function createGraphMailer(config, fetchImpl = globalThis.fetch) {
         throw new MailFailure('mail_delivery_unknown', { uncertain: true });
       }
       if (response.status === 202) return;
-      if (response.status === 401) { token = undefined; expiresAt = 0; }
+      if (response.status === 401) { token = undefined; expiresAt = 0; await delegatedAuthorization?.invalidate(); }
       if (response.status === 429) {
         const header = response.headers.get('Retry-After');
         const seconds = header && /^\d+$/.test(header) ? Number(header) : Math.ceil((Date.parse(header) - Date.now()) / 1000);

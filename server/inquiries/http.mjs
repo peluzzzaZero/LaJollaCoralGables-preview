@@ -1,19 +1,15 @@
-import { mkdirSync, chmodSync, existsSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
 import { createGraphMailer } from './graph.mjs';
-import { openStore } from './store.mjs';
+import { openInquiryStorage } from './storage.mjs';
 import { createInquiryService } from './service.mjs';
 
-export function createInquiryRuntime() {
-  const databasePath = resolve(process.env.INQUIRY_DATABASE || './private-data/inquiries.sqlite');
-  mkdirSync(dirname(databasePath), { recursive:true, mode:0o700 });
-  const store = openStore(databasePath);
-  if (existsSync(databasePath)) chmodSync(databasePath,0o600);
-  const mailer = createGraphMailer({ tenantId:process.env.MICROSOFT_TENANT_ID,
+export async function createInquiryRuntime({ mailer: suppliedMailer, storage: suppliedStorage, rateSecret: suppliedRateSecret, origins: suppliedOrigins } = {}) {
+  const storage = suppliedStorage || await openInquiryStorage();
+  const store = storage.store;
+  const mailer = suppliedMailer || createGraphMailer({ tenantId:process.env.MICROSOFT_TENANT_ID,
     clientId:process.env.MICROSOFT_CLIENT_ID, clientSecret:process.env.MICROSOFT_CLIENT_SECRET });
   const handle = createInquiryService({ store, mailer,
-    origins:(process.env.INQUIRY_ALLOWED_ORIGINS || 'https://jolla.peluzzza.com').split(',').map(s=>s.trim()),
-    rateSecret:process.env.INQUIRY_RATE_SECRET });
+    origins:suppliedOrigins || (process.env.INQUIRY_ALLOWED_ORIGINS || 'https://jolla.peluzzza.com').split(',').map(s=>s.trim()),
+    rateSecret:suppliedRateSecret || process.env.INQUIRY_RATE_SECRET });
 
   const handleHttp = async (req,res) => {
     const send = (status,code) => { res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'}); res.end(JSON.stringify({success:false,code})); };
@@ -38,5 +34,5 @@ export function createInquiryRuntime() {
       res.writeHead(result.status,Object.fromEntries(result.headers)); res.end(await result.text());
     } catch { if (!res.headersSent) send(503,'service_unavailable'); }
   };
-  return { handle:handleHttp, close:()=>store.close() };
+  return { handle:handleHttp, close:()=>suppliedStorage ? undefined : storage.close() };
 }

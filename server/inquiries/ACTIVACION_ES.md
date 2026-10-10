@@ -1,5 +1,7 @@
 # Activación del correo propio — pendiente
 
+La preparación actual permite iniciar sesión desde el navegador o usar el envío incorporado de GoDaddy. Seguir [CONEXION_NAVEGADOR_ES.md](CONEXION_NAVEGADOR_ES.md), que incorpora la base MySQL confirmada en el panel. La vía de aplicación con Exchange descrita a continuación sigue siendo una referencia avanzada no aplicada; no repetir el flujo de dispositivo bloqueado ni instalar programas en el PC del propietario.
+
 Objetivo: guardar cada inquiry y notificar a info@lajollacoralgables.com usando su Microsoft 365. La web actual, el dominio de producción y el sitio antiguo no se reemplazan durante esta preparación. La migración a GoDaddy requiere autorización posterior del cliente. Esta guía no significa que la cuenta esté conectada.
 
 ## 1. Registrar la aplicación del negocio
