@@ -33,8 +33,8 @@ async def main(base, output):
             await page.goto(base.rstrip('/') + '/planning.html', wait_until='networkidle')
             assert not provider_requests, 'Microsoft must not load before a user opens the calendar'
             assert await page.locator('#quote-form').count() == 0
-            await page.locator('[data-service-id="planning"]').click()
-            assert await page.locator('#inquiry-selection li').count() == 1
+            assert await page.locator('form').count() == 0
+            assert await page.locator('[data-booking-opener]').count() == 1
             opener = page.locator('.inquiry-visit [data-booking-opener]')
             for language in ['en', 'es']:
                 await page.locator(f'[data-lang="{language}"]').click()
@@ -62,12 +62,11 @@ async def main(base, output):
                     assert await page.locator('.booking-close').evaluate('e => e === document.activeElement')
                     await page.keyboard.press('Escape')
                 await viewer.wait_for(state='hidden')
+                await page.wait_for_function("!document.body.classList.contains('booking-open')")
                 assert await opener.evaluate('e => e === document.activeElement')
-                assert await page.locator('[data-service-id="planning"]').get_attribute('aria-pressed') == 'true'
-                assert await page.locator('#inquiry-selection li').count() == 1
                 assert not await page.locator('body').evaluate('e => e.classList.contains("booking-open")')
             assert not errors, errors
-            results.append({'width': width, 'height': height, 'lazyLoad': True, 'serviceSelectionPreserved': True, 'quoteFormRemoved': True, 'closeAndEscape': True, 'languages': ['en', 'es']})
+            results.append({'width': width, 'height': height, 'lazyLoad': True, 'singleBookingAction': True, 'quoteFormRemoved': True, 'closeAndEscape': True, 'languages': ['en', 'es']})
             await context.close()
         context = await browser.new_context(java_script_enabled=False)
         page = await context.new_page()
@@ -76,7 +75,7 @@ async def main(base, output):
         assert await page.locator('.booking-frame').get_attribute('src') is None
         await browser.close()
     (output / 'results.json').write_text(json.dumps(results, indent=2))
-    print('Bookings-only planning: no duplicate quote form; retained service selection/calendar session; keyboard, EN/ES, mobile/desktop and no-JS fallback passed; no real appointments or emails.')
+    print('Bookings-only planning: no forms or selection controls; single booking action and preserved calendar session; keyboard, EN/ES, mobile/desktop and no-JS fallback passed; no real appointments or emails.')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

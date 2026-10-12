@@ -1,4 +1,4 @@
-"""Exercise Node-served native forms with intercepted APIs only; never send email."""
+"""Check the Node-served visit route while local inquiry delivery is disabled."""
 import argparse
 import asyncio
 import json
@@ -20,54 +20,30 @@ async def review(base, output):
         for width, language in [(390, 'es'), (1280, 'en')]:
             context = await browser.new_context(viewport={'width': width, 'height': 900})
             page = await context.new_page()
-            requests = []; external = []; errors = []
+            mail_requests = []; errors = []
             page.on('pageerror', lambda error: errors.append(str(error)))
-            status = 503
-            reference = 'LJ-00000000-0000-4000-8000-000000000001'
-            async def api(route):
-                requests.append({'payload': route.request.post_data_json, 'key': route.request.headers.get('idempotency-key')})
-                body = {'success': True, 'reference': reference, 'mailStatus': 'accepted', 'bookingConfirmed': False} if status == 200 else {'success': False, 'code': 'delivery_requires_review', 'reference': reference}
-                await route.fulfill(status=status, content_type='application/json', body=json.dumps(body))
-            async def deny_external(route):
-                external.append(route.request.url)
+            async def deny_mail(route):
+                mail_requests.append(route.request.url)
                 await route.abort()
-            await page.route('**/api/inquiries', api)
-            await page.route('https://api.web3forms.com/**', deny_external)
+            await page.route('**/api/inquiries', deny_mail)
+            await page.route('https://api.web3forms.com/**', deny_mail)
             await page.goto(base.rstrip('/') + '/planning.html', wait_until='networkidle')
-            assert await page.locator('html').get_attribute('data-inquiry-transport') == 'native'
             await page.locator(f'[data-lang="{language}"]').click()
-            assert await page.locator('#quote-form').count() == 0
-            await page.locator('#vendor-details > summary').click()
-            for field, value in {'v-name': 'Fake native vendor', 'v-company': 'Fake test company', 'v-service': 'Technical native test', 'v-email': 'vendor-test@example.com'}.items():
-                await page.locator('#' + field).fill(value)
-            await page.locator('#vendor-form [type=submit]').click()
-            await page.locator('#vendor-send-error').wait_for(state='visible')
-            assert await page.locator('#v-name').input_value() == 'Fake native vendor'
-            assert reference in await page.locator('#vendor-send-error').text_content()
-            other = 'en' if language == 'es' else 'es'
-            await page.locator(f'[data-lang="{other}"]').click()
-            assert reference in await page.locator('#vendor-send-error').text_content()
-            status = 200
-            await page.locator('#vendor-form [type=submit]').click()
-            await page.locator('#vendor-success').wait_for(state='visible')
-            assert await page.locator('#v-name').input_value() == ''
-            assert len(requests) == 2 and requests[0]['key'] == requests[1]['key']
-            assert requests[0]['payload']['kind'] == 'vendor'
-            assert set(requests[0]['payload']) == {'kind', 'name', 'email', 'company', 'service'}
-            for field, value in {'v-name': 'Different fake vendor', 'v-company': 'Other fake company', 'v-service': 'Other technical test', 'v-email': 'another-test@example.com'}.items():
-                await page.locator('#' + field).fill(value)
-            await page.locator('#vendor-form [type=submit]').click()
-            await page.locator('#vendor-success').wait_for(state='visible')
-            assert len(requests) == 3 and requests[-1]['key'] != requests[0]['key']
-            stored = await page.evaluate('JSON.stringify({local:{...localStorage},session:{...sessionStorage}})')
-            assert 'vendor-test@example.com' not in stored and 'another-test@example.com' not in stored
-            assert not external and not errors
-            await page.screenshot(path=str(output / f'native-{width}.png'))
-            reports.append({'viewport': width, 'quote_form': 'removed', 'vendor_mapping': 'passed', 'unchanged_retry_uuid': 'passed', 'uncertain_reference_translation': 'passed', 'contact_storage': 'none', 'external_mail_calls': 0, 'real_emails_sent': 0})
+            assert await page.locator('form, input, textarea').count() == 0
+            assert await page.locator('[data-booking-opener]').count() == 1
+            opener = page.locator('[data-booking-opener]')
+            assert await opener.is_visible()
+            assert 'bookings.cloud.microsoft/book/' in await opener.get_attribute('href')
+            assert await page.locator('.booking-frame').get_attribute('src') is None
+            assert await page.locator('#vendors, #rentals, #inquiry-selection').count() == 0
+            assert await page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+            assert not mail_requests and not errors
+            await page.screenshot(path=str(output / f'visit-{width}.png'))
+            reports.append({'viewport': width, 'language': language, 'single_visit_action': True, 'forms_removed': True, 'local_mail_requests': 0, 'real_emails_sent': 0})
             await context.close()
         await browser.close()
     (output / 'results.json').write_text(json.dumps(reports, indent=2) + '\n')
-    print('PASS native forms, UUID reuse, saved reference, languages, no external mail calls', flush=True)
+    print('PASS Node visit route: single Bookings action, no forms, no local mail dependency or requests', flush=True)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)

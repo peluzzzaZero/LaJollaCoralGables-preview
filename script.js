@@ -1,6 +1,6 @@
 /* La Jolla Coral Gables — page script.
    Scroll: GSAP ScrollTrigger with native scrolling and a readable static fallback.
-   Forms post through Web3Forms. No Stripe. */
+   Visits are scheduled through Microsoft Bookings. */
 
 (function () {
   "use strict";
@@ -18,7 +18,7 @@
       "motion.head.planning": "Let’s begin.",
       "motion.hero": "Weddings, private gatherings and event services in Coral Gables and throughout South Florida.",
       "motion.alcazar": "An upstairs lounge for cocktails, private dinners and smaller gatherings.",
-      "motion.final": "Share your occasion, date and preferred setting. We’ll be in touch to discuss the details.",
+      "motion.final": "Schedule a visit to explore the house and discuss your occasion with our team.",
       "motion.index": "Chapters",
       "motion.link.history": "About the house",
       "motion.link.visit": "See the spaces",
@@ -77,26 +77,8 @@
       "paths.beyondTitle": "Bring the occasion to you",
       "paths.beyondBody": "Rentals, design and production for your chosen location in South Florida.",
       "paths.beyondLink": "Explore services",
-      "form.contactGroup": "A way to reach you",
-      "form.occasionGroup": "The occasion",
-      "form.detailsGroup": "Your vision",
-      "form.location": "Event location",
-      "form.locationPlaceholder": "Select a setting…",
-      "form.locationHouse": "At La Jolla, Coral Gables",
-      "form.locationBeyond": "At another location in South Florida",
-      "form.locationExploring": "Still exploring",
-      "selection.setting": "Setting",
       "nav.menu": "Explore La Jolla",
-      "rentals.select": "Select",
-      "rentals.selected": "Selected",
-      "selection.title": "Your selection",
-      "selection.help": "Choose the services you would like to discuss with our team.",
-      "selection.continue": "Discuss your selection",
-      "selection.inquiry": "Services to discuss",
-      "selection.edit": "Explore more services",
-      "selection.remove": "Remove",
-      "selection.count": "services selected",
-      "form.planning": "Let's Start Planning",
+      "form.planning": "Schedule a visit",
 
       "visit.altFacade": "La Jolla facade, ivy, striped awnings and brick entrance at 301 Alcazar Avenue.",
       "visit.altWide": "La Jolla facade and balcony at 301 Alcazar Avenue, Coral Gables.",
@@ -244,40 +226,11 @@
       "team.julie.role": "Executive Director",
       "team.pat.role": "Managing Director",
       "quote.eyebrow": "An invitation",
-      "quote.title": "Let’s start planning",
-      "quote.intro": "Schedule a venue tour or contact our team to discuss your occasion.",
-      "form.name": "Name",
-      "form.email": "Email",
-      "form.phone": "Phone",
-      "form.date": "Event date",
-      "form.guests": "Guest count",
-      "form.type": "Event type",
-      "form.typePlaceholder": "Select…",
-      "form.typeWedding": "Wedding",
-      "form.typeQuince": "Quinceañera / Sweet Sixteen",
-      "form.typeSocial": "Social celebration",
-      "form.typeCorporate": "Corporate event",
-      "form.typeBrand": "Brand activation / launch",
-      "form.typeProduction": "Production & entertainment",
-      "form.typeFilm": "Film, photo & content",
-      "form.typeGala": "Gala / fundraiser",
-      "form.typeDining": "Private dining",
-      "form.typeAlcazar": "The Lexington",
-      "form.typeRental": "Rentals / services only",
-      "form.typeOther": "Something else",
-      "form.interest": "Additional service details",
-      "form.optional": "(optional)",
-      "form.interestPh": "Anything else you would like us to know",
-      "form.comments": "Comments",
-      "form.submit": "Submit inquiry",
-      "form.sending": "Sending inquiry…",
-      "form.emailDraft": "Email this inquiry",
-      "form.emailHelp": "Your email app will open with your details. Please send the email to complete your inquiry.",
-      "form.bookingNotice": "Your preferred event date is a request. Our team will confirm space availability. You can schedule a visit separately.",
+      "quote.title": "Come see the house",
+      "quote.intro": "Choose an available time for a venue tour.",
       "booking.title": "Come see the house",
       "booking.intro": "Choose an available time for a venue tour.",
       "booking.open": "Schedule a visit",
-      "booking.selectionHelp": "Include these services in your booking notes, or discuss them with our team.",
       "booking.separate": "A tour appointment does not reserve a space for an event.",
       "booking.dialogTitle": "Schedule your visit",
       "booking.help": "Select a date and time in the calendar. Your visit is confirmed when Bookings completes the reservation. Check the time zone shown before booking.",
@@ -285,26 +238,6 @@
       "booking.frameTitle": "La Jolla venue tour booking calendar",
       "booking.fallback": "If the calendar does not load,",
       "booking.external": "open the booking page in a new tab",
-      "form.rateLimit": "Please wait before trying again, or email your inquiry below.",
-      "form.networkError": "The connection was interrupted. Your details are still here. You can retry or email your inquiry below.",
-      "form.providerError": "Online sending is unavailable. Your details are still here. Please email your inquiry below or call 786-290-8813.",
-      "form.deliveryReview": "Your inquiry was saved, but email delivery needs review. Please contact our team with this reference: ",
-
-      "form.successEyebrow": "La Jolla",
-      "form.successTitle": "Thank you",
-      "form.successBody": "Your request has been submitted. Our team will confirm availability; this is not a confirmed booking.",
-      "form.error": "Please complete the required fields.",
-      "form.sendError": "We could not send that. Please email info@lajollacoralgables.com or call 786-290-8813.",
-      "vendors.eyebrow": "Vendors",
-      "vendors.title": "Become a vendor",
-      "vendors.intro": "Tell us your name, company, service, and email.",
-      "vendors.name": "Name",
-      "vendors.company": "Company",
-      "vendors.service": "Service",
-      "vendors.email": "Email",
-      "vendors.submit": "Send vendor note",
-      "vendors.successTitle": "Thank you",
-      "vendors.successBody": "Your note has been sent. We will be in touch.",
       "footer.tag": "Coral Gables · Est. 1928",
       "footer.managed": "Managed by Epic Lux Management",
       "footer.contact": "Contact",
@@ -312,7 +245,6 @@
       "footer.maps": "Find us",
       "footer.mapsLink": "Open in Google Maps",
       "footer.connect": "Connect",
-      "footer.vendor": "Become a Vendor",
       "footer.terms": "Terms",
       "footer.privacy": "Privacy",
       "motion.history": "Mediterranean arches, ivy and striped awnings. Find the house at 301 Alcazar Avenue.",
@@ -345,7 +277,7 @@
       "motion.head.planning": "Empecemos.",
       "motion.hero": "Bodas, encuentros privados y servicios para eventos en Coral Gables y en todo el sur de Florida.",
       "motion.alcazar": "Un lounge en la planta superior para cócteles, cenas privadas y encuentros más pequeños.",
-      "motion.final": "Comparta la ocasión, la fecha y el lugar que prefiere. Nos pondremos en contacto para hablar de los detalles.",
+      "motion.final": "Agende una visita para conocer la casa y hablar de su ocasión con nuestro equipo.",
       "motion.index": "Capítulos",
       "motion.link.history": "Conozca la casa",
       "motion.link.visit": "Vea los espacios",
@@ -405,26 +337,8 @@
       "paths.beyondTitle": "Lleve la ocasión a su espacio",
       "paths.beyondBody": "Alquileres, diseño y producción en el lugar que elija en South Florida.",
       "paths.beyondLink": "Explore los servicios",
-      "form.contactGroup": "Cómo contactarle",
-      "form.occasionGroup": "La ocasión",
-      "form.detailsGroup": "Su visión",
-      "form.location": "Lugar del evento",
-      "form.locationPlaceholder": "Elija un escenario…",
-      "form.locationHouse": "En La Jolla, Coral Gables",
-      "form.locationBeyond": "En otro lugar de South Florida",
-      "form.locationExploring": "Aún por decidir",
-      "selection.setting": "Lugar",
       "nav.menu": "Explore La Jolla",
-      "rentals.select": "Elegir",
-      "rentals.selected": "Elegido",
-      "selection.title": "Su selección",
-      "selection.help": "Elija los servicios que desea comentar con nuestro equipo.",
-      "selection.continue": "Consultar su selección",
-      "selection.inquiry": "Servicios para consultar",
-      "selection.edit": "Explorar más servicios",
-      "selection.remove": "Quitar",
-      "selection.count": "servicios seleccionados",
-      "form.planning": "Comencemos a planificar",
+      "form.planning": "Agende una visita",
 
       "visit.altFacade": "Fachada de La Jolla, hiedra, toldos de rayas y entrada de ladrillo en 301 Alcazar Avenue.",
       "visit.altWide": "Fachada y balcón de La Jolla en 301 Alcazar Avenue, Coral Gables.",
@@ -572,40 +486,11 @@
       "team.julie.role": "Executive Director",
       "team.pat.role": "Managing Director",
       "quote.eyebrow": "Una invitación",
-      "quote.title": "Comencemos a planear",
-      "quote.intro": "Agende una visita o contacte con nuestro equipo para hablar de su ocasión.",
-      "form.name": "Nombre",
-      "form.email": "Correo",
-      "form.phone": "Teléfono",
-      "form.date": "Fecha del evento",
-      "form.guests": "Cantidad de invitados",
-      "form.type": "Tipo de evento",
-      "form.typePlaceholder": "Seleccionar…",
-      "form.typeWedding": "Boda",
-      "form.typeQuince": "Quinceañera / Sweet Sixteen",
-      "form.typeSocial": "Celebración social",
-      "form.typeCorporate": "Evento corporativo",
-      "form.typeBrand": "Activación de marca / lanzamiento",
-      "form.typeProduction": "Producción y entretenimiento",
-      "form.typeFilm": "Cine, foto y contenido",
-      "form.typeGala": "Gala / recaudación",
-      "form.typeDining": "Cena privada",
-      "form.typeAlcazar": "The Lexington",
-      "form.typeRental": "Solo renta / servicios",
-      "form.typeOther": "Otra cosa",
-      "form.interest": "Detalles adicionales de servicios",
-      "form.optional": "(opcional)",
-      "form.interestPh": "Algo más que usted desee compartir",
-      "form.comments": "Comentarios",
-      "form.submit": "Enviar solicitud",
-      "form.sending": "Enviando solicitud…",
-      "form.emailDraft": "Enviar esta solicitud por correo",
-      "form.emailHelp": "Se abrirá su aplicación de correo con sus datos. Envíe el mensaje para completar la solicitud.",
-      "form.bookingNotice": "La fecha de evento indicada es una solicitud. Nuestro equipo confirmará la disponibilidad del espacio. Puede agendar una visita por separado.",
+      "quote.title": "Venga a conocer la casa",
+      "quote.intro": "Elija un horario disponible para visitar el espacio.",
       "booking.title": "Venga a conocer la casa",
       "booking.intro": "Elija un horario disponible para visitar el lugar.",
       "booking.open": "Agendar una visita",
-      "booking.selectionHelp": "Incluya estos servicios en las notas de la reserva o coméntelos con nuestro equipo.",
       "booking.separate": "La cita para visitar el lugar no reserva un espacio para un evento.",
       "booking.dialogTitle": "Agende su visita",
       "booking.help": "Seleccione una fecha y hora en el calendario. Su visita queda confirmada cuando Bookings completa la reserva. Compruebe la zona horaria indicada antes de reservar.",
@@ -613,26 +498,6 @@
       "booking.frameTitle": "Calendario de visitas a La Jolla",
       "booking.fallback": "Si el calendario no carga,",
       "booking.external": "abra la página de reservas en una pestaña nueva",
-      "form.rateLimit": "Espere antes de volver a intentarlo o envíe su solicitud por correo a continuación.",
-      "form.networkError": "La conexión se interrumpió. Sus datos siguen aquí. Puede reintentar o enviar su solicitud por correo a continuación.",
-      "form.providerError": "El envío en línea no está disponible. Sus datos siguen aquí. Envíe su solicitud por correo a continuación o llame al 786-290-8813.",
-      "form.deliveryReview": "Su solicitud se guardó, pero es necesario revisar el envío del correo. Contacte con nuestro equipo con esta referencia: ",
-
-      "form.successEyebrow": "La Jolla",
-      "form.successTitle": "Gracias",
-      "form.successBody": "Su solicitud ha sido enviada. Nuestro equipo confirmará la disponibilidad; esto no confirma una reserva.",
-      "form.sendError": "No pudimos enviarla. Escriba a info@lajollacoralgables.com o llame al 786-290-8813.",
-      "form.error": "Complete los campos obligatorios.",
-      "vendors.eyebrow": "Proveedores",
-      "vendors.title": "Ser proveedor",
-      "vendors.intro": "Indique su nombre, empresa, servicio y correo.",
-      "vendors.name": "Nombre",
-      "vendors.company": "Empresa",
-      "vendors.service": "Servicio",
-      "vendors.email": "Correo",
-      "vendors.submit": "Enviar nota de proveedor",
-      "vendors.successTitle": "Gracias",
-      "vendors.successBody": "Su nota ha sido enviada. Le responderemos.",
       "footer.tag": "Coral Gables · Est. 1928",
       "footer.managed": "Gestionado por Epic Lux Management",
       "footer.contact": "Contacto",
@@ -640,7 +505,6 @@
       "footer.maps": "Cómo llegar",
       "footer.mapsLink": "Abrir en Google Maps",
       "footer.connect": "Conectar",
-      "footer.vendor": "Convertirse en proveedor",
       "footer.terms": "Términos",
       "footer.privacy": "Privacidad",
       "motion.history": "Arcos mediterráneos, hiedra y toldos a rayas. Encuentre la casa en 301 Alcazar Avenue.",
@@ -665,18 +529,6 @@
   };
 
   let lang = "en";
-  const selectedServices = new Set();
-  const allowedServices = ["planning", "catering", "florals", "furniture", "photo", "entertainment", "av", "builds", "interactive", "staff"];
-  let inquiryContext = { type: "", location: "" };
-  try {
-    const saved = JSON.parse(sessionStorage.getItem("lajolla-inquiry") || "{}");
-    (saved.services || []).filter(id => allowedServices.includes(id)).forEach(id => selectedServices.add(id));
-    inquiryContext = { type: typeof saved.type === "string" ? saved.type : "", location: typeof saved.location === "string" ? saved.location : "" };
-  } catch (_) { /* Direct contact and forms work without browser storage. */ }
-  function saveInquiryContext() {
-    try { sessionStorage.setItem("lajolla-inquiry", JSON.stringify({ services: Array.from(selectedServices), type: inquiryContext.type, location: inquiryContext.location })); } catch (_) {}
-  }
-
   function applyI18n(next) {
     lang = next;
     const dict = I18N[lang] || I18N.en;
@@ -689,7 +541,7 @@
       if (attr) {
         el.setAttribute(attr, dict[key]);
       } else {
-        el.textContent = dict[key] + (key === "form.deliveryReview" ? el.dataset.deliveryReference || "" : "");
+        el.textContent = dict[key];
       }
     });
 
@@ -700,7 +552,6 @@
     });
     prepareScrollWords();
     window.dispatchEvent(new Event("lajolla-language"));
-    renderInquirySelection();
     try { localStorage.setItem("lajolla-language", lang); } catch (_) { /* Storage is optional. */ }
     // Translated paragraphs change section heights and scroll positions.
     window.requestAnimationFrame(function () {
@@ -1071,123 +922,6 @@
     }
   }
 
-  function serviceLabel(id) {
-    return I18N[lang]["rentals.svc." + id] || I18N.en["rentals.svc." + id] || id;
-  }
-
-  function renderInquirySelection() {
-    const dict = I18N[lang];
-    const ids = Array.from(selectedServices);
-    saveInquiryContext();
-    document.querySelectorAll("[data-service-id]").forEach(function (button) {
-      const selected = selectedServices.has(button.dataset.serviceId);
-      button.setAttribute("aria-pressed", String(selected));
-      const action = button.querySelector("em");
-      const key = selected ? "rentals.selected" : "rentals.select";
-      action.setAttribute("data-i18n", key);
-      action.textContent = dict[key];
-    });
-    ["catalog-selection", "inquiry-selection"].forEach(function (id) {
-      const list = document.getElementById(id);
-      if (!list) return;
-      list.setAttribute("aria-label", dict["selection.inquiry"]);
-      list.replaceChildren();
-      ids.forEach(function (service) {
-        const item = document.createElement("li");
-        const button = document.createElement("button");
-        button.type = "button";
-        button.dataset.removeService = service;
-        button.setAttribute("aria-label", dict["selection.remove"] + " " + serviceLabel(service));
-        button.append(document.createTextNode(serviceLabel(service)));
-        const cross = document.createElement("span");
-        cross.setAttribute("aria-hidden", "true");
-        cross.textContent = "×";
-        button.append(cross);
-        item.append(button);
-        list.append(item);
-      });
-    });
-    document.querySelectorAll(".selection-continue, .inquiry-selection").forEach(function (node) { node.hidden = !ids.length; });
-    const services = document.getElementById("selected-services");
-    const stableIds = document.getElementById("selected-service-ids");
-    if (services) services.value = ids.map(serviceLabel).join("; ");
-    if (stableIds) stableIds.value = ids.join(", ");
-    const status = document.getElementById("selection-status");
-    if (status) status.textContent = ids.length + " " + dict["selection.count"];
-    const location = document.getElementById("q-location");
-    const setting = document.querySelector(".inquiry-location");
-    if (location && setting) {
-      setting.hidden = !location.value;
-      setting.textContent = location.value ? dict["selection.setting"] + ": " + location.selectedOptions[0].textContent : "";
-    }
-  }
-
-  function initInquiryComposer() {
-    const type = document.getElementById("q-type");
-    const location = document.getElementById("q-location");
-    if (type && Array.from(type.options).some(o => o.value === inquiryContext.type)) type.value = inquiryContext.type;
-    if (location && Array.from(location.options).some(o => o.value === inquiryContext.location)) location.value = inquiryContext.location;
-    document.querySelectorAll("[data-service-id]").forEach(function (button) {
-      button.disabled = false;
-      button.addEventListener("click", function () {
-        const position = button.getBoundingClientRect().top;
-        const id = button.dataset.serviceId;
-        if (selectedServices.has(id)) selectedServices.delete(id);
-        else selectedServices.add(id);
-        if (selectedServices.size && !inquiryContext.type) inquiryContext.type = "rental";
-        if (type && !type.value && selectedServices.size) type.value = "rental";
-        renderInquirySelection();
-        const shift = button.getBoundingClientRect().top - position;
-        const chapter = button.closest(".cinema-scroll .cinema-story");
-        if (Math.abs(shift) > 1) {
-          if (chapter) chapter.scrollTop += shift;
-          else window.scrollBy({ top: shift, behavior: "instant" });
-        }
-        // Choices expand inside the reader; they do not change the film timeline's document height.
-        if (!chapter && window.ScrollTrigger) window.ScrollTrigger.refresh();
-      });
-    });
-    document.addEventListener("click", function (event) {
-      const remove = event.target.closest && event.target.closest("[data-remove-service]");
-      if (remove) {
-        const list = remove.closest("ul");
-        const service = remove.dataset.removeService;
-        const before = Array.from(list.querySelectorAll("button"));
-        const index = before.indexOf(remove);
-        selectedServices.delete(service);
-        renderInquirySelection();
-        const remaining = list.querySelectorAll("button");
-        const focus = remaining[Math.min(index, remaining.length - 1)] || (list.id === "catalog-selection"
-          ? document.querySelector('[data-service-id="' + service + '"]') : document.querySelector("[data-booking-opener]"));
-        if (focus) focus.focus({ preventScroll: true });
-        if (window.ScrollTrigger && !document.body.classList.contains("reading-details")) window.ScrollTrigger.refresh();
-      }
-      const occasion = event.target.closest && event.target.closest("[data-event-type]");
-      if (occasion) {
-        inquiryContext.type = occasion.dataset.eventType; inquiryContext.location = "la-jolla";
-        if (type) type.value = occasion.dataset.eventType;
-        if (location) location.value = "la-jolla";
-        renderInquirySelection();
-      }
-      const path = event.target.closest && event.target.closest("[data-inquiry-location]");
-      if (path) {
-        inquiryContext.location = path.dataset.inquiryLocation;
-        if (location) location.value = path.dataset.inquiryLocation;
-        renderInquirySelection();
-      }
-      const vendorLink = event.target.closest && event.target.closest("a[href='#vendors']");
-      if (vendorLink) document.getElementById("vendor-details").open = true;
-    });
-    if (type) type.addEventListener("change", function () { inquiryContext.type = type.value; renderInquirySelection(); });
-    if (location) location.addEventListener("change", function () { inquiryContext.location = location.value; renderInquirySelection(); });
-    const form = document.getElementById("quote-form");
-    if (form) form.addEventListener("reset", function () {
-      selectedServices.clear(); inquiryContext = { type: "", location: "" }; saveInquiryContext();
-      window.requestAnimationFrame(renderInquirySelection);
-    });
-    renderInquirySelection();
-  }
-
   function initChapterMenu() {
     const menu = document.querySelector(".mobile-menu");
     if (!menu) return;
@@ -1199,197 +933,6 @@
         menu.open = false;
         menu.querySelector("summary").focus();
       }
-    });
-  }
-
-  var MAIL_KEY = "c13b3e4c-b71b-4df0-84b0-ce0b91be3b84";
-
-  function sendMail(payload) {
-    if (!MAIL_KEY) return Promise.reject(new Error("mail"));
-    const controller = new AbortController();
-    const timeout = window.setTimeout(function () { controller.abort(); }, 15000);
-    return fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      signal: controller.signal,
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(Object.assign({
-        access_key: MAIL_KEY,
-        from_name: "La Jolla",
-        ccemail: "info@lajollacoralgables.com",
-        botcheck: ""
-      }, payload))
-    }).then(function (res) {
-      return res.json().catch(function () {
-        const error = new Error("mail");
-        error.status = res.status;
-        throw error;
-      }).then(function (data) {
-        if (!res.ok || (data.success !== true && data.success !== "true")) {
-          // Keep diagnostics free of submitted contact data and provider echoes.
-          const error = new Error("mail");
-          error.status = res.status;
-          throw error;
-        }
-        return data;
-      });
-    }).finally(function () { window.clearTimeout(timeout); });
-  }
-
-  function formText(key) { return (I18N[lang] || I18N.en)[key] || I18N.en[key]; }
-
-  function nativeInquiry(payload, kind) {
-    const fields = kind === "vendor" ? ["name", "email", "company", "service"]
-      : ["name", "email", "phone", "eventDate", "guestCount", "eventType", "eventLocation", "selectedServices", "selectedServiceIds", "rentalInterest", "comments"];
-    const result = { kind: kind };
-    fields.forEach(function (field) { result[field] = payload[field] || ""; });
-    return result;
-  }
-
-  function sendNativeMail(payload, key) {
-    const controller = new AbortController();
-    const timeout = window.setTimeout(function () { controller.abort(); }, 40000);
-    return fetch("/api/inquiries", { method: "POST", signal: controller.signal,
-      headers: { "Content-Type": "application/json", "Idempotency-Key": key }, body: JSON.stringify(payload)
-    }).then(function (res) {
-      return res.json().catch(function () { throw new Error("mail"); }).then(function (data) {
-        if (!res.ok || data.success !== true || data.mailStatus !== "accepted") {
-          const failure = new Error("mail"); failure.status = res.status;
-          if (data.code === "delivery_requires_review" && /^LJ-[a-f\d-]{36}$/i.test(data.reference || "")) failure.reviewReference = data.reference;
-          throw failure;
-        }
-        return data;
-      });
-    }).finally(function () { window.clearTimeout(timeout); });
-  }
-
-  function inquiryDraft(form, subject) {
-    const lines = [subject, ""];
-    if (/^LJ-[a-f\d-]{36}$/i.test(form.dataset.deliveryReference || "")) lines.push("Reference: " + form.dataset.deliveryReference, "");
-    Array.prototype.forEach.call(form.elements, function (field) {
-      if (!field.name || field.type === "submit" || field.type === "button" || field.type === "hidden") return;
-      const value = String(field.value || "").trim();
-      if (!value) return;
-      const label = form.querySelector('label[for="' + field.id + '"]');
-      const title = label ? label.textContent.trim().replace(/\s+/g, " ") : field.name;
-      const text = field.tagName === "SELECT" ? field.options[field.selectedIndex].textContent.trim() : value;
-      lines.push(title + ": " + text);
-    });
-    const services = form.querySelector('[name="selectedServices"]');
-    if (services && services.value) lines.push(formText("selection.title") + ": " + services.value);
-    return "mailto:info@lajollacoralgables.com?subject=" + encodeURIComponent(subject)
-      + "&body=" + encodeURIComponent(lines.join("\n"));
-  }
-
-  function initLocalForm(formId, successId, errorId, sendErrorId, subject) {
-    const form = document.getElementById(formId);
-    if (!form) return;
-    const success = document.getElementById(successId);
-    const error = document.getElementById(errorId);
-    const sendError = document.getElementById(sendErrorId);
-    const recovery = form.querySelector(".inquiry-recovery");
-    const draft = form.querySelector(".inquiry-email-draft");
-    if (draft) draft.addEventListener("click", function () {
-      // Build only on an explicit click; no personal details in page links/storage.
-      draft.href = inquiryDraft(form, subject);
-      window.setTimeout(function () { draft.href = "mailto:info@lajollacoralgables.com"; }, 0);
-    });
-    const required = form.querySelectorAll("[required]");
-    const submit = form.querySelector("[type='submit']");
-    const submitLabel = submit && submit.dataset.i18n;
-    let sending = false;
-    let attempt;
-    // The default submit button stays disabled if the page script fails to load.
-    if (submit) submit.disabled = false;
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (sending) return;
-      if (success) success.hidden = true;
-      if (error) error.hidden = true;
-      if (sendError) sendError.hidden = true;
-      if (recovery) recovery.hidden = true;
-
-      let ok = true;
-      required.forEach(function (field) {
-        if (field.type === "text" || field.type === "email" || field.type === "tel") {
-          field.value = field.value.trim();
-        }
-        const valid = field.checkValidity();
-        field.classList.toggle("is-invalid", !valid);
-        field.setAttribute("aria-invalid", valid ? "false" : "true");
-        if (!valid) ok = false;
-      });
-
-      if (!ok) {
-        if (error) error.hidden = false;
-        const first = form.querySelector(".is-invalid");
-        if (first) first.focus();
-        return;
-      }
-
-      const payload = { subject: subject };
-      Array.prototype.forEach.call(form.elements, function (field) {
-        if (!field.name || field.type === "submit" || field.type === "button") return;
-        payload[field.name] = String(field.value || "").trim();
-      });
-      if (payload.email) payload.replyto = payload.email;
-      sending = true;
-      form.setAttribute("aria-busy", "true");
-      if (submit) { submit.disabled = true; submit.dataset.i18n = "form.sending"; submit.textContent = formText("form.sending"); }
-
-      const native = document.documentElement.dataset.inquiryTransport === "native";
-      let delivery;
-      if (native) {
-        delivery = Promise.resolve().then(function () {
-          const inquiry = nativeInquiry(payload, formId === "vendor-form" ? "vendor" : "quote");
-          const signature = JSON.stringify(inquiry);
-          // Only in-memory identity: no contact details or tokens in browser storage.
-          if (!attempt || attempt.signature !== signature) attempt = { signature: signature, key: window.crypto.randomUUID() };
-          return sendNativeMail(inquiry, attempt.key);
-        });
-      } else delivery = sendMail(payload);
-      delivery.then(function () {
-        if (success) {
-          success.hidden = false;
-          success.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
-        }
-        form.reset();
-        attempt = undefined;
-        delete form.dataset.deliveryReference;
-        required.forEach(function (field) {
-          field.classList.remove("is-invalid");
-          field.removeAttribute("aria-invalid");
-        });
-      }).catch(function (failure) {
-        const status = Number(failure.status) || 0;
-        const key = failure.reviewReference ? "form.deliveryReview" : status === 429 ? "form.rateLimit" : status ? "form.providerError" : "form.networkError";
-        if (sendError) {
-          sendError.dataset.i18n = key;
-          sendError.textContent = formText(key) + (failure.reviewReference || "");
-          sendError.dataset.deliveryReference = failure.reviewReference || "";
-          if (failure.reviewReference) form.dataset.deliveryReference = failure.reviewReference;
-          sendError.dataset.deliveryStatus = String(status);
-          sendError.hidden = false;
-          sendError.scrollIntoView({ behavior: "auto", block: "nearest" });
-        }
-        // HTTP status only: never log the provider's response/data, which echoes PII.
-        form.dispatchEvent(new CustomEvent("inquiry-delivery-error", { bubbles: true, detail: { status: status } }));
-        if (recovery) recovery.hidden = false;
-      }).then(function () {
-        sending = false;
-        form.removeAttribute("aria-busy");
-        if (submit) { submit.disabled = false; submit.dataset.i18n = submitLabel; submit.textContent = formText(submitLabel); }
-      });
-    });
-
-    required.forEach(function (field) {
-      const validate = function () {
-        const valid = field.checkValidity();
-        field.classList.toggle("is-invalid", !valid);
-        field.setAttribute("aria-invalid", valid ? "false" : "true");
-      };
-      field.addEventListener("input", validate);
-      field.addEventListener("blur", validate);
     });
   }
 
@@ -1581,26 +1124,16 @@
     initHeader();
     initPhotoCollections();
     initPhotoViewer();
-    initInquiryComposer();
     initChapterMenu();
     initChapterDetails();
-    // Resolve selection and menu layout before positioning or focusing an anchor.
+    // Resolve the menu layout before positioning or focusing an anchor.
     initStory(initCinematicWindow());
     initVenueFilms();
-    initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
     initBookingCalendar();
     initYear();
     if (document.body.classList.contains("planning-page")) {
       const title = document.getElementById("quote-title");
       title.setAttribute("tabindex", "-1"); title.focus({ preventScroll: true });
-      function openPlanningAnchor() {
-        if (location.hash === "#vendors") {
-          document.getElementById("vendor-details").open = true;
-          document.getElementById("vendors").scrollIntoView({ block: "start" });
-        }
-      }
-      window.addEventListener("hashchange", openPlanningAnchor);
-      openPlanningAnchor();
     }
   });
 })();

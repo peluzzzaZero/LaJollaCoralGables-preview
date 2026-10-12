@@ -36,3 +36,7 @@ Sources:
 - https://docs.web3forms.com/getting-started/troubleshooting
 - https://learn.microsoft.com/en-us/microsoft-365/bookings/bookings-overview
 - https://learn.microsoft.com/en-us/microsoft-365/bookings/bookings-faq
+
+## Current public route — v1.16.2
+
+The owner requested only the Schedule a visit action. Both quote and vendor forms and service-selection controls are removed. All ten homepage service descriptions remain. Native inquiry mail is optional retained backend preparation and no longer blocks the public website. Bookings schedules 45-minute venue tours, independently of that backend. The owner tested rescheduling in the GoDaddy Preview embed and reported receiving its email; the screenshot confirms the booking was rescheduled. This does not independently establish receipt of the specific custom update-flow notification. No automatic event-space/resource reservations are claimed.
