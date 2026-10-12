@@ -1,0 +1,139 @@
+{
+  "version": "1.15.0",
+  "purpose": "Native portrait delivery on phones, continuous existing panorama on wide screens, later recording replaces a reversed repeat.",
+  "sources": {
+    "details-mobile-hq": {
+      "path": "assets/venue/facade-details.mp4",
+      "start_seconds": 1.5,
+      "duration_seconds": 5,
+      "sha256": "6c5a28076c3914aa016cbf50c75ae50b1a115b5822d4464bb8451e4c3b04a37e"
+    },
+    "exterior-mobile-hq": {
+      "path": "assets/venue/arrival.mp4",
+      "start_seconds": 3,
+      "duration_seconds": 5,
+      "sha256": "d12218ed927ac64c4610118cb6e5056d5c8efe39d63e35fd056af1875f72f8de"
+    },
+    "craft": {
+      "path": "assets/venue/facade-details.mp4",
+      "start_seconds": 7,
+      "duration_seconds": 5,
+      "sha256": "6c5a28076c3914aa016cbf50c75ae50b1a115b5822d4464bb8451e4c3b04a37e"
+    }
+  },
+  "generation_cost_usd": 0,
+  "treatment": "Native 480x854 recording excerpts, no optical flow, AI reconstruction or upscaling; H264 GOP4 / VP9 GOP8, no audio, MP4 faststart. Existing house panorama is the historical approved photo-conditioned shot, not captured interior footage.",
+  "assets": {
+    "details-mobile-hq.mp4": {
+      "bytes": 2198875,
+      "sha256": "299d9d707c943a99d47ebc6c0efdd0ef6da718e114e296534dc11672cad75a79",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "details-mobile-hq.webm": {
+      "bytes": 1649144,
+      "sha256": "1a22cc90f774ce63b628b428bf7b99742e85db6468823bd5218476a408fec237",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "exterior-mobile-hq.mp4": {
+      "bytes": 2195350,
+      "sha256": "db9a45cfc7c6f407e70d1d2c63205643c118cbb3a7becda1b5a02789db9eb5f3",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "exterior-mobile-hq.webm": {
+      "bytes": 1530721,
+      "sha256": "e6721594a9b4f5d5ec03311e1dce20f4fa6299c4b28f6c70652e42589b3e798b",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "craft.mp4": {
+      "bytes": 2506377,
+      "sha256": "d5b28338e4d52e5abf7de021252fabdfb22a5911c9fb1d3fc3ff82e106ec77de",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "craft.webm": {
+      "bytes": 1937513,
+      "sha256": "d7170d12c0ba0f88a0ae012f9b7041c762c39669f7c2d3117e14d57230e0867e",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "craft-poster.webp": {
+      "bytes": 57284,
+      "sha256": "8ad0052de26d145cefefbae83bb9268f464a1aab32f2c8eb59e97686f7618faa"
+    }
+  },
+  "images": {
+    "flower-plaque": {
+      "source": "assets/brand/flower-plaque.jpg",
+      "source_sha256": "32351ee4c1b8a5037f771da9bfeeedb3656f6548389ab0fd159c5590b2dff083",
+      "output": "assets/brand/web/flower-plaque-motion.webp",
+      "bytes": 68628,
+      "treatment": "768px WebP from the approved original, resized/compressed only; no generative editing."
+    },
+    "welcome-table": {
+      "source": "assets/brand/welcome-table.jpg",
+      "source_sha256": "a8be1e477616e39e650b928cd603acff9da125339ec64b78de2c8d15bba6fad2",
+      "output": "assets/brand/web/welcome-table-motion.webp",
+      "bytes": 60718,
+      "treatment": "768px WebP from the approved original, resized/compressed only; no generative editing."
+    }
+  },
+  "font": {
+    "file": "assets/fonts/Manrope-latin.woff2",
+    "bytes": 23068,
+    "license": "assets/fonts/Manrope-OFL.txt",
+    "source": "https://github.com/google/fonts/tree/main/ofl/manrope",
+    "treatment": "Latin/Spanish subset of the official variable font, self-hosted WOFF2."
+  }
+}
