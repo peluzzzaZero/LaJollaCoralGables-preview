@@ -283,6 +283,23 @@
       "footer.vendor": "Become a Vendor",
       "footer.terms": "Terms",
       "footer.privacy": "Privacy",
+      "motion.history": "Since 1928. Mediterranean arches, garden light and a setting shaped by Coral Gables.",
+      "motion.visit": "From the ballroom to the smallest detail, discover the setting for your occasion.",
+      "motion.events": "Weddings, private dinners and corporate gatherings. A ballroom shaped around your guests.",
+      "motion.lexington": "The Lexington. An intimate setting for private gatherings, dining and shared moments.",
+      "motion.rentals": "Planning, rentals and production, at La Jolla or at your chosen location in South Florida.",
+      "motion.gallery": "From the invitation to the table, let each detail tell your story.",
+      "motion.team": "Julie Arias and Patricia Mir. A personal approach to every occasion.",
+      "motion.finale": "Your occasion. Your date. Your ideas. Let's begin.",
+      "motion.nav.house": "The house",
+      "motion.nav.history": "History",
+      "motion.nav.inside": "Inside",
+      "motion.nav.events": "Occasions",
+      "motion.nav.lexington": "Lexington",
+      "motion.nav.services": "Services",
+      "motion.nav.details": "Details",
+      "motion.nav.team": "Our team",
+      "motion.nav.plan": "Your occasion",
       "footer.rights": "All rights reserved.",
     },
     es: {
@@ -562,6 +579,23 @@
       "footer.vendor": "Convertirse en proveedor",
       "footer.terms": "Términos",
       "footer.privacy": "Privacidad",
+      "motion.history": "Desde 1928. Arcos mediterráneos, luz de jardín y el carácter de Coral Gables.",
+      "motion.visit": "Un salón lleno de luz y detalles que dan carácter a tu celebración.",
+      "motion.events": "Bodas, cenas privadas y encuentros de empresa. Un salón que se adapta a tus invitados.",
+      "motion.lexington": "The Lexington. Un ambiente íntimo para reuniones privadas, cenas y momentos compartidos.",
+      "motion.rentals": "Planificación, alquileres y producción, en La Jolla o donde imagines tu evento en el sur de Florida.",
+      "motion.gallery": "De la invitación a la mesa, deja que cada detalle cuente tu historia.",
+      "motion.team": "Julie Arias y Patricia Mir. Una atención personal para cada celebración.",
+      "motion.finale": "Tu celebración. Tu fecha. Tus ideas. Empecemos.",
+      "motion.nav.house": "La casa",
+      "motion.nav.history": "Historia",
+      "motion.nav.inside": "Espacios",
+      "motion.nav.events": "Celebraciones",
+      "motion.nav.lexington": "Lexington",
+      "motion.nav.services": "Servicios",
+      "motion.nav.details": "Detalles",
+      "motion.nav.team": "Equipo",
+      "motion.nav.plan": "Tu evento",
       "footer.rights": "Todos los derechos reservados.",
     },
   };
@@ -601,6 +635,7 @@
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
     prepareScrollWords();
+    window.dispatchEvent(new Event("lajolla-language"));
     renderInquirySelection();
     try { localStorage.setItem("lajolla-language", lang); } catch (_) { /* Storage is optional. */ }
     // Translated paragraphs change section heights and scroll positions.
@@ -644,169 +679,188 @@
     const videos = Array.from(section.querySelectorAll("[data-cinema-film]"));
     const layers = Array.from(section.querySelectorAll("[data-film-layer]"));
     const positions = [.035, .155, .265, .375, .485, .595, .705, .815, .965];
-    // Every chapter has a reading interval; the gaps deliberately leave only the film.
     const chapters = [[0, .10], [.12, .21], [.23, .32], [.34, .43], [.45, .54], [.56, .65], [.67, .76], [.78, .87], [.92, 1.01]];
-    const films = [[0, .34], [.34, .67], [.67, .90]];
-    const filmStates = videos.map(function () { return { loaded: false, controller: null }; });
-    let trigger = null, observer = null, nearby = false;
+    // One camera journey; each source has its own pace and a quiet reading centre.
+    const filmSegments = [
+      { name: "journey", start: 0, end: .12, linger: .2 },
+      { name: "architecture", start: .12, end: .22, linger: .22 },
+      { name: "arrival", start: .22, end: .28, linger: .15 },
+      { name: "balcony", start: .28, end: .34, linger: .15 },
+      { name: "house", start: .34, end: .46, linger: .25 },
+      { name: "ballroom", start: .46, end: .90, linger: .38 },
+      { name: "house", start: .90, end: 1, linger: .1, reprise: true }
+    ];
+    const filmStates = videos.map(() => ({ loaded: false, controller: null }));
     const saveData = !!(navigator.connection && navigator.connection.saveData);
-
-    function setAvailable(element, available) {
-      element.hidden = !available;
-      element.inert = !available;
-    }
+    const portrait = window.matchMedia("(max-width: 650px) and (orientation: portrait)");
+    let trigger = null, observer = null, nearby = false, renderCurrent = null;
+    let viewportSpan = window.innerHeight, viewportWidth = window.innerWidth;
+    let userReady = false;
+    const clamp = x => Math.min(1, Math.max(0, x));
+    const smooth = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+    // Adapted from oso95/scroll-world (MIT): endpoint-preserving linger mapping.
+    // f(0)=0 and f(1)=1, so a reading hold never drops either seam frame.
+    const linger = (x, amount) => { const c = x - .5; return (1 - amount) * x + amount * (4 * c * c * c + .5); };
+    const filmIndex = name => videos.findIndex(v => v.dataset.cinemaFilm === name);
+    function setAvailable(element, available) { element.hidden = !available; element.inert = !available; }
+    details.forEach(function (detail) {
+      if (detail.querySelector('.photo-window')) return;
+      const image = detail.querySelector('img');
+      const frame = document.createElement('span'); frame.className = 'photo-window';
+      image.before(frame); frame.append(image);
+      const fragments = document.createElement('span'); fragments.className = 'photo-fragments'; fragments.setAttribute('aria-hidden', 'true');
+      for (let i = 0; i < 3; i++) {
+        const part = document.createElement('span'); part.className = 'photo-slice'; part.dataset.slice = String(i);
+        const copy = image.cloneNode(false); copy.alt = ''; copy.removeAttribute('data-i18n'); copy.removeAttribute('data-i18n-attr'); copy.dataset.photoSource = copy.getAttribute('src'); copy.removeAttribute('src'); copy.loading = 'eager';
+        part.append(copy); fragments.append(part);
+      }
+      frame.append(fragments);
+    });
     function resetPresentation() {
-      section.dataset.scene = "all";
-      delete section.dataset.film;
-      section.style.removeProperty("--chapter-ink");
-      layers.forEach(function (layer) { layer.style.opacity = ""; });
-      stories.concat(details).forEach(function (element) {
-        setAvailable(element, true); element.style.opacity = ""; element.style.transform = "";
+      section.dataset.scene = 'all'; delete section.dataset.film;
+      section.style.removeProperty('--chapter-ink'); section.style.removeProperty('--world-progress');
+      layers.forEach(layer => { layer.style.opacity = ''; layer.style.zIndex = ''; });
+      stories.concat(details).forEach(element => {
+        setAvailable(element, true); element.style.opacity = ''; element.style.transform = '';
+        element.style.removeProperty('--reading-progress'); element.style.removeProperty('--photo-spread');
       });
-      buttons.forEach(function (button) { button.setAttribute("aria-pressed", "false"); button.style.removeProperty("--scene-progress"); });
+      buttons.forEach(button => { button.setAttribute('aria-pressed', 'false'); button.style.removeProperty('--scene-progress'); });
+      renderCurrent = null;
     }
+    function primeVideo(video) {
+      if (!userReady || !portrait.matches || !video) return;
+      try { const play = video.play(); if (play?.then) play.then(() => video.pause()).catch(() => {}); } catch (_) {}
+    }
+    function firstGesture() { userReady = true; videos.forEach(primeVideo); }
+    window.addEventListener('pointerdown', firstGesture, { once: true, passive: true });
     videos.forEach(function (video) {
       let desired = 0;
       function seek() {
         if (video.readyState < 2 || video.seeking || !Number.isFinite(video.duration)) return;
         const target = Math.min(video.duration - .001, Math.max(0, desired * video.duration));
-        if (Math.abs(video.currentTime - target) > .012) {
-          try { video.currentTime = target; } catch (_) { /* The poster remains available. */ }
-        }
+        if (Math.abs(video.currentTime - target) > .012) { try { video.currentTime = target; } catch (_) {} }
       }
-      video.requestFrame = function (fraction) { desired = fraction; seek(); };
-      video.addEventListener("seeked", seek);
-      video.addEventListener("loadeddata", function () {
-        video.classList.add("is-decoded");
-        seek();
-      });
-      video.addEventListener("error", function () { video.classList.remove("is-decoded"); });
+      video.requestFrame = fraction => { desired = fraction; seek(); };
+      video.addEventListener('seeked', function () { video.classList.add('is-decoded'); seek(); });
+      video.addEventListener('loadeddata', function () { primeVideo(video); seek(); });
+      video.addEventListener('error', () => video.classList.remove('is-decoded'));
     });
     function loadFilm(index) {
       if (!trigger || saveData || !videos[index] || filmStates[index].loaded) return;
-      const state = filmStates[index], video = videos[index];
-      state.loaded = true;
-      const controller = new AbortController();
-      state.controller = controller;
+      const state = filmStates[index], video = videos[index]; state.loaded = true;
+      const controller = new AbortController(); state.controller = controller;
+      const mobile = portrait.matches && video.dataset.cinemaMobile;
+      const source = mobile || video.dataset.cinemaFilm;
+      const wide = window.innerWidth >= 1500 && video.dataset.cinemaWide;
+      const formats = ['mp4', 'webm'].filter(format => video.canPlayType('video/' + format));
       let attempt = 0;
-      const formats = ["mp4", "webm"].filter(function (format) { return video.canPlayType("video/" + format); });
       function tryFormat() {
         if (controller.signal.aborted || attempt >= formats.length) return;
         const format = formats[attempt++];
-        // Blob URLs permit reliable backward seeking even on hosts without byte-range support.
-        fetch("assets/venue/cinematic/" + video.dataset.cinemaFilm + "." + format, { signal: controller.signal })
-          .then(function (response) { if (!response.ok) throw new Error("film"); return response.blob(); })
-          .then(function (blob) {
+        const actualSource = wide && format === 'mp4' ? wide : source;
+        fetch('assets/venue/cinematic/' + actualSource + '.' + format, { signal: controller.signal })
+          .then(response => { if (!response.ok) throw new Error('film'); return response.blob(); })
+          .then(blob => {
             if (controller.signal.aborted) return;
             if (video.filmURL) URL.revokeObjectURL(video.filmURL);
-            video.filmURL = URL.createObjectURL(blob);
-            video.dataset.format = format;
-            video.src = video.filmURL;
-            video.preload = "auto";
-            video.load();
-          }).catch(function () { if (!controller.signal.aborted) tryFormat(); });
+            video.filmURL = URL.createObjectURL(blob); video.dataset.format = format; video.dataset.source = actualSource;
+            video.src = video.filmURL; video.preload = 'auto'; video.load();
+          }).catch(() => { if (!controller.signal.aborted) tryFormat(); });
       }
-      video.onerror = tryFormat;
-      tryFormat();
+      video.onerror = tryFormat; tryFormat();
     }
     function releaseFilms() {
       videos.forEach(function (video, index) {
-        const state = filmStates[index];
-        if (state.controller) state.controller.abort();
-        state.controller = null; state.loaded = false;
-        video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute("src");
-        video.classList.remove("is-decoded"); video.preload = "none"; video.load();
+        const state = filmStates[index]; state.controller?.abort(); state.controller = null; state.loaded = false;
+        video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute('src'); video.classList.remove('is-decoded'); video.preload = 'none'; video.load();
         if (video.filmURL) URL.revokeObjectURL(video.filmURL);
-        video.filmURL = null; delete video.dataset.format;
+        video.filmURL = null; delete video.dataset.format; delete video.dataset.source;
       });
     }
     function goTo(index, focus) {
       if (index < 0 || !stories[index]) return;
       closeChapterDetails();
       if (trigger) {
-        const top = trigger.start + (trigger.end - trigger.start) * positions[index];
-        window.scrollTo({ top: top, behavior: focus ? "instant" : "smooth" });
+        window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * positions[index], behavior: focus ? 'instant' : 'smooth' });
         if (focus) { trigger.update(); trigger.animation.progress(positions[index]); }
-      } else stories[index].scrollIntoView({ behavior: "auto", block: "start" });
-      if (focus) {
-        stories[index].setAttribute("tabindex", "-1");
-        // The browser processes a native fragment after load. Focus after the rendered chapter settles.
-        requestAnimationFrame(function () { requestAnimationFrame(function () {
-          if (!stories[index].hidden && !stories[index].inert) stories[index].focus({ preventScroll: true });
-        }); });
-      }
+      } else stories[index].scrollIntoView({ behavior: 'auto', block: 'start' });
+      if (focus) { stories[index].setAttribute('tabindex', '-1'); requestAnimationFrame(() => requestAnimationFrame(() => { if (!stories[index].hidden) stories[index].focus({ preventScroll: true }); })); }
     }
-    window.__ljStory = { goTo: goTo, chapterIds: stories.map(story => story.id) };
-    buttons.forEach(function (button, index) { button.addEventListener("click", function () { goTo(index, false); }); });
+    window.__ljStory = { goTo, chapterIds: stories.map(s => s.id), cameraSegments: filmSegments };
+    buttons.forEach((button, index) => button.addEventListener('click', () => goTo(index, false)));
     function restoreHash() {
       const id = location.hash.slice(1);
-      const index = stories.findIndex(story => story.id === id || (id === "possibilities" && story.id === "hero") || (id === "quote" && story.id === "planning"));
+      const index = stories.findIndex(story => story.id === id || (id === 'possibilities' && story.id === 'hero') || (id === 'quote' && story.id === 'planning'));
       if (index >= 0) goTo(index, true);
     }
-    window.addEventListener("hashchange", restoreHash);
-    window.addEventListener("load", function () { window.setTimeout(restoreHash, 100); });
+    window.addEventListener('hashchange', restoreHash);
+    window.addEventListener('load', () => window.setTimeout(restoreHash, 100));
+    window.addEventListener('lajolla-language', () => { if (renderCurrent) renderCurrent(); });
+    portrait.addEventListener('change', () => { releaseFilms(); if (renderCurrent) renderCurrent(); });
+    window.addEventListener('resize', () => { if (window.innerWidth !== viewportWidth) { viewportWidth = window.innerWidth; viewportSpan = window.innerHeight; trigger?.refresh(); } });
     resetPresentation();
     return { animate: function (gsap, ScrollTrigger) {
       if (saveData || window.innerHeight < 600) return null;
-      section.classList.add("cinema-scroll");
+      section.classList.add('cinema-scroll');
       const playhead = { progress: 0 };
-      const clamp = gsap.utils.clamp(0, 1);
       function render() {
         const p = playhead.progress;
-        const current = chapters.findIndex(function (range) { return p >= range[0] && p < range[1]; });
-        section.dataset.scene = String(current);
+        const current = chapters.findIndex(range => p >= range[0] && p < range[1]);
         const range = chapters[current];
-        const fade = range ? Math.min(current === 0 ? 1 : clamp((p - range[0]) / .015), current === 8 ? 1 : clamp((range[1] - p) / .025)) : 0;
-        section.style.setProperty("--chapter-ink", String(fade));
+        const local = range ? clamp((p - range[0]) / (range[1] - range[0])) : 0;
+        const fade = range ? Math.min(current === 0 ? 1 : smooth((p - range[0]) / .012), current === 8 ? 1 : smooth((range[1] - p) / .016)) : 0;
+        section.dataset.scene = String(current); section.style.setProperty('--chapter-ink', String(fade)); section.style.setProperty('--world-progress', String(p));
         stories.forEach(function (story, i) {
-          if (i !== current) { const more = story.querySelector(".chapter-more"); if (more && more.open) { more.open = false; closeChapterDetails(); } }
-          setAvailable(story, i === current);
-          story.style.opacity = String(fade);
-          story.style.transform = "translateY(" + ((1 - fade) * 16) + "px)";
+          if (i !== current) { const more = story.querySelector('.chapter-more'); if (more?.open) { more.open = false; closeChapterDetails(); } }
+          setAvailable(story, i === current); story.style.opacity = String(fade);
+          story.style.transform = 'translate3d(0,' + ((1 - fade) * 18) + 'px,0)';
+          story.style.setProperty('--reading-progress', String(current === 0 ? .72 + .28 * smooth(local / .5) : smooth(local / .58)));
         });
         details.forEach(function (detail, i) {
-          // One relevant photograph supports each reading; the finale gathers the four memories.
-          const visible = current === i || (current === 8 && [0,3,4,5].includes(i));
-          setAvailable(detail, visible);
-          detail.style.opacity = String(fade);
-          detail.style.transform = "translateY(" + ((1 - fade) * 14) + "px)";
+          const visible = current === i || (current === 8 && [0,3,4,5].includes(i)); setAvailable(detail, visible);
+          if (visible) detail.querySelectorAll('.photo-slice img').forEach(image => { if (!image.getAttribute('src')) image.src = image.dataset.photoSource; });
+          const photoFade = current === 0 ? 1 : Math.min(1, fade * 1.2);
+          detail.style.opacity = String(photoFade);
+          detail.style.setProperty('--photo-spread', String(1 - smooth(local / .34)));
+          detail.style.transform = 'translate3d(0,' + ((1 - fade) * 18 + (local - .5) * 7) + 'px,0)';
         });
-        buttons.forEach(function (button, i) {
-          button.setAttribute("aria-pressed", String(i === current));
-          button.style.setProperty("--scene-progress", String(clamp((p - chapters[i][0]) / (chapters[i][1] - chapters[i][0]))));
-        });
-        const film = p < .34 ? 0 : p < .67 ? 1 : p < .90 ? 2 : 0;
-        const reprise = clamp((p - .90) / .025);
-        section.dataset.film = String(film);
+        buttons.forEach((button, i) => { button.setAttribute('aria-pressed', String(i === current)); button.style.setProperty('--scene-progress', String(clamp((p - chapters[i][0]) / (chapters[i][1] - chapters[i][0])))); });
+        let segmentIndex = filmSegments.findIndex(segment => p >= segment.start && p < segment.end);
+        if (segmentIndex < 0) segmentIndex = filmSegments.length - 1;
+        const segment = filmSegments[segmentIndex], active = filmIndex(segment.name);
+        section.dataset.film = String(active);
+        layers.forEach(layer => { layer.style.opacity = '0'; layer.style.zIndex = '0'; });
+        if (layers[active]) { layers[active].style.opacity = '1'; layers[active].style.zIndex = '1'; }
+        // Adjacent clips dissolve across a small band. We never claim these
+        // independently photographed views form a geometrically exact 3D take.
+        for (let n = 1; n < filmSegments.length; n++) {
+          const boundary = filmSegments[n].start;
+          if (Math.abs(p - boundary) <= .008) {
+            const from = filmIndex(filmSegments[n - 1].name), to = filmIndex(filmSegments[n].name);
+            if (layers[from]) { layers[from].style.opacity = '1'; layers[from].style.zIndex = '2'; }
+            if (layers[to]) { layers[to].style.opacity = String(smooth((p - boundary + .008) / .016)); layers[to].style.zIndex = '3'; }
+          }
+        }
         videos.forEach(function (video, i) {
-          const span = films[i];
-          video.requestFrame(i === 0 && p >= .90 ? .8 + .2 * clamp((p - .90) / .10) : clamp((p - span[0]) / (span[1] - span[0])));
-          // Fetch only the active shot and the next shot shortly before its transition.
-          if (p > .002 && (nearby || (trigger && trigger.isActive)) && (i === film || (i === film + 1 && p >= span[0] - .06))) loadFilm(i);
-          const opacity = i === 0 ? 1 : clamp((p - span[0] + .015) / .03);
-          layers[i].style.opacity = String(i === 0 ? 1 : opacity * (1 - reprise));
+          const span = filmSegments.find(s => s.name === video.dataset.cinemaFilm);
+          let fraction = clamp((p - span.start) / (span.end - span.start));
+          fraction = linger(fraction, span.linger);
+          if (segment.reprise && video.dataset.cinemaFilm === segment.name) fraction = .82 + .18 * linger(clamp((p - segment.start) / (segment.end - segment.start)), segment.linger);
+          video.requestFrame(fraction);
+          const next = filmSegments[segmentIndex + 1];
+          if (p > .002 && (nearby || trigger?.isActive) && (i === active || (next && i === filmIndex(next.name) && p > next.start - .035))) loadFilm(i);
         });
       }
-      const timeline = gsap.to(playhead, { progress: 1, ease: "none", onUpdate: render,
-        scrollTrigger: { id: "cinematic-journey", trigger: section, pin: stage,
-          start: "top top",
-          end: function () { return "+=" + Math.round(window.innerHeight * 10); },
-          scrub: .3, invalidateOnRefresh: true, onRefresh: render,
-          onEnter: render, onEnterBack: render
-        }
+      renderCurrent = render;
+      const timeline = gsap.to(playhead, { progress: 1, ease: 'none', onUpdate: render,
+        scrollTrigger: { id: 'cinematic-journey', trigger: section, pin: stage, start: 'top top',
+          end: () => '+=' + Math.round(viewportSpan * 11), scrub: .3, invalidateOnRefresh: true,
+          onRefresh: render, onEnter: render, onEnterBack: render }
       });
       trigger = timeline.scrollTrigger;
-      observer = new IntersectionObserver(function (entries) {
-        nearby = entries.some(function (entry) { return entry.isIntersecting; });
-        if (nearby) render();
-      }, { rootMargin: "180px 0px" });
-      observer.observe(section);
-      render();
-      return function () {
-        observer.disconnect(); observer = null; trigger = null; nearby = false;
-        section.classList.remove("cinema-scroll");
-        releaseFilms(); resetPresentation();
-      };
+      observer = new IntersectionObserver(entries => { nearby = entries.some(entry => entry.isIntersecting); if (nearby) render(); }, { rootMargin: '180px 0px' });
+      observer.observe(section); render();
+      return function () { observer.disconnect(); observer = null; trigger = null; nearby = false; section.classList.remove('cinema-scroll'); releaseFilms(); resetPresentation(); };
     }};
   }
 
@@ -852,6 +906,7 @@
   function initStory(cinema) {
     if (window.gsap && window.ScrollTrigger && cinema) {
       gsap.registerPlugin(ScrollTrigger);
+      ScrollTrigger.config({ ignoreMobileResize: true });
       const media = gsap.matchMedia();
       media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px)", function () {
         const dispose = cinema.animate(gsap, ScrollTrigger);
