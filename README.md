@@ -17,13 +17,13 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.15.3. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.16.0. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `dev` → review and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
 GitHub Pages publishes `main` at https://jolla.peluzzza.com. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.15.3 notes](tests/releases/v1.15.3.md) and [the latest review](tests/reviews/v1.15.3.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.16.0 notes](tests/releases/v1.16.0.md) and [the latest review](tests/reviews/v1.16.0.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Content requirements
 
@@ -34,6 +34,8 @@ The user authorized rethinking the old composition and scroll timings. Tests for
 The homepage now presents all approved public content within one nine-chapter full-screen film timeline. Expanded native chapter disclosures retain complete details. Inquiry and vendor forms live at `planning.html`; same-tab service choices and language follow the visitor without saving contact fields. Reduced motion, short screens, SaveData and unavailable JavaScript retain a readable native document.
 
 Inquiry recovery: after a rejected online submission, planning.html retains the written details and offers a complete email draft to the business inbox. This manual action opens the visitor's mail app and does not automatically send it. Actual Web3Forms delivery is currently unresolved; its legacy primary recipient/account must be verified. Appointment and space booking require a connected real calendar; see [the delivery and calendar integration requirements](tests/INQUIRY-AND-CALENDAR.md).
+
+The planning page now offers the owner-created Microsoft Bookings venue-tour calendar on request. The embed requires HTTPS; its ordinary link is available without JavaScript and as a fallback. A tour appointment remains separate from an event inquiry: this integration does not reserve event spaces, link their records automatically or certify email delivery. The owner's creation/update/cancellation notification flows require actual receipt verification separately.
 
 ## Native mail and Node hosting preparation
 

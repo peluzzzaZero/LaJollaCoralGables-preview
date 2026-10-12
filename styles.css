@@ -447,6 +447,26 @@ html.js #team .reveal { opacity: 1; transform: none; }
 .quote .section-intro { margin: 1.5rem 0; }
 .quote-rule, .vendors-rule { display: none; }
 .inquiry-contact { display: flex; flex-direction: column; gap: .5rem; font-size: 1rem; margin-top: 2rem; overflow-wrap: anywhere; }
+.inquiry-visit { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line-soft); }
+.inquiry-visit h2 { font-size: 1.25rem; margin: 0 0 .6rem; }
+.inquiry-visit p { font-size: .95rem; line-height: 1.6; margin: 0 0 1rem; }
+.inquiry-visit .booking-note { font-size: .8rem; margin: .9rem 0 0; }
+.booking-open { overflow: hidden; }
+.booking-viewer { box-sizing: border-box; width: min(1050px, calc(100vw - 32px)); height: min(1000px, calc(100dvh - 32px)); max-width: none; max-height: none; padding: 0; margin: auto; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+.booking-viewer[open] { display: flex; flex-direction: column; }
+.booking-viewer::backdrop { background: #18221bb3; }
+.booking-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 1.25rem; flex-shrink: 0; }
+.booking-header h2 { font-size: clamp(1.15rem, 2vw, 1.5rem); margin: 0; line-height: 1.3; }
+.booking-close { width: 44px; height: 44px; flex-shrink: 0; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 28px/1 var(--font-body); cursor: pointer; }
+.booking-viewer > p { font-size: .85rem; line-height: 1.5; margin: 0; padding: 0 1.25rem .8rem; flex-shrink: 0; }
+.booking-frame { display: block; width: 100%; flex: 1 1 0; min-height: 100px; border: 0; background: white; }
+.booking-viewer .booking-fallback { padding: .8rem 1.25rem; border-top: 1px solid var(--line-soft); }
+.booking-fallback a { color: var(--forest); text-decoration: underline; }
+@media (max-width: 650px) {
+  .booking-viewer { width: 100vw; height: 100dvh; border: 0; }
+  .booking-header { padding-inline: 1rem; }
+  .booking-viewer > p, .booking-viewer .booking-fallback { padding-inline: 1rem; }
+}
 .quote-panel { padding: clamp(1.25rem, 3vw, 3rem); border: 1px solid var(--line-soft); background: var(--cream); }
 .vendors { padding-block: 4rem; background: var(--cream); }
 .vendors .section-title { font-size: 2.5rem; }
