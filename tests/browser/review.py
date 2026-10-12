@@ -352,10 +352,10 @@ async def review_fallbacks(browser,base,output):
         await page.route('**/assets/venue/cinematic/*.mp4',lambda route:route.abort())
         if failure=='all':await page.route('**/assets/venue/cinematic/*.webm',lambda route:route.abort())
         await page.goto(base,wait_until='networkidle');await travel(page,.265,2)
-        if failure=='mp4':await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film=house]');return v.dataset.format==='webm'&&v.readyState>=2&&!v.seeking}")
+        if failure=='mp4':await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film=room-wide]');return v.dataset.format==='webm'&&v.readyState>=2&&!v.seeking}")
         else:
             await page.wait_for_timeout(800)
-            assert await page.locator('[data-film-layer="3"] > img').evaluate('i=>i.complete&&i.naturalWidth>0')
+            assert await page.locator('[data-cinema-film=room-wide]').locator('xpath=..').locator('img').evaluate('i=>i.complete&&i.naturalWidth>0')
             assert await page.locator('.cinema-film video').evaluate_all('vs=>vs.every(v=>!v.classList.contains("is-decoded"))')
         await page.emulate_media(reduced_motion='reduce')
         await page.wait_for_function('!ScrollTrigger.getById("cinematic-journey")')
