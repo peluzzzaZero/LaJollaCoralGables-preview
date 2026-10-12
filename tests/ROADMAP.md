@@ -111,3 +111,7 @@ A client screenshot establishes a real submission failure. Keep fields and selec
 ## Next — first-party business mail (activation pending)
 
 The client objects to Web3Forms' 250 free monthly submissions and requests authenticating the business mailbox inside the project. Pause the business-key v1.11.2 PR; do not merge or tag it as the desired final solution. An authorized technical Web3Forms request was provider-accepted, but receipt was not confirmed. Build the server-owned Microsoft Graph path with private persistent inquiry records, fixed sender/recipient, idempotency, safe error states and burst protection. The client confirms GoDaddy's owner Email & Office dashboard can administer the mailbox. Verify the actual Microsoft permissions and available compatible hosting; configuring domains alone does not provide a backend. Activate only after a real received Graph test and a reviewed frontend/deployment cycle. Email acceptance never confirms a visit or space booking.
+
+## v1.15.0 — editorial rhythm after owner feedback
+
+Restore complete readable headings and the original cream navigation. Reserve word reading for the occasions statement and split-photo assembly for two chapters. Alternate mobile positions and photographic proportions, leaving the opening, occasions and team film uninterrupted by inset photos. Keep the existing recorded footage and v1.14.1 mobile priming. Subjective art direction is assessed from all nine mobile/desktop stops; automatic checks protect readability, safe geometry and native interactions.

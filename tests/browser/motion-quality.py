@@ -1,4 +1,4 @@
-"""Exercise scroll-driven words, assembled real photos and source selection; no email."""
+"""Exercise readable editorial copy, selected photo assembly and video scrubbing; no email."""
 import asyncio
 import argparse
 import functools
@@ -19,14 +19,11 @@ async def main(base,output,webkit=False,webkit_only=False):
             await page.goto(base,wait_until='networkidle')
             await page.locator('[data-lang="en"]').click()
             await travel(page,.13,1)
-            words = page.locator('#history > h3 .scroll-word')
-            early = await words.evaluate_all('els=>els.map(e=>Number(getComputedStyle(e).opacity))')
-            assert early and min(early)<.7, early
+            assert await page.locator('#history > h3 .scroll-word').count()==0
+            assert await page.locator('#history > h3').evaluate('e=>Number(getComputedStyle(e).opacity)')>.99
             photo = page.locator('[data-scene-detail="1"]')
             separated = await photo.evaluate('e=>Number(e.style.getPropertyValue("--photo-spread"))')
             await travel(page,.19,1)
-            late = await words.evaluate_all('els=>els.map(e=>Number(getComputedStyle(e).opacity))')
-            assert min(late)>.95 and sum(late)>sum(early), (early,late)
             assembled = await photo.evaluate('e=>Number(e.style.getPropertyValue("--photo-spread"))')
             assert separated>assembled and assembled<.01
             await page.wait_for_function('''() => Array.from(document.querySelectorAll('[data-scene-detail="1"] .photo-slice img')).every(e=>e.complete&&e.naturalWidth>0)''')
@@ -34,7 +31,14 @@ async def main(base,output,webkit=False,webkit_only=False):
             assert await photo.get_attribute('href')=='assets/venue/architecture.jpg'
             await page.locator('[data-lang="es"]').click()
             assert 'historia' in (await page.locator('#history > h3').text_content()).lower()
-            assert await words.count()>0
+            assert await page.locator('#history > h3 .scroll-word').count()==0
+            await travel(page,.35,3)
+            words = page.locator('#events > p .scroll-word')
+            early = await words.evaluate_all('els=>els.map(e=>Number(getComputedStyle(e).opacity))')
+            assert early and min(early)<.8, early
+            await travel(page,.40,3)
+            late = await words.evaluate_all('els=>els.map(e=>Number(getComputedStyle(e).opacity))')
+            assert min(late)>.95 and sum(late)>sum(early), (early,late)
             await travel(page,.055,0)
             await page.wait_for_function('''() => {const v=document.querySelector('[data-cinema-film="journey"]');return v.readyState>=2&&!v.seeking&&v.currentTime>0;}''')
             actual=await page.locator('[data-cinema-film="journey"]').evaluate('v=>({source:v.dataset.source,width:v.videoWidth})')
@@ -42,8 +46,8 @@ async def main(base,output,webkit=False,webkit_only=False):
             if width>=1500: assert actual['width']==1920
             await travel(page,.485,4)
             await page.wait_for_function('''() => {const v=document.querySelector('[data-cinema-film="details"]');return v.readyState>=2&&!v.seeking&&v.currentTime>0;}''')
-            await page.wait_for_function('''() => Array.from(document.querySelectorAll('[data-scene-detail="4"] .photo-slice img')).every(e=>e.complete&&e.naturalWidth>0)''')
-            assert await page.locator('[data-scene-detail="4"] .photo-fragments').evaluate('e=>getComputedStyle(e).display')!='none'
+            await page.wait_for_function('''() => Array.from(document.querySelectorAll('[data-scene-detail="4"] .photo-window > img')).every(e=>e.complete&&e.naturalWidth>0)''')
+            assert await page.locator('[data-scene-detail="4"] .photo-fragments').evaluate('e=>getComputedStyle(e).display')=='none'
             if width<650:
                 mobile=await page.locator('[data-cinema-film="details"]').evaluate('v=>({width:v.videoWidth,height:v.videoHeight})')
                 assert mobile['width']<mobile['height']
@@ -61,9 +65,9 @@ async def main(base,output,webkit=False,webkit_only=False):
             await page.wait_for_function("""() => {const v=document.querySelector('[data-cinema-film=house]');return v.readyState>=2&&!v.seeking&&v.currentTime<.08;}""")
             await travel(page,.965,8)
             for photo in await page.locator('.cinema-detail:visible').all():
-                await photo.locator('.photo-slice img').first.wait_for()
-                assert await photo.locator('.photo-fragments').evaluate('e=>getComputedStyle(e).display')!='none'
-            reports.append({'viewport':[width,height],'word_reveal':'passed','translation':'passed','photo_assembly':'passed','decoded_source':actual,'chapter_five_seconds_advanced':last-first})
+                assert await photo.locator('.photo-fragments').evaluate('e=>getComputedStyle(e).display')=='none'
+                assert await photo.locator('.photo-window > img').evaluate('e=>getComputedStyle(e).opacity')=='1'
+            reports.append({'viewport':[width,height],'readable_titles':'passed','single_occasions_reveal':'passed','translation':'passed','photo_assembly':'passed','decoded_source':actual,'chapter_five_seconds_advanced':last-first})
             await page.close()
         await browser.close()
         if webkit or webkit_only:
