@@ -6,7 +6,7 @@ const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
 const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
 const section = html.slice(html.indexOf('id="history"'), html.indexOf('id="visit"'));
 test("history uses the supplied architecture photograph with its real proportions", () => {
-  assert.match(section, /assets\/venue\/architecture\.jpg/);
+  assert.match(section, /assets\/venue\/web\/architecture\.webp/);
   assert.match(section, /width="768" height="1024"/);
   assert.match(css, /\.history-photo img[^}]*object-fit: contain/);
 });
