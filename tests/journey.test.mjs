@@ -17,10 +17,12 @@ test('the supplied cinematic film ships within its delivery budget with auditabl
   }
 });
 
-test('temporary preview pages request no indexing until the production launch', () => {
+test('production pages identify the final canonical domain', () => {
   for (const name of ['index.html', 'planning.html', 'privacy.html', 'terms.html']) {
     const html = readFileSync(new URL(`../${name}`, import.meta.url), 'utf8');
-    assert.match(html, /<meta name="robots" content="noindex, nofollow, noarchive"\s*\/>/, name);
+    assert.doesNotMatch(html, /content="noindex/);
+    const path = name === 'index.html' ? '' : name;
+    assert.ok(html.includes(`<link rel="canonical" href="https://lajollacoralgables.com/${path}"/>`), name);
   }
 });
 
