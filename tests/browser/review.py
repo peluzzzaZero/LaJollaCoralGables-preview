@@ -225,7 +225,7 @@ async def review_motion(browser, base, output, viewports=None):
             for n,p in enumerate(POSITIONS):
                 await travel(page,p,n)
                 assert await page.locator('.cinema-story:visible').count()==1
-                assert await page.locator('.cinema-detail:visible').count()==(4 if n==8 else 1)
+                assert await page.locator('.cinema-detail:visible').count()==(2 if n==8 else 0 if n in [0,3,7] else 1)
                 card=await page.locator(f'[data-scene-copy="{n}"]').bounding_box()
                 assert card['y']>=68 and card['y']+card['height']<=height-85,('reading',width,language,n,card)
                 for photo in await page.locator('.cinema-detail:visible').all():

@@ -692,6 +692,12 @@
       { name: "details", start: .67, end: .78, linger: .12, reverse: true },
       { name: "house", start: .78, end: 1, linger: .1 }
     ];
+    // The film carries the motion. Copy/photo treatment follows each chapter,
+    // rather than replaying one entrance on every slide.
+    const copyMotion = ['settle', 'fade', 'rise', 'fade', 'fade', 'rise', 'fade', 'fade', 'settle'];
+    const photoMotion = ['still', 'assemble', 'drift', 'still', 'still', 'drift', 'assemble', 'still'];
+    stories.forEach((story, i) => { story.dataset.copyMotion = copyMotion[i]; });
+    details.forEach((detail, i) => { detail.dataset.photoMotion = photoMotion[i]; });
     const filmStates = videos.map(() => ({ loaded: false, controller: null }));
     const saveData = !!(navigator.connection && navigator.connection.saveData);
     const portrait = window.matchMedia("(max-width: 650px) and (orientation: portrait)");
@@ -834,16 +840,18 @@
         stories.forEach(function (story, i) {
           if (i !== current) { const more = story.querySelector('.chapter-more'); if (more?.open) { more.open = false; closeChapterDetails(); } }
           setAvailable(story, i === current); story.style.opacity = String(fade);
-          story.style.transform = 'translate3d(0,' + ((1 - fade) * 18) + 'px,0)';
+          const lift = copyMotion[i] === 'rise' ? 14 : copyMotion[i] === 'settle' ? 6 : 0;
+          story.style.transform = 'translate3d(0,' + ((1 - fade) * lift) + 'px,0)';
           story.style.setProperty('--reading-progress', String(current === 0 ? .72 + .28 * smooth(local / .5) : smooth(local / .58)));
         });
         details.forEach(function (detail, i) {
-          const visible = current === i || (current === 8 && [0,3,4,5].includes(i)); setAvailable(detail, visible);
-          if (visible) detail.querySelectorAll('.photo-slice img').forEach(image => { if (!image.getAttribute('src')) image.src = image.dataset.photoSource; });
+          const visible = (current === i && ![0,3,7].includes(i)) || (current === 8 && [0,5].includes(i)); setAvailable(detail, visible);
+          if (visible && detail.dataset.photoMotion === 'assemble') detail.querySelectorAll('.photo-slice img').forEach(image => { if (!image.getAttribute('src')) image.src = image.dataset.photoSource; });
           const photoFade = current === 0 ? 1 : Math.min(1, fade * 1.2);
           detail.style.opacity = String(photoFade);
           detail.style.setProperty('--photo-spread', String(1 - smooth(local / .34)));
-          detail.style.transform = 'translate3d(0,' + ((1 - fade) * 18 + (local - .5) * 7) + 'px,0)';
+          const drift = photoMotion[i] === 'drift' ? (local - .5) * 12 : 0;
+          detail.style.transform = 'translate3d(0,' + drift + 'px,0)';
         });
         buttons.forEach((button, i) => { button.setAttribute('aria-pressed', String(i === current)); button.style.setProperty('--scene-progress', String(clamp((p - chapters[i][0]) / (chapters[i][1] - chapters[i][0])))); });
         let segmentIndex = filmSegments.findIndex(segment => p >= segment.start && p < segment.end);
