@@ -239,7 +239,8 @@ async def review_navigation(browser,base,output):
         assert await page.locator('#rentals [data-service-id]').count()==10
         assert await page.locator('#rentals button[data-service-id]').count()==0
         await page.locator('[data-lang="es"]').click()
-        await page.locator('#rentals .cinema-inquiry').click()
+        await page.locator('#rentals .chapter-close').click()
+        await page.locator('.inquire-link').click()
         await page.wait_for_url('**/planning.html')
         assert await page.locator('html').get_attribute('lang')=='es'
         assert await page.locator('form').count()==0
