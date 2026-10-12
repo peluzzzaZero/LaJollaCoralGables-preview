@@ -342,7 +342,7 @@ async def review_fallbacks(browser,base,output):
         page=await browser.new_page(viewport={'width':838,'height':884})
         await page.route('**/assets/venue/cinematic/*.mp4',lambda route:route.abort())
         if failure=='all':await page.route('**/assets/venue/cinematic/*.webm',lambda route:route.abort())
-        await page.goto(base,wait_until='networkidle');await travel(page,.485,4)
+        await page.goto(base,wait_until='networkidle');await travel(page,.265,2)
         if failure=='mp4':await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film=arrival]');return v.dataset.format==='webm'&&v.readyState>=2&&!v.seeking}")
         else:
             await page.wait_for_timeout(800)
