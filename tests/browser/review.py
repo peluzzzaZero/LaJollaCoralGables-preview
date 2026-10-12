@@ -256,16 +256,16 @@ async def review_motion(browser, base, output, viewports=None):
                 await travel(page,gap,-1)
                 assert await page.locator('.cinema-story:visible,.cinema-detail:visible').count()==0
             # Verify real decoding, complete cuts, the finale and reverse seeks.
-            for name,p in [('journey',.1199),('architecture',.2199),('arrival',.2799),('balcony',.3399),('house',.4599),('ballroom',.8999),('house',.999)]:
+            for name,p in [('journey',.1199),('architecture',.2199),('arrival',.2799),('balcony',.3399),('house',.4499),('details',.5599),('exterior',.6699),('house',.999)]:
                 await travel(page,p)
                 await page.wait_for_function("name=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return v.readyState>=2&&!v.seeking&&v.currentTime>=v.duration-.04&&v.getVideoPlaybackQuality().totalVideoFrames>0&&v.paused&&v.muted;}",arg=name)
-            for p,name,a,b,L in [(.595,'ballroom',.46,.90,.38),(.375,'house',.34,.46,.25),(.155,'architecture',.12,.22,.22)]:
+            for p,name,a,b,L in [(.485,'details',.45,.56,.12),(.375,'house',.34,.45,.2),(.155,'architecture',.12,.22,.22)]:
                 await travel(page,p)
                 x=(p-a)/(b-a);c=x-.5;fraction=(1-L)*x+L*(4*c*c*c+.5)
                 await page.wait_for_function("({name,fraction})=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return !v.seeking&&Math.abs(v.currentTime-v.duration*fraction)<.05;}",arg={'name':name,'fraction':fraction})
             if width <= 650:
-                mobile=await page.locator('[data-cinema-film="ballroom"]').evaluate("v=>({width:v.videoWidth,height:v.videoHeight,source:v.dataset.source})")
-                assert mobile['width']<mobile['height'] and mobile['source']=='ballroom-mobile',mobile
+                mobile=await page.locator('[data-cinema-film="details"]').evaluate("v=>({width:v.videoWidth,height:v.videoHeight,source:v.dataset.source})")
+                assert mobile['width']<mobile['height'] and mobile['source']=='details-mobile',mobile
             await page.locator('button[data-scene="4"]').focus();await page.keyboard.press('Enter')
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()

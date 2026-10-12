@@ -86,3 +86,7 @@ The user additionally requested Venice AI Cloud for light supporting images whil
 ## v1.14.0: photo-conditioned motion and web delivery
 
 The approved original JPEGs and facade films remain unchanged. Additional WebP delivery variants are resized/re-encoded from those photos; their full original JPEGs remain the photo viewer targets. Three new Venice-generated architectural motion clips are distinct from the original supplied footage. Their provenance and delivered hashes are in `assets/venue/cinematic/scroll-world-source.json`. Selected first/middle/last frames were reviewed against the reference images. The later portrait footage with changed furniture is excluded. No claim of surveyed geometry or verified native capture is made. All delivered video streams are silent.
+
+## v1.14.1 — remove the distorted ballroom take from the landing
+
+Chapter 05 and the following motion chapters use five-second cuts of the original supplied facade films. Mobile uses centre crops of the same recorded frames. No generated ballroom or optical-flow-retimed room take is referenced by the landing. Original room photographs and old version assets remain unchanged for provenance. The new source offsets, hashes and silent delivery files are recorded in `assets/venue/cinematic/chapter-five-source.json`; these films show the venue exterior and do not establish a filmed interior identity for The Lexington.

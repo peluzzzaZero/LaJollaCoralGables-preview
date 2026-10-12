@@ -1,0 +1,151 @@
+{
+  "version": "1.14.1",
+  "reason": "Replace the generated/optical-flow ballroom take with owner-supplied captured exterior video. Chapter 05 now traverses more than three seconds of recorded camera movement in its own reading band.",
+  "sources": {
+    "details": {
+      "path": "assets/venue/facade-details.mp4",
+      "sha256": "6c5a28076c3914aa016cbf50c75ae50b1a115b5822d4464bb8451e4c3b04a37e",
+      "start_seconds": 1.5,
+      "duration_seconds": 5,
+      "treatment": "Cut of owner-supplied recorded facade footage; no generation, optical flow or architectural reconstruction. Mobile is a centre crop of the same frames."
+    },
+    "exterior": {
+      "path": "assets/venue/arrival.mp4",
+      "sha256": "d12218ed927ac64c4610118cb6e5056d5c8efe39d63e35fd056af1875f72f8de",
+      "start_seconds": 3.0,
+      "duration_seconds": 5,
+      "treatment": "Cut of owner-supplied recorded facade footage; no generation, optical flow or architectural reconstruction. Mobile is a centre crop of the same frames."
+    }
+  },
+  "assets": {
+    "details.mp4": {
+      "bytes": 1342795,
+      "sha256": "674a9f99e6612d7ca38730fc10b87387f0b533b716260a9a8c5910688148a58f",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "details.webm": {
+      "bytes": 1660715,
+      "sha256": "0dcce1b79107a449c3554862b52fd0f17c7bdaae95d2bd5110d172d1879d9f04",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "details-poster.webp": {
+      "bytes": 80462,
+      "sha256": "cac978153e370277afe7fd64f6826fb66887283c6a3ca16949ff04d64f48bc16"
+    },
+    "details-mobile.mp4": {
+      "bytes": 1009172,
+      "sha256": "7eecb174d532b9ed523ea3a2b8f56eea7e2fa2b7ef12e0168a29e7ea9c276c66",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 324,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "details-mobile.webm": {
+      "bytes": 953120,
+      "sha256": "5326b00d96006e967359219cde24f990f2dbb3ab9388ab18c5a19492a9f7303f",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 324,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "details-mobile-poster.webp": {
+      "bytes": 43746,
+      "sha256": "b76a9832892f2b8b6b73675efe0a062efde63fcbe4892065f798e51253d0edf5"
+    },
+    "exterior.mp4": {
+      "bytes": 1228691,
+      "sha256": "f9bd6d17dbf3d61913998a80cec229d721e04b87f7e49ebb55528e9091f668ac",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "exterior.webm": {
+      "bytes": 1541840,
+      "sha256": "908a43c9b9894992784a8fdeda3a71c527fe2a78958aa6c7335cbccde76e681f",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "exterior-poster.webp": {
+      "bytes": 61446,
+      "sha256": "ea7f9eea1a4282163fb560b46f159db72e7f0b511d0982e4cbd2652cbff2170d"
+    },
+    "exterior-mobile.mp4": {
+      "bytes": 804268,
+      "sha256": "5a76e6405b3f9132b694998a6f1b3b936844d83b2b8c155fc21999caa0aecc37",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 324,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "exterior-mobile.webm": {
+      "bytes": 796523,
+      "sha256": "48324d50317db25017f61fd1ce769573485a8264e0ae575aef471b1ca52c167a",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 324,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "exterior-mobile-poster.webp": {
+      "bytes": 31564,
+      "sha256": "604c46252ef6ed1b7c818d609165991207cbfec32715cac96e9e2b6012d1b8be"
+    }
+  },
+  "cost_usd": 0
+}

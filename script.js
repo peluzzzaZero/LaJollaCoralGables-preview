@@ -686,9 +686,11 @@
       { name: "architecture", start: .12, end: .22, linger: .22 },
       { name: "arrival", start: .22, end: .28, linger: .15 },
       { name: "balcony", start: .28, end: .34, linger: .15 },
-      { name: "house", start: .34, end: .46, linger: .25 },
-      { name: "ballroom", start: .46, end: .90, linger: .38 },
-      { name: "house", start: .90, end: 1, linger: .1, reprise: true }
+      { name: "house", start: .34, end: .45, linger: .2 },
+      { name: "details", start: .45, end: .56, linger: .12 },
+      { name: "exterior", start: .56, end: .67, linger: .12 },
+      { name: "details", start: .67, end: .78, linger: .12, reverse: true },
+      { name: "house", start: .78, end: 1, linger: .1 }
     ];
     const filmStates = videos.map(() => ({ loaded: false, controller: null }));
     const saveData = !!(navigator.connection && navigator.connection.saveData);
@@ -842,10 +844,10 @@
           }
         }
         videos.forEach(function (video, i) {
-          const span = filmSegments.find(s => s.name === video.dataset.cinemaFilm);
+          const span = segment.name === video.dataset.cinemaFilm ? segment : filmSegments.find(s => s.name === video.dataset.cinemaFilm);
           let fraction = clamp((p - span.start) / (span.end - span.start));
           fraction = linger(fraction, span.linger);
-          if (segment.reprise && video.dataset.cinemaFilm === segment.name) fraction = .82 + .18 * linger(clamp((p - segment.start) / (segment.end - segment.start)), segment.linger);
+          if (span.reverse) fraction = 1 - fraction;
           video.requestFrame(fraction);
           const next = filmSegments[segmentIndex + 1];
           if (p > .002 && (nearby || trigger?.isActive) && (i === active || (next && i === filmIndex(next.name) && p > next.start - .035))) loadFilm(i);
