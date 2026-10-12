@@ -79,6 +79,7 @@ jobs:
               raise RuntimeError('Node preview did not start')
           PY
           python tests/browser/native-forms.py --base http://127.0.0.1:13317 --output review-artifacts/native
+          python tests/browser/bookings.py --base http://127.0.0.1:13317 --output review-artifacts/bookings
       - name: Save screenshots, recordings and results
         if: always()
         uses: actions/upload-artifact@v4

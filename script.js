@@ -273,7 +273,17 @@
       "form.sending": "Sending inquiry…",
       "form.emailDraft": "Email this inquiry",
       "form.emailHelp": "Your email app will open with your details. Please send the email to complete your inquiry.",
-      "form.bookingNotice": "Your preferred event date is a request. Availability and visits are confirmed by our team.",
+      "form.bookingNotice": "Your preferred event date is a request. Our team will confirm space availability. You can schedule a visit separately.",
+      "booking.title": "Come see the house",
+      "booking.intro": "Choose an available time for a venue tour.",
+      "booking.open": "Schedule a visit",
+      "booking.separate": "A tour appointment is separate from your event inquiry and does not reserve an event space.",
+      "booking.dialogTitle": "Schedule your visit",
+      "booking.help": "Select a date and time in the calendar. Your visit is confirmed when Bookings completes the reservation. Check the time zone shown before booking.",
+      "booking.close": "Close booking calendar",
+      "booking.frameTitle": "La Jolla venue tour booking calendar",
+      "booking.fallback": "If the calendar does not load,",
+      "booking.external": "open the booking page in a new tab",
       "form.rateLimit": "Please wait before trying again, or email your inquiry below.",
       "form.networkError": "The connection was interrupted. Your details are still here. You can retry or email your inquiry below.",
       "form.providerError": "Online sending is unavailable. Your details are still here. Please email your inquiry below or call 786-290-8813.",
@@ -590,7 +600,17 @@
       "form.sending": "Enviando solicitud…",
       "form.emailDraft": "Enviar esta solicitud por correo",
       "form.emailHelp": "Se abrirá su aplicación de correo con sus datos. Envíe el mensaje para completar la solicitud.",
-      "form.bookingNotice": "La fecha de evento indicada es una solicitud. Nuestro equipo confirma disponibilidad y visitas.",
+      "form.bookingNotice": "La fecha de evento indicada es una solicitud. Nuestro equipo confirmará la disponibilidad del espacio. Puede agendar una visita por separado.",
+      "booking.title": "Venga a conocer la casa",
+      "booking.intro": "Elija un horario disponible para visitar el lugar.",
+      "booking.open": "Agendar una visita",
+      "booking.separate": "La visita es independiente de su solicitud de evento y no reserva un espacio para celebrarlo.",
+      "booking.dialogTitle": "Agende su visita",
+      "booking.help": "Seleccione una fecha y hora en el calendario. Su visita queda confirmada cuando Bookings completa la reserva. Compruebe la zona horaria indicada antes de reservar.",
+      "booking.close": "Cerrar calendario de visitas",
+      "booking.frameTitle": "Calendario de visitas a La Jolla",
+      "booking.fallback": "Si el calendario no carga,",
+      "booking.external": "abra la página de reservas en una pestaña nueva",
       "form.rateLimit": "Espere antes de volver a intentarlo o envíe su solicitud por correo a continuación.",
       "form.networkError": "La conexión se interrumpió. Sus datos siguen aquí. Puede reintentar o enviar su solicitud por correo a continuación.",
       "form.providerError": "El envío en línea no está disponible. Sus datos siguen aquí. Envíe su solicitud por correo a continuación o llame al 786-290-8813.",
@@ -1523,6 +1543,34 @@
     if (y) y.textContent = String(new Date().getFullYear());
   }
 
+  function initBookingCalendar() {
+    const viewer = document.getElementById("booking-viewer");
+    if (!viewer || typeof viewer.showModal !== "function") return;
+    const frame = viewer.querySelector("iframe");
+    let opener;
+    document.querySelectorAll("[data-booking-opener]").forEach(function (link) {
+      link.setAttribute("aria-haspopup", "dialog");
+      link.setAttribute("aria-controls", "booking-viewer");
+      link.addEventListener("click", function (event) {
+        // Retain native new-tab gestures and the ordinary link without JS.
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button) return;
+        event.preventDefault();
+        opener = link;
+        viewer.showModal();
+        document.body.classList.add("booking-open");
+        // Load Microsoft only after an explicit request. Keep the same frame
+        // across closes so an unfinished reservation is not reset.
+        if (!frame.hasAttribute("src")) frame.src = link.href;
+        viewer.querySelector("button").focus();
+      });
+    });
+    viewer.querySelector(".booking-close").addEventListener("click", function () { viewer.close(); });
+    viewer.addEventListener("close", function () {
+      document.body.classList.remove("booking-open");
+      if (opener) opener.focus({ preventScroll: true });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
     let preferred = "en";
@@ -1539,6 +1587,7 @@
     initVenueFilms();
     initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
+    initBookingCalendar();
     initYear();
     if (document.body.classList.contains("planning-page")) {
       const title = document.getElementById("quote-title");

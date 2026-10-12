@@ -11,6 +11,14 @@ The client requested notification to info@lajollacoralgables.com, appointment sc
 
 ## Proposed booking workflow for review
 
+### Implemented v1.16.0: owner-owned venue tours
+
+The owner created a shared Microsoft Bookings page, supplied its public link, and reported configuring business hours. Its `venue tour` service offers 45-minute appointments. The planning page embeds this live calendar only after an explicit click; browser review verified real rendering on mobile and desktop HTTPS origins without making appointments. The original date field remains a preferred event date, not an event-space reservation. Tours and inquiry records are not automatically joined. Three Power Automate notification workflows are being configured by the owner; the observed successful run is not proof of Outlook action execution or inbox receipt. Space/resource rules and notification receipts remain pending.
+
+Public Bookings URL: https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true
+
+### Remaining event-space and inquiry work
+
 1. Persist each inquiry with an idempotency key, reference, status and delivery state in a private backend. Notify the business address and acknowledge the visitor only after durable acceptance. Track/retry mail failures; a client timeout alone must never trigger duplicate booking or duplicate mail.
 2. A successful inquiry is not an event booking. The acknowledgment can offer a tour scheduling link. The client's brief originally names Google Calendar; the present email routing suggests Outlook. Confirm the actual shared calendar before choosing an integration. Avoid two competing calendars as sources of truth.
 3. For Outlook, check whether the existing subscription enables Microsoft Bookings. Use a shared tour schedule associated with the business team. Configure real staff availability, approved visit duration, buffers, notice/cancellation windows and America/New_York timezone. Bookings can manage appointment slots; do not assume it provides the complete venue event inventory model.

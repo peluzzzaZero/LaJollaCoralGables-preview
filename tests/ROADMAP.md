@@ -115,3 +115,7 @@ The client objects to Web3Forms' 250 free monthly submissions and requests authe
 ## v1.15.0 — editorial rhythm after owner feedback
 
 Restore complete readable headings and the original cream navigation. Reserve word reading for the occasions statement and split-photo assembly for two chapters. Alternate mobile positions and photographic proportions, leaving the opening, occasions and team film uninterrupted by inset photos. Keep the existing recorded footage and v1.14.1 mobile priming. Subjective art direction is assessed from all nine mobile/desktop stops; automatic checks protect readability, safe geometry and native interactions.
+
+## v1.16.0 — venue-tour calendar in the inquiry page
+
+Integrate the owner-owned Microsoft Bookings schedule as an on-demand accessible dialog beside the existing event-quote form, and offer it again after a successful inquiry. Preserve homepage motion, selected services, entered draft and provider booking session. EN/ES controls, keyboard dismissal/focus restoration, narrow phones and desktop, HTTPS embedding and external/no-JS fallback are reviewed without actual email or appointment creation. Tour booking is independent of the preferred event date. Remaining: verify each owner's Outlook notification flow, finish native inquiry activation and implement reviewed event-space occupancy rules before exposing confirmed event reservations.
