@@ -719,6 +719,9 @@
             if (video.filmURL) URL.revokeObjectURL(video.filmURL);
             video.filmURL = URL.createObjectURL(blob); video.dataset.format = format; video.dataset.source = actualSource;
             video.src = video.filmURL; video.preload = 'auto'; video.load();
+            // Start the muted mobile decoder before metadata: WebKit can defer
+            // loading an invisible clip, whose opacity waits for a decoded frame.
+            primeVideo(video);
           }).catch(() => { if (!controller.signal.aborted) tryFormat(); });
       }
       video.onerror = tryFormat; tryFormat();
