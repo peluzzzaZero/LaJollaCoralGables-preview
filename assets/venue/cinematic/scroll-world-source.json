@@ -1,0 +1,169 @@
+{
+  "version": "1.14.0",
+  "sources": {
+    "house": "Approved facade-wide.jpg, photo-conditioned motion",
+    "ballroom": "Approved ballroom.jpg, photo-conditioned motion",
+    "ballroom-mobile": "Native portrait generation from a cropped approved ballroom photograph; only the faithful first 0.9 seconds are retimed to approximately five seconds. Later changed furniture is excluded.",
+    "journey-hd": "Re-encode of the original user-supplied 1920x1080 approach; no AI upscaling.",
+    "architecture": "Unchanged approved architecture.jpg animated with a 3.5% centre zoom; no AI regeneration or inferred geometry."
+  },
+  "generator": {
+    "provider": "Venice",
+    "model": "seedance-2-0-mini-image-to-video-basic",
+    "clips_generated": 3,
+    "quoted_usd_per_clip": 0.47,
+    "quoted_total_usd": 1.41,
+    "no_top_up": true
+  },
+  "limitations": "Independent photo-conditioned AI shots, not surveyed architecture or captured footage. Dissolves connect the shots. Original films and reference JPEGs are unchanged.",
+  "assets": {
+    "house.mp4": {
+      "bytes": 2667770,
+      "sha256": "543aad44d7771a069a63ab172bd4e8d3d4081f9de32111e80a66d02b2f9c8b26",
+      "duration_seconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "house.webm": {
+      "bytes": 2272756,
+      "sha256": "2740aa81099e63aa0636d77742f63df19a71778d995eff286f45f2eca48dfd1f",
+      "duration_seconds": 5.042,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "house-poster.webp": {
+      "bytes": 128252,
+      "sha256": "9cbea1fa312621b4052f246a55d966d173dda0d3674861c71e747205aa9559dd"
+    },
+    "ballroom.mp4": {
+      "bytes": 1555329,
+      "sha256": "cacd1d649cfbf3d42931776d56636aa4435acc965fc3fa7278d3ee50a1081593",
+      "duration_seconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "ballroom.webm": {
+      "bytes": 1215253,
+      "sha256": "918ab997a4a2b4604af0608441d49cfbe61378cb5221e5457ad564e2725a2b3b",
+      "duration_seconds": 5.042,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "ballroom-poster.webp": {
+      "bytes": 49724,
+      "sha256": "c2c02195c490ebfadb8222fb82fb4c160baf1d13cb6b601f2965ab89fc109d07"
+    },
+    "ballroom-mobile.mp4": {
+      "bytes": 892648,
+      "sha256": "89dd0468f0bb508df4df3ee4a49b84f0487b1985cbe8c825f67a9e0a4f17a42a",
+      "duration_seconds": 4.666667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "ballroom-mobile.webm": {
+      "bytes": 868970,
+      "sha256": "1a13a7954a9ff9ed63678d69c39fbbc59490f147e75db773ac45cea9249e92db",
+      "duration_seconds": 4.667,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 480,
+          "height": 854,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "ballroom-mobile-poster.webp": {
+      "bytes": 20508,
+      "sha256": "051c2f247a4cc6b6d896465970d77354dfca791746220b962bb9c1de5a30aa69"
+    },
+    "journey-hd.mp4": {
+      "bytes": 4429101,
+      "sha256": "9c9369645819f9460ee273ac8cd79394ba43b0d6b41ce99614eeb66e72399bfc",
+      "duration_seconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "architecture.mp4": {
+      "bytes": 1862673,
+      "sha256": "6fd016881467d5ce2ae072601d28a4288f66e787515a7e686c10e4714ddaf6bc",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 624,
+          "height": 832,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "architecture.webm": {
+      "bytes": 2587061,
+      "sha256": "d5b2622e26a190c9eea6c920ff7492d0247fc16683fb5602b8698c57f56da2b3",
+      "duration_seconds": 5.0,
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 624,
+          "height": 832,
+          "r_frame_rate": "24/1"
+        }
+      ]
+    },
+    "architecture-poster.webp": {
+      "bytes": 123380,
+      "sha256": "f7f8535ff1df317764ae6d16eab4b8c5a7791a4f84eb429247b1d0475b3d7d88"
+    }
+  },
+  "free_generation_trial": {
+    "provider": "Hugging Face ZeroGPU",
+    "model": "Wan2.2-I2V-A14B with Lightning LoRA",
+    "cost_usd": 0,
+    "status": "First four-step generation rejected for doubled roof edges; eight-step follow-up blocked by anonymous daily quota. Neither generated clip is delivered."
+  }
+}

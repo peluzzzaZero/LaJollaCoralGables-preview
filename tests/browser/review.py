@@ -55,7 +55,8 @@ async def snapshot(page, output, name):
     })""")
     await page.wait_for_timeout(200)
     header = await page.locator("#header").bounding_box()
-    assert header and abs(header["y"]) <= 1, "Fixed navigation moves out of the viewport"
+    assert header and 0 <= header["y"] <= 16 and header["y"] + header["height"] <= 90, "Fixed navigation moves out of the viewport"
+    assert await page.locator("#header").evaluate("e => getComputedStyle(e).position") == "fixed"
     await page.screenshot(path=str(output / f"{name}.png"))
 
 
@@ -255,14 +256,16 @@ async def review_motion(browser, base, output, viewports=None):
                 await travel(page,gap,-1)
                 assert await page.locator('.cinema-story:visible,.cinema-detail:visible').count()==0
             # Verify real decoding, complete cuts, the finale and reverse seeks.
-            for name,p in [('journey',.3399),('arrival',.6699),('balcony',.8999),('journey',.999)]:
+            for name,p in [('journey',.1199),('architecture',.2199),('arrival',.2799),('balcony',.3399),('house',.4599),('ballroom',.8999),('house',.999)]:
                 await travel(page,p)
                 await page.wait_for_function("name=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return v.readyState>=2&&!v.seeking&&v.currentTime>=v.duration-.04&&v.getVideoPlaybackQuality().totalVideoFrames>0&&v.paused&&v.muted;}",arg=name)
-            for p,name in [(.485,'arrival'),(.155,'journey')]:
+            for p,name,a,b,L in [(.595,'ballroom',.46,.90,.38),(.375,'house',.34,.46,.25),(.155,'architecture',.12,.22,.22)]:
                 await travel(page,p)
-                a,b=(0,.34) if name=='journey' else (.34,.67)
-                fraction=(p-a)/(b-a)
+                x=(p-a)/(b-a);c=x-.5;fraction=(1-L)*x+L*(4*c*c*c+.5)
                 await page.wait_for_function("({name,fraction})=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return !v.seeking&&Math.abs(v.currentTime-v.duration*fraction)<.05;}",arg={'name':name,'fraction':fraction})
+            if width <= 650:
+                mobile=await page.locator('[data-cinema-film="ballroom"]').evaluate("v=>({width:v.videoWidth,height:v.videoHeight,source:v.dataset.source})")
+                assert mobile['width']<mobile['height'] and mobile['source']=='ballroom-mobile',mobile
             await page.locator('button[data-scene="4"]').focus();await page.keyboard.press('Enter')
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()

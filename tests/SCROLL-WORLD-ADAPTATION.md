@@ -1,0 +1,70 @@
+# Scroll World + Elaya adaptation
+
+The user requested both skills and photo-conditioned short Venice clips. Their existing La Jolla brand takes precedence over the template's miniature art and mandatory sans-serif font rules. There are nine factual chapters with one primary planning route. Camera clips, reading intervals, word masks and real-photo slices share one timeline; more detailed content remains within its native expandable chapters. Existing approved media remains intact.
+
+The camera uses Scroll World's endpoint-preserving linger mapping, coalesced seeks, poster-first decoding, nearby loading and mobile priming. The implementation retains the existing tested ScrollTrigger pin and cleanup rather than replacing the page with an unrelated standalone template. Mobile URL-bar-only changes keep the configured scroll span.
+
+Elaya's contribution is the short benefit-led copy, one clear planning action, meaningful line breaks, spacing/type hierarchy, floating navigation, complete interaction states and per-word reading reveal. The existing serif brand fonts, script signature, sage and cream palette are explicit retained brand choices. No fake testimonials, capacities, offers, guarantees or pricing were introduced.
+
+Venice production uses three five-second Seedance Mini generations quoted at 0.47 USD each. No top-ups. A furniture mutation in the later portrait generation is excluded from delivery; only its faithful opening is retimed. MP4s have no audio; all media is self-hosted and no generation API is called by visitors. Provenance is recorded in the cinematic asset manifest.
+
+## Upstream licences
+
+### oso95/scroll-world
+
+Source: https://github.com/oso95/scroll-world
+
+```text
+MIT License
+
+Copyright (c) 2026 cyw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+### elayadesign/ai-design-skills
+
+Source: https://github.com/elayadesign/ai-design-skills
+
+```text
+MIT License
+
+Copyright (c) 2026 Elaya
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
