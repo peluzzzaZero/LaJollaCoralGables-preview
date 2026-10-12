@@ -6,7 +6,7 @@ The camera uses Scroll World's endpoint-preserving linger mapping, coalesced see
 
 Elaya's contribution is the short benefit-led copy, one clear planning action, meaningful line breaks, spacing/type hierarchy, floating navigation, complete interaction states and per-word reading reveal. The existing serif brand fonts, script signature, sage and cream palette are explicit retained brand choices. No fake testimonials, capacities, offers, guarantees or pricing were introduced.
 
-Venice production uses three five-second Seedance Mini generations quoted at 0.47 USD each. No top-ups. A furniture mutation in the later portrait generation is excluded from delivery; only its faithful opening is retimed. MP4s have no audio; all media is self-hosted and no generation API is called by visitors. Provenance is recorded in the cinematic asset manifest.
+Version 1.14.0 produced three five-second Venice Seedance Mini generations quoted at 0.47 USD each, with no top-up. Version 1.14.1 removes the ballroom takes from the landing after the owner identified mobile ceiling distortion and insufficient motion. Those chapters now use five-second cuts of owner-supplied recorded facade films, cropped for mobile without generation or optical flow. The per-chapter camera intervals preserve visible movement and the existing reading/photo choreography. MP4s have no audio; media is self-hosted and no generation API is called by visitors. Both historical and corrected provenance are recorded in the cinematic asset manifests.
 
 ## Upstream licences
 
