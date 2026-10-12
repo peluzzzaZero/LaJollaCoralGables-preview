@@ -1409,3 +1409,18 @@ html { scrollbar-gutter: stable; }
 @media (max-width: 650px) and (orientation: portrait) {
   .cinema-scroll .cinema-film[data-desktop-film] { display: none; }
 }
+/* Horizontal room/paper images need a stable reading field and legible captions. */
+@media (min-width: 651px) {
+  .motion-page .cinema-scroll[data-scene="2"] .cinema-stage::before,
+  .motion-page .cinema-scroll[data-scene="3"] .cinema-stage::before,
+  .motion-page .cinema-scroll[data-scene="6"] .cinema-stage::before {
+    background: linear-gradient(90deg, #102019f2, #102019cc 42%, #1020194d 60%, transparent 82%), linear-gradient(0deg, #10201999, transparent 26%);
+  }
+  .motion-page .cinema-scroll[data-scene="4"] .cinema-stage::before,
+  .motion-page .cinema-scroll[data-scene="5"] .cinema-stage::before {
+    background: linear-gradient(270deg, #102019f2, #102019cc 42%, #1020194d 60%, transparent 82%), linear-gradient(0deg, #10201999, transparent 26%);
+  }
+  .motion-page .cinema-scroll .cinema-detail > span:not(.photo-window) {
+    width: fit-content; min-height: 0; margin-top: 8px; padding: 6px 10px; background: #102019d9; color: #f5f1e6;
+  }
+}
