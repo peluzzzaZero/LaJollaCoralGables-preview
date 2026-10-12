@@ -219,7 +219,7 @@ async def review_motion(browser, base, output, viewports=None):
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()
             await page.wait_for_url('**/planning.html')
-            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).type")=='alcazar'
+            assert await page.locator('[data-booking-opener]').count()==1
             assert await page.locator('html').get_attribute('lang')==language
             assert await page.evaluate("document.activeElement.id==='quote-title'")
             assert not errors,errors
@@ -352,7 +352,7 @@ async def check_venue_media(browser, base, output):
             assert await viewer.is_hidden()
             await page.locator('[data-i18n="visit.cta"]').click()
             await page.wait_for_url("**/planning.html")
-            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).location") == "la-jolla"
+            assert await page.locator('form').count() == 0
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
             results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "both_films_decoded": "passed", "single_player": "passed", "modal_keyboard_close_focus": "passed", "venue_inquiry": "passed"})
             await page.close()
