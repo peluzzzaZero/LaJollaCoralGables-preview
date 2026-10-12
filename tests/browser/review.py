@@ -205,6 +205,32 @@ async def travel(page, progress, expected=None):
         await page.wait_for_function("n => document.getElementById('cinema').dataset.scene === String(n)",arg=expected)
     await page.wait_for_timeout(400)
 
+def reader_contrast(colour, background):
+    import re
+    def channels(value):
+        values=[float(x) for x in re.findall(r"[\d.]+",value)]
+        return values[:3], values[3] if len(values)>3 else 1
+    fg,alpha=channels(colour);bg,_=channels(background)
+    def luminance(rgb):
+        values=[x/255 for x in rgb]
+        values=[x/12.92 if x<=.04045 else ((x+.055)/1.055)**2.4 for x in values]
+        return sum(x*w for x,w in zip(values,[.2126,.7152,.0722]))
+    foreground=luminance([x*alpha+y*(1-alpha) for x,y in zip(fg,bg)])
+    back=luminance(bg)
+    return (max(foreground,back)+.05)/(min(foreground,back)+.05)
+
+async def check_reader_legibility(body):
+    data=await body.evaluate("""e=>({background:getComputedStyle(e.closest('.cinema-story')).backgroundColor,
+      headings:[...e.querySelectorAll('h2,h3')].map(h=>({text:h.textContent.trim(),colour:getComputedStyle(h).color,size:parseFloat(getComputedStyle(h).fontSize),level:h.tagName})),
+      prose:[...e.querySelectorAll('.alcazar-copy > p:not(.eyebrow),.team-role')].map(t=>({text:t.textContent.trim(),colour:getComputedStyle(t).color}))})""")
+    for item in data['headings']:
+        ratio=reader_contrast(item['colour'],data['background'])
+        assert ratio>=3,(item['text'],'reader heading contrast',ratio)
+        if item['level']=='H3':assert item['size']<=40,(item['text'],'nested heading inherited film size',item['size'])
+    for item in data['prose']:
+        ratio=reader_contrast(item['colour'],data['background'])
+        assert ratio>=4.5,(item['text'],'reader body contrast',ratio)
+
 async def review_motion(browser, base, output, viewports=None):
     reports=[]
     for width,height in (viewports or [(320,600),(390,667),(390,844),(768,1024),(838,884),(1280,900)]):
@@ -244,6 +270,17 @@ async def review_motion(browser, base, output, viewports=None):
                     await page.wait_for_function('document.body.classList.contains("reading-details")')
                     body=page.locator(f'#{CHAPTERS[n]} .chapter-body')
                     assert await body.is_visible()
+                    await check_reader_legibility(body)
+                    if n in [3,5,7]:
+                        reader=page.locator('.cinema-story:visible')
+                        await reader.evaluate('e=>{e.scrollTop=e.scrollHeight}')
+                        await page.wait_for_timeout(80)
+                        target=body.locator('.occasion > summary').last if n==3 else body.locator('[data-service-id]').last if n==5 else body.locator('.team-card h3').last
+                        target_box=await target.bounding_box();reader_box=await reader.bounding_box()
+                        assert target_box and target_box['y']>=reader_box['y'] and target_box['y']+target_box['height']<=reader_box['y']+reader_box['height'],('Reader end is inaccessible',width,language,n,target_box,reader_box)
+                        assert abs(await page.evaluate('scrollY')-before)<2,'Reader scrolling moved the film'
+                        await reader.evaluate('e=>{e.scrollTop=0}')
+
                     if n==3:assert await body.locator('.occasion').count()==10
                     if n==5:assert await body.locator('[data-service-id]').count()==10
                     if n==6:
