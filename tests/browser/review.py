@@ -225,8 +225,11 @@ async def review_motion(browser, base, output, viewports=None):
             for n,p in enumerate(POSITIONS):
                 await travel(page,p,n)
                 assert await page.locator('.cinema-story:visible').count()==1
-                assert await page.locator('.cinema-detail:visible').count()==(2 if n==8 else 0 if n in [0,3,7] else 1)
+                assert await page.locator('.cinema-detail:visible').count()==(1 if n in [2,4,5,6] else 0)
+                heading=page.locator(f'[data-scene-copy="{n}"] > h1,[data-scene-copy="{n}"] > h3')
+                ink=await heading.evaluate('e=>{const r=document.createRange();r.selectNodeContents(e);const b=r.getBoundingClientRect();return {x:b.x,right:b.right};}')
                 card=await page.locator(f'[data-scene-copy="{n}"]').bounding_box()
+                assert ink['x']>=card['x']-1 and ink['right']<=card['x']+card['width']+1,('heading clips',width,language,n,ink,card)
                 assert card['y']>=68 and card['y']+card['height']<=height-85,('reading',width,language,n,card)
                 for photo in await page.locator('.cinema-detail:visible').all():
                     d=await photo.bounding_box()
@@ -255,17 +258,23 @@ async def review_motion(browser, base, output, viewports=None):
             for gap in [.11,.22,.33,.44,.55,.66,.77,.895]:
                 await travel(page,gap,-1)
                 assert await page.locator('.cinema-story:visible,.cinema-detail:visible').count()==0
-            # Verify real decoding, complete cuts, the finale and reverse seeks.
-            for name,p in [('journey',.1199),('architecture',.2199),('arrival',.2799),('balcony',.3399),('house',.4499),('details',.5599),('exterior',.6699),('house',.999)]:
-                await travel(page,p)
-                await page.wait_for_function("name=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return v.readyState>=2&&!v.seeking&&v.currentTime>=v.duration-.04&&v.getVideoPlaybackQuality().totalVideoFrames>0&&v.paused&&v.muted;}",arg=name)
-            for p,name,a,b,L in [(.485,'details',.45,.56,.12),(.375,'house',.34,.45,.2),(.155,'architecture',.12,.22,.22)]:
-                await travel(page,p)
-                x=(p-a)/(b-a);c=x-.5;fraction=(1-L)*x+L*(4*c*c*c+.5)
-                await page.wait_for_function("({name,fraction})=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return !v.seeking&&Math.abs(v.currentTime-v.duration*fraction)<.05;}",arg={'name':name,'fraction':fraction})
+            # Verify each selected native camera cut's endpoints and reading frames.
+            segments=await page.evaluate('window.__ljStory.cameraSegments')
+            assert len(segments)==(8 if width<=650 else 3),segments
+            for segment in segments:
+                await travel(page,segment['end']-.0001)
+                await page.wait_for_function("name=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return v.readyState>=2&&!v.seeking&&v.currentTime>=v.duration-.04&&v.getVideoPlaybackQuality().totalVideoFrames>0&&v.paused&&v.muted;}",arg=segment['name'])
+            for point in [.485,.375,.155]:
+                span=next(item for item in segments if item['start']<=point<item['end'])
+                await travel(page,point)
+                x=(point-span['start'])/(span['end']-span['start']);c=x-.5;L=span['linger'];fraction=(1-L)*x+L*(4*c*c*c+.5)
+                await page.wait_for_function("({name,fraction})=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return !v.seeking&&Math.abs(v.currentTime-v.duration*fraction)<.05;}",arg={'name':span['name'],'fraction':fraction})
             if width <= 650:
                 mobile=await page.locator('[data-cinema-film="details"]').evaluate("v=>({width:v.videoWidth,height:v.videoHeight,source:v.dataset.source})")
-                assert mobile['width']<mobile['height'] and mobile['source']=='details-mobile',mobile
+                assert mobile['width']==480 and mobile['height']==854 and mobile['source']=='details-mobile-hq',mobile
+            else:
+                assert await page.locator('[data-cinema-film="details"]').get_attribute('data-source') is None
+            await page.locator('.cinema-directory > summary').click()
             await page.locator('button[data-scene="4"]').focus();await page.keyboard.press('Enter')
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()
@@ -304,7 +313,7 @@ async def review_navigation(browser,base,output):
         else:target=page.locator('.chapter-nav a[href="#visit"]')
         await target.click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="2"')
         assert await page.locator('.mobile-menu').get_attribute('open') is None
-        await page.locator('button[data-scene="8"]').click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="8"')
+        await page.locator('.cinema-directory > summary').click();await page.locator('button[data-scene="8"]').click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="8"')
         await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
         assert await page.locator('#selected-service-ids').input_value()=='catering'
         await page.goto(base+'planning.html#vendors',wait_until='networkidle')
@@ -343,10 +352,10 @@ async def review_fallbacks(browser,base,output):
         await page.route('**/assets/venue/cinematic/*.mp4',lambda route:route.abort())
         if failure=='all':await page.route('**/assets/venue/cinematic/*.webm',lambda route:route.abort())
         await page.goto(base,wait_until='networkidle');await travel(page,.265,2)
-        if failure=='mp4':await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film=arrival]');return v.dataset.format==='webm'&&v.readyState>=2&&!v.seeking}")
+        if failure=='mp4':await page.wait_for_function("()=>{const v=document.querySelector('[data-cinema-film=house]');return v.dataset.format==='webm'&&v.readyState>=2&&!v.seeking}")
         else:
             await page.wait_for_timeout(800)
-            assert await page.locator('[data-film-layer="1"] > img').evaluate('i=>i.complete&&i.naturalWidth>0')
+            assert await page.locator('[data-film-layer="3"] > img').evaluate('i=>i.complete&&i.naturalWidth>0')
             assert await page.locator('.cinema-film video').evaluate_all('vs=>vs.every(v=>!v.classList.contains("is-decoded"))')
         await page.emulate_media(reduced_motion='reduce')
         await page.wait_for_function('!ScrollTrigger.getById("cinematic-journey")')
@@ -452,7 +461,7 @@ async def check_photos(browser,base,output):
     reports=[]
     for width in [390,1280]:
         page=await browser.new_page(viewport={"width":width,"height":900})
-        await page.goto(base,wait_until="networkidle");await travel(page,.155,1)
+        await page.goto(base,wait_until="networkidle");await travel(page,.265,2)
         before=await page.evaluate("scrollY");opener=page.locator(".cinema-detail:visible")
         await opener.click();viewer=page.locator("#photo-viewer");await viewer.wait_for(state="visible")
         assert await viewer.locator("img").evaluate("i=>i.complete&&i.naturalWidth>0&&getComputedStyle(i).objectFit==='contain'")
@@ -461,7 +470,7 @@ async def check_photos(browser,base,output):
         await snapshot(page,output,f"photo-{width}");await page.keyboard.press("Escape")
         await viewer.wait_for(state="hidden");assert await opener.evaluate("a=>document.activeElement===a")
         assert abs(await page.evaluate("scrollY")-before)<2
-        assert await page.locator(".cinema-story:visible").get_attribute("id")=="history"
+        assert await page.locator(".cinema-story:visible").get_attribute("id")=="visit"
         await page.close();reports.append({"width":width,"complete_photo_modal_focus_return":"passed"})
     return reports
 
