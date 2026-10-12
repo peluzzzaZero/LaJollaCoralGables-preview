@@ -1220,7 +1220,8 @@ html { scrollbar-gutter: stable; }
   opacity: clamp(.55, calc(var(--reading-progress, 1) * 2 - var(--word-step)), 1);
   transform: none; transition: opacity .3s var(--ease);
 }
-.cinema-year { display: block; color: #f2eee3cc; font: 400 clamp(64px, 7vw, 104px)/.9 var(--font-display); letter-spacing: -.04em; margin: 0 0 24px; }
+.cinema-year { display: block; color: var(--sage-deep); font: 400 clamp(64px, 7vw, 104px)/.9 var(--font-display); letter-spacing: -.04em; margin: 0 0 24px; }
+.motion-page .cinema-scroll .cinema-year { color: #f2eee3cc; }
 .motion-page .cinema-scroll .cinema-story[data-scene-copy="1"] { top: 19%; width: min(38%, 440px); }
 .motion-page .cinema-scroll .cinema-story[data-scene-copy="2"] { width: min(42%, 520px); }
 .motion-page .cinema-scroll .cinema-story[data-scene-copy="3"] { top: auto; bottom: 22%; }
