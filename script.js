@@ -7,6 +7,27 @@
 
   const I18N = {
     en: {
+
+      "motion.head.history": "Coral Gables.",
+      "motion.head.visit": "The ballroom.",
+      "motion.head.events": "Your occasion.",
+      "motion.head.alcazar": "The Lexington.",
+      "motion.head.rentals": "Beyond the house.",
+      "motion.head.gallery": "Design & details.",
+      "motion.head.team": "Our team.",
+      "motion.head.planning": "Let’s begin.",
+      "motion.hero": "Weddings, private gatherings and event services in Coral Gables and throughout South Florida.",
+      "motion.alcazar": "An upstairs lounge for cocktails, private dinners and smaller gatherings.",
+      "motion.final": "Share your occasion, date and preferred setting. We’ll be in touch to discuss the details.",
+      "motion.index": "Chapters",
+      "motion.link.history": "About the house",
+      "motion.link.visit": "See the spaces",
+      "motion.link.events": "Explore occasions",
+      "motion.link.alcazar": "Explore The Lexington",
+      "motion.link.rentals": "View services",
+      "motion.link.gallery": "Explore the details",
+      "motion.link.team": "Meet the team",
+
       "motion.team.body": "Julie Arias, Executive Director, and Patricia Mir, Managing Director. A personal team to help you shape your occasion.",
       "motion.details.body": "From the welcome at the table to the smallest finishing touch. Discover the details that give La Jolla its character.",
       "motion.close": "Close details",
@@ -29,7 +50,7 @@
       "journey.beyond.title": "Your vision. Your location.",
       "journey.beyond.body": "Rentals, design and production throughout South Florida. Furniture, lighting, florals and tableware, brought together for the location you choose.",
       "journey.beyond.link": "Explore services",
-      "journey.finale.kicker": "Imagine the possibilities",
+      "journey.finale.kicker": "Your occasion",
       "journey.finale.title": "Let's plan something memorable.",
       "journey.finale.body": "At La Jolla or beyond. Tell us your occasion, your date and your ideas; we will help you explore the possibilities.",
       "cinema.eyebrow": "A sense of place",
@@ -112,7 +133,7 @@
       "gallery.label": "La Jolla brand gallery",
       "gallery.previous": "Previous piece",
       "gallery.next": "Next piece",
-      "hero.offer": "A historic setting for your celebration. Event services at La Jolla and throughout South Florida.",
+      "hero.offer": "Weddings, private gatherings and event services in Coral Gables and throughout South Florida.",
       "hero.explore": "Explore the possibilities",
       "hero.enter": "Step inside",
       "hero.chapter1": "The arrival",
@@ -283,12 +304,12 @@
       "footer.vendor": "Become a Vendor",
       "footer.terms": "Terms",
       "footer.privacy": "Privacy",
-      "motion.history": "Since 1928. Mediterranean arches, garden light and a setting shaped by Coral Gables.",
-      "motion.visit": "From the ballroom to the smallest detail, discover the setting for your occasion.",
-      "motion.events": "Weddings, private dinners and corporate gatherings. A ballroom shaped around your guests.",
+      "motion.history": "Mediterranean arches, ivy and striped awnings. Find the house at 301 Alcazar Avenue.",
+      "motion.visit": "A light-filled ballroom, chandeliers and an open setting for your celebration.",
+      "motion.events": "Weddings. Private dinners. Corporate gatherings. Explore the occasions we welcome.",
       "motion.lexington": "The Lexington. An intimate setting for private gatherings, dining and shared moments.",
-      "motion.rentals": "Planning, rentals and production, at La Jolla or at your chosen location in South Florida.",
-      "motion.gallery": "From the invitation to the table, let each detail tell your story.",
+      "motion.rentals": "Furniture, florals, tableware, lighting and production. At La Jolla or at the location you choose.",
+      "motion.gallery": "Invitations, table settings and finishing touches. Explore the La Jolla identity.",
       "motion.team": "Julie Arias and Patricia Mir. A personal approach to every occasion.",
       "motion.finale": "Your occasion. Your date. Your ideas. Let's begin.",
       "motion.nav.house": "The house",
@@ -303,6 +324,27 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "motion.head.history": "Coral Gables.",
+      "motion.head.visit": "El salón.",
+      "motion.head.events": "Su ocasión.",
+      "motion.head.alcazar": "The Lexington.",
+      "motion.head.rentals": "Más allá de la casa.",
+      "motion.head.gallery": "Diseño y detalles.",
+      "motion.head.team": "Nuestro equipo.",
+      "motion.head.planning": "Empecemos.",
+      "motion.hero": "Bodas, encuentros privados y servicios para eventos en Coral Gables y en todo el sur de Florida.",
+      "motion.alcazar": "Un lounge en la planta superior para cócteles, cenas privadas y encuentros más pequeños.",
+      "motion.final": "Comparta la ocasión, la fecha y el lugar que prefiere. Nos pondremos en contacto para hablar de los detalles.",
+      "motion.index": "Capítulos",
+      "motion.link.history": "Conozca la casa",
+      "motion.link.visit": "Vea los espacios",
+      "motion.link.events": "Explore las ocasiones",
+      "motion.link.alcazar": "Conozca The Lexington",
+      "motion.link.rentals": "Vea los servicios",
+      "motion.link.gallery": "Explore los detalles",
+      "motion.link.team": "Conozca al equipo",
+
+
       "motion.team.body": "Julie Arias, directora ejecutiva, y Patricia Mir, directora general. Un equipo cercano que le ayudará a dar forma a su celebración.",
       "motion.details.body": "Desde la bienvenida en la mesa hasta el último toque. Descubra los detalles que dan carácter a La Jolla.",
       "motion.close": "Cerrar detalles",
@@ -325,7 +367,7 @@
       "journey.beyond.title": "Su idea. Su espacio.",
       "journey.beyond.body": "Alquileres, diseño y producción en el sur de Florida. Mobiliario, iluminación, flores y vajilla para dar forma al lugar que elija.",
       "journey.beyond.link": "Explore los servicios",
-      "journey.finale.kicker": "Imagine las posibilidades",
+      "journey.finale.kicker": "Su ocasión",
       "journey.finale.title": "Planeemos algo memorable.",
       "journey.finale.body": "En La Jolla o en el lugar que elija. Cuéntenos la ocasión, la fecha y sus ideas; le ayudaremos a explorar las posibilidades.",
       "cinema.eyebrow": "El carácter de un lugar",
@@ -408,7 +450,7 @@
       "gallery.label": "Galería de identidad de La Jolla",
       "gallery.previous": "Pieza anterior",
       "gallery.next": "Siguiente pieza",
-      "hero.offer": "Un entorno histórico para su celebración. Servicios para eventos en La Jolla y en todo el sur de Florida.",
+      "hero.offer": "Bodas, encuentros privados y servicios para eventos en Coral Gables y en todo el sur de Florida.",
       "hero.explore": "Explore las posibilidades",
       "hero.enter": "Entre a descubrirlo",
       "hero.chapter1": "La llegada",
@@ -579,12 +621,12 @@
       "footer.vendor": "Convertirse en proveedor",
       "footer.terms": "Términos",
       "footer.privacy": "Privacidad",
-      "motion.history": "Desde 1928. Arcos mediterráneos, luz de jardín y el carácter de Coral Gables.",
-      "motion.visit": "Un salón lleno de luz y detalles que dan carácter a tu celebración.",
-      "motion.events": "Bodas, cenas privadas y encuentros de empresa. Un salón que se adapta a tus invitados.",
+      "motion.history": "Arcos mediterráneos, hiedra y toldos a rayas. Encuentre la casa en 301 Alcazar Avenue.",
+      "motion.visit": "Un salón lleno de luz, lámparas de araña y un espacio abierto para su celebración.",
+      "motion.events": "Bodas. Cenas privadas. Encuentros de empresa. Explore las ocasiones que recibimos.",
       "motion.lexington": "The Lexington. Un ambiente íntimo para reuniones privadas, cenas y momentos compartidos.",
-      "motion.rentals": "Planificación, alquileres y producción, en La Jolla o donde imagines tu evento en el sur de Florida.",
-      "motion.gallery": "De la invitación a la mesa, deja que cada detalle cuente tu historia.",
+      "motion.rentals": "Mobiliario, flores, menaje, iluminación y producción. En La Jolla o en el lugar que usted elija.",
+      "motion.gallery": "Invitaciones, mesas y los detalles finales. Explore la identidad de La Jolla.",
       "motion.team": "Julie Arias y Patricia Mir. Una atención personal para cada celebración.",
       "motion.finale": "Tu celebración. Tu fecha. Tus ideas. Empecemos.",
       "motion.nav.house": "La casa",
@@ -595,7 +637,7 @@
       "motion.nav.services": "Servicios",
       "motion.nav.details": "Detalles",
       "motion.nav.team": "Equipo",
-      "motion.nav.plan": "Tu evento",
+      "motion.nav.plan": "Su ocasión",
       "footer.rights": "Todos los derechos reservados.",
     },
   };
@@ -681,20 +723,34 @@
     const positions = [.035, .155, .265, .375, .485, .595, .705, .815, .965];
     const chapters = [[0, .10], [.12, .21], [.23, .32], [.34, .43], [.45, .54], [.56, .65], [.67, .76], [.78, .87], [.92, 1.01]];
     // One camera journey; each source has its own pace and a quiet reading centre.
-    const filmSegments = [
+    const portrait = window.matchMedia("(max-width: 650px) and (orientation: portrait)");
+    const portraitSegments = [
       { name: "journey", start: 0, end: .12, linger: .2 },
       { name: "architecture", start: .12, end: .22, linger: .22 },
       { name: "arrival", start: .22, end: .28, linger: .15 },
-      { name: "balcony", start: .28, end: .34, linger: .15 },
-      { name: "house", start: .34, end: .45, linger: .2 },
+      { name: "balcony", start: .28, end: .45, linger: .15 },
       { name: "details", start: .45, end: .56, linger: .12 },
       { name: "exterior", start: .56, end: .67, linger: .12 },
-      { name: "details", start: .67, end: .78, linger: .12, reverse: true },
+      { name: "craft", start: .67, end: .78, linger: .12 },
       { name: "house", start: .78, end: 1, linger: .1 }
     ];
+    // Wide screens use the approved panorama instead of enlarging a 480px portrait crop.
+    // Its camera runs forward across the story; the original room/detail photographs
+    // provide the evidence for individual interior chapters.
+    const landscapeSegments = [
+      { name: "journey", start: 0, end: .12, linger: .2 },
+      { name: "architecture", start: .12, end: .22, linger: .22 },
+      { name: "house", start: .22, end: 1, linger: .1 }
+    ];
+    let filmSegments = portrait.matches ? portraitSegments : landscapeSegments;
+    // The film carries the motion. Copy/photo treatment follows each chapter,
+    // rather than replaying one entrance on every slide.
+    const copyMotion = ['settle', 'fade', 'rise', 'fade', 'fade', 'rise', 'fade', 'fade', 'settle'];
+    const photoMotion = ['still', 'still', 'assemble', 'still', 'still', 'drift', 'assemble', 'still'];
+    stories.forEach((story, i) => { story.dataset.copyMotion = copyMotion[i]; });
+    details.forEach((detail, i) => { detail.dataset.photoMotion = photoMotion[i]; });
     const filmStates = videos.map(() => ({ loaded: false, controller: null }));
     const saveData = !!(navigator.connection && navigator.connection.saveData);
-    const portrait = window.matchMedia("(max-width: 650px) and (orientation: portrait)");
     let trigger = null, observer = null, nearby = false, renderCurrent = null;
     let viewportSpan = window.innerHeight, viewportWidth = window.innerWidth;
     let userReady = false;
@@ -719,6 +775,7 @@
       frame.append(fragments);
     });
     function resetPresentation() {
+      const brandMark = document.querySelector('header .logo-mark-img'); if (brandMark) brandMark.src = 'assets/brand/logo-lj-oval-sage.png';
       section.dataset.scene = 'all'; delete section.dataset.film;
       section.style.removeProperty('--chapter-ink'); section.style.removeProperty('--world-progress');
       layers.forEach(layer => { layer.style.opacity = ''; layer.style.zIndex = ''; });
@@ -801,14 +858,17 @@
     function goTo(index, focus) {
       if (index < 0 || !stories[index]) return;
       closeChapterDetails();
+      const directory = section.querySelector('.cinema-directory'); if (directory) directory.open = false;
       if (trigger) {
         window.scrollTo({ top: trigger.start + (trigger.end - trigger.start) * positions[index], behavior: focus ? 'instant' : 'smooth' });
         if (focus) { trigger.update(); trigger.animation.progress(positions[index]); }
       } else stories[index].scrollIntoView({ behavior: 'auto', block: 'start' });
       if (focus) { stories[index].setAttribute('tabindex', '-1'); requestAnimationFrame(() => requestAnimationFrame(() => { if (!stories[index].hidden) stories[index].focus({ preventScroll: true }); })); }
     }
+    const directory = section.querySelector('.cinema-directory');
+    directory?.addEventListener('keydown', event => { if (event.key === 'Escape' && directory.open) { directory.open = false; directory.querySelector('summary').focus(); } });
     window.__ljStory = { goTo, chapterIds: stories.map(s => s.id), cameraSegments: filmSegments };
-    buttons.forEach((button, index) => button.addEventListener('click', () => goTo(index, false)));
+    buttons.forEach((button, index) => button.addEventListener('click', event => goTo(index, event.detail === 0)));
     function restoreHash() {
       const id = location.hash.slice(1);
       const index = stories.findIndex(story => story.id === id || (id === 'possibilities' && story.id === 'hero') || (id === 'quote' && story.id === 'planning'));
@@ -817,12 +877,13 @@
     window.addEventListener('hashchange', restoreHash);
     window.addEventListener('load', () => window.setTimeout(restoreHash, 100));
     window.addEventListener('lajolla-language', () => { if (renderCurrent) renderCurrent(); });
-    portrait.addEventListener('change', () => { releaseFilms(); if (renderCurrent) renderCurrent(); });
+    portrait.addEventListener('change', () => { filmSegments = portrait.matches ? portraitSegments : landscapeSegments; window.__ljStory.cameraSegments = filmSegments; releaseFilms(); if (renderCurrent) renderCurrent(); });
     window.addEventListener('resize', () => { if (window.innerWidth !== viewportWidth) { viewportWidth = window.innerWidth; viewportSpan = window.innerHeight; trigger?.refresh(); } });
     resetPresentation();
     return { animate: function (gsap, ScrollTrigger) {
       if (saveData || window.innerHeight < 600) return null;
       section.classList.add('cinema-scroll');
+      const brandMark = document.querySelector('header .logo-mark-img'); if (brandMark) brandMark.src = 'assets/brand/logo-lj-oval-cream.png';
       const playhead = { progress: 0 };
       function render() {
         const p = playhead.progress;
@@ -830,20 +891,26 @@
         const range = chapters[current];
         const local = range ? clamp((p - range[0]) / (range[1] - range[0])) : 0;
         const fade = range ? Math.min(current === 0 ? 1 : smooth((p - range[0]) / .012), current === 8 ? 1 : smooth((range[1] - p) / .016)) : 0;
+        if (current >= 0) {
+          const number = String(current + 1).padStart(2, '0') + ' / 09'; const numberNode = section.querySelector('[data-current-number]'); if (numberNode.textContent !== number) numberNode.textContent = number;
+          const label = buttons[current].querySelector('span:last-child').textContent; const labelNode = section.querySelector('[data-current-chapter]'); if (labelNode.textContent !== label) labelNode.textContent = label;
+        }
         section.dataset.scene = String(current); section.style.setProperty('--chapter-ink', String(fade)); section.style.setProperty('--world-progress', String(p));
         stories.forEach(function (story, i) {
           if (i !== current) { const more = story.querySelector('.chapter-more'); if (more?.open) { more.open = false; closeChapterDetails(); } }
           setAvailable(story, i === current); story.style.opacity = String(fade);
-          story.style.transform = 'translate3d(0,' + ((1 - fade) * 18) + 'px,0)';
+          const lift = copyMotion[i] === 'rise' ? 14 : copyMotion[i] === 'settle' ? 6 : 0;
+          story.style.transform = 'translate3d(0,' + ((1 - fade) * lift) + 'px,0)';
           story.style.setProperty('--reading-progress', String(current === 0 ? .72 + .28 * smooth(local / .5) : smooth(local / .58)));
         });
         details.forEach(function (detail, i) {
-          const visible = current === i || (current === 8 && [0,3,4,5].includes(i)); setAvailable(detail, visible);
-          if (visible) detail.querySelectorAll('.photo-slice img').forEach(image => { if (!image.getAttribute('src')) image.src = image.dataset.photoSource; });
+          const visible = current === i && [2,4,5,6].includes(i); setAvailable(detail, visible);
+          if (visible && detail.dataset.photoMotion === 'assemble') detail.querySelectorAll('.photo-slice img').forEach(image => { if (!image.getAttribute('src')) image.src = image.dataset.photoSource; });
           const photoFade = current === 0 ? 1 : Math.min(1, fade * 1.2);
           detail.style.opacity = String(photoFade);
           detail.style.setProperty('--photo-spread', String(1 - smooth(local / .34)));
-          detail.style.transform = 'translate3d(0,' + ((1 - fade) * 18 + (local - .5) * 7) + 'px,0)';
+          const drift = photoMotion[i] === 'drift' ? (local - .5) * 12 : 0;
+          detail.style.transform = 'translate3d(0,' + drift + 'px,0)';
         });
         buttons.forEach((button, i) => { button.setAttribute('aria-pressed', String(i === current)); button.style.setProperty('--scene-progress', String(clamp((p - chapters[i][0]) / (chapters[i][1] - chapters[i][0])))); });
         let segmentIndex = filmSegments.findIndex(segment => p >= segment.start && p < segment.end);
@@ -866,6 +933,7 @@
           // A reused take must seek the nearest interval before its dissolve,
           // keeping the outgoing end and incoming first frame intact.
           const spans = filmSegments.filter(s => s.name === video.dataset.cinemaFilm);
+          if (!spans.length) return;
           const distance = s => p < s.start ? s.start - p : p > s.end ? p - s.end : 0;
           const span = spans.reduce((a, b) => distance(a) <= distance(b) ? a : b);
           let fraction = clamp((p - span.start) / (span.end - span.start));

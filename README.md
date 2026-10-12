@@ -1,6 +1,6 @@
 # La Jolla Coral Gables
 
-A bilingual editorial website for La Jolla Coral Gables, using approved brand assets and descriptions. Static HTML, CSS and JavaScript; locally vendored GSAP/ScrollTrigger; native scrolling; Web3Forms inquiries.
+A bilingual editorial website for La Jolla Coral Gables, using approved brand assets and descriptions. Static HTML, CSS and JavaScript with a Node backend; locally vendored GSAP/ScrollTrigger and native scrolling. Inquiry delivery depends on the configured host/mail setup.
 
 ## Preview and checks
 
@@ -17,13 +17,13 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.14.1. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.15.0. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `dev` → review and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
 GitHub Pages publishes `main` at https://jolla.peluzzza.com. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.14.1 notes](tests/releases/v1.14.1.md) and [the latest review](tests/reviews/v1.14.1.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.15.0 notes](tests/releases/v1.15.0.md) and [the latest review](tests/reviews/v1.15.0.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Content requirements
 
@@ -44,3 +44,7 @@ Two notification modes are available: GoDaddy's built-in gateway (platform sende
 Use the platform Node version within the declared range, `npm ci`, `npm run build` and `npm start`. The server listens on its assigned `PORT`. Native public delivery and private setup default off; adding credentials alone does not enable either. `/healthz` reports process health and enabled state only. Public pages/assets are allowed, private files/source are denied, and HTTP byte ranges preserve the approved films.
 
 Node-served planning forms use the same-origin API without a Web3Forms fallback. Static GitHub Pages retains its old transport while the migration is pending. Activate only after the private setup records verified storage, mailbox authorization when applicable and manually confirmed technical receipt. Contact fields are retained on failed submissions; UUIDs prevent accepted unchanged retries from being resent during the browser session, and uncertain saved records need owner reconciliation. Automated tests use isolated fake providers and a local/CI MySQL container, never real mail or the business database.
+
+## Cinematic art direction
+
+The interface uses one self-hosted Manrope variable font, factual room/occasion copy and an adaptive full-screen camera with an accessible chapter directory. The ballroom is supported by its original photograph, and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
