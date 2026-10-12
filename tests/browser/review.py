@@ -260,7 +260,7 @@ async def review_motion(browser, base, output, viewports=None):
                 assert await page.locator('.cinema-story:visible,.cinema-detail:visible').count()==0
             # Verify each selected native camera cut's endpoints and reading frames.
             segments=await page.evaluate('window.__ljStory.cameraSegments')
-            assert len(segments)==(8 if width<=650 else 3),segments
+            assert len(segments)==(8 if width<=650 else 6),segments
             for segment in segments:
                 await travel(page,segment['end']-.0001)
                 await page.wait_for_function("name=>{const v=Array.from(document.querySelectorAll('[data-cinema-film]')).find(v=>v.dataset.cinemaFilm===name);return v.readyState>=2&&!v.seeking&&v.currentTime>=v.duration-.04&&v.getVideoPlaybackQuality().totalVideoFrames>0&&v.paused&&v.muted;}",arg=segment['name'])

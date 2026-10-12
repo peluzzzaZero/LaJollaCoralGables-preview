@@ -35,14 +35,14 @@ async def main(base,output,webkit=False,webkit_only=False):
             actual=await page.locator('[data-cinema-film="journey"]').evaluate('v=>({source:v.dataset.source,width:v.videoWidth})')
             assert actual['source']==('journey-hd' if width>=1500 else 'journey'), actual
             if width>=1500: assert actual['width']==1920
-            camera='details' if width<650 else 'house'
+            camera='details' if width<650 else 'stair-wide'
             await travel(page,.455,4)
             await page.wait_for_function("name=>{const v=document.querySelector('[data-cinema-film='+name+']');return v.readyState>=2&&!v.seeking&&v.currentTime>0;}",arg=camera)
             first=await page.locator('[data-cinema-film="'+camera+'"]').evaluate('v=>v.currentTime')
             await travel(page,.535,4)
-            await page.wait_for_function("({name,first})=>{const v=document.querySelector('[data-cinema-film='+name+']');return !v.seeking&&v.currentTime>first+.4;}",arg={'name':camera,'first':first})
+            await page.wait_for_function("({name,first})=>{const v=document.querySelector('[data-cinema-film='+name+']');return !v.seeking&&v.currentTime>first+3;}",arg={'name':camera,'first':first})
             last=await page.locator('[data-cinema-film="'+camera+'"]').evaluate('v=>v.currentTime')
-            assert last-first>(3 if width<650 else .4),(first,last)
+            assert last-first>3,(first,last)
             if width<650:
                 assert await page.locator('[data-cinema-film=details]').get_attribute('data-source')=='details-mobile-hq'
             else:
