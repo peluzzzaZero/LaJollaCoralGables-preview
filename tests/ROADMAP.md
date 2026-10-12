@@ -119,3 +119,7 @@ Restore complete readable headings and the original cream navigation. Reserve wo
 ## v1.16.0 — venue-tour calendar in the inquiry page
 
 Integrate the owner-owned Microsoft Bookings schedule as an on-demand accessible dialog beside the existing event-quote form, and offer it again after a successful inquiry. Preserve homepage motion, selected services, entered draft and provider booking session. EN/ES controls, keyboard dismissal/focus restoration, narrow phones and desktop, HTTPS embedding and external/no-JS fallback are reviewed without actual email or appointment creation. Tour booking is independent of the preferred event date. Remaining: verify each owner's Outlook notification flow, finish native inquiry activation and implement reviewed event-space occupancy rules before exposing confirmed event reservations.
+
+## v1.16.1 — booking-only planning at the owner's request
+
+Remove the full selected quote form and redundant notice/submit action; retain tours through the existing calendar and direct contact for event discussions. Reword EN/ES page introduction, use a compact single-column layout, and keep service selections across navigation for discussion in booking notes. Vendor form and prepared native API are retained. Revise browser assertions to cover the actual remaining routes and keep vendor error/retry/idempotency/privacy tests. Do not describe tours as confirmed event-space reservations.

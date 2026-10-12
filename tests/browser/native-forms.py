@@ -36,36 +36,34 @@ async def review(base, output):
             await page.goto(base.rstrip('/') + '/planning.html', wait_until='networkidle')
             assert await page.locator('html').get_attribute('data-inquiry-transport') == 'native'
             await page.locator(f'[data-lang="{language}"]').click()
-            for field, value in {'q-name': 'Fake native visitor', 'q-email': 'native-test@example.com', 'q-phone': '+13055550100', 'q-date': '2027-02-15', 'q-guests': '40', 'q-comments': 'FAKE PRIVATE NOTE — not an inquiry'}.items():
-                await page.locator('#' + field).fill(value)
-            await page.locator('#q-type').select_option('wedding')
-            await page.locator('#quote-form [type=submit]').click()
-            await page.locator('#form-send-error').wait_for(state='visible')
-            assert await page.locator('#q-name').input_value() == 'Fake native visitor'
-            assert reference in await page.locator('#form-send-error').text_content()
-            other = 'en' if language == 'es' else 'es'
-            await page.locator(f'[data-lang="{other}"]').click()
-            assert reference in await page.locator('#form-send-error').text_content()
-            status = 200
-            await page.locator('#quote-form [type=submit]').click()
-            await page.locator('#form-success').wait_for(state='visible')
-            assert await page.locator('#q-name').input_value() == ''
-            assert len(requests) == 2 and requests[0]['key'] == requests[1]['key']
-            assert requests[0]['payload']['kind'] == 'quote'
-            assert set(requests[0]['payload']) == {'kind', 'name', 'email', 'phone', 'eventDate', 'guestCount', 'eventType', 'eventLocation', 'selectedServices', 'selectedServiceIds', 'rentalInterest', 'comments'}
+            assert await page.locator('#quote-form').count() == 0
             await page.locator('#vendor-details > summary').click()
             for field, value in {'v-name': 'Fake native vendor', 'v-company': 'Fake test company', 'v-service': 'Technical native test', 'v-email': 'vendor-test@example.com'}.items():
                 await page.locator('#' + field).fill(value)
             await page.locator('#vendor-form [type=submit]').click()
+            await page.locator('#vendor-send-error').wait_for(state='visible')
+            assert await page.locator('#v-name').input_value() == 'Fake native vendor'
+            assert reference in await page.locator('#vendor-send-error').text_content()
+            other = 'en' if language == 'es' else 'es'
+            await page.locator(f'[data-lang="{other}"]').click()
+            assert reference in await page.locator('#vendor-send-error').text_content()
+            status = 200
+            await page.locator('#vendor-form [type=submit]').click()
             await page.locator('#vendor-success').wait_for(state='visible')
-            assert requests[-1]['payload']['kind'] == 'vendor'
-            assert requests[-1]['key'] != requests[0]['key']
-            assert set(requests[-1]['payload']) == {'kind', 'name', 'email', 'company', 'service'}
+            assert await page.locator('#v-name').input_value() == ''
+            assert len(requests) == 2 and requests[0]['key'] == requests[1]['key']
+            assert requests[0]['payload']['kind'] == 'vendor'
+            assert set(requests[0]['payload']) == {'kind', 'name', 'email', 'company', 'service'}
+            for field, value in {'v-name': 'Different fake vendor', 'v-company': 'Other fake company', 'v-service': 'Other technical test', 'v-email': 'another-test@example.com'}.items():
+                await page.locator('#' + field).fill(value)
+            await page.locator('#vendor-form [type=submit]').click()
+            await page.locator('#vendor-success').wait_for(state='visible')
+            assert len(requests) == 3 and requests[-1]['key'] != requests[0]['key']
             stored = await page.evaluate('JSON.stringify({local:{...localStorage},session:{...sessionStorage}})')
-            assert 'native-test@example.com' not in stored and 'FAKE PRIVATE NOTE' not in stored
+            assert 'vendor-test@example.com' not in stored and 'another-test@example.com' not in stored
             assert not external and not errors
             await page.screenshot(path=str(output / f'native-{width}.png'))
-            reports.append({'viewport': width, 'quote_vendor_mapping': 'passed', 'unchanged_retry_uuid': 'passed', 'uncertain_reference_translation': 'passed', 'contact_storage': 'none', 'external_mail_calls': 0, 'real_emails_sent': 0})
+            reports.append({'viewport': width, 'quote_form': 'removed', 'vendor_mapping': 'passed', 'unchanged_retry_uuid': 'passed', 'uncertain_reference_translation': 'passed', 'contact_storage': 'none', 'external_mail_calls': 0, 'real_emails_sent': 0})
             await context.close()
         await browser.close()
     (output / 'results.json').write_text(json.dumps(reports, indent=2) + '\n')

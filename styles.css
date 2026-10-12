@@ -1448,3 +1448,11 @@ html { scrollbar-gutter: stable; }
 /* Reader content uses ink on cream; film typography belongs only to the lead copy. */
 .chapter-body .alcazar-copy > p:not(.eyebrow) { color: var(--ink-soft); }
 .chapter-body .team-card > h3 { color: var(--ink); font-size: clamp(24px, 2.5vw, 36px); line-height: 1.15; letter-spacing: -.035em; }
+
+/* Booking-only planning: no empty column left by the removed inquiry form. */
+.planning-page .inquiry-layout { display: block; max-width: 780px; }
+.planning-page #quote .section-head { position: static; }
+.planning-page #quote .inquiry-selection { margin-top: 1.75rem; }
+.planning-page #quote .inquiry-selection .booking-note { font-size: .85rem; line-height: 1.6; margin: 1rem 0 0; }
+
+.planning-page #quote .section-title { font-size: clamp(2.5rem, 6vw, 4.5rem); overflow-wrap: anywhere; }

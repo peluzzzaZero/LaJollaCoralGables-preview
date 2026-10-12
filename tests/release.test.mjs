@@ -70,6 +70,8 @@ test('all public information remains in nine native chapters and forms have a se
   assert.equal((html.match(/class="brand-card[^"]*"/g) || []).length, 7);
   assert.equal((html.match(/class="team-card reveal"/g) || []).length, 2);
   assert.equal(html.includes('<form'), false);
-  for (const id of ['quote-form', 'vendor-form']) assert.ok(planning.includes(`id="${id}"`));
+  assert.ok(planning.includes('id="vendor-form"'));
+  assert.equal(planning.includes('id="quote-form"'), false);
+  assert.ok(planning.includes('id="booking-viewer"'));
   assert.ok(html.includes('href="planning.html"'));
 });

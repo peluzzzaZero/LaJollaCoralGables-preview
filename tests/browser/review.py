@@ -64,16 +64,13 @@ async def check_forms(browser, base):
     context = await browser.new_context(viewport={"width": 390, "height": 844})
     page = await context.new_page()
     requests = []
-    response = {"success": True}
-    status = 200
-    mode = "json"
+    response, status, mode = {"success": True}, 200, "json"
 
     async def mail(route):
-        nonlocal response, status, mode
         requests.append(route.request.post_data_json)
         await asyncio.sleep(.1)
         if mode == "timeout":
-            return  # Leave the intercepted request pending until the client's timeout aborts it.
+            return
         if mode == "offline":
             await route.abort("failed")
         else:
@@ -82,119 +79,72 @@ async def check_forms(browser, base):
     await page.route("https://api.web3forms.com/**", mail)
     await page.goto(base + "planning.html", wait_until="networkidle")
     await page.locator('[data-lang="es"]').click()
+    assert await page.locator('#quote-form').count() == 0
     expected = await page.locator(".rentals-quiet-link span").first.text_content()
     await page.locator(".rentals-quiet-link").first.click()
     await page.locator(".selection-continue").click()
-    # A CSS-visible form elsewhere in the document is insufficient: navigation
-    # must actually bring its heading into this viewport after a native jump.
     await page.wait_for_function("""() => {
       const r = document.getElementById('quote-title').getBoundingClientRect();
       return r.top >= 68 && r.bottom <= innerHeight;
     }""", timeout=5000)
-    assert await page.locator("#selected-services").input_value() == expected
-    assert await page.locator("#q-type").input_value() == "rental"
+    assert expected in await page.locator('#inquiry-selection').text_content()
+    assert await page.locator('.inquiry-visit [data-booking-opener]').is_visible()
     await scroll(page, 0)
     await page.locator(".inquire-link").click()
     await page.wait_for_function("""() => {
       const r = document.getElementById('quote-title').getBoundingClientRect();
       return r.top >= 68 && r.bottom <= innerHeight;
     }""", timeout=5000)
-
-    async def fill_quote():
-        if await page.locator('[data-service-id="planning"]').get_attribute("aria-pressed") != "true":
-            await page.locator('[data-service-id="planning"]').click()
-            await page.locator(".selection-continue").click()
-        await page.locator("#q-interest").fill("Additional written detail")
-        await page.locator("#q-comments").fill("Celebración & detalles? #sí + private note")
-        for field, value in {"q-name": " Browser test ", "q-email": " browser@example.com ", "q-phone": "+13055550100", "q-date": "2027-02-15", "q-guests": "40"}.items():
-            await page.locator(f"#{field}").fill(value)
-        await page.locator("#q-type").select_option("wedding")
-        await page.locator("#q-location").select_option("exploring")
+    await page.locator('#vendor-details summary').click()
+    form = page.locator('#vendor-form')
+    await form.evaluate('f => f.requestSubmit()')
+    assert await page.locator('#vendor-error').is_visible()
+    assert not requests
 
     async def fill_vendor():
         for field, value in {"v-name": " Browser test ", "v-company": "Test company", "v-service": "Test service", "v-email": " browser@example.com "}.items():
-            await page.locator(f"#{field}").fill(value)
+            await page.locator('#' + field).fill(value)
 
-    for form, prefix, fill in (("quote-form", "form", fill_quote), ("vendor-form", "vendor", fill_vendor)):
-        if form == "vendor-form":
-            await page.locator("#vendor-details summary").click()
-        await page.locator(f"#{form}").evaluate("f => f.reset()")
-        await page.wait_for_timeout(50)
-        await page.locator(f"#{form}").evaluate("f => f.requestSubmit()")
-        assert await page.locator(f"#{prefix}-error").is_visible()
-        assert not requests or form == "vendor-form"
-        await fill()
-        name = "q-name" if form == "quote-form" else "v-name"
-        await page.locator(f"#{name}").fill("   ")
-        count = len(requests)
-        await page.locator(f"#{form}").evaluate("f => f.requestSubmit()")
-        assert len(requests) == count, "Whitespace-only name submitted"
-        assert await page.locator(f"#{name}").get_attribute("aria-invalid") == "true"
-        await fill()
+    await fill_vendor()
+    await page.locator('#v-name').fill('   ')
+    await form.evaluate('f => f.requestSubmit()')
+    assert not requests
+    assert await page.locator('#v-name').get_attribute('aria-invalid') == 'true'
+    await fill_vendor()
+    failures = [({"success": False, "message": "<script>private-contact@example.com</script>"}, 400, "json"), ({"success": False}, 429, "json"), ({"success": False}, 200, "json"), ({}, 200, "json"), ({"success": True}, 503, "json"), ({}, 200, "offline"), ({}, 200, "invalid-json"), ({}, 200, "timeout")]
+    for response, status, mode in failures:
+        await form.evaluate('f => f.requestSubmit()')
+        await page.locator('#vendor-send-error').wait_for(state='visible')
+        assert await page.locator('#vendor-success').is_hidden()
+        assert await page.locator('#v-name').input_value() == 'Browser test'
+        assert await form.locator('[type=submit]').is_enabled()
+        assert await form.locator('.inquiry-recovery').is_visible()
+        assert 'private-contact@example.com' not in await page.locator('#vendor-send-error').text_content()
+        await form.locator('.inquiry-email-draft').evaluate("a => a.addEventListener('click', e => e.preventDefault())")
+        draft = await form.locator('.inquiry-email-draft').evaluate('a => { a.click(); return a.href; }')
+        from urllib.parse import urlsplit, parse_qs
+        parsed = urlsplit(draft)
+        assert parsed.path == 'info@lajollacoralgables.com'
+        body = parse_qs(parsed.query)['body'][0]
+        assert all(value in body for value in ['Browser test', 'browser@example.com', 'Test company', 'Test service'])
+        await page.wait_for_timeout(20)
+        assert await form.locator('.inquiry-email-draft').get_attribute('href') == 'mailto:info@lajollacoralgables.com'
 
-        failures = [( {"success": False, "message": "<script>private-contact@example.com</script>"}, 400, "json"), ({"success": False}, 429, "json"), ( {"success": False}, 200, "json"), ({}, 200, "json"), ({"success": True}, 503, "json"), ({}, 200, "offline"), ({}, 200, "invalid-json")]
-        if form == "quote-form":
-            failures.append(({}, 200, "timeout"))
-        for bad_response, bad_status, bad_mode in failures:
-            response, status, mode = bad_response, bad_status, bad_mode
-            await page.locator(f"#{form}").evaluate("f => f.requestSubmit()")
-            await page.locator(f"#{prefix}-send-error").wait_for(state="visible")
-            assert await page.locator(f"#{prefix}-success").is_hidden()
-            assert await page.locator(f"#{name}").input_value() == "Browser test", "Failure discarded the form"
-            if form == "quote-form":
-                assert await page.locator("#q-location").input_value() == "exploring", "Failure discarded the setting"
-            assert await page.locator(f"#{form} button[type=submit]").is_enabled()
-            assert await page.locator(f"#{form} .inquiry-recovery").is_visible()
-            assert "private-contact@example.com" not in await page.locator(f"#{prefix}-send-error").text_content()
-            # Explicit recovery builds a draft with current values, safely encoded.
-            await page.locator(f"#{form} .inquiry-email-draft").evaluate("a => a.addEventListener('click', e => e.preventDefault())")
-            draft = await page.locator(f"#{form} .inquiry-email-draft").evaluate("a => { a.click(); return a.href; }")
-            from urllib.parse import urlsplit, parse_qs
-            parsed = urlsplit(draft)
-            assert parsed.path == "info@lajollacoralgables.com"
-            body = parse_qs(parsed.query)["body"][0]
-            assert "Browser test" in body
-            assert "browser@example.com" in body
-            if form == "quote-form":
-                assert "Celebración & detalles? #sí + private note" in body
-                assert expected in body
-                assert "2027-02-15" in body
-                assert "Additional written detail" in body
-                assert "+13055550100" in body
-            else:
-                assert "Test company" in body and "Test service" in body
-            await page.wait_for_timeout(20)
-            assert await page.locator(f"#{form} .inquiry-email-draft").get_attribute("href") == "mailto:info@lajollacoralgables.com"
-
-            if form == "quote-form":
-                assert await page.locator("#selected-services").input_value() == expected
-                assert await page.locator("#q-interest").input_value() == "Additional written detail"
-
-        response, status, mode = {"success": True}, 200, "json"
-        count = len(requests)
-        await page.locator(f"#{form}").evaluate("f => { f.requestSubmit(); f.requestSubmit(); }")
-        await page.locator(f"#{prefix}-success").wait_for(state="visible")
-        await page.wait_for_timeout(200)
-        assert len(requests) == count + 1, "Duplicate submission was sent"
-        assert await page.locator(f"#{form} .inquiry-recovery").is_hidden()
-        assert requests[-1]["email"] == "browser@example.com"
-        assert requests[-1]["replyto"] == "browser@example.com"
-        assert requests[-1]["ccemail"] == "info@lajollacoralgables.com"
-        if form == "quote-form":
-            assert requests[-1]["selectedServices"] == expected
-            assert requests[-1]["selectedServiceIds"] == "planning"
-            assert requests[-1]["rentalInterest"] == "Additional written detail"
-            assert await page.locator("#selected-services").input_value() == ""
-            assert await page.locator("#catalog-selection li").count() == 0
-            assert requests[-1]["eventLocation"] == "exploring"
-            assert await page.locator("#q-location").input_value() == ""
-        assert await page.locator(f"#{name}").input_value() == ""
-        assert await page.locator(f"#{form} button[type=submit]").is_enabled()
-        assert await page.locator(f"#{form}").get_attribute("aria-busy") is None
+    response, status, mode = {'success': True}, 200, 'json'
+    count = len(requests)
+    await form.evaluate('f => { f.requestSubmit(); f.requestSubmit(); }')
+    await page.locator('#vendor-success').wait_for(state='visible')
+    await page.wait_for_timeout(200)
+    assert len(requests) == count + 1
+    assert await form.locator('.inquiry-recovery').is_hidden()
+    assert requests[-1]['email'] == 'browser@example.com'
+    assert requests[-1]['replyto'] == 'browser@example.com'
+    assert requests[-1]['ccemail'] == 'info@lajollacoralgables.com'
+    assert await page.locator('#v-name').input_value() == ''
+    assert await form.locator('[type=submit]').is_enabled()
+    assert await form.get_attribute('aria-busy') is None
     await context.close()
-    return {"simulated_requests": len(requests), "real_emails_sent": 0, "inquiry_in_viewport": "passed", "validation": "passed", "failure_and_retry": "passed", "timeout": "passed", "invalid_json": "passed", "duplicate_guard": "passed"}
-
-
+    return {'simulated_requests': len(requests), 'real_emails_sent': 0, 'quote_form': 'removed', 'planning_navigation': 'passed', 'vendor_validation_and_retry': 'passed', 'timeout': 'passed', 'invalid_json': 'passed', 'duplicate_guard': 'passed'}
 
 POSITIONS = [.035,.155,.265,.375,.485,.595,.705,.815,.965]
 CHAPTERS = ['hero','history','visit','events','alcazar','rentals','gallery','team','planning']
@@ -333,7 +283,7 @@ async def review_motion(browser, base, output, viewports=None):
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()
             await page.wait_for_url('**/planning.html')
-            assert await page.locator('#q-type').input_value()=='alcazar'
+            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).type")=='alcazar'
             assert await page.locator('html').get_attribute('lang')==language
             assert await page.evaluate("document.activeElement.id==='quote-title'")
             assert not errors,errors
@@ -353,12 +303,14 @@ async def review_navigation(browser,base,output):
         await page.locator('[data-service-id="planning"]').click();await page.locator('[data-service-id="catering"]').click()
         await page.locator('[data-lang="es"]').click()
         await page.locator('.selection-continue').click();await page.wait_for_url('**/planning.html')
-        assert await page.locator('#selected-service-ids').input_value()=='planning, catering'
-        assert await page.locator('#q-type').input_value()=='rental'
+        assert await page.locator('#inquiry-selection li').count()==2
+        assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).type")=='rental'
         assert await page.locator('html').get_attribute('lang')=='es'
         await page.locator('#inquiry-selection button').first.click()
-        assert await page.locator('#selected-service-ids').input_value()=='catering'
-        await page.locator('#q-name').fill('Do not persist contact')
+        assert await page.locator('#inquiry-selection li').count()==1
+        assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).services")==['catering']
+        await page.locator('#vendor-details summary').click()
+        await page.locator('#v-name').fill('Do not persist contact')
         stored=await page.evaluate('JSON.stringify(sessionStorage)')
         assert 'Do not persist contact' not in stored
         await page.locator('.logo').click();await page.wait_for_url('**/index.html')
@@ -369,7 +321,8 @@ async def review_navigation(browser,base,output):
         assert await page.locator('.mobile-menu').get_attribute('open') is None
         await page.locator('.cinema-directory > summary').click();await page.locator('button[data-scene="8"]').click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="8"')
         await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
-        assert await page.locator('#selected-service-ids').input_value()=='catering'
+        assert await page.locator('#inquiry-selection li').count()==1
+        assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).services")==['catering']
         await page.goto(base+'planning.html#vendors',wait_until='networkidle')
         assert await page.locator('#vendor-details').get_attribute('open') is not None
         assert await page.evaluate('ScrollTrigger.getAll().length')==0
@@ -396,7 +349,8 @@ async def review_fallbacks(browser,base,output):
             assert await page.locator('#events-content').is_visible()
         else:
             await travel(page,.965,8);await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
-            assert await page.locator('#quote-form button[type=submit]').is_enabled()
+            assert await page.locator('#vendor-form button[type=submit]').is_enabled()
+            assert await page.locator('#quote-form').count()==0
         assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
         assert not errors,errors
         await page.screenshot(path=str(output/f'fallback-{mode}.png'))
@@ -468,7 +422,7 @@ async def check_venue_media(browser, base, output):
             assert await viewer.is_hidden()
             await page.locator('[data-i18n="visit.cta"]').click()
             await page.wait_for_url("**/planning.html")
-            assert await page.locator("#q-location").input_value() == "la-jolla"
+            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).location") == "la-jolla"
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
             results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "both_films_decoded": "passed", "single_player": "passed", "modal_keyboard_close_focus": "passed", "venue_inquiry": "passed"})
             await page.close()

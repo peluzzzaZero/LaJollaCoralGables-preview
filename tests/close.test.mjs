@@ -19,13 +19,13 @@ function revealOverride(id) {
   return match[1];
 }
 
-test("quote keeps its required contact and event fields and local submit wiring", () => {
-  const section = sectionBetween("quote", "vendors");
-  for (const name of ["name", "email", "phone", "eventDate", "guestCount"]) {
-    assert.match(section, new RegExp(`name="${name}"`), name);
-  }
-  assert.match(section, /<button[^>]+type="submit"/);
-  assert.match(js, /initLocalForm\("quote-form"/);
+test("planning uses the live tour calendar without the removed quote form", () => {
+  const section = sectionBetween("quote", "rentals");
+  assert.equal(section.includes('<form'), false);
+  assert.match(section, /data-booking-opener/);
+  assert.match(section, /https:\/\/bookings\.cloud\.microsoft\/book\//);
+  assert.match(section, /mailto:info@lajollacoralgables\.com/);
+  assert.match(section, /id="inquiry-selection"/);
 });
 
 test("vendor form keeps name, company, service, and email", () => {

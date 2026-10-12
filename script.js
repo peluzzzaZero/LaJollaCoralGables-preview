@@ -90,7 +90,7 @@
       "rentals.select": "Select",
       "rentals.selected": "Selected",
       "selection.title": "Your selection",
-      "selection.help": "Choose the services that interest you. You can adjust your selection before sending an inquiry.",
+      "selection.help": "Choose the services you would like to discuss with our team.",
       "selection.continue": "Discuss your selection",
       "selection.inquiry": "Services to discuss",
       "selection.edit": "Explore more services",
@@ -243,9 +243,9 @@
       "team.title": "Our Team",
       "team.julie.role": "Executive Director",
       "team.pat.role": "Managing Director",
-      "quote.eyebrow": "Private quote",
-      "quote.title": "Request a private quote",
-      "quote.intro": "Share a few details. We will be in touch.",
+      "quote.eyebrow": "An invitation",
+      "quote.title": "Let’s start planning",
+      "quote.intro": "Schedule a venue tour or contact our team to discuss your occasion.",
       "form.name": "Name",
       "form.email": "Email",
       "form.phone": "Phone",
@@ -277,7 +277,8 @@
       "booking.title": "Come see the house",
       "booking.intro": "Choose an available time for a venue tour.",
       "booking.open": "Schedule a visit",
-      "booking.separate": "A tour appointment is separate from your event inquiry and does not reserve an event space.",
+      "booking.selectionHelp": "Include these services in your booking notes, or discuss them with our team.",
+      "booking.separate": "A tour appointment does not reserve a space for an event.",
       "booking.dialogTitle": "Schedule your visit",
       "booking.help": "Select a date and time in the calendar. Your visit is confirmed when Bookings completes the reservation. Check the time zone shown before booking.",
       "booking.close": "Close booking calendar",
@@ -417,7 +418,7 @@
       "rentals.select": "Elegir",
       "rentals.selected": "Elegido",
       "selection.title": "Su selección",
-      "selection.help": "Elija los servicios que le interesan. Puede ajustar su selección antes de enviar una consulta.",
+      "selection.help": "Elija los servicios que desea comentar con nuestro equipo.",
       "selection.continue": "Consultar su selección",
       "selection.inquiry": "Servicios para consultar",
       "selection.edit": "Explorar más servicios",
@@ -570,9 +571,9 @@
       "team.title": "Nuestro equipo",
       "team.julie.role": "Executive Director",
       "team.pat.role": "Managing Director",
-      "quote.eyebrow": "Cotización privada",
-      "quote.title": "Solicitar cotización privada",
-      "quote.intro": "Comparta algunos datos. Le responderemos.",
+      "quote.eyebrow": "Una invitación",
+      "quote.title": "Comencemos a planear",
+      "quote.intro": "Agende una visita o contacte con nuestro equipo para hablar de su ocasión.",
       "form.name": "Nombre",
       "form.email": "Correo",
       "form.phone": "Teléfono",
@@ -604,7 +605,8 @@
       "booking.title": "Venga a conocer la casa",
       "booking.intro": "Elija un horario disponible para visitar el lugar.",
       "booking.open": "Agendar una visita",
-      "booking.separate": "La visita es independiente de su solicitud de evento y no reserva un espacio para celebrarlo.",
+      "booking.selectionHelp": "Incluya estos servicios en las notas de la reserva o coméntelos con nuestro equipo.",
+      "booking.separate": "La cita para visitar el lugar no reserva un espacio para un evento.",
       "booking.dialogTitle": "Agende su visita",
       "booking.help": "Seleccione una fecha y hora en el calendario. Su visita queda confirmada cuando Bookings completa la reserva. Compruebe la zona horaria indicada antes de reservar.",
       "booking.close": "Cerrar calendario de visitas",
@@ -1156,7 +1158,7 @@
         renderInquirySelection();
         const remaining = list.querySelectorAll("button");
         const focus = remaining[Math.min(index, remaining.length - 1)] || (list.id === "catalog-selection"
-          ? document.querySelector('[data-service-id="' + service + '"]') : document.getElementById("q-name"));
+          ? document.querySelector('[data-service-id="' + service + '"]') : document.querySelector("[data-booking-opener]"));
         if (focus) focus.focus({ preventScroll: true });
         if (window.ScrollTrigger && !document.body.classList.contains("reading-details")) window.ScrollTrigger.refresh();
       }
@@ -1585,7 +1587,6 @@
     // Resolve selection and menu layout before positioning or focusing an anchor.
     initStory(initCinematicWindow());
     initVenueFilms();
-    initLocalForm("quote-form", "form-success", "form-error", "form-send-error", "La Jolla inquiry");
     initLocalForm("vendor-form", "vendor-success", "vendor-error", "vendor-send-error", "La Jolla vendor");
     initBookingCalendar();
     initYear();
