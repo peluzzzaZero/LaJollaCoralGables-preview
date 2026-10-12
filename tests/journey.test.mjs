@@ -40,3 +40,22 @@ test('the three actual shots stay within a combined delivery budget with unchang
   assert.ok(mp4Bytes < 4_400_000);
   assert.ok(webmBytes < 3_700_000);
 });
+
+test('desktop photo motion preserves its approved sources and bounded silent delivery assets', () => {
+  const root = new URL('../assets/venue/cinematic/', import.meta.url);
+  const manifest = JSON.parse(readFileSync(new URL('desktop-source.json', root), 'utf8'));
+  assert.equal(manifest.generation_cost_usd, 0);
+  for (const source of Object.values(manifest.sources)) {
+    const original = readFileSync(new URL('../' + source.path, import.meta.url));
+    assert.equal(createHash('sha256').update(original).digest('hex'), source.sha256);
+  }
+  let totalMp4 = 0;
+  for (const [name, entry] of Object.entries(manifest.assets)) {
+    const bytes = readFileSync(new URL(name, root));
+    assert.equal(bytes.length, entry.bytes);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), entry.sha256);
+    assert.ok(bytes.length < (name.endsWith('.webp') ? 200_000 : 2_500_000), `${name} delivery budget`);
+    if (name.endsWith('.mp4')) totalMp4 += bytes.length;
+  }
+  assert.ok(totalMp4 < 4_000_000);
+});

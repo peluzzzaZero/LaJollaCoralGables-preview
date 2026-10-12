@@ -1,0 +1,185 @@
+{
+  "version": "1.15.1",
+  "treatment": "Five-second horizontal photo pans from unchanged approved originals. Crop/translation/scale only; no inferred geometry, optical flow or generative alteration. These are animated photographs, not captured walkthrough footage. Original entrance and portrait camera are unchanged.",
+  "generation_cost_usd": 0,
+  "sources": {
+    "history-wide": {
+      "path": "assets/venue/facade-wide.jpg",
+      "sha256": "fcc920b88d09115951ea6019a99b360290ecde29f56bc8301f2b7efee7b80a76",
+      "zoom_start": 1,
+      "zoom_end": 1.07,
+      "duration_seconds": 5
+    },
+    "room-wide": {
+      "path": "assets/venue/ballroom-piano.jpg",
+      "sha256": "711b2a09f180381ce5277f30fe9ddae69eff8fd07af41efdb38b7a2fb3df59b8",
+      "zoom_start": 1,
+      "zoom_end": 1.065,
+      "duration_seconds": 5
+    },
+    "stair-wide": {
+      "path": "assets/venue/staircase.jpg",
+      "sha256": "8cdabf41d05b0d92c7596fc8e9ca60c89192244a0516e26a463baf468fbe5358",
+      "zoom_start": 1,
+      "zoom_end": 1.07,
+      "duration_seconds": 5
+    },
+    "identity-wide": {
+      "path": "assets/brand/wax-seal-photo.jpg",
+      "sha256": "1bdfeabfe0f1f5b898949564eccc09b6d9556f7e356bbfb9e557742c92504bb9",
+      "zoom_start": 1,
+      "zoom_end": 1.08,
+      "duration_seconds": 5
+    }
+  },
+  "assets": {
+    "history-wide.mp4": {
+      "bytes": 1805790,
+      "sha256": "95cf590e3f67a15d7227f434ec3b014b4b1b80c07104f015bc655671d251ec11",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "history-wide.webm": {
+      "bytes": 2306089,
+      "sha256": "f48c6994889123d4e8b9d4ab3c9c0ecacfb3fcf5d5de00b4288e2fdd8347b86d",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "history-wide-poster.webp": {
+      "bytes": 99676,
+      "sha256": "7e0d2ccd1a2c3cc9f066436f94a5fd6f58ed4adcc2d00ffdc153519c0feae65c"
+    },
+    "room-wide.mp4": {
+      "bytes": 921096,
+      "sha256": "b601e58954ee1bb7475eaf821fc0507150a14ffa623cb9265b01e3ad6485ca1a",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "room-wide.webm": {
+      "bytes": 1030023,
+      "sha256": "0f385f94958ac333f799f006a8bc284f17c2e4c136a4f0e19a17a2c1c69e181d",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "room-wide-poster.webp": {
+      "bytes": 41676,
+      "sha256": "478d0807db19c17120559f804c0ca79ca6599491a9d8523ddbc341d5ddc3a5c8"
+    },
+    "stair-wide.mp4": {
+      "bytes": 645540,
+      "sha256": "b521bf37bee6e1eeb68a24343873feaea280045c4d726fb94282186095966267",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "stair-wide.webm": {
+      "bytes": 696204,
+      "sha256": "65b6af6e69de6bd92b2a24c8502eb49f1b69c4c335b47af11cadecd069df1a91",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "stair-wide-poster.webp": {
+      "bytes": 27196,
+      "sha256": "992e37538d8d87caa407444738abf1c620cd6001a74bf784e565b091351fa97e"
+    },
+    "identity-wide.mp4": {
+      "bytes": 384991,
+      "sha256": "109aefc41b844e45f81df7bf386429658954b27cf6f2760fab49c9604f7d1424",
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "identity-wide.webm": {
+      "bytes": 386618,
+      "sha256": "d5ac7b82f4c7fa60dcc0c16717cd527545556477923670fd115d51cbf7cf1cf8",
+      "streams": [
+        {
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 1024,
+          "height": 576,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "duration_seconds": 5.0
+    },
+    "identity-wide-poster.webp": {
+      "bytes": 14160,
+      "sha256": "611ad2dcc8731b08aca3036948ae26b4c157da48181a1993b3821af8d1c65268"
+    }
+  },
+  "encoding": {
+    "dimensions": [
+      1024,
+      576
+    ],
+    "fps": 24,
+    "mp4": {
+      "codec": "h264",
+      "crf": 26,
+      "gop_frames": 8,
+      "faststart": true
+    },
+    "webm": {
+      "codec": "vp9",
+      "crf": 35,
+      "gop_frames": 8
+    },
+    "audio": false,
+    "delivery": "Lazy selected/next clip only; desktop-only posters and videos are hidden on portrait phones."
+  }
+}

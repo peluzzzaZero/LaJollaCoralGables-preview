@@ -734,13 +734,16 @@
       { name: "craft", start: .67, end: .78, linger: .12 },
       { name: "house", start: .78, end: 1, linger: .1 }
     ];
-    // Wide screens use the approved panorama instead of enlarging a 480px portrait crop.
-    // Its camera runs forward across the story; the original room/detail photographs
-    // provide the evidence for individual interior chapters.
+    // Horizontal photographs carry each desktop beat without stretching a
+    // portrait recording or spreading one five-second take over seven chapters.
+    // Animated originals are not represented as a captured interior walkthrough.
     const landscapeSegments = [
       { name: "journey", start: 0, end: .12, linger: .2 },
-      { name: "architecture", start: .12, end: .22, linger: .22 },
-      { name: "house", start: .22, end: 1, linger: .1 }
+      { name: "history-wide", start: .12, end: .22, linger: .12 },
+      { name: "room-wide", start: .22, end: .45, linger: .12 },
+      { name: "stair-wide", start: .45, end: .56, linger: .12 },
+      { name: "identity-wide", start: .56, end: .78, linger: .12 },
+      { name: "house", start: .78, end: 1, linger: .1 }
     ];
     let filmSegments = portrait.matches ? portraitSegments : landscapeSegments;
     // The film carries the motion. Copy/photo treatment follows each chapter,
@@ -752,7 +755,8 @@
     const filmStates = videos.map(() => ({ loaded: false, controller: null }));
     const saveData = !!(navigator.connection && navigator.connection.saveData);
     let trigger = null, observer = null, nearby = false, renderCurrent = null;
-    let viewportSpan = window.innerHeight, viewportWidth = window.innerWidth;
+    let viewportSpan = window.innerHeight, viewportWidth = window.innerWidth, viewportHeight = window.innerHeight;
+    let wideSource = window.innerWidth >= 1500;
     let userReady = false;
     const clamp = x => Math.min(1, Math.max(0, x));
     const smooth = x => { x = clamp(x); return x * x * (3 - 2 * x); };
@@ -878,10 +882,19 @@
     window.addEventListener('load', () => window.setTimeout(restoreHash, 100));
     window.addEventListener('lajolla-language', () => { if (renderCurrent) renderCurrent(); });
     portrait.addEventListener('change', () => { filmSegments = portrait.matches ? portraitSegments : landscapeSegments; window.__ljStory.cameraSegments = filmSegments; releaseFilms(); if (renderCurrent) renderCurrent(); });
-    window.addEventListener('resize', () => { if (window.innerWidth !== viewportWidth) { viewportWidth = window.innerWidth; viewportSpan = window.innerHeight; trigger?.refresh(); } });
+    window.addEventListener('resize', () => {
+      const changedWidth = window.innerWidth !== viewportWidth;
+      const changedDesktopHeight = !portrait.matches && window.innerHeight !== viewportHeight;
+      viewportHeight = window.innerHeight;
+      if (!changedWidth && !changedDesktopHeight) return; // Keep phone toolbar resizing stable.
+      const nextWideSource = window.innerWidth >= 1500;
+      if (nextWideSource !== wideSource) { wideSource = nextWideSource; releaseFilms(); }
+      viewportWidth = window.innerWidth; viewportSpan = window.innerHeight;
+      trigger?.refresh(); if (renderCurrent) renderCurrent();
+    });
     resetPresentation();
     return { animate: function (gsap, ScrollTrigger) {
-      if (saveData || window.innerHeight < 600) return null;
+      if (saveData) return null; // Viewport/reduced-motion eligibility belongs to initStory media queries.
       section.classList.add('cinema-scroll');
       const brandMark = document.querySelector('header .logo-mark-img'); if (brandMark) brandMark.src = 'assets/brand/logo-lj-oval-cream.png';
       const playhead = { progress: 0 };
@@ -1001,7 +1014,7 @@
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.config({ ignoreMobileResize: true });
       const media = gsap.matchMedia();
-      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px)", function () {
+      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)", function () {
         const dispose = cinema.animate(gsap, ScrollTrigger);
         ScrollTrigger.refresh();
         return function () { closeChapterDetails(); if (dispose) dispose(); };
