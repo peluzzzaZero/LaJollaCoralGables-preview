@@ -1014,7 +1014,7 @@
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.config({ ignoreMobileResize: true });
       const media = gsap.matchMedia();
-      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px)", function () {
+      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)", function () {
         const dispose = cinema.animate(gsap, ScrollTrigger);
         ScrollTrigger.refresh();
         return function () { closeChapterDetails(); if (dispose) dispose(); };
