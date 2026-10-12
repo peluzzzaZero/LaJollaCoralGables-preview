@@ -422,7 +422,7 @@ async def check_venue_media(browser, base, output):
             assert await viewer.is_hidden()
             await page.locator('[data-i18n="visit.cta"]').click()
             await page.wait_for_url("**/planning.html")
-            assert await page.locator("#q-location").input_value() == "la-jolla"
+            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).location") == "la-jolla"
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
             results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "both_films_decoded": "passed", "single_player": "passed", "modal_keyboard_close_focus": "passed", "venue_inquiry": "passed"})
             await page.close()
