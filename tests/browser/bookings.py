@@ -16,7 +16,7 @@ async def main(base, output):
     results = []
     async with async_playwright() as p:
         browser = await p.chromium.launch(**launch)
-        for width, height in [(320, 600), (390, 844), (1366, 768)]:
+        for width, height in [(320, 600), (390, 844), (1366, 500), (1366, 768)]:
             context = await browser.new_context(viewport={'width': width, 'height': height})
             page = await context.new_page()
             provider_requests = []
