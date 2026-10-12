@@ -844,7 +844,11 @@
           }
         }
         videos.forEach(function (video, i) {
-          const span = segment.name === video.dataset.cinemaFilm ? segment : filmSegments.find(s => s.name === video.dataset.cinemaFilm);
+          // A reused take must seek the nearest interval before its dissolve,
+          // keeping the outgoing end and incoming first frame intact.
+          const spans = filmSegments.filter(s => s.name === video.dataset.cinemaFilm);
+          const distance = s => p < s.start ? s.start - p : p > s.end ? p - s.end : 0;
+          const span = spans.reduce((a, b) => distance(a) <= distance(b) ? a : b);
           let fraction = clamp((p - span.start) / (span.end - span.start));
           fraction = linger(fraction, span.linger);
           if (span.reverse) fraction = 1 - fraction;

@@ -57,6 +57,8 @@ async def main(base,output,webkit=False):
             assert last-first>3, (first,last)
             await travel(page,.485,4)
             await page.screenshot(path=str(output/f'motion-{width}.png'))
+            await travel(page,.775)
+            await page.wait_for_function("""() => {const v=document.querySelector('[data-cinema-film=house]');return v.readyState>=2&&!v.seeking&&v.currentTime<.08;}""")
             await travel(page,.965,8)
             for photo in await page.locator('.cinema-detail:visible').all():
                 await photo.locator('.photo-slice img').first.wait_for()
