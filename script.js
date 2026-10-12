@@ -730,19 +730,36 @@
       renderCurrent = null;
     }
     function primeVideo(video) {
-      if (!userReady || !portrait.matches || !video) return;
-      try { const play = video.play(); if (play?.then) play.then(() => video.pause()).catch(() => {}); } catch (_) {}
+      if (!userReady || !portrait.matches || !video?.filmURL || video.primedURL === video.filmURL) return;
+      const source = video.filmURL;
+      video.primeCleanup?.(); video.primedURL = source; video.priming = true;
+      let timer;
+      function cleanup() { clearTimeout(timer); video.removeEventListener('playing', finish); video.priming = false; }
+      function finish() {
+        if (video.filmURL !== source) return;
+        cleanup(); video.pause(); video.resumeSeek?.();
+      }
+      video.primeCleanup = cleanup;
+      // WebKit may delay play() settlement during a seek. Pause on the first
+      // playing event, with a bounded fallback, then restore the requested frame.
+      video.addEventListener('playing', finish, { once: true });
+      timer = setTimeout(finish, 120);
+      try { const play = video.play(); if (play?.then) play.then(finish, finish); } catch (_) { finish(); }
     }
     function firstGesture() { userReady = true; videos.forEach(primeVideo); }
     window.addEventListener('pointerdown', firstGesture, { once: true, passive: true });
     videos.forEach(function (video) {
       let desired = 0;
       function seek() {
-        if (video.readyState < 2 || video.seeking || !Number.isFinite(video.duration)) return;
+        if (video.priming || video.readyState < 1 || video.seeking || !Number.isFinite(video.duration)) return;
+        if (!video.paused) video.pause();
         const target = Math.min(video.duration - .001, Math.max(0, desired * video.duration));
         if (Math.abs(video.currentTime - target) > .012) { try { video.currentTime = target; } catch (_) {} }
       }
       video.requestFrame = fraction => { desired = fraction; seek(); };
+      video.resumeSeek = seek;
+      video.addEventListener('pause', seek);
+      video.addEventListener('loadedmetadata', function () { primeVideo(video); seek(); });
       video.addEventListener('seeked', function () { video.classList.add('is-decoded'); seek(); });
       video.addEventListener('loadeddata', function () { primeVideo(video); seek(); });
       video.addEventListener('error', () => video.classList.remove('is-decoded'));
@@ -764,6 +781,7 @@
           .then(response => { if (!response.ok) throw new Error('film'); return response.blob(); })
           .then(blob => {
             if (controller.signal.aborted) return;
+            video.primeCleanup?.();
             if (video.filmURL) URL.revokeObjectURL(video.filmURL);
             video.filmURL = URL.createObjectURL(blob); video.dataset.format = format; video.dataset.source = actualSource;
             video.src = video.filmURL; video.preload = 'auto'; video.load();
@@ -774,6 +792,7 @@
     function releaseFilms() {
       videos.forEach(function (video, index) {
         const state = filmStates[index]; state.controller?.abort(); state.controller = null; state.loaded = false;
+        video.primeCleanup?.(); video.primedURL = null;
         video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute('src'); video.classList.remove('is-decoded'); video.preload = 'none'; video.load();
         if (video.filmURL) URL.revokeObjectURL(video.filmURL);
         video.filmURL = null; delete video.dataset.format; delete video.dataset.source;

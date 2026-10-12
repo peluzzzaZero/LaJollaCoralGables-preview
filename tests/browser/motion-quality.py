@@ -88,6 +88,10 @@ async def main(base,output,webkit=False,webkit_only=False):
             assert frames[0]['pixels']!=frames[1]['pixels']
             assert all(f['source']=='details-mobile' and f['width']<f['height'] for f in frames)
             await travel(page,.485,4)
+            await page.wait_for_function("""()=>{const v=document.querySelector('[data-cinema-film=details]');return v.paused&&!v.seeking&&v.currentTime>1&&v.currentTime<2;}""")
+            held=await page.locator('[data-cinema-film=details]').evaluate('v=>v.currentTime')
+            await page.wait_for_timeout(1200)
+            assert abs(await page.locator('[data-cinema-film=details]').evaluate('v=>v.currentTime')-held)<.05
             await page.screenshot(path=str(output/'chapter-five-webkit.png'))
             reports.append({'engine':'WebKit mobile emulation','chapter':'05','recorded_video':'passed','decoded_frames_change':'passed','seconds_advanced':frames[1]['time']-frames[0]['time']})
             await browser.close()
