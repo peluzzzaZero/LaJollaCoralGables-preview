@@ -231,6 +231,22 @@ async def check_reader_legibility(body):
         ratio=reader_contrast(item['colour'],data['background'])
         assert ratio>=4.5,(item['text'],'reader body contrast',ratio)
 
+async def check_reader_button(page, body):
+    button=body.locator('a.btn-sage').first
+    await button.evaluate("""e=>{const r=e.closest('.cinema-story'),b=e.getBoundingClientRect(),p=r.getBoundingClientRect();r.scrollTop+=b.top-p.top-(p.height-b.height)/2}""")
+    box=await button.bounding_box()
+    await page.mouse.move(box['x']+box['width']/2,box['y']+box['height']/2)
+    await page.wait_for_timeout(350)
+    for state in ['hover','keyboard-focus']:
+        if state=='keyboard-focus':
+            await button.focus();await page.keyboard.press('Tab');await page.keyboard.press('Shift+Tab')
+            assert await button.evaluate("e=>e===document.activeElement&&e.matches(':focus-visible')"),'CTA keyboard focus was lost'
+            await page.mouse.move(1,1);await page.wait_for_timeout(350)
+        colours=await button.evaluate("e=>({colour:getComputedStyle(e).color,background:getComputedStyle(e).backgroundColor})")
+        ratio=reader_contrast(colours['colour'],colours['background'])
+        assert ratio>=4.5,(state,'filled CTA contrast',ratio,colours)
+    await body.locator('xpath=..').locator('xpath=..').evaluate('e=>{e.scrollTop=0}')
+
 async def review_motion(browser, base, output, viewports=None):
     reports=[]
     for width,height in (viewports or [(320,600),(390,667),(390,844),(768,1024),(838,884),(1280,900)]):
@@ -271,6 +287,7 @@ async def review_motion(browser, base, output, viewports=None):
                     body=page.locator(f'#{CHAPTERS[n]} .chapter-body')
                     assert await body.is_visible()
                     await check_reader_legibility(body)
+                    if n==4:await check_reader_button(page,body)
                     if n in [3,5,7]:
                         reader=page.locator('.cinema-story:visible')
                         await reader.evaluate('e=>{e.scrollTop=e.scrollHeight}')
