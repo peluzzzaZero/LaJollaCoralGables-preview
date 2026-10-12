@@ -32,7 +32,9 @@ async def main(base, output):
             await page.route('https://api.web3forms.com/**', mail)
             await page.goto(base.rstrip('/') + '/planning.html', wait_until='networkidle')
             assert not provider_requests, 'Microsoft must not load before a user opens the calendar'
-            await page.locator('#q-name').fill('FAKE retained draft')
+            assert await page.locator('#quote-form').count() == 0
+            await page.locator('[data-service-id="planning"]').click()
+            assert await page.locator('#inquiry-selection li').count() == 1
             opener = page.locator('.inquiry-visit [data-booking-opener]')
             for language in ['en', 'es']:
                 await page.locator(f'[data-lang="{language}"]').click()
@@ -42,7 +44,7 @@ async def main(base, output):
                 await page.frame_locator('.booking-frame').locator('h1').wait_for()
                 assert await page.locator('.booking-frame').get_attribute('src') == BOOKING_URL
                 assert len(provider_requests) == 1, 'Reopening must preserve the unfinished booking'
-                assert await page.locator('#form-success').is_hidden(), 'Loading a calendar never confirms an inquiry'
+                assert await page.locator('#form-success').count() == 0
                 assert await page.locator('.booking-fallback a').get_attribute('href') == BOOKING_URL
                 assert await page.locator('.booking-fallback a').get_attribute('target') == '_blank'
                 assert await page.evaluate('document.documentElement.scrollWidth <= innerWidth')
@@ -61,10 +63,11 @@ async def main(base, output):
                     await page.keyboard.press('Escape')
                 await viewer.wait_for(state='hidden')
                 assert await opener.evaluate('e => e === document.activeElement')
-                assert await page.locator('#q-name').input_value() == 'FAKE retained draft'
+                assert await page.locator('[data-service-id="planning"]').get_attribute('aria-pressed') == 'true'
+                assert await page.locator('#inquiry-selection li').count() == 1
                 assert not await page.locator('body').evaluate('e => e.classList.contains("booking-open")')
             assert not errors, errors
-            results.append({'width': width, 'height': height, 'lazyLoad': True, 'draftPreserved': True, 'closeAndEscape': True, 'languages': ['en', 'es']})
+            results.append({'width': width, 'height': height, 'lazyLoad': True, 'serviceSelectionPreserved': True, 'quoteFormRemoved': True, 'closeAndEscape': True, 'languages': ['en', 'es']})
             await context.close()
         context = await browser.new_context(java_script_enabled=False)
         page = await context.new_page()
@@ -73,7 +76,7 @@ async def main(base, output):
         assert await page.locator('.booking-frame').get_attribute('src') is None
         await browser.close()
     (output / 'results.json').write_text(json.dumps(results, indent=2))
-    print('Bookings: mobile/desktop, lazy load, retained draft/session, keyboard exit from iframe and Escape, focus return, EN/ES and no-JS fallback passed; no real appointments or emails.')
+    print('Bookings-only planning: no duplicate quote form; retained service selection/calendar session; keyboard, EN/ES, mobile/desktop and no-JS fallback passed; no real appointments or emails.')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
