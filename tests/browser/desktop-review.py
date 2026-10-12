@@ -9,7 +9,7 @@ async def main(base, output):
  output.mkdir(parents=True, exist_ok=True);reports=[]
  async with async_playwright() as p:
   b=await p.chromium.launch()
-  for w,h in [(1024,600),(1366,768),(1920,1080),(2560,1080)]:
+  for w,h in [(1024,600),(1366,500),(1366,768),(1920,1080),(2560,1080)]:
    page=await b.new_page(viewport={'width':w,'height':h})
    await page.goto(base,wait_until='networkidle');await page.evaluate('document.fonts.ready')
    for language in ['en','es']:
@@ -36,7 +36,7 @@ async def main(base, output):
    await page.wait_for_timeout(600)
    held=await page.locator('[data-cinema-film=stair-wide]').evaluate('v=>v.currentTime');await page.wait_for_timeout(400)
    assert abs(held-await page.locator('[data-cinema-film=stair-wide]').evaluate('v=>v.currentTime'))<.03
-   await page.set_viewport_size({'width':w,'height':600 if h!=600 else 768})
+   await page.set_viewport_size({'width':w,'height':500 if h!=500 else 768})
    await page.wait_for_timeout(500)
    span=await page.evaluate("()=>{const s=ScrollTrigger.getById('cinematic-journey');return(s.end-s.start)/innerHeight}")
    assert abs(span-11)<.05,('height-only refresh',span)

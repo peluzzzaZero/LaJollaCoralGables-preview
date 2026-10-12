@@ -894,7 +894,7 @@
     });
     resetPresentation();
     return { animate: function (gsap, ScrollTrigger) {
-      if (saveData || window.innerHeight < 600) return null;
+      if (saveData) return null; // Viewport/reduced-motion eligibility belongs to initStory media queries.
       section.classList.add('cinema-scroll');
       const brandMark = document.querySelector('header .logo-mark-img'); if (brandMark) brandMark.src = 'assets/brand/logo-lj-oval-cream.png';
       const playhead = { progress: 0 };
@@ -1014,7 +1014,7 @@
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.config({ ignoreMobileResize: true });
       const media = gsap.matchMedia();
-      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px)", function () {
+      media.add("(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)", function () {
         const dispose = cinema.animate(gsap, ScrollTrigger);
         ScrollTrigger.refresh();
         return function () { closeChapterDetails(); if (dispose) dispose(); };
