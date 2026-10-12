@@ -1378,3 +1378,49 @@ html { scrollbar-gutter: stable; }
 .motion-page:has(.cinema-scroll) .mobile-menu[open] .menu-lines::after { transform: rotate(-45deg); }
 
 @media (max-width: 650px) { .motion-page .cinema-scroll .cinema-story[data-scene-copy="8"] h3 { font-size: clamp(44px, 13.5vw, 56px); } }
+
+/* v1.15.1 — Desktop reading stays inside short laptop windows. */
+@media (min-width: 651px) and (max-height: 740px) {
+  .motion-page .cinema-scroll .cinema-story h1 { font-size: clamp(64px, 12svh, 100px); margin-bottom: 16px; }
+  .motion-page .cinema-scroll .cinema-year { font-size: clamp(64px, 18svh, 124px); margin-bottom: 16px; }
+  .motion-page .cinema-scroll .cinema-story h3 { font-size: clamp(30px, 5.5svh, 44px); margin-bottom: 16px; }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="3"] h3 { font-size: clamp(38px, 7svh, 56px); }
+  .motion-page .cinema-scroll .cinema-story .eyebrow { margin-bottom: 12px; }
+  .motion-page .cinema-scroll .cinema-story > p:not(.eyebrow) { font-size: 15px; line-height: 1.5; margin-bottom: 12px; }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="0"] { bottom: 104px; }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="1"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="2"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="4"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="5"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="6"] { top: 96px; }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="3"],
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="7"] { bottom: 104px; }
+  .motion-page .cinema-scroll .cinema-story[data-scene-copy="8"] h3 { font-size: clamp(48px, 10svh, 72px); }
+  .motion-page .cinema-scroll .motion-people { gap: 14px; margin-bottom: 16px; }
+  .motion-page .cinema-scroll .motion-people strong { font-size: 26px; }
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="2"] { top: 96px; width: min(45%, calc((100svh - 224px) * 16 / 9)); }
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="4"] { top: 96px; }
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="5"],
+  .motion-page .cinema-scroll .cinema-detail[data-scene-detail="6"] { bottom: 112px; }
+}
+
+.cinema-film[data-desktop-film] { display: none; }
+.cinema-scroll .cinema-film[data-desktop-film] { display: block; }
+@media (max-width: 650px) and (orientation: portrait) {
+  .cinema-scroll .cinema-film[data-desktop-film] { display: none; }
+}
+/* Horizontal room/paper images need a stable reading field and legible captions. */
+@media (min-width: 651px) {
+  .motion-page .cinema-scroll[data-scene="2"] .cinema-stage::before,
+  .motion-page .cinema-scroll[data-scene="3"] .cinema-stage::before,
+  .motion-page .cinema-scroll[data-scene="6"] .cinema-stage::before {
+    background: linear-gradient(90deg, #102019f2, #102019cc 42%, #1020194d 60%, transparent 82%), linear-gradient(0deg, #10201999, transparent 26%);
+  }
+  .motion-page .cinema-scroll[data-scene="4"] .cinema-stage::before,
+  .motion-page .cinema-scroll[data-scene="5"] .cinema-stage::before {
+    background: linear-gradient(270deg, #102019f2, #102019cc 42%, #1020194d 60%, transparent 82%), linear-gradient(0deg, #10201999, transparent 26%);
+  }
+  .motion-page .cinema-scroll .cinema-detail > span:not(.photo-window) {
+    width: fit-content; min-height: 0; margin-top: 8px; padding: 6px 10px; background: #102019d9; color: #f5f1e6;
+  }
+}
