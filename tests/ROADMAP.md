@@ -138,3 +138,7 @@ Next improvements, in order of useful evidence:
 - Collect approved high-resolution photographs of actual weddings and celebrations, with permission for identifiable guests. Use them beside the matching occasion descriptions instead of adding more motion.
 - Confirm each room's capacity, accessibility, parking, catering and scheduling policies. Present a concise visible FAQ near the visit invitation once those facts are reliable.
 - Validate the entrance-to-calendar journey with representative mobile visitors before adding more effects. A visit appointment remains separate from reserving event space.
+
+## v1.19.0 — visible motion without a second scroll world
+
+The owner found the first beige landing too static. Add layered arrival phrases, an advancing frame and a moving title alongside the only entrance zoom. Below, three photographed scenes receive native scroll depth and three one-time reveals; keep every paragraph visible and all later sections unpinned. Emphasize Weddings with one full-width editorial tile, with captions safely outside each moving image window. Reduced motion disables decoration. The next evidence priorities remain actual celebration photography, verified venue facts and an owner-configured Google review connection.

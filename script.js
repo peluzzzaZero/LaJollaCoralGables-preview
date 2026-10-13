@@ -51,6 +51,10 @@
       "motion.close": "Close details",
       "motion.more": "Discover more",
       "landing.explore": "Discover the house",
+      "landing.arrival": "An arrival worth remembering.",
+      "landing.house": "A house with a story.",
+      "landing.occasion": "Make it your occasion.",
+      "landing.arrive": "Arrive",
       "landing.visitReason": "A visit is the first step to finding the right setting for your occasion.",
       "journey.title": "The house. Your occasion. A world of possibilities.",
       "journey.label": "Explore the story",
@@ -331,6 +335,10 @@
       "motion.close": "Cerrar detalles",
       "motion.more": "Descubra más",
       "landing.explore": "Descubra la casa",
+      "landing.arrival": "Una llegada para recordar.",
+      "landing.house": "Una casa con historia.",
+      "landing.occasion": "Imagine su celebración.",
+      "landing.arrive": "Llegue",
       "landing.visitReason": "Una visita es el primer paso para encontrar el espacio adecuado para su celebración.",
       "journey.title": "La casa. Su celebración. Un mundo de posibilidades.",
       "journey.label": "Explore la historia",
@@ -631,7 +639,6 @@
     const video = entrance?.querySelector('.entrance-video');
     if (!video) return;
     const stage = entrance.querySelector('.entrance-stage');
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const saveData = !!navigator.connection?.saveData;
     let desired = 0, active = false, trigger = null, sourceIndex = 0;
     let priming = false, primeTimer, primeAttempts = 0, primeGeneration = 0, started = false;
@@ -650,12 +657,17 @@
       if (generation !== undefined && generation !== primeGeneration) return;
       if (!priming) return;
       priming = false; clearTimeout(primeTimer); video.pause(); seek();
-      if (active && video.readyState === 0 && objectURL && !nativeSource) {
-        // WebKit can defer metadata on a blob. Its native MP4 loader is the
-        // bounded fallback, as in the previously reviewed entrance player.
-        nativeSource = true; video.src = networkURL; video.load();
-        URL.revokeObjectURL(objectURL); objectURL = null; prime();
-      }
+      if (video.readyState === 0) useNativeSource();
+    }
+    function useNativeSource() {
+      if (!active || !objectURL || nativeSource) return false;
+      // WebKit can reject a blob at bootstrap or after a reverse seek. Try
+      // its native loader once for this same format before choosing another.
+      clearTimeout(primeTimer); priming = false; primeGeneration++; primeAttempts = 0;
+      video.pause(); video.classList.remove('is-decoded');
+      const previous = objectURL; objectURL = null; nativeSource = true;
+      video.src = networkURL; video.load(); URL.revokeObjectURL(previous); prime();
+      return true;
     }
     function prime() {
       if (!active || !video.hasAttribute('src') || priming || primeAttempts >= 3 || video.readyState >= 2) return;
@@ -691,15 +703,21 @@
     video.addEventListener('loadeddata', () => { finishPrime(); seek(); });
     video.addEventListener('seeked', seek);
     video.addEventListener('playing', () => finishPrime());
-    video.addEventListener('error', nextSource);
+    video.addEventListener('error', () => {
+      // An error queued by an abandoned source must not replace a fresh one.
+      if (video.error && !useNativeSource()) nextSource();
+    });
     // One paused entrance film. The rest of the page never seeks or pins media.
     function render(self) {
       desired = self.progress;
       entrance.dataset.progress = desired.toFixed(3);
+      stage.style.setProperty('--entrance-progress', desired.toFixed(4));
+      stage.dataset.phase = desired < .34 ? 'arrival' : desired < .72 ? 'house' : 'occasion';
       active = self.isActive && !document.hidden && !document.querySelector('dialog[open]');
       if (!active) { finishPrime(); video.pause(); return; }
       if (desired > .001 && !started) { started = true; nextSource(); }
-      else if ((video.error || loadFailed) && sourceIndex < formats.length) nextSource();
+      else if (video.error) { if (!useNativeSource()) nextSource(); }
+      else if (loadFailed && sourceIndex < formats.length) nextSource();
       prime(); seek();
     }
     function release() {
@@ -708,6 +726,7 @@
       video.removeAttribute('src'); video.load(); video.preload = 'none'; video.classList.remove('is-decoded');
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null; loadFailed = false; networkURL = null; nativeSource = false;
       sourceIndex = 0; primeAttempts = 0; started = false;
+      stage.style.removeProperty('--entrance-progress'); delete stage.dataset.phase;
     }
     if (window.gsap && window.ScrollTrigger && !saveData) {
       gsap.registerPlugin(ScrollTrigger);
@@ -716,7 +735,7 @@
       media.add('(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)', function () {
         entrance.classList.add('entrance-scroll');
         trigger = ScrollTrigger.create({ id: 'entrance-zoom', trigger: entrance, pin: stage,
-          start: 'top top', end: () => '+=' + Math.round(window.innerHeight * .9),
+          start: 'top top', end: () => '+=' + Math.round(window.innerHeight * 1.25),
           onUpdate: render, onRefresh: render, onEnter: render, onEnterBack: render,
           onLeave: render, onLeaveBack: render, invalidateOnRefresh: true });
         return () => { release(); trigger = null; entrance.classList.remove('entrance-scroll'); };
@@ -730,15 +749,57 @@
     window.addEventListener('pointerdown', prime, { passive: true });
     window.addEventListener('touchstart', prime, { passive: true });
     window.addEventListener('pagehide', release);
-    // Only decoration moves; headings and complete paragraphs are always visible.
-    if (!reduced.matches && !saveData && 'IntersectionObserver' in window) {
-      document.body.classList.add('landing-effects');
-      const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.classList.add('has-arrived'); observer.unobserve(entry.target); }
-      }), { threshold: .08 });
-      document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => observer.observe(element));
-    }
     window.__ljEntrance = { get trigger() { return trigger; }, video };
+  }
+
+  function initLandingMotion() {
+    if (!document.body.classList.contains('landing-page')) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const saveData = !!navigator.connection?.saveData;
+    const photos = [...document.querySelectorAll('[data-landing-parallax]')];
+    const visible = new Set();
+    let frame = 0, observer, reveal;
+    const progress = document.createElement('span');
+    progress.className = 'landing-reading-progress'; progress.setAttribute('aria-hidden', 'true');
+    document.querySelector('#header')?.append(progress);
+    function draw() {
+      frame = 0;
+      if (document.hidden || reduced.matches || saveData) return;
+      const span = document.documentElement.scrollHeight - innerHeight;
+      progress.style.setProperty('--reading-progress', String(span > 0 ? Math.min(1, Math.max(0, scrollY / span)) : 0));
+      for (const photo of visible) {
+        const image = photo.querySelector('img'), box = image.getBoundingClientRect();
+        const position = Math.max(-1, Math.min(1, (box.top + box.height / 2 - innerHeight / 2) / innerHeight));
+        photo.style.setProperty('--photo-drift', (position * Math.min(24, image.offsetHeight * .025)).toFixed(2) + 'px');
+      }
+    }
+    function schedule() { if (!frame) frame = requestAnimationFrame(draw); }
+    function configure() {
+      observer?.disconnect(); reveal?.disconnect(); visible.clear();
+      if (frame) cancelAnimationFrame(frame); frame = 0;
+      document.body.classList.remove('landing-effects');
+      photos.forEach(photo => photo.style.removeProperty('--photo-drift'));
+      progress.style.removeProperty('--reading-progress');
+      if (reduced.matches || saveData || !('IntersectionObserver' in window)) return;
+      document.body.classList.add('landing-effects');
+      // Only three photographs drift. Complete text never fades or follows scroll.
+      observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
+        schedule();
+      }, { rootMargin: '80px' });
+      photos.forEach(photo => observer.observe(photo));
+      // Three one-time image reveals complement the continuous photo motion.
+      reveal = new IntersectionObserver(entries => entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add('has-arrived'); reveal.unobserve(entry.target); }
+      }), { threshold: .08, rootMargin: '30px' });
+      document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => reveal.observe(element));
+      schedule();
+    }
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+    document.addEventListener('visibilitychange', schedule);
+    reduced.addEventListener('change', configure);
+    configure();
   }
 
   function initAnchorNavigation() {
@@ -827,6 +888,7 @@
     initChapterMenu();
     // Resolve the menu layout before positioning or focusing an anchor.
     initEntranceZoom();
+    initLandingMotion();
     initAnchorNavigation();
     initBookingCalendar();
     initYear();

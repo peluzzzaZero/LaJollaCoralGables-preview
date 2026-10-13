@@ -17,13 +17,13 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.18.0. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.19.0. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `develop` → Claude CLI Sonnet high review (Sol medium only after a recorded failure) and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
 GitHub Pages publishes `main` for https://lajollacoralgables.com. The owner selected GitHub hosting and retired the temporary jolla.peluzzza.com alias. Domain registration, DNS and Microsoft 365 email remain in GoDaddy. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.18.0 notes](tests/releases/v1.18.0.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.19.0 notes](tests/releases/v1.19.0.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Optional live guest reviews
 
@@ -39,7 +39,7 @@ Keep the year 1928, The Lexington, Julie Arias (Executive Director), Patricia Mi
 
 The user authorized rethinking the old composition and scroll timings. Tests for the old exact crops, pinned history and duplicated opening paragraphs have been updated to protect the new behavior; brand and content requirements remain covered. High-resolution approved photography, Pat's final tagline, an approved guest quote and actual inbox confirmation remain external decisions.
 
-The homepage starts with the approved five-second approach to the door. Only that short entrance is pinned and scrubbed; the remaining complete information uses ordinary vertical document flow, photographs, subtle shadows and decorative reveals. No chapter readers, occasion/service accordions, horizontal brand carousel or additional films are active. All ten occasion descriptions, ten service labels and seven original brand plates are visible. Bookings opens over the current page and contact is always visible at the end. Reduced motion, SaveData, missing JavaScript/GSAP, short screens and failed decoding retain the complete landing and approved poster.
+The homepage starts with the approved five-second approach to the door. Only that short entrance is pinned and scrubbed; the remaining complete information uses ordinary vertical document flow, photographs, three selected scroll-depth treatments, three one-time image reveals, subtle shadows and decorative progress. The entrance has layered arrival phrases and an advancing fine frame; no later content is pinned. No chapter readers, occasion/service accordions, horizontal brand carousel or additional films are active. All ten occasion descriptions, ten service labels and seven original brand plates are visible. Bookings opens over the current page and contact is always visible at the end. Reduced motion, SaveData, missing JavaScript/GSAP, short screens and failed decoding retain the complete landing and approved poster.
 
 The owner requested one scheduling action in v1.16.2: **Schedule a visit**. The planning route contains a compact introduction, that action, the existing Microsoft Bookings calendar and direct contact in the footer. Quote/vendor forms and service selection controls are removed. The homepage preserves all ten service descriptions and its approved cinematic presentation.
 
