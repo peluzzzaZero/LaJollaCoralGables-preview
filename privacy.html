@@ -41,7 +41,7 @@
 </script>
 <meta name="color-scheme" content="light"/>
 <link href="assets/favicon.ico" rel="icon" sizes="any"/>
-<link href="styles.css?v=1.16.5" rel="stylesheet"/>
+<link href="styles.css?v=1.17.0" rel="stylesheet"/>
 <link href="assets/fonts/Manrope-latin.woff2" as="font" crossorigin="" rel="preload" type="font/woff2"/></head>
 <body class="legal-page">
 <header class="site-header">
@@ -50,7 +50,7 @@
 <img class="logo-mark-img" src="assets/brand/logo-lj-oval-sage.png" alt="" width="40" height="48"/>
 <span class="logo-text"><b>La Jolla</b><i>Coral Gables</i></span>
 </a>
-<a class="inquire-link" href="planning.html" data-i18n="form.planning">Schedule a visit</a>
+<a class="inquire-link" href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" data-booking-opener="" target="_blank" rel="noopener noreferrer" data-i18n="form.planning">Schedule a visit</a>
 </div>
 </header>
 <main class="legal">
@@ -63,6 +63,8 @@
 <p>Opening the map link leaves this site only when you choose it. This site's typefaces are hosted locally.</p>
 <h2>Visit appointments</h2>
 <p>When you open the visit calendar, Microsoft Bookings loads in this page or in a new tab. Microsoft processes the appointment details you enter for La Jolla to manage visits and send booking notifications. The calendar may load its own resources. A visit appointment does not reserve a space for an event.</p>
+<h2>Optional social content and guest reviews</h2>
+<p>Facebook posts and Google Maps reviews load when you choose to view them. These providers may process your network information and use their own cookies. Their policies apply: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">Meta Privacy Policy</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>. Review content is not stored in this site’s browser storage.</p>
 <h2>Contact</h2>
 <p>For a question about information you shared with the venue by phone or email: <a href="tel:+17862908813">786-290-8813</a> or <a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a>. The venue is at 301 Alcazar Avenue, Coral Gables, and is managed by Epic Lux Management.</p>
 </article>
@@ -74,6 +76,8 @@
 <p>El enlace del mapa sale de este sitio solo cuando usted lo abre. Las tipografías de este sitio están alojadas localmente.</p>
 <h2>Citas para visitas</h2>
 <p>Al abrir el calendario de visitas, Microsoft Bookings se carga dentro de esta página o en una pestaña nueva. Microsoft procesa los datos de la cita que usted introduce para que La Jolla gestione las visitas y envíe avisos de reserva. El calendario puede cargar sus propios recursos. Una cita de visita no reserva un espacio para un evento.</p>
+<h2>Contenido social y reseñas opcionales</h2>
+<p>Las publicaciones de Facebook y las reseñas de Google Maps se cargan cuando usted elige verlas. Estos proveedores pueden procesar información de su conexión y usar sus propias cookies. Se aplican sus políticas: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">Política de privacidad de Meta</a> y <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Política de privacidad de Google</a>. El contenido de las reseñas no se guarda en el almacenamiento del navegador de este sitio.</p>
 <h2>Contacto</h2>
 <p>Si tiene una pregunta sobre información que compartió con el lugar por teléfono o correo: <a href="tel:+17862908813">786-290-8813</a> o <a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a>. El lugar está en 301 Alcazar Avenue, Coral Gables, y lo gestiona Epic Lux Management.</p>
 </article>
@@ -85,6 +89,12 @@
 <p>© <span id="year"></span> La Jolla Coral Gables.</p>
 </div>
 </footer>
-<script src="script.js?v=1.16.5"></script>
+<dialog id="booking-viewer" class="booking-viewer" aria-labelledby="booking-title" aria-describedby="booking-help">
+<header class="booking-header"><h2 id="booking-title" data-i18n="booking.dialogTitle">Schedule your visit</h2><button class="booking-close" type="button" data-i18n="booking.close" data-i18n-attr="aria-label" aria-label="Close booking calendar">×</button></header>
+<p id="booking-help" data-i18n="booking.help">Select a date and time in the calendar. Your visit is confirmed when Bookings completes the reservation. Check the time zone shown before booking.</p>
+<iframe class="booking-frame" title="La Jolla venue tour booking calendar" data-i18n="booking.frameTitle" data-i18n-attr="title" referrerpolicy="no-referrer"></iframe>
+<p class="booking-fallback"><span data-i18n="booking.fallback">If the calendar does not load,</span> <a href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" target="_blank" rel="noopener noreferrer" data-i18n="booking.external">open the booking page in a new tab</a>.</p>
+</dialog>
+<script src="script.js?v=1.17.0"></script>
 </body>
 </html>

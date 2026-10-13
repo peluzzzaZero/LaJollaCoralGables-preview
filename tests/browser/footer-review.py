@@ -21,7 +21,11 @@ async def main(base, output):
                 await page.evaluate('document.fonts.ready')
                 for language in ['en', 'es']:
                     await page.locator(f'[data-lang="{language}"]').click()
-                    await page.locator('#footer').scroll_into_view_if_needed()
+                    if route == 'index.html':
+                        assert await page.locator('.cinema-stage > #footer').count() == 1
+                        await page.locator('.contact-directory > summary').click()
+                    else:
+                        await page.locator('#footer').scroll_into_view_if_needed()
                     await page.wait_for_timeout(350)
                     geometry = await page.locator('#footer').evaluate('''footer => {
                         const cards = [...footer.querySelectorAll('.footer-grid > div')];
@@ -46,8 +50,10 @@ async def main(base, output):
                     assert await page.locator('#footer a[href="terms.html"]').count() == 1
                     assert await page.locator('#footer a[href="privacy.html"]').count() == 1
                     if route == 'index.html':
-                        assert geometry['background'] == 'rgb(16, 32, 25)'
+                        assert await page.locator('.contact-panel').evaluate('e=>getComputedStyle(e).backgroundColor') == 'rgb(16, 32, 25)'
                     await page.screenshot(path=str(output / f'{route[:-5]}-{width}-{language}.png'))
+                    if route == 'index.html':
+                        await page.keyboard.press('Escape')
                     results.append({'route':route,'width':width,'language':language,**geometry})
                 await page.close()
         await browser.close()
