@@ -60,91 +60,27 @@ async def snapshot(page, output, name):
     await page.screenshot(path=str(output / f"{name}.png"))
 
 
-async def check_forms(browser, base):
+async def check_visit_entry(browser, base):
     context = await browser.new_context(viewport={"width": 390, "height": 844})
     page = await context.new_page()
-    requests = []
-    response, status, mode = {"success": True}, 200, "json"
-
-    async def mail(route):
-        requests.append(route.request.post_data_json)
-        await asyncio.sleep(.1)
-        if mode == "timeout":
-            return
-        if mode == "offline":
-            await route.abort("failed")
-        else:
-            await route.fulfill(status=status, content_type="application/json", body="{invalid" if mode == "invalid-json" else json.dumps(response))
-
-    await page.route("https://api.web3forms.com/**", mail)
+    mail_requests = []
+    async def deny_mail(route):
+        mail_requests.append(route.request.url)
+        await route.abort()
+    await page.route("https://api.web3forms.com/**", deny_mail)
+    await page.route("**/api/inquiries", deny_mail)
     await page.goto(base + "planning.html", wait_until="networkidle")
-    await page.locator('[data-lang="es"]').click()
-    assert await page.locator('#quote-form').count() == 0
-    expected = await page.locator(".rentals-quiet-link span").first.text_content()
-    await page.locator(".rentals-quiet-link").first.click()
-    await page.locator(".selection-continue").click()
-    await page.wait_for_function("""() => {
-      const r = document.getElementById('quote-title').getBoundingClientRect();
-      return r.top >= 68 && r.bottom <= innerHeight;
-    }""", timeout=5000)
-    assert expected in await page.locator('#inquiry-selection').text_content()
-    assert await page.locator('.inquiry-visit [data-booking-opener]').is_visible()
-    await scroll(page, 0)
-    await page.locator(".inquire-link").click()
-    await page.wait_for_function("""() => {
-      const r = document.getElementById('quote-title').getBoundingClientRect();
-      return r.top >= 68 && r.bottom <= innerHeight;
-    }""", timeout=5000)
-    await page.locator('#vendor-details summary').click()
-    form = page.locator('#vendor-form')
-    await form.evaluate('f => f.requestSubmit()')
-    assert await page.locator('#vendor-error').is_visible()
-    assert not requests
-
-    async def fill_vendor():
-        for field, value in {"v-name": " Browser test ", "v-company": "Test company", "v-service": "Test service", "v-email": " browser@example.com "}.items():
-            await page.locator('#' + field).fill(value)
-
-    await fill_vendor()
-    await page.locator('#v-name').fill('   ')
-    await form.evaluate('f => f.requestSubmit()')
-    assert not requests
-    assert await page.locator('#v-name').get_attribute('aria-invalid') == 'true'
-    await fill_vendor()
-    failures = [({"success": False, "message": "<script>private-contact@example.com</script>"}, 400, "json"), ({"success": False}, 429, "json"), ({"success": False}, 200, "json"), ({}, 200, "json"), ({"success": True}, 503, "json"), ({}, 200, "offline"), ({}, 200, "invalid-json"), ({}, 200, "timeout")]
-    for response, status, mode in failures:
-        await form.evaluate('f => f.requestSubmit()')
-        await page.locator('#vendor-send-error').wait_for(state='visible')
-        assert await page.locator('#vendor-success').is_hidden()
-        assert await page.locator('#v-name').input_value() == 'Browser test'
-        assert await form.locator('[type=submit]').is_enabled()
-        assert await form.locator('.inquiry-recovery').is_visible()
-        assert 'private-contact@example.com' not in await page.locator('#vendor-send-error').text_content()
-        await form.locator('.inquiry-email-draft').evaluate("a => a.addEventListener('click', e => e.preventDefault())")
-        draft = await form.locator('.inquiry-email-draft').evaluate('a => { a.click(); return a.href; }')
-        from urllib.parse import urlsplit, parse_qs
-        parsed = urlsplit(draft)
-        assert parsed.path == 'info@lajollacoralgables.com'
-        body = parse_qs(parsed.query)['body'][0]
-        assert all(value in body for value in ['Browser test', 'browser@example.com', 'Test company', 'Test service'])
-        await page.wait_for_timeout(20)
-        assert await form.locator('.inquiry-email-draft').get_attribute('href') == 'mailto:info@lajollacoralgables.com'
-
-    response, status, mode = {'success': True}, 200, 'json'
-    count = len(requests)
-    await form.evaluate('f => { f.requestSubmit(); f.requestSubmit(); }')
-    await page.locator('#vendor-success').wait_for(state='visible')
-    await page.wait_for_timeout(200)
-    assert len(requests) == count + 1
-    assert await form.locator('.inquiry-recovery').is_hidden()
-    assert requests[-1]['email'] == 'browser@example.com'
-    assert requests[-1]['replyto'] == 'browser@example.com'
-    assert requests[-1]['ccemail'] == 'info@lajollacoralgables.com'
-    assert await page.locator('#v-name').input_value() == ''
-    assert await form.locator('[type=submit]').is_enabled()
-    assert await form.get_attribute('aria-busy') is None
+    for language in ['es', 'en']:
+        await page.locator(f'[data-lang="{language}"]').click()
+        assert await page.locator('form').count() == 0
+        assert await page.locator('[data-booking-opener]').count() == 1
+        assert await page.locator('.inquiry-visit [data-booking-opener]').is_visible()
+        assert await page.locator('[data-service-id]').count() == 0
+        assert await page.locator('#vendors').count() == 0
+        assert await page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+    assert not mail_requests
     await context.close()
-    return {'simulated_requests': len(requests), 'real_emails_sent': 0, 'quote_form': 'removed', 'planning_navigation': 'passed', 'vendor_validation_and_retry': 'passed', 'timeout': 'passed', 'invalid_json': 'passed', 'duplicate_guard': 'passed'}
+    return {'forms': 'removed', 'single_visit_action': 'passed', 'languages': ['es', 'en'], 'mail_requests': 0, 'real_emails_sent': 0}
 
 POSITIONS = [.035,.155,.265,.375,.485,.595,.705,.815,.965]
 CHAPTERS = ['hero','history','visit','events','alcazar','rentals','gallery','team','planning']
@@ -283,7 +219,7 @@ async def review_motion(browser, base, output, viewports=None):
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()
             await page.wait_for_url('**/planning.html')
-            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).type")=='alcazar'
+            assert await page.locator('[data-booking-opener]').count()==1
             assert await page.locator('html').get_attribute('lang')==language
             assert await page.evaluate("document.activeElement.id==='quote-title'")
             assert not errors,errors
@@ -295,24 +231,21 @@ async def review_navigation(browser,base,output):
     results=[]
     for width in [390,838,1280]:
         context=await browser.new_context(viewport={'width':width,'height':884})
-        page=await context.new_page();await page.route('https://api.web3forms.com/**',lambda route:route.abort())
+        page=await context.new_page()
         await page.goto(base+'#rentals',wait_until='networkidle')
         await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="5"')
         assert await page.evaluate("document.activeElement.id==='rentals'")
         await page.locator('#rentals .chapter-more > summary').click()
-        await page.locator('[data-service-id="planning"]').click();await page.locator('[data-service-id="catering"]').click()
+        assert await page.locator('#rentals [data-service-id]').count()==10
+        assert await page.locator('#rentals button[data-service-id]').count()==0
         await page.locator('[data-lang="es"]').click()
-        await page.locator('.selection-continue').click();await page.wait_for_url('**/planning.html')
-        assert await page.locator('#inquiry-selection li').count()==2
-        assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).type")=='rental'
+        await page.locator('#rentals .chapter-close').click()
+        await page.locator('.inquire-link').click()
+        await page.wait_for_url('**/planning.html')
         assert await page.locator('html').get_attribute('lang')=='es'
-        await page.locator('#inquiry-selection button').first.click()
-        assert await page.locator('#inquiry-selection li').count()==1
-        assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).services")==['catering']
-        await page.locator('#vendor-details summary').click()
-        await page.locator('#v-name').fill('Do not persist contact')
-        stored=await page.evaluate('JSON.stringify(sessionStorage)')
-        assert 'Do not persist contact' not in stored
+        assert await page.locator('form').count()==0
+        assert await page.locator('[data-booking-opener]').count()==1
+        assert await page.locator('#inquiry-selection').count()==0
         await page.locator('.logo').click();await page.wait_for_url('**/index.html')
         if width<=900:
             await page.locator('.mobile-menu summary').click();target=page.locator('.mobile-chapters a[href="#visit"]')
@@ -321,12 +254,10 @@ async def review_navigation(browser,base,output):
         assert await page.locator('.mobile-menu').get_attribute('open') is None
         await page.locator('.cinema-directory > summary').click();await page.locator('button[data-scene="8"]').click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="8"')
         await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
-        assert await page.locator('#inquiry-selection li').count()==1
-        assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).services")==['catering']
-        await page.goto(base+'planning.html#vendors',wait_until='networkidle')
-        assert await page.locator('#vendor-details').get_attribute('open') is not None
+        assert await page.locator('[data-booking-opener]').is_visible()
         assert await page.evaluate('ScrollTrigger.getAll().length')==0
-        results.append({'width':width,'deep_links':'passed','service_language_occasion_context':'passed','no_contact_storage':'passed','vendors':'passed'})
+        assert await page.locator('a[href$="#vendors"]').count()==0
+        results.append({'width':width,'deep_links':'passed','language':'passed','services':'informational','single_visit_action':'passed'})
         await context.close()
     return results
 
@@ -349,7 +280,7 @@ async def review_fallbacks(browser,base,output):
             assert await page.locator('#events-content').is_visible()
         else:
             await travel(page,.965,8);await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
-            assert await page.locator('#vendor-form button[type=submit]').is_enabled()
+            assert await page.locator('[data-booking-opener]').is_visible()
             assert await page.locator('#quote-form').count()==0
         assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
         assert not errors,errors
@@ -422,7 +353,7 @@ async def check_venue_media(browser, base, output):
             assert await viewer.is_hidden()
             await page.locator('[data-i18n="visit.cta"]').click()
             await page.wait_for_url("**/planning.html")
-            assert await page.evaluate("JSON.parse(sessionStorage.getItem('lajolla-inquiry')).location") == "la-jolla"
+            assert await page.locator('form').count() == 0
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
             results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "both_films_decoded": "passed", "single_player": "passed", "modal_keyboard_close_focus": "passed", "venue_inquiry": "passed"})
             await page.close()
@@ -493,7 +424,7 @@ async def main(args,base):
         navigation=await review_navigation(browser,base,args.output);print('PASS internal planning, context and chapter routing',flush=True)
         photos=await check_photos(browser,base,args.output);print("PASS complete photos, modal focus and film position",flush=True)
         media=await check_venue_media(browser,base,args.output);print('PASS both full films, modal focus and native file links',flush=True)
-        forms=await check_forms(browser,base);print('PASS mock-only forms: validation, errors, retry and duplicate guard',flush=True)
+        forms=await check_visit_entry(browser,base);print('PASS visit entry: single action, no forms or mail requests',flush=True)
         fallbacks=await review_fallbacks(browser,base,args.output);print('PASS native alternatives, storage denied and media failures',flush=True)
         (args.output/'results.json').write_text(json.dumps({'motion':motion,'navigation':navigation,'forms':forms,'fallbacks':fallbacks,'media':media,'photos':photos,'real_emails_sent':0},indent=2)+'\n')
         await browser.close()

@@ -60,13 +60,6 @@ const server = createServer(async (req, res) => {
     if (asset && !file.startsWith(resolve(root,'assets') + sep)) return json(req,res,404,{ success:false, code:'not_found' });
     const info = await stat(file);
     if (!info.isFile()) return json(req,res,404,{ success:false, code:'not_found' });
-    if (relative === 'planning.html') {
-      // This Node deployment always uses its own API. The static Pages preview
-      // has no server and retains its legacy transport; never fail over to it here.
-      const html = (await readFile(file,'utf8')).replace('<html ', '<html data-inquiry-transport="native" ');
-      res.writeHead(200, { 'Content-Type':mime['.html'], 'Content-Length':Buffer.byteLength(html), 'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff' });
-      return res.end(req.method === 'HEAD' ? undefined : html);
-    }
     let start = 0; let end = info.size - 1; let status = 200;
     // Video seeking is required by the approved scroll-controlled films.
     if (req.headers.range) {

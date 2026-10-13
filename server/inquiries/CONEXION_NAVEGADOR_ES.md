@@ -1,4 +1,6 @@
-# Conexión desde el navegador — preparada, todavía sin activar
+# Conexión desde el navegador — preparación opcional
+
+Desde v1.16.2 la página pública usa únicamente Microsoft Bookings para agendar visitas y contacto directo. El propietario retiró los formularios de consulta y proveedores. Esta preparación de correo queda disponible para una futura función: no es un requisito para publicar la web actual ni para los avisos de Bookings.
 
 GoDaddy ya tiene una aplicación Node que ejecuta v1.12.0 y una base MySQL alojada. La captura de su guía confirma que las cinco variables `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD` se inyectan automáticamente. No copiar contraseñas, importar SQL ni instalar programas en el PC del propietario.
 

@@ -123,3 +123,7 @@ Integrate the owner-owned Microsoft Bookings schedule as an on-demand accessible
 ## v1.16.1 — booking-only planning at the owner's request
 
 Remove the full selected quote form and redundant notice/submit action; retain tours through the existing calendar and direct contact for event discussions. Reword EN/ES page introduction, use a compact single-column layout, and keep service selections across navigation for discussion in booking notes. Vendor form and prepared native API are retained. Revise browser assertions to cover the actual remaining routes and keep vendor error/retry/idempotency/privacy tests. Do not describe tours as confirmed event-space reservations.
+
+## v1.16.2 — one visit action
+
+At the owner's request, remove the remaining vendor form and service selection controls. Planning contains only its visit introduction, Schedule a visit action and existing calendar, with ordinary footer contact. Keep all ten homepage service descriptions, the films, navigation, languages and legal links. Remove public mail delivery JavaScript and update privacy copy. Native mail preparation stays disabled and is optional. Update the existing browser reviews for the actual booking/navigation route and wait for the native dialog close event before asserting body unlock.

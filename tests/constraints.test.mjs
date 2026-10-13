@@ -33,8 +33,9 @@ test("opening frame cannot collapse", () => {
   assert.match(css, /\.cinema-scroll \.cinema-stage[^}]*height: 100svh/);
 });
 
-test("inquiry form is present", () => {
+test("visits use Bookings with no public inquiry forms", () => {
   const planning = readFileSync(new URL("../planning.html", import.meta.url), "utf8");
-  assert.match(planning, /<form[\s\S]+<\/form>/);
+  assert.equal(planning.includes('<form'), false);
+  assert.match(planning, /data-booking-opener/);
   assert.equal(html.includes("<form"), false);
 });
