@@ -2,9 +2,9 @@ name: Quality and versioned release
 
 on:
   pull_request:
-    branches: [dev, main]
+    branches: [develop, main]
   push:
-    branches: [dev, main]
+    branches: [develop, main]
   workflow_dispatch:
 
 permissions:
@@ -39,6 +39,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate feature and release PR route
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          if [ "$BASE_BRANCH" = main ]; then
+            test "$HEAD_BRANCH" = develop
+          elif [ "$BASE_BRANCH" = develop ]; then
+            case "$HEAD_BRANCH" in feature/*) ;; *) exit 1 ;; esac
+          fi
       - name: Require a new semantic version before merging to main
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
         env:
@@ -62,6 +73,7 @@ jobs:
           python tests/browser/review.py --output review-artifacts
           python tests/browser/motion-quality.py --output review-artifacts/motion --webkit
           python tests/browser/desktop-review.py --output review-artifacts/desktop
+          python tests/browser/footer-review.py --output review-artifacts/footer
       - name: Node visit route and calendar without real submissions
         run: |
           INQUIRY_ENABLED=false MAIL_SETUP_ENABLED=false PORT=13317 HOST=127.0.0.1 npm start > /tmp/lajolla-node-preview.log 2>&1 &

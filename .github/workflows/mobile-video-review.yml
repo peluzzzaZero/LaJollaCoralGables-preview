@@ -1,7 +1,7 @@
 name: Mobile video review
 on:
   pull_request:
-    branches: [dev, main]
+    branches: [develop, main]
     paths:
       - script.js
       - tests/browser/motion-quality.py

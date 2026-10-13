@@ -48,6 +48,28 @@ async def main(base,output,webkit=False,webkit_only=False):
             else:
                 assert await page.locator('[data-cinema-film=details]').get_attribute('data-source') is None
             await travel(page,.485,4)
+            # After several clips have warmed, scrubbing within one segment must
+            # not seek hidden clips. A quick reversal must settle at the latest
+            # requested frame rather than an older queued position.
+            await travel(page,.79,7)
+            await travel(page,.485,4)
+            await page.wait_for_timeout(800)
+            await page.evaluate("""()=>{window.hiddenSeeks=[];
+                document.querySelectorAll('[data-cinema-film]').forEach(v=>v.addEventListener('seeking',()=>{
+                    if(v.closest('[data-film-layer]').style.opacity==='0') hiddenSeeks.push(v.dataset.cinemaFilm);
+                }));}""")
+            for target in [.51,.48,.53,.46,.49]:
+                await page.evaluate("""p=>{const t=ScrollTrigger.getById('cinematic-journey');
+                    window.scrollTo(0,t.start+(t.end-t.start)*p);ScrollTrigger.update();}""",target)
+                await page.wait_for_timeout(45)
+            await page.wait_for_timeout(1000)
+            assert await page.evaluate('hiddenSeeks') == []
+            state=await page.locator('[data-cinema-film="'+camera+'"]').evaluate("""v=>{
+                const p=Number(document.querySelector('#cinema').style.getPropertyValue('--world-progress'));
+                const x=Math.min(1,Math.max(0,(p-.45)/.11)), c=x-.5;
+                const expected=((1-.12)*x+.12*(4*c*c*c+.5))*v.duration;
+                return {time:v.currentTime,expected,seeking:v.seeking,paused:v.paused};}""")
+            assert abs(state['time']-state['expected'])<.08 and not state['seeking'] and state['paused'],state
             await page.screenshot(path=str(output/f'motion-{width}.png'))
             await page.locator('.cinema-directory > summary').click()
             await page.locator('button[data-scene="6"]').click()
