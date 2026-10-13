@@ -80,3 +80,14 @@ test('Pages deploys the public artifact only after quality and the immutable rel
   assert.match(workflow, /publish:[\s\S]*?needs: \[review, review-v14, release\]/);
   assert.match(workflow, /uses: actions\/deploy-pages@v4/);
 });
+
+
+test('public ARIA relationships resolve to real page elements', async () => {
+  for (const file of ['index.html', 'planning.html', 'privacy.html', 'terms.html']) {
+    const html = await readFile(new URL(file, root), 'utf8');
+    const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]));
+    for (const [, references] of html.matchAll(/\baria-(?:labelledby|describedby)="([^"]+)"/g)) {
+      for (const id of references.split(/\s+/)) assert.ok(ids.has(id), `${file}: Missing ARIA target ${id}`);
+    }
+  }
+});
