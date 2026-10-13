@@ -1160,7 +1160,8 @@ html { scrollbar-gutter: stable; }
 
 /* v1.15 — Cinematic art direction: the scene, evidence and copy share a purpose. */
 @font-face { font-family: 'Manrope'; src: url('assets/fonts/Manrope-latin.woff2') format('woff2'); font-style: normal; font-weight: 200 800; font-display: swap; }
-.motion-page, .planning-page, .legal-page { --font-display: 'Manrope', sans-serif; --font-body: 'Manrope', sans-serif; --font-script: 'Manrope', sans-serif; }
+@font-face { font-family: 'Cormorant Garamond'; src: url('assets/fonts/CormorantGaramond-latin.woff2') format('woff2'); font-style: normal; font-weight: 300 700; font-display: swap; }
+.motion-page, .planning-page, .legal-page { --font-display: 'Cormorant Garamond', Georgia, serif; --font-body: 'Manrope', sans-serif; --font-script: 'Manrope', sans-serif; }
 .motion-page:has(.cinema-scroll) .site-header { inset: 0 0 auto; height: 76px; background: transparent; border: 0; border-radius: 0; box-shadow: none; color: #f5f1e6; }
 .motion-page:has(.cinema-scroll) .site-header::before { content: ''; position: absolute; inset: 0 0 -36px; background: linear-gradient(#14251ed9, transparent); pointer-events: none; z-index: -1; }
 .motion-page:has(.cinema-scroll) .header-inner { width: calc(100% - 80px); }
@@ -1405,7 +1406,7 @@ html { scrollbar-gutter: stable; }
   }
 }
 
-/* Reader content uses ink on cream; film typography belongs only to the lead copy. */
+/* Reader colours follow the surface; film sizing belongs only to the lead copy. */
 .chapter-body .alcazar-copy > p:not(.eyebrow) { color: var(--ink-soft); }
 .chapter-body .team-card > h3 { color: var(--ink); font-size: clamp(24px, 2.5vw, 36px); line-height: 1.15; letter-spacing: -.035em; }
 
@@ -1418,3 +1419,72 @@ html { scrollbar-gutter: stable; }
 .planning-page #quote .section-title { font-size: clamp(2.5rem, 6vw, 4.5rem); overflow-wrap: anywhere; }
 /* Heading defaults must not override the cinematic footer's light ink. */
 .footer-contact h3, .footer-maps h3 { color: inherit; }
+
+/* v1.16.4 — an opaque forest reader belongs to the film, with editorial serif titles. */
+.motion-page .cinema-scroll .cinema-story > h1,
+.motion-page .cinema-scroll .cinema-story > h3,
+.cinema-year { letter-spacing: -.02em; font-weight: 500; }
+.motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) {
+  --ink: #f2eee3; --ink-soft: #d1d8ce; --ink-muted: #bec9bd;
+  --sage-deep: #c5d0bf; --sage: #bec9bd;
+  --line: #f2eee32e; --line-soft: #f2eee34d;
+  inset: 88px 6% 88px auto !important;
+  width: min(600px, 52vw) !important; max-width: none; margin: 0;
+  padding: 20px 32px 32px; opacity: 1 !important;
+  background: #102019; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 0;
+  box-shadow: 0 12px 60px #0004;
+}
+.motion-page .cinema-scroll .chapter-more[open] > summary {
+  background: #102019; padding-block: 12px;
+  border-bottom: 1px solid var(--line); font-size: 12px;
+}
+.motion-page .cinema-scroll .chapter-body { padding-top: 16px; }
+.motion-page .cinema-scroll .chapter-close {
+  color: var(--ink); background: transparent; border-color: var(--line-soft);
+  font-size: 12px; padding: 8px 14px; margin-bottom: 24px;
+}
+.motion-page .cinema-scroll .chapter-body .section-title {
+  font-size: clamp(30px, 3vw, 40px); line-height: 1.12; letter-spacing: -.015em;
+}
+.motion-page .cinema-scroll .chapter-body .team-card > h3 { letter-spacing: -.015em; }
+.motion-page .cinema-scroll .chapter-body .history-stage,
+.motion-page .cinema-scroll .chapter-body .events-intro .section-head,
+.motion-page .cinema-scroll .chapter-body .events-body,
+.motion-page .cinema-scroll .chapter-body .alcazar-grid,
+.motion-page .cinema-scroll .chapter-body .rentals-layout,
+.motion-page .cinema-scroll .chapter-body .venue-details,
+.motion-page .cinema-scroll .chapter-body .team-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px;
+}
+.motion-page .cinema-scroll .chapter-body .history-copy,
+.motion-page .cinema-scroll .chapter-body .history-photo,
+.motion-page .cinema-scroll .chapter-body .venue-detail-stair {
+  grid-column: auto; grid-row: auto; width: 100%;
+}
+.motion-page .cinema-scroll .chapter-body .history-photo { justify-self: start; }
+.motion-page .cinema-scroll .chapter-body .events-intro .section-head { margin-bottom: 28px; }
+.motion-page .cinema-scroll .chapter-body .occasion-visual { position: static; }
+.motion-page .cinema-scroll .chapter-body .occasion-visual img { aspect-ratio: 16 / 9; }
+.motion-page .cinema-scroll .chapter-body .venue-essay .venue-detail { margin: 0; }
+.motion-page .cinema-scroll .chapter-body .btn-sage {
+  background: var(--cream); color: #102019; border-color: var(--cream);
+}
+.motion-page .cinema-scroll .chapter-body .btn-sage:hover,
+.motion-page .cinema-scroll .chapter-body .btn-sage:focus-visible { background: #d1d8ce; color: #102019; }
+.motion-page .cinema-scroll .chapter-body .gallery-controls button { color: var(--ink); }
+@media (max-width: 1000px) {
+  .motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) {
+    inset: 88px 24px !important; width: auto !important; padding: 20px 28px 28px;
+  }
+}
+@media (max-width: 650px) {
+  .motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) {
+    inset: 80px 16px 88px !important; padding: 12px 20px 24px;
+  }
+}
+
+.motion-page .cinema-scroll .chapter-body .events-intro .section-head > * { margin-bottom: 0; }
+
+.motion-page .lang-btn, .motion-page .inquire-link, .planning-page .btn, .legal-page .btn,
+.motion-page .footer-contact h3, .motion-page .footer-maps h3 { font-family: var(--font-body); }

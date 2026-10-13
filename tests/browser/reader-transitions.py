@@ -43,8 +43,10 @@ async def main(base, output, webkit=False):
                             }''')
                             assert state['captionOpacity']<.8, 'Fixture did not reach the fade band'
                             assert state['opacity']>=.999, ('Open reader is translucent',engine,width,language,chapter,edge,state)
-                            assert state['background']=='rgb(242, 238, 227)', state
+                            assert state['background']=='rgb(16, 32, 25)', state
                             await check_reader_legibility(body)
+                            assert await body.evaluate('e=>e.closest(".cinema-story").scrollWidth <= e.closest(".cinema-story").clientWidth'), ('Reader content overflows horizontally',engine,width,language,chapter,edge,await body.evaluate('e=>{const p=e.closest(".cinema-story");return {client:p.clientWidth,scroll:p.scrollWidth,wide:[...e.querySelectorAll("*")].filter(n=>n.getBoundingClientRect().right>p.getBoundingClientRect().right).map(n=>({tag:n.tagName,cls:n.className,width:n.getBoundingClientRect().width}))}}'))
+                            assert await page.evaluate('document.fonts.check("500 32px Cormorant Garamond")'), 'Editorial font failed to load'
                             reader=page.locator(f'#{chapter}')
                             await reader.evaluate('e=>{e.scrollTop=e.scrollHeight}')
                             assert abs(await page.evaluate('scrollY')-before)<2,'Reading moved the film'
