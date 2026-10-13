@@ -61,11 +61,12 @@ test('the internal planning page has the same version and unique real IDs', () =
   for (const [, target] of planning.matchAll(/\bfor="([^"]+)"/g)) assert.ok(ids.includes(target), target);
 });
 
-test('all public information remains in nine native chapters and visits open the calendar over the film', () => {
+test('all landing information is visible in normal sections with same-page visits', () => {
   for (const id of ['hero', 'history', 'visit', 'events', 'alcazar', 'rentals', 'gallery', 'team', 'planning']) {
-    assert.match(html, new RegExp(`<article id="${id}"[^>]*data-scene-copy=`));
+    assert.match(html, new RegExp(`<(?:article|section) id="${id}"`));
   }
-  assert.equal((html.match(/class="chapter-more"/g) || []).length, 7);
+  assert.equal((html.match(/class="chapter-more"/g) || []).length, 0);
+  assert.equal((html.match(/<details\b/g) || []).length, 1);
   assert.equal((html.match(/class="occasion"/g) || []).length, 10);
   assert.equal((html.match(/class="brand-card[^"]*"/g) || []).length, 7);
   assert.equal((html.match(/class="team-card reveal"/g) || []).length, 2);

@@ -53,6 +53,7 @@
       author.append(link(review.authorAttribution.displayName, safeURL(review.authorAttribution.uri)));
       const date = document.createElement('time'); date.dateTime = review.publishTime.toISOString(); date.textContent = new Intl.DateTimeFormat(language(), { dateStyle: 'medium' }).format(review.publishTime);
       const rating = document.createElement('span'); rating.className = 'review-rating'; rating.textContent = '5 / 5';
+      const stars = document.createElement('span'); stars.className = 'review-stars'; stars.setAttribute('aria-hidden', 'true'); stars.textContent = '★★★★★'; rating.prepend(stars);
       const quote = document.createElement('blockquote'); quote.textContent = review.originalText || review.text; quote.lang = review.originalTextLanguageCode || review.textLanguageCode || 'en';
       card.append(author, date, rating, quote, link(messages().source, safeURL(review.googleMapsURI))); container.append(card);
     }
@@ -66,22 +67,6 @@
     return true;
   }
   document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.house-stream').forEach(function (stream) {
-      stream.classList.add('social-ready');
-      const button = stream.querySelector('.social-load'), holder = stream.querySelector('.social-frame');
-      button.addEventListener('click', function () {
-        if (holder.querySelector('iframe')) return;
-        const width = Math.max(180, Math.min(500, Math.floor(holder.clientWidth)));
-        const url = new URL('https://www.facebook.com/plugins/page.php');
-        for (const [key, value] of Object.entries({ href: 'https://www.facebook.com/lajollaballroom', tabs: 'timeline', width, height: 480, small_header: true, adapt_container_width: true, hide_cover: false, show_facepile: false })) url.searchParams.set(key, value);
-        const frame = document.createElement('iframe'); frame.src = url.href; frame.title = messages().facebook; frame.height = 480; frame.width = width; frame.referrerPolicy = 'no-referrer'; frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
-        holder.append(frame); button.hidden = true;
-      });
-      window.addEventListener('lajolla-language', function () {
-        const frame = holder.querySelector('iframe');
-        if (frame) frame.title = messages().facebook;
-      });
-    });
     const key = document.querySelector('meta[name="google-maps-browser-key"]')?.content || '';
     if (!/^[A-Za-z0-9_-]{20,120}$/.test(key)) return;
     document.querySelectorAll('[data-guest-reviews]').forEach(function (section) {

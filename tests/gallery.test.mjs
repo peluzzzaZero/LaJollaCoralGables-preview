@@ -34,7 +34,8 @@ test("gallery keeps the seven brand plates in order", () => {
     cursor = captionAt;
   }
   const images = section.match(/<img\b/g) || [];
-  assert.equal(images.length, 7);
+  assert.equal((section.match(/class="brand-card[^"]*"/g) || []).length, 7);
+  assert.equal(images.length, 8);
   assert.equal(section.includes("cafe-garden.png"), false);
   assert.equal(section.includes("cafe-table.png"), false);
   assert.equal(section.includes("cafe-detail.png"), false);
@@ -49,7 +50,7 @@ test("gallery marks are not faded in from nothing", () => {
     assert.equal(/opacity:\s*0(?:\s|;|!|$)/.test(body), false, body);
     assert.equal(/opacity:\s*calc\(\s*0\.08/.test(body), false);
   }
-  assert.match(css, /scroll-snap-type: x mandatory/);
-  assert.match(html, /class="brand-track"[^>]*tabindex="0"/);
-  assert.match(html, /class="gallery-next"/);
+  assert.match(html, /class="brand-grid"/);
+  assert.equal(html.includes('class="gallery-next"'), false);
+  assert.equal(html.includes('class="brand-track"'), false);
 });

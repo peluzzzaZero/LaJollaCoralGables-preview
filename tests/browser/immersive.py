@@ -1,98 +1,49 @@
-"""Verify a continuous visit, in-frame contact and inert live-content adapters."""
-import argparse, asyncio, functools, json, threading
-from pathlib import Path
-from http.server import ThreadingHTTPServer
+"""Test same-page visit sessions, focus and visible contact on the landing."""
+import json
 from playwright.async_api import async_playwright
-from review import ROOT, QuietHandler, travel, POSITIONS
-
-async def main(base, output, webkit=False):
-    output.mkdir(parents=True, exist_ok=True)
-    rows=[]
-    async with async_playwright() as p:
-        for engine in [p.chromium]+([p.webkit] if webkit else []):
-            browser=await engine.launch()
-            for width,height in [(320,600),(390,844),(884,884),(1366,500),(1366,768)]:
-                context=await browser.new_context(viewport={'width':width,'height':height})
-                page=await context.new_page(); requests=[]; errors=[]
-                page.on('pageerror',lambda error:errors.append(str(error)))
-                async def provider(route):
-                    requests.append(route.request.url)
-                    await route.fulfill(content_type='text/html',body='<html><body><h1>Mock calendar</h1><button>Calendar</button></body></html>')
-                await context.route('https://bookings.cloud.microsoft/**',provider)
-                await page.route('**/*.mp4',lambda route:route.abort())
-                await page.route('**/*.webm',lambda route:route.abort())
-                await page.goto(base)
-                await page.evaluate('document.fonts.ready')
-                assert not requests
-                for language in ['en','es']:
-                    await page.locator(f'[data-lang="{language}"]').click()
-                    for n,progress in enumerate(POSITIONS):
-                        await travel(page,progress,n)
-                        footer=page.locator('#footer')
-                        assert await footer.is_visible()
-                        bounds=await footer.bounding_box();stage=await page.locator('.cinema-stage').bounding_box()
-                        assert bounds['y']>=stage['y'] and bounds['y']+bounds['height']<=stage['y']+stage['height']+1
-                        assert bounds['x']>=0 and bounds['x']+bounds['width']<=width
-                        assert bounds['y']>=height-96,'Contact must stay at the bottom of the film frame'
-                    before=await page.evaluate('scrollY');url=page.url
-                    await page.locator('.inquire-link').click()
-                    await page.frame_locator('.booking-frame').locator('h1').wait_for()
-                    assert page.url==url and len(requests)==1
-                    # The recovery action must remain readable if the provider fails.
-                    fallback=page.locator('.booking-fallback a')
-                    for state in ['normal','hover','focus']:
-                        if state=='hover':await fallback.hover()
-                        if state=='focus':await fallback.focus()
-                        contrast=await fallback.evaluate('''e=>{
-                            const luminance=color=>{
-                                const c=color.match(/[\\d.]+/g).slice(0,3).map(Number).map(v=>{
-                                    v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;
-                                });return c[0]*.2126+c[1]*.7152+c[2]*.0722;
-                            };
-                            const a=luminance(getComputedStyle(e).color);
-                            const b=luminance(getComputedStyle(e.closest('dialog')).backgroundColor);
-                            return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
-                        }''')
-                        assert contrast>=4.5,(engine.name,width,language,state,contrast)
-                    await page.screenshot(path=str(output/f'calendar-{engine.name}-{width}-{language}.png'))
-                    await page.keyboard.press('Escape')
-                    await page.wait_for_function('!document.body.classList.contains("booking-open")')
-                    assert abs(await page.evaluate('scrollY')-before)<2
-                    assert await page.locator('.inquire-link').evaluate('e=>e===document.activeElement')
-                    await page.locator('.contact-directory > summary').click()
-                    panel=page.locator('.contact-panel');rect=await panel.bounding_box()
-                    await page.screenshot(path=str(output/f'contact-{engine.name}-{width}-{language}.png'))
-                    assert rect['x']>=0 and rect['x']+rect['width']<=width+1 and rect['y']>=68 and rect['y']+rect['height']<=height,(width,height,rect)
-                    assert await panel.locator('a[href^="mailto:"]').is_visible()
-                    await page.screenshot(path=str(output/f'contact-{engine.name}-{width}-{language}.png'))
-                    await page.locator('.contact-close').click()
-                    assert await page.locator('.contact-directory > summary').evaluate('e=>e===document.activeElement')
-                    await page.locator('.cinema-inquiry:visible').click()
-                    await page.frame_locator('.booking-frame').locator('h1').wait_for()
-                    assert page.url==url and len(requests)==1,'Booking session must be preserved'
-                    await page.keyboard.press('Escape')
-                    await page.wait_for_function('!document.body.classList.contains("booking-open")')
-                    rows.append({'engine':engine.name,'width':width,'language':language,'persistent_contact':True,'direct_calendar':True})
-                assert not errors,errors
-                await context.close()
-            context=await browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844})
-            page=await context.new_page();await page.goto(base)
-            assert 'bookings.cloud.microsoft' in await page.locator('.inquire-link').get_attribute('href')
-            await page.locator('.contact-directory > summary').scroll_into_view_if_needed()
-            await page.locator('.contact-directory > summary').click()
-            panel=page.locator('.contact-panel');assert await panel.is_visible()
-            bounds=await panel.bounding_box();assert bounds['y']>=0 and bounds['x']>=0,bounds
-            assert await panel.locator('a[href^="mailto:"]').is_visible()
-            assert await page.locator('.contact-close').is_hidden()
-            assert await page.locator('.social-load').is_hidden()
-            await context.close()
-            await browser.close()
-    (output/'results.json').write_text(json.dumps(rows,indent=2))
-    print(f'Immersive visit: {len(rows)} language/viewport/browser cases passed; no real bookings.')
-
-if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=Path('review-artifacts/immersive'));parser.add_argument('--webkit',action='store_true');args=parser.parse_args()
-    server=ThreadingHTTPServer(('127.0.0.1',0),functools.partial(QuietHandler,directory=str(ROOT)))
-    threading.Thread(target=server.serve_forever,daemon=True).start()
-    try:asyncio.run(main(f'http://127.0.0.1:{server.server_port}/',args.output,args.webkit))
-    finally:server.shutdown()
+from review import run, position
+async def main(base,output,args):
+ output.mkdir(parents=True,exist_ok=True);rows=[]
+ async with async_playwright() as p:
+  for engine in [p.chromium]+([p.webkit] if args.webkit else []):
+   browser=await engine.launch()
+   for width,height in [(320,600),(390,844),(884,884),(1366,500),(1366,768)]:
+    context=await browser.new_context(viewport={'width':width,'height':height});page=await context.new_page();requests=[];errors=[]
+    page.on('pageerror',lambda e:errors.append(str(e)))
+    async def provider(route):
+     requests.append(route.request.url);await route.fulfill(content_type='text/html',body='<html><body><h1>Mock calendar</h1><button>Calendar</button></body></html>')
+    await context.route('https://bookings.cloud.microsoft/**',provider)
+    await page.goto(base);assert not requests
+    for language in ['en','es']:
+     await page.locator(f'[data-lang="{language}"]').click();await position(page,'planning')
+     opener=page.locator('#planning [data-booking-opener]');await opener.scroll_into_view_if_needed()
+     before=await page.evaluate('scrollY');url=page.url
+     await opener.click()
+     await page.frame_locator('.booking-frame').locator('h1').wait_for();assert page.url==url and len(requests)==1
+     rect=await page.locator('#booking-viewer').bounding_box();assert rect['x']>=-1 and rect['y']>=-1 and rect['x']+rect['width']<=width+1 and rect['y']+rect['height']<=height+1
+     fallback=page.locator('.booking-fallback a')
+     for state in ['normal','hover','focus']:
+      if state=='hover':await fallback.hover()
+      if state=='focus':await fallback.focus()
+      ratio=await fallback.evaluate('''e=>{const lum=s=>{const c=s.match(/[\\d.]+/g).slice(0,3).map(Number).map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4});return c[0]*.2126+c[1]*.7152+c[2]*.0722};const a=lum(getComputedStyle(e).color),b=lum(getComputedStyle(e.closest('dialog')).backgroundColor);return(Math.max(a,b)+.05)/(Math.min(a,b)+.05)}''')
+      assert ratio>=4.5,(engine.name,width,state,ratio)
+     await page.screenshot(path=str(output/f'calendar-{engine.name}-{width}-{language}.png'))
+     await page.keyboard.press('Escape');await page.wait_for_function('!document.body.classList.contains("booking-open")')
+     after=await page.evaluate('scrollY');focused=await opener.evaluate('e=>e===document.activeElement')
+     assert abs(after-before)<2 and focused,(engine.name,width,language,before,after,focused)
+     await page.locator('#header .inquire-link').click();await page.frame_locator('.booking-frame').locator('h1').wait_for();assert len(requests)==1
+     await page.locator('.booking-close').click();await position(page,'footer')
+     assert await page.locator('#footer a[href^="mailto:"]').is_visible()
+     assert await page.locator('#footer a[href^="tel:"]').is_visible()
+     assert await page.locator('.contact-directory').count()==0
+     await page.screenshot(path=str(output/f'contact-{engine.name}-{width}-{language}.png'))
+     rows.append({'engine':engine.name,'width':width,'language':language,'same_page_session':True,'contact_visible':True})
+    assert not errors,errors
+    await context.close()
+   context=await browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=await context.new_page();await page.goto(base)
+   assert 'bookings.cloud.microsoft' in await page.locator('.inquire-link').get_attribute('href')
+   await position(page,'footer');assert await page.locator('#footer a[href^="mailto:"]').is_visible()
+   assert await page.locator('.social-links a').count()==4
+   await context.close();await browser.close()
+ (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Visit/contact: {len(rows)} EN/ES browser/viewport cases passed; no real bookings.')
+if __name__=='__main__':run(main)

@@ -78,7 +78,7 @@ jobs:
           python tests/browser/motion-quality.py --output review-artifacts/motion --webkit
           python tests/browser/desktop-review.py --output review-artifacts/desktop
           python tests/browser/footer-review.py --output review-artifacts/footer
-          python tests/browser/reader-transitions.py --webkit --output review-artifacts/readers
+          python tests/browser/landing-flow.py --webkit --output review-artifacts/flow
           python tests/browser/public-foundation.py --output review-artifacts/foundation
           python tests/browser/immersive.py --webkit --output review-artifacts/immersive
           python tests/browser/social.py --webkit --output review-artifacts/social

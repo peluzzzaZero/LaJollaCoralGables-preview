@@ -3,7 +3,7 @@ import argparse, asyncio, functools, json, threading
 from pathlib import Path
 from http.server import ThreadingHTTPServer
 from playwright.async_api import async_playwright
-from review import ROOT, QuietHandler, travel, POSITIONS
+from review import ROOT, QuietHandler, position
 
 SDK = """window.google={maps:{importLibrary:async()=>({Place:class {
  constructor(options){if(options.id!=='ChIJWbeTzJu32YgRbGDUdwzI0W0')throw Error('Wrong venue');}
@@ -35,7 +35,7 @@ async def main(base, output, webkit=False):
                     await page.route('https://www.facebook.com/plugins/**',facebook)
                     await page.route('**/*.mp4',lambda route:route.abort());await page.route('**/*.webm',lambda route:route.abort())
                     await page.goto(base);assert not requests,'Social providers must not preload'
-                    await travel(page,POSITIONS[3],3);await page.locator('#events .chapter-more > summary').click()
+                    await position(page,'events')
                     button=page.locator('.reviews-load')
                     if mode=='disabled':assert await button.is_hidden()
                     else:
@@ -50,6 +50,8 @@ async def main(base, output, webkit=False):
                             assert await page.locator('.guest-review time').get_attribute('datetime')=='2024-06-01T12:00:00.000Z'
                             assert await page.locator('.guest-review > a').get_attribute('href')=='https://www.google.com/maps/reviews/FAKE_REVIEW'
                             assert await page.locator('.GMP-attribution').inner_text()=='Google Maps'
+                            assert await page.locator('.review-stars').get_attribute('aria-hidden')=='true'
+                            assert '5 / 5' in await page.locator('.review-rating').inner_text()
                             assert await page.evaluate('window.__mockFields')==['reviews','attributions']
                             await page.locator('[data-lang=es]').click();assert 'cinco estrellas' in await page.locator('.reviews-selection').inner_text()
                         elif mode=='empty':
@@ -61,11 +63,11 @@ async def main(base, output, webkit=False):
                             assert 'no están disponibles' in await page.locator('.reviews-status').inner_text()
                         assert requests==['google']
                     await page.screenshot(path=str(output/f'reviews-{engine.name}-{width}-{mode}.png'))
-                    await page.locator('#events .chapter-close').click()
-                    await travel(page,POSITIONS[7],7);await page.locator('#team .chapter-more > summary').click()
-                    await page.locator('.social-load').click();await page.frame_locator('.social-frame iframe').locator('body').wait_for()
-                    assert requests.count('facebook')==1
-                    assert await page.locator('.social-frame iframe').bounding_box()
+                    await position(page,'team')
+                    for url in ['https://www.instagram.com/lajollacoralgables/','https://www.tiktok.com/@lajollacoralgables','https://www.pinterest.com/LaJollaCoralGables/','https://www.facebook.com/lajollaballroom']:
+                        assert await page.locator('.social-links a[href="'+url+'"]').count()==1
+                    assert requests.count('facebook')==0,'The images-only landing must not embed additional media'
+                    assert await page.locator('.house-stream iframe').count()==0
                     assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
                     assert not errors,errors
                     rows.append({'engine':engine.name,'width':width,'mode':mode,'lazy':True,'only_positive':True})
