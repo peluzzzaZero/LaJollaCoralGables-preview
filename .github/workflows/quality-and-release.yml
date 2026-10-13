@@ -74,6 +74,7 @@ jobs:
           python tests/browser/motion-quality.py --output review-artifacts/motion --webkit
           python tests/browser/desktop-review.py --output review-artifacts/desktop
           python tests/browser/footer-review.py --output review-artifacts/footer
+          python tests/browser/reader-transitions.py --webkit --output review-artifacts/readers
       - name: Node visit route and calendar without real submissions
         run: |
           INQUIRY_ENABLED=false MAIL_SETUP_ENABLED=false PORT=13317 HOST=127.0.0.1 npm start > /tmp/lajolla-node-preview.log 2>&1 &

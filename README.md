@@ -17,13 +17,13 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.16.3. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.16.4. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `develop` → Claude CLI Sonnet high review (Sol medium only after a recorded failure) and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
 GitHub Pages publishes `main` for https://lajollacoralgables.com. The owner selected GitHub hosting and retired the temporary jolla.peluzzza.com alias. Domain registration, DNS and Microsoft 365 email remain in GoDaddy. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.16.3 notes](tests/releases/v1.16.3.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.16.4 notes](tests/releases/v1.16.4.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Content requirements
 
@@ -49,4 +49,4 @@ Node-served planning forms use the same-origin API without a Web3Forms fallback.
 
 ## Cinematic art direction
 
-The interface uses one self-hosted Manrope variable font, factual room/occasion copy and an adaptive full-screen camera with an accessible chapter directory. The ballroom is supported by its original photograph, and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
+The interface pairs self-hosted Cormorant Garamond titles with Manrope body copy and controls, opaque forest chapter readers, factual room/occasion copy and an adaptive full-screen camera with an accessible chapter directory. The ballroom is supported by its original photograph, and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
