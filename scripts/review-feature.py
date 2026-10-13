@@ -62,9 +62,12 @@ try:
         response = json.loads(result.stdout)
     except json.JSONDecodeError:
         response = {'rawOutput': result.stdout}
+    if not isinstance(response, dict):
+        response = {'unexpectedOutput': response}
     report['response'] = response
     review = response.get('structured_output')
-    models = list(response.get('modelUsage', {}))
+    usage = response.get('modelUsage', {})
+    models = list(usage) if isinstance(usage, dict) else []
     report['modelsActual'] = models
     valid = (result.returncode == 0 and not response.get('is_error')
              and any('sonnet' in m.lower() for m in models)
