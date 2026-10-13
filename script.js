@@ -657,12 +657,17 @@
       if (generation !== undefined && generation !== primeGeneration) return;
       if (!priming) return;
       priming = false; clearTimeout(primeTimer); video.pause(); seek();
-      if (active && video.readyState === 0 && objectURL && !nativeSource) {
-        // WebKit can defer metadata on a blob. Its native MP4 loader is the
-        // bounded fallback, as in the previously reviewed entrance player.
-        nativeSource = true; video.src = networkURL; video.load();
-        URL.revokeObjectURL(objectURL); objectURL = null; prime();
-      }
+      if (video.readyState === 0) useNativeSource();
+    }
+    function useNativeSource() {
+      if (!active || !objectURL || nativeSource) return false;
+      // WebKit can reject a blob at bootstrap or after a reverse seek. Try
+      // its native loader once for this same format before choosing another.
+      clearTimeout(primeTimer); priming = false; primeGeneration++; primeAttempts = 0;
+      video.pause(); video.classList.remove('is-decoded');
+      const previous = objectURL; objectURL = null; nativeSource = true;
+      video.src = networkURL; video.load(); URL.revokeObjectURL(previous); prime();
+      return true;
     }
     function prime() {
       if (!active || !video.hasAttribute('src') || priming || primeAttempts >= 3 || video.readyState >= 2) return;
@@ -698,7 +703,10 @@
     video.addEventListener('loadeddata', () => { finishPrime(); seek(); });
     video.addEventListener('seeked', seek);
     video.addEventListener('playing', () => finishPrime());
-    video.addEventListener('error', nextSource);
+    video.addEventListener('error', () => {
+      // An error queued by an abandoned source must not replace a fresh one.
+      if (video.error && !useNativeSource()) nextSource();
+    });
     // One paused entrance film. The rest of the page never seeks or pins media.
     function render(self) {
       desired = self.progress;
@@ -708,7 +716,8 @@
       active = self.isActive && !document.hidden && !document.querySelector('dialog[open]');
       if (!active) { finishPrime(); video.pause(); return; }
       if (desired > .001 && !started) { started = true; nextSource(); }
-      else if ((video.error || loadFailed) && sourceIndex < formats.length) nextSource();
+      else if (video.error) { if (!useNativeSource()) nextSource(); }
+      else if (loadFailed && sourceIndex < formats.length) nextSource();
       prime(); seek();
     }
     function release() {
