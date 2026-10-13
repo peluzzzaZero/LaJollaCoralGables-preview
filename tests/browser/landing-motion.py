@@ -26,13 +26,18 @@ async def main(base,output,args):
       heading=await page.locator('#hero-title').bounding_box()
       assert heading['y']>=68 and heading['y']+heading['height']<=height,(width,heading)
       caption=page.locator('.entrance-phrase')
-      active=await caption.evaluate_all('items=>items.filter(e=>Number(getComputedStyle(e).opacity)>.99).length')
+      active=await caption.evaluate_all('items=>items.filter(e=>getComputedStyle(e).display!=="none"&&Number(getComputedStyle(e).opacity)>.99).length')
       assert active==1,(width,fraction,active)
-      phrase=await caption.evaluate_all('items=>items.find(e=>Number(getComputedStyle(e).opacity)>.99).getBoundingClientRect().bottom')
+      phrase=await caption.evaluate_all('items=>items.find(e=>getComputedStyle(e).display!=="none"&&Number(getComputedStyle(e).opacity)>.99).getBoundingClientRect().bottom')
       assert phrase<state['top'],(width,fraction,phrase,state)
       assert await page.locator('.entrance-actions [data-booking-opener]').is_visible()
       await page.screenshot(path=str(output/f'arrival-{engine.name}-{width}-{language}-{fraction}.png'))
      assert len(set(poses))==3,'Entrance typography must accompany the zoom'
+     for fraction in [.15,.52,.9,.52,.15]:
+      await page.evaluate('p=>{const t=__ljEntrance.trigger;scrollTo(0,t.start+(t.end-t.start)*p);ScrollTrigger.update()}',fraction)
+      await page.wait_for_timeout(30)
+      displayed=await page.locator('.entrance-phrase').evaluate_all('items=>items.filter(e=>getComputedStyle(e).display!=="none").length')
+      assert displayed==1,'Rapid scrubbing must never overlay different caption strings'
      image=page.locator('.history-photo img')
      await image.evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.2)')
      await page.wait_for_timeout(1400)
