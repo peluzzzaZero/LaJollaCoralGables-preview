@@ -37,7 +37,7 @@ test("alcazar title is The Lexington", () => {
 
 test("alcazar drawing is the awning-mark bitmap", () => {
   const section = alcazarSection();
-  assert.match(section, /<figure class="alcazar-visual">/);
+  assert.match(section, /<figure class="alcazar-visual"[^>]*>/);
   assert.match(section, /src="assets\/brand\/awning-mark\.jpg"/);
   assert.equal(/<svg[\s>]/.test(section), false);
   assert.equal(section.includes("cafe-garden"), false);

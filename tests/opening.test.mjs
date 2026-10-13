@@ -11,12 +11,12 @@ test("styles and script are linked with a cache query", () => {
   assert.match(html, /<script[^>]+src="script\.js\?[^"]+"/);
 });
 
-test("the shared cinema fills the viewport", () => {
-  assert.match(css, /\.cinema-scroll \.cinema-stage[^}]*height: 100svh/);
+test("the entrance has a stable full-height frame", () => {
+  assert.match(css, /\.entrance-stage[^}]*height: 100svh/);
 });
 
-test("reel names the four opening photos", () => {
-  for (const name of ["venue/facade", "welcome-table", "mood-card-flowers", "flower-plaque"]) {
+test("landing uses the approved venue and styling photographs", () => {
+  for (const name of ["venue/web/architecture", "welcome-table", "mood-card-flowers", "flower-plaque"]) {
     assert.equal(html.includes(name), true, name);
   }
 });
@@ -47,8 +47,11 @@ test("1928 remains in the arrival and history without repeating the history para
   assert.match(html, /class="lede history-line"[^>]*>Since 1928/);
 });
 
-test("the homepage uses one shared cinema instead of an independent hero carousel", () => {
+test("only the entrance film is pinned; later content is in document flow", () => {
   assert.equal(html.includes('class="reel-controls"'), false);
-  assert.equal((html.match(/class="cinema-stage"/g) || []).length, 1);
+  assert.equal((html.match(/class="entrance-stage"/g) || []).length, 1);
   assert.match(js, /pin: stage/);
+  assert.equal((html.match(/<video\b/g) || []).length, 1);
+  assert.equal(html.includes('data-scene-copy'), false);
+  assert.equal(js.includes('cinematic-journey'), false);
 });

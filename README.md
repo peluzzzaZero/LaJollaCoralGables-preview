@@ -1,6 +1,6 @@
 # La Jolla Coral Gables
 
-A bilingual editorial website for La Jolla Coral Gables, using approved brand assets and descriptions. Static HTML, CSS and JavaScript with a Node backend; locally vendored GSAP/ScrollTrigger and native scrolling. Visits are scheduled through the business-owned Microsoft Bookings page.
+A bilingual landing page for La Jolla Coral Gables, using approved brand assets and descriptions. Static HTML, CSS and JavaScript with a Node backend; locally vendored GSAP/ScrollTrigger and native scrolling. Visits are scheduled through the business-owned Microsoft Bookings page.
 
 ## Preview and checks
 
@@ -17,13 +17,13 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.17.0. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.18.0. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `develop` → Claude CLI Sonnet high review (Sol medium only after a recorded failure) and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
 GitHub Pages publishes `main` for https://lajollacoralgables.com. The owner selected GitHub hosting and retired the temporary jolla.peluzzza.com alias. Domain registration, DNS and Microsoft 365 email remain in GoDaddy. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.17.0 notes](tests/releases/v1.17.0.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.18.0 notes](tests/releases/v1.18.0.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Optional live guest reviews
 
@@ -31,7 +31,7 @@ The owner confirmed Facebook `https://www.facebook.com/lajollaballroom` and the 
 
 To activate reviews, configure repository variable `GOOGLE_MAPS_BROWSER_KEY` with an explicitly browser-public Maps key. Enable Maps JavaScript API and Places API (New), restrict website referrers to the owned apex/www domains (and only approved preview domains), restrict API access and set appropriate quotas/billing controls. The build places this browser key in a dedicated homepage meta field; it is intentionally visible to the browser. Never put a private server credential there. Without this variable, the direct Google Maps review link works and the API-loading button stays hidden. No Google account, payment or billable request is created by tooling/tests.
 
-Official sources: [Place Reviews](https://developers.google.com/maps/documentation/javascript/place-reviews), [Places attribution and filtering](https://developers.google.com/maps/documentation/places/web-service/policies), [usage and billing](https://developers.google.com/maps/documentation/places/web-service/usage-and-billing), [Facebook Page Plugin](https://developers.facebook.com/docs/plugins/page-plugin/). Provider login/cookie/network restrictions can prevent an embed; the source links always remain available. Instagram and TikTok handles must be verified before being added.
+Official sources: [Place Reviews](https://developers.google.com/maps/documentation/javascript/place-reviews), [Places attribution and filtering](https://developers.google.com/maps/documentation/places/web-service/policies), [usage and billing](https://developers.google.com/maps/documentation/places/web-service/usage-and-billing), [Facebook Page Plugin](https://developers.facebook.com/docs/plugins/page-plugin/). Provider login/cookie/network restrictions can prevent an embed; the source links always remain available. The owner supplied official Instagram/TikTok `lajollacoralgables` and Pinterest `LaJollaCoralGables` profiles. Clean canonical links appear within the team view; the images-only landing does not embed other social media/video or blocked Facebook frames.
 
 ## Content requirements
 
@@ -39,7 +39,7 @@ Keep the year 1928, The Lexington, Julie Arias (Executive Director), Patricia Mi
 
 The user authorized rethinking the old composition and scroll timings. Tests for the old exact crops, pinned history and duplicated opening paragraphs have been updated to protect the new behavior; brand and content requirements remain covered. High-resolution approved photography, Pat's final tagline, an approved guest quote and actual inbox confirmation remain external decisions.
 
-The homepage now presents all approved public content within one nine-chapter full-screen film timeline. Expanded native chapter disclosures retain complete details. The visit action lives at `planning.html`; language follows the visitor. Service descriptions are informational, with no selection or submission controls. Reduced motion, short screens, SaveData and unavailable JavaScript retain a readable native document.
+The homepage starts with the approved five-second approach to the door. Only that short entrance is pinned and scrubbed; the remaining complete information uses ordinary vertical document flow, photographs, subtle shadows and decorative reveals. No chapter readers, occasion/service accordions, horizontal brand carousel or additional films are active. All ten occasion descriptions, ten service labels and seven original brand plates are visible. Bookings opens over the current page and contact is always visible at the end. Reduced motion, SaveData, missing JavaScript/GSAP, short screens and failed decoding retain the complete landing and approved poster.
 
 The owner requested one scheduling action in v1.16.2: **Schedule a visit**. The planning route contains a compact introduction, that action, the existing Microsoft Bookings calendar and direct contact in the footer. Quote/vendor forms and service selection controls are removed. The homepage preserves all ten service descriptions and its approved cinematic presentation.
 
@@ -53,11 +53,11 @@ Two notification modes are available: GoDaddy's built-in gateway (platform sende
 
 Use the platform Node version within the declared range, `npm ci`, `npm run build` and `npm start`. The server listens on its assigned `PORT`. Native public delivery and private setup default off; adding credentials alone does not enable either. `/healthz` reports process health and enabled state only. Public pages/assets are allowed, private files/source are denied, and HTTP byte ranges preserve the approved films.
 
-Node-served planning forms use the same-origin API without a Web3Forms fallback. Static GitHub Pages retains its old transport while the migration is pending. Activate only after the private setup records verified storage, mailbox authorization when applicable and manually confirmed technical receipt. Contact fields are retained on failed submissions; UUIDs prevent accepted unchanged retries from being resent during the browser session, and uncertain saved records need owner reconciliation. Automated tests use isolated fake providers and a local/CI MySQL container, never real mail or the business database.
+Historical native-form preparation used a same-origin API. Current public pages contain no inquiry forms or external mail transport. Activate only after the private setup records verified storage, mailbox authorization when applicable and manually confirmed technical receipt. Contact fields are retained on failed submissions; UUIDs prevent accepted unchanged retries from being resent during the browser session, and uncertain saved records need owner reconciliation. Automated tests use isolated fake providers and a local/CI MySQL container, never real mail or the business database.
 
 ## Cinematic art direction
 
-The interface pairs self-hosted Cormorant Garamond titles with Manrope body copy and controls, opaque forest chapter readers, factual room/occasion copy and an adaptive full-screen camera with an accessible chapter directory. The ballroom is supported by its original photograph, and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
+The interface pairs self-hosted Cormorant Garamond titles with Manrope body copy and controls, warm ivory/beige/taupe, visible factual room/occasion copy and one short entrance zoom followed by normal native scrolling. The ballroom is supported by its original photograph, and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
 
 ## Public-only Pages deployment
 

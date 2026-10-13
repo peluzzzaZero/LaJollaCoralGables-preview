@@ -30,7 +30,7 @@ test("MonteCarlo from the brand zip is the script font", () => {
 });
 
 test("opening frame cannot collapse", () => {
-  assert.match(css, /\.cinema-scroll \.cinema-stage[^}]*height: 100svh/);
+  assert.match(css, /\.entrance-stage[^}]*height: 100svh/);
 });
 
 test("visits use Bookings with no public inquiry forms", () => {

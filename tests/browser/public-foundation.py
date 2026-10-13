@@ -59,8 +59,8 @@ async def main(base, output):
                     assert await page.evaluate('document.documentElement.scrollWidth <= innerWidth'), (filename,width,language)
                     assert await page.locator('form').count()==0
                     if filename=='index.html':
-                        assert await page.locator('.cinema-story > h3').count()==0
-                        assert await page.locator('.cinema-story > h2').count()==8
+                        assert await page.locator('main details').count()==0
+                        assert await page.locator('main .landing-section').count()==8
                         header=await page.locator('.header-inner').bounding_box()
                         logo=await page.locator('#header .logo').bounding_box()
                         actions=await page.locator('.header-actions').bounding_box()
@@ -69,18 +69,15 @@ async def main(base, output):
                         assert (await cta.inner_text()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
                         box=await cta.bounding_box()
                         assert box['x']>=0 and box['x']+box['width']<=width and box['y']+box['height']<=header['y']+header['height']+1
-                        await page.locator('.cinema-directory > summary').click()
-                        controls=page.locator('.cinema-controls')
-                        labels=await controls.locator('button > span:last-child').all_text_contents()
-                        for label in labels:
-                            assert await controls.get_by_role('button',name=label,exact=True).count()==1, ('Label in Name',language,label)
-                        await page.screenshot(path=str(output/f'chapters-{width}-{language}.png'))
-                        await page.keyboard.press('Escape')
-                        assert await page.locator('.cinema-directory > summary').evaluate('e=>e===document.activeElement')
-                        await page.locator('.cinema-directory > summary').click()
-                        await controls.get_by_role('button',name=labels[3],exact=True).press('Enter')
-                        await page.wait_for_function('document.getElementById("cinema").dataset.scene==="3"')
-                        assert await page.locator('#events > h2').is_visible()
+                        if width<=900:
+                            await page.locator('.mobile-menu > summary').click()
+                            link=page.locator('.mobile-chapters a[href="#events"]')
+                        else:link=page.locator('.chapter-nav a[href="#events"]')
+                        await link.press('Enter')
+                        await page.wait_for_function('location.hash==="#events"')
+                        assert await page.locator('#events-title').evaluate('e=>e===document.activeElement')
+                        assert await page.locator('#events-title').is_visible()
+                        await page.screenshot(path=str(output/f'navigation-{width}-{language}.png'))
                     if filename=='planning.html':
                         assert await page.locator('[data-booking-opener]').count()==1
                         assert 'bookings.cloud.microsoft' in await page.locator('[data-booking-opener]').get_attribute('href')
