@@ -43,7 +43,7 @@ async def main(base,output,webkit=False,webkit_only=False):
             await page.wait_for_function("() => Array.from(document.querySelectorAll('[data-scene-detail=\"2\"] .photo-slice img')).every(e=>e.complete&&e.naturalWidth>0)")
             assert await photo.get_attribute('href')=='assets/venue/ballroom.jpg'
             await page.locator('[data-lang="es"]').click()
-            assert 'salón' in (await page.locator('#visit > h3').text_content()).lower()
+            assert 'salón' in (await page.locator('#visit > h2').text_content()).lower()
             assert await page.locator('.cinema-position [data-current-chapter]').text_content()=='Espacios'
             await travel(page,.055,0)
             await page.wait_for_function('''() => {const v=document.querySelector('[data-cinema-film="journey"]');return v.readyState>=2&&!v.seeking&&v.currentTime>0;}''')
