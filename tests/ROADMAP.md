@@ -127,3 +127,14 @@ Remove the full selected quote form and redundant notice/submit action; retain t
 ## v1.16.2 — one visit action
 
 At the owner's request, remove the remaining vendor form and service selection controls. Planning contains only its visit introduction, Schedule a visit action and existing calendar, with ordinary footer contact. Keep all ten homepage service descriptions, the films, navigation, languages and legal links. Remove public mail delivery JavaScript and update privacy copy. Native mail preparation stays disabled and is optional. Update the existing browser reviews for the actual booking/navigation route and wait for the native dialog close event before asserting body unlock.
+
+## v1.18.0 — a short entrance and a continuous landing
+
+Client feedback rejected the extended camera journey and expanding chapter readers. Keep only the approved approach to the door, then expose the original room, occasion, services, brand and team information in ordinary vertical flow. Use warm ivory/beige, classic headings, readable controls and subtle image/card shadows. The calendar opens over the current page; visible invitations beside the spaces explain why a visit is useful. Clean owner-confirmed social links and styled, attributed five-star review selection belong within the content, with no secondary video or fabricated testimonials.
+
+Next improvements, in order of useful evidence:
+
+- Connect the existing restricted Google review source when the owner supplies an authorized provider connection; retain selection disclosure, original authors/date/source and the native source link on failure.
+- Collect approved high-resolution photographs of actual weddings and celebrations, with permission for identifiable guests. Use them beside the matching occasion descriptions instead of adding more motion.
+- Confirm each room's capacity, accessibility, parking, catering and scheduling policies. Present a concise visible FAQ near the visit invitation once those facts are reliable.
+- Validate the entrance-to-calendar journey with representative mobile visitors before adding more effects. A visit appointment remains separate from reserving event space.

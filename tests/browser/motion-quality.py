@@ -16,6 +16,14 @@ async def main(base,output,args):
       media.append(request.url)
       network.append({'url':request.url,'type':request.resource_type,'range':request.headers.get('range')})
     page.on('request',record_media)
+    await page.add_init_script('''(() => {
+     const original=window.fetch; window.__entranceFetches=[];
+     window.fetch=function(input,options) {
+      const url=typeof input==='string'?new URL(input,location.href).href:input.url;
+      if (/\\/cinematic\\/journey(?:-hd)?\\.(mp4|webm)$/.test(url)) window.__entranceFetches.push(url);
+      return original.apply(this,arguments);
+     };
+    })();''')
     await page.goto(base);await page.evaluate('document.fonts.ready')
     await page.wait_for_function('window.__ljEntrance?.trigger')
     assert not media,'Entrance must not preload until scrolling'
@@ -35,13 +43,13 @@ async def main(base,output,args):
     assert .8*height<=t['end']-t['start']<=height
     await position(page,'events');await verify_flow(page)
     paused=await page.locator('.entrance-video').evaluate('v=>v.paused');assert paused
-    # A native decoder may make several byte-range requests for one source.
-    # Bound actual format fetches rather than mistaking ranges for new films.
-    fetches=[request for request in network if request['type']=='fetch']
-    assert 1<=len(fetches)<=2 and len({r['url'] for r in fetches})==len(fetches),network
-    assert len(set(media))<=2 and all(r['url'] in {f['url'] for f in fetches} for r in network),network
+    # Native decoder loads/ranges can also be tagged "fetch" by WebKit.
+    # Count explicit JS fetch calls independently of browser request labels.
+    fetches=await page.evaluate('window.__entranceFetches')
+    assert 1<=len(fetches)<=2 and len(set(fetches))==len(fetches),(fetches,network)
+    assert len(set(media))<=2 and all(r['url'] in set(fetches) for r in network),(fetches,network)
     assert not errors,errors
-    rows.append({'engine':engine.name,'width':width,'forward_reverse_decoded':True,'one_entrance_clip':True,'format_attempts':len(fetches),'network_requests':network,'pin_span':t['end']-t['start']})
+    rows.append({'engine':engine.name,'width':width,'forward_reverse_decoded':True,'one_entrance_clip':True,'format_attempts':len(fetches),'explicit_fetches':fetches,'network_requests':network,'pin_span':t['end']-t['start']})
     await page.close()
    page=await browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
    await page.goto(base);await verify_flow(page)
