@@ -1261,7 +1261,7 @@ html { scrollbar-gutter: stable; }
 .motion-page .cinema-scroll .cinema-controls button > span:nth-child(2) { display: inline; }
 .motion-page .cinema-scroll .cinema-controls button[aria-pressed="true"], .motion-page .cinema-scroll .cinema-controls button:hover { background: #55635512; }
 .motion-page .cinema-scroll .cinema-skip { display: none; }
-.motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) { filter: none; background: var(--cream); color: var(--ink); box-shadow: 0 16px 80px #0005; border-radius: 2px; }
+.motion-page .cinema-scroll .cinema-story:has(.chapter-more[open]) { opacity: 1 !important; filter: none; background: var(--cream); color: var(--ink); box-shadow: 0 16px 80px #0005; border-radius: 2px; }
 .motion-page .cinema-scroll .chapter-more[open] > summary { color: var(--sage-deep); display: flex; }
 .motion-page .cinema-scroll .chapter-body { color: var(--ink); }
 .motion-page .cinema-scroll .chapter-body .eyebrow { color: var(--sage-deep); }
