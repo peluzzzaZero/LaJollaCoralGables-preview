@@ -42,6 +42,16 @@ async def main(base,output,args):
      assert before!=after and after!='none','Selected photography must have measured scroll depth'
      assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='inset(0px)', 'Image reveal must finish'
      await verify_flow(page)
+     first=await page.locator('.events-list > li').first.bounding_box()
+     other=await page.locator('.events-list > li').nth(1).bounding_box()
+     if width>=884:assert first['width']>other['width']*1.8,'Weddings must span the occasion list'
+     sizes=await page.locator('.occasion h3').evaluate_all('items=>items.map(e=>parseFloat(getComputedStyle(e).fontSize))')
+     assert sizes[0]>max(sizes[1:]),'Only the wedding title should receive the larger treatment'
+     window=page.locator('.ballroom-photo .photo-window')
+     await window.scroll_into_view_if_needed();await page.wait_for_timeout(1000)
+     picture=await window.bounding_box();caption=await page.locator('.ballroom-photo figcaption').bounding_box()
+     assert picture['y']+picture['height']<=caption['y'], 'Photo movement must not paint over its caption'
+     assert await window.evaluate('e=>getComputedStyle(e).overflow') in ['clip','hidden']
      assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.pin).length')==1,'Later posts must never be pinned'
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
      await page.screenshot(path=str(output/f'depth-{engine.name}-{width}-{language}.png'))
