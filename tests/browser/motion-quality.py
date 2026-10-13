@@ -9,9 +9,13 @@ async def main(base,output,args):
   for engine in engines:
    browser=await engine.launch()
    for width,height in [(390,844),(884,884),(1920,900)]:
-    page=await browser.new_page(viewport={'width':width,'height':height});media=[];errors=[]
+    page=await browser.new_page(viewport={'width':width,'height':height});media=[];network=[];errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
-    page.on('request',lambda r:media.append(r.url) if r.url.endswith(('.mp4','.webm')) else None)
+    def record_media(request):
+     if request.url.endswith(('.mp4','.webm')):
+      media.append(request.url)
+      network.append({'url':request.url,'type':request.resource_type,'range':request.headers.get('range')})
+    page.on('request',record_media)
     await page.goto(base);await page.evaluate('document.fonts.ready')
     await page.wait_for_function('window.__ljEntrance?.trigger')
     assert not media,'Entrance must not preload until scrolling'
@@ -31,9 +35,13 @@ async def main(base,output,args):
     assert .8*height<=t['end']-t['start']<=height
     await position(page,'events');await verify_flow(page)
     paused=await page.locator('.entrance-video').evaluate('v=>v.paused');assert paused
-    assert 1<=len(media)<=3 and len(set(media))<=2,media
+    # A native decoder may make several byte-range requests for one source.
+    # Bound actual format fetches rather than mistaking ranges for new films.
+    fetches=[request for request in network if request['type']=='fetch']
+    assert 1<=len(fetches)<=2 and len({r['url'] for r in fetches})==len(fetches),network
+    assert len(set(media))<=2 and all(r['url'] in {f['url'] for f in fetches} for r in network),network
     assert not errors,errors
-    rows.append({'engine':engine.name,'width':width,'forward_reverse_decoded':True,'one_entrance_clip':True,'format_attempts':len(media),'pin_span':t['end']-t['start']})
+    rows.append({'engine':engine.name,'width':width,'forward_reverse_decoded':True,'one_entrance_clip':True,'format_attempts':len(fetches),'network_requests':network,'pin_span':t['end']-t['start']})
     await page.close()
    page=await browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
    await page.goto(base);await verify_flow(page)
