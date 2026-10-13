@@ -664,21 +664,30 @@
       renderCurrent = null;
     }
     function primeVideo(video) {
-      if (!userReady || !portrait.matches || !video?.filmURL || video.primedURL === video.filmURL) return;
+      if (!userReady || !portrait.matches || !video?.frameRequested || !video.filmURL || video.priming || video.primedURL === video.filmURL) return;
       const source = video.filmURL;
-      video.primeCleanup?.(); video.primedURL = source; video.priming = true;
-      let timer;
-      function cleanup() { clearTimeout(timer); video.removeEventListener('playing', finish); video.priming = false; }
-      function finish() {
-        if (video.filmURL !== source) return;
-        cleanup(); video.pause(); video.resumeSeek?.();
+      if (video.primeSource !== source) { video.primeSource = source; video.primeAttempts = 0; video.primeRetryAt = 0; }
+      if (video.primeAttempts >= 3 || Date.now() < (video.primeRetryAt || 0)) return; // Keep the poster if the decoder cannot start.
+      video.primeCleanup?.(); video.primeAttempts++; video.priming = true;
+      let timer, retryTimer, finished = false;
+      function cleanup() { clearTimeout(timer); clearTimeout(retryTimer); video.removeEventListener('playing', playing); video.priming = false; }
+      function finish(played) {
+        if (finished || video.filmURL !== source) return;
+        finished = true; cleanup();
+        const decoded = played && video.readyState >= 2;
+        video.primedURL = decoded ? source : null;
+        video.pause(); video.resumeSeek?.();
+        if (decoded && video.frameRequested && !video.seeking) video.classList.add('is-decoded');
+        video.primeRetryAt = decoded ? 0 : Date.now() + 250;
+        if (!decoded && !video.error && video.frameRequested) retryTimer = setTimeout(() => primeVideo(video), 250);
       }
-      video.primeCleanup = cleanup;
-      // WebKit may delay play() settlement during a seek. Pause on the first
-      // playing event, with a bounded fallback, then restore the requested frame.
-      video.addEventListener('playing', finish, { once: true });
-      timer = setTimeout(finish, 120);
-      try { const play = video.play(); if (play?.then) play.then(finish, finish); } catch (_) { finish(); }
+      function playing() { finish(true); }
+      video.primeCleanup = () => { finished = true; cleanup(); };
+      // Prime only a visible requested clip. A preload can be invisible when
+      // WebKit defers metadata; pausing it after 120ms must not mark it primed.
+      video.addEventListener('playing', playing, { once: true });
+      timer = setTimeout(() => finish(video.readyState >= 2), 1500);
+      try { const play = video.play(); if (play?.then) play.then(() => finish(true), () => finish(false)); } catch (_) { finish(false); }
     }
     function firstGesture() { userReady = true; videos.forEach(primeVideo); }
     window.addEventListener('pointerdown', firstGesture, { once: true, passive: true });
@@ -693,15 +702,19 @@
       video.requestFrame = fraction => {
         // A dormant clip can still hold a frame from a previous visit.
         if (!requested && Number.isFinite(video.duration) && Math.abs(video.currentTime - fraction * video.duration) > .08) video.classList.remove('is-decoded');
-        requested = true; desired = fraction; seek();
+        if (!requested) { video.primeAttempts = 0; video.primeRetryAt = 0; }
+        requested = true; video.frameRequested = true; desired = fraction; primeVideo(video); seek();
       };
-      video.suspendFrame = () => { requested = false; };
+      video.suspendFrame = () => {
+        requested = false; video.frameRequested = false; video.primeCleanup?.();
+        if (!video.paused) video.pause();
+      };
       video.resumeSeek = seek;
       video.addEventListener('pause', seek);
       video.addEventListener('loadedmetadata', function () { primeVideo(video); seek(); });
       video.addEventListener('seeked', function () {
         seek(); // Coalesce rapid direction changes to the latest visible target.
-        if (requested && !video.seeking) video.classList.add('is-decoded');
+        if (requested && !video.seeking && video.readyState >= 2) video.classList.add('is-decoded');
       });
       video.addEventListener('loadeddata', function () {
         primeVideo(video); seek();

@@ -16,6 +16,16 @@ async def main(base,output,webkit=False,webkit_only=False):
         browser = await p.chromium.launch()
         for width, height in ([] if webkit_only else [(390,844),(1920,1080)]):
             page = await browser.new_page(viewport={'width':width,'height':height})
+            if width < 650:
+                await page.add_init_script("""{
+                    const play=HTMLMediaElement.prototype.play;
+                    window.primeRequests=0;
+                    HTMLMediaElement.prototype.play=function(){
+                        if(this.dataset.cinemaFilm==='details' && ++window.primeRequests===1)
+                            return Promise.reject(new DOMException('Isolated decoder retry fixture','NotAllowedError'));
+                        return play.call(this);
+                    };
+                }""")
             await page.goto(base,wait_until='networkidle')
             await page.locator('[data-lang="en"]').click()
             assert await page.locator('.cinema-story .scroll-word').count()==0
@@ -44,6 +54,7 @@ async def main(base,output,webkit=False,webkit_only=False):
             last=await page.locator('[data-cinema-film="'+camera+'"]').evaluate('v=>v.currentTime')
             assert last-first>3,(first,last)
             if width<650:
+                assert await page.evaluate('primeRequests') >= 2, 'Rejected mobile prime did not retry'
                 assert await page.locator('[data-cinema-film=details]').get_attribute('data-source')=='details-mobile-hq'
             else:
                 assert await page.locator('[data-cinema-film=details]').get_attribute('data-source') is None
@@ -81,34 +92,35 @@ async def main(base,output,webkit=False,webkit_only=False):
             await page.close()
         await browser.close()
         if webkit or webkit_only:
-            browser=await p.webkit.launch()
-            context=await browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
-            page=await context.new_page()
-            await page.goto(base,wait_until='networkidle')
-            await page.locator('[data-lang="en"]').click()
-            frames=[]
-            for progress,limit in [(.455,.5),(.535,3.5)]:
-                await travel(page,progress,4)
-                try:
-                    await page.wait_for_function("""({progress,limit})=>{const v=document.querySelector('[data-cinema-film=details]');return v.readyState>=2&&!v.seeking&&(progress<.5?v.currentTime<limit:v.currentTime>limit)&&v.currentTime>0;}""",arg={'progress':progress,'limit':limit})
-                except Exception:
-                    state=await page.evaluate("""() => ({width:innerWidth,height:innerHeight,scroll:scrollY,scene:document.getElementById('cinema').dataset.scene,trigger:ScrollTrigger.getById('cinematic-journey')?.progress,videos:Array.from(document.querySelectorAll('[data-cinema-film]')).map(v=>({name:v.dataset.cinemaFilm,source:v.dataset.source,format:v.dataset.format,time:v.currentTime,duration:Number.isFinite(v.duration)?v.duration:null,ready:v.readyState,network:v.networkState,seeking:v.seeking,paused:v.paused,ended:v.ended,error:v.error?.code,decoded:v.classList.contains('is-decoded'),opacity:getComputedStyle(v).opacity,mp4:v.canPlayType('video/mp4'),webm:v.canPlayType('video/webm')}))})""")
-                    print('WEBKIT DIAGNOSTIC '+json.dumps({'requested_progress':progress,'state':state}),flush=True)
-                    (output/'webkit-state.json').write_text(json.dumps(state,indent=2))
-                    await page.screenshot(path=str(output/'webkit-failed.png'))
-                    raise
-                frames.append(await page.locator('[data-cinema-film=details]').evaluate("""v=>{const c=document.createElement('canvas');c.width=160;c.height=284;c.getContext('2d').drawImage(v,0,0,160,284);return {time:v.currentTime,source:v.dataset.source,width:v.videoWidth,height:v.videoHeight,pixels:c.toDataURL()};}"""))
-            assert frames[1]['time']-frames[0]['time']>3
-            assert frames[0]['pixels']!=frames[1]['pixels']
-            assert all(f['source']=='details-mobile-hq' and f['width']<f['height'] for f in frames)
-            await travel(page,.485,4)
-            await page.wait_for_function("""()=>{const v=document.querySelector('[data-cinema-film=details]');return v.paused&&!v.seeking&&v.currentTime>1&&v.currentTime<2;}""")
-            held=await page.locator('[data-cinema-film=details]').evaluate('v=>v.currentTime')
-            await page.wait_for_timeout(1200)
-            assert abs(await page.locator('[data-cinema-film=details]').evaluate('v=>v.currentTime')-held)<.05
-            await page.screenshot(path=str(output/'chapter-five-webkit.png'))
-            reports.append({'engine':'WebKit mobile emulation','chapter':'05','recorded_video':'passed','decoded_frames_change':'passed','seconds_advanced':frames[1]['time']-frames[0]['time']})
-            await browser.close()
+            for trial in range(3):
+                browser=await p.webkit.launch()
+                context=await browser.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
+                page=await context.new_page()
+                await page.goto(base,wait_until='networkidle')
+                await page.locator('[data-lang="en"]').click()
+                frames=[]
+                for progress,limit in [(.455,.5),(.535,3.5)]:
+                    await travel(page,progress,4)
+                    try:
+                        await page.wait_for_function("""({progress,limit})=>{const v=document.querySelector('[data-cinema-film=details]');return v.readyState>=2&&!v.seeking&&(progress<.5?v.currentTime<limit:v.currentTime>limit)&&v.currentTime>0;}""",arg={'progress':progress,'limit':limit})
+                    except Exception:
+                        state=await page.evaluate("""() => ({width:innerWidth,height:innerHeight,scroll:scrollY,scene:document.getElementById('cinema').dataset.scene,trigger:ScrollTrigger.getById('cinematic-journey')?.progress,videos:Array.from(document.querySelectorAll('[data-cinema-film]')).map(v=>({name:v.dataset.cinemaFilm,source:v.dataset.source,format:v.dataset.format,time:v.currentTime,duration:Number.isFinite(v.duration)?v.duration:null,ready:v.readyState,network:v.networkState,seeking:v.seeking,paused:v.paused,ended:v.ended,error:v.error?.code,decoded:v.classList.contains('is-decoded'),priming:!!v.priming,primeAttempts:v.primeAttempts,frameRequested:!!v.frameRequested,opacity:getComputedStyle(v).opacity,mp4:v.canPlayType('video/mp4'),webm:v.canPlayType('video/webm')}))})""")
+                        print('WEBKIT DIAGNOSTIC '+json.dumps({'requested_progress':progress,'state':state}),flush=True)
+                        (output/'webkit-state.json').write_text(json.dumps(state,indent=2))
+                        await page.screenshot(path=str(output/'webkit-failed.png'))
+                        raise
+                    frames.append(await page.locator('[data-cinema-film=details]').evaluate("""v=>{const c=document.createElement('canvas');c.width=160;c.height=284;c.getContext('2d').drawImage(v,0,0,160,284);return {time:v.currentTime,source:v.dataset.source,width:v.videoWidth,height:v.videoHeight,pixels:c.toDataURL()};}"""))
+                assert frames[1]['time']-frames[0]['time']>3
+                assert frames[0]['pixels']!=frames[1]['pixels']
+                assert all(f['source']=='details-mobile-hq' and f['width']<f['height'] for f in frames)
+                await travel(page,.485,4)
+                await page.wait_for_function("""()=>{const v=document.querySelector('[data-cinema-film=details]');return v.paused&&!v.seeking&&v.currentTime>1&&v.currentTime<2;}""")
+                held=await page.locator('[data-cinema-film=details]').evaluate('v=>v.currentTime')
+                await page.wait_for_timeout(1200)
+                assert abs(await page.locator('[data-cinema-film=details]').evaluate('v=>v.currentTime')-held)<.05
+                await page.screenshot(path=str(output/f'chapter-five-webkit-{trial}.png'))
+                reports.append({'cold_visit':trial+1,'engine':'WebKit mobile emulation','chapter':'05','recorded_video':'passed','decoded_frames_change':'passed','seconds_advanced':frames[1]['time']-frames[0]['time']})
+                await browser.close()
     print(json.dumps(reports,indent=2))
 
 if __name__=='__main__':
