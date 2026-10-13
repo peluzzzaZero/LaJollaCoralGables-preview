@@ -871,7 +871,10 @@ html:not(.js) .selection-builder { display: none; }
 .cinema-media { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
 .cinema-film { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--sage-deep); }
 .cinema-film > img, .cinema-film > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-.cinema-film > video { opacity: 0; pointer-events: none; }
+/* Keep the decoder renderable; the poster covers it until a frame is ready. */
+.cinema-film > video { opacity: 1; pointer-events: none; }
+.cinema-film > img, .cinema-film > picture { z-index: 1; }
+.cinema-film:has(video.is-decoded) > img, .cinema-film:has(video.is-decoded) > picture { visibility: hidden; }
 .cinema-film > video.is-decoded { opacity: 1; }
 .cinema-stories { position: relative; }
 .cinema-story { max-width: 38rem; margin-block: 0 2rem; background: var(--cream); color: var(--ink); padding: 2rem; }

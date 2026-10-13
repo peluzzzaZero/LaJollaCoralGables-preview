@@ -687,7 +687,7 @@
       // WebKit defers metadata; pausing it after 120ms must not mark it primed.
       video.addEventListener('playing', playing, { once: true });
       timer = setTimeout(() => finish(video.readyState >= 2), 1500);
-      try { const play = video.play(); if (play?.then) play.then(() => finish(true), () => finish(false)); } catch (_) { finish(false); }
+      try { const play = video.play(); if (play?.then) play.then(() => finish(true), error => { if (!finished && video.filmURL === source) video.primeFailure = error?.name; finish(false); }); } catch (error) { video.primeFailure = error?.name; finish(false); }
     }
     function firstGesture() { userReady = true; videos.forEach(primeVideo); }
     window.addEventListener('pointerdown', firstGesture, { once: true, passive: true });
