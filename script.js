@@ -683,19 +683,30 @@
     function firstGesture() { userReady = true; videos.forEach(primeVideo); }
     window.addEventListener('pointerdown', firstGesture, { once: true, passive: true });
     videos.forEach(function (video) {
-      let desired = 0;
+      let desired = 0, requested = false;
       function seek() {
-        if (video.priming || video.readyState < 1 || video.seeking || !Number.isFinite(video.duration)) return;
+        if (!requested || video.priming || video.readyState < 1 || video.seeking || !Number.isFinite(video.duration)) return;
         if (!video.paused) video.pause();
         const target = Math.min(video.duration - .001, Math.max(0, desired * video.duration));
         if (Math.abs(video.currentTime - target) > .012) { try { video.currentTime = target; } catch (_) {} }
       }
-      video.requestFrame = fraction => { desired = fraction; seek(); };
+      video.requestFrame = fraction => {
+        // A dormant clip can still hold a frame from a previous visit.
+        if (!requested && Number.isFinite(video.duration) && Math.abs(video.currentTime - fraction * video.duration) > .08) video.classList.remove('is-decoded');
+        requested = true; desired = fraction; seek();
+      };
+      video.suspendFrame = () => { requested = false; };
       video.resumeSeek = seek;
       video.addEventListener('pause', seek);
       video.addEventListener('loadedmetadata', function () { primeVideo(video); seek(); });
-      video.addEventListener('seeked', function () { video.classList.add('is-decoded'); seek(); });
-      video.addEventListener('loadeddata', function () { primeVideo(video); seek(); });
+      video.addEventListener('seeked', function () {
+        seek(); // Coalesce rapid direction changes to the latest visible target.
+        if (requested && !video.seeking) video.classList.add('is-decoded');
+      });
+      video.addEventListener('loadeddata', function () {
+        primeVideo(video); seek();
+        if (requested && !video.priming && !video.seeking) video.classList.add('is-decoded');
+      });
       video.addEventListener('error', () => video.classList.remove('is-decoded'));
     });
     function loadFilm(index) {
@@ -729,7 +740,7 @@
     function releaseFilms() {
       videos.forEach(function (video, index) {
         const state = filmStates[index]; state.controller?.abort(); state.controller = null; state.loaded = false;
-        video.primeCleanup?.(); video.primedURL = null;
+        video.primeCleanup?.(); video.primedURL = null; video.suspendFrame();
         video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute('src'); video.classList.remove('is-decoded'); video.preload = 'none'; video.load();
         if (video.filmURL) URL.revokeObjectURL(video.filmURL);
         video.filmURL = null; delete video.dataset.format; delete video.dataset.source;
@@ -806,6 +817,7 @@
         if (segmentIndex < 0) segmentIndex = filmSegments.length - 1;
         const segment = filmSegments[segmentIndex], active = filmIndex(segment.name);
         section.dataset.film = String(active);
+        const visibleFilms = new Set([active]);
         layers.forEach(layer => { layer.style.opacity = '0'; layer.style.zIndex = '0'; });
         if (layers[active]) { layers[active].style.opacity = '1'; layers[active].style.zIndex = '1'; }
         // Adjacent clips dissolve across a small band. We never claim these
@@ -814,6 +826,7 @@
           const boundary = filmSegments[n].start;
           if (Math.abs(p - boundary) <= .008) {
             const from = filmIndex(filmSegments[n - 1].name), to = filmIndex(filmSegments[n].name);
+            visibleFilms.add(from); visibleFilms.add(to);
             if (layers[from]) { layers[from].style.opacity = '1'; layers[from].style.zIndex = '2'; }
             if (layers[to]) { layers[to].style.opacity = String(smooth((p - boundary + .008) / .016)); layers[to].style.zIndex = '3'; }
           }
@@ -828,9 +841,11 @@
           let fraction = clamp((p - span.start) / (span.end - span.start));
           fraction = linger(fraction, span.linger);
           if (span.reverse) fraction = 1 - fraction;
-          video.requestFrame(fraction);
+          if (visibleFilms.has(i)) video.requestFrame(fraction);
+          else video.suspendFrame();
+          const previous = filmSegments[segmentIndex - 1];
           const next = filmSegments[segmentIndex + 1];
-          if (p > .002 && (nearby || trigger?.isActive) && (i === active || (next && i === filmIndex(next.name) && p > next.start - .035))) loadFilm(i);
+          if (p > .002 && (nearby || trigger?.isActive) && (visibleFilms.has(i) || (next && i === filmIndex(next.name) && p > next.start - .035) || (previous && i === filmIndex(previous.name) && p < segment.start + .035))) loadFilm(i);
         });
       }
       renderCurrent = render;
