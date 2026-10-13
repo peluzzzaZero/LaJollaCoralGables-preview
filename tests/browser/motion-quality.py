@@ -40,7 +40,7 @@ async def main(base,output,args):
      assert all('/cinematic/journey.' in u or '/cinematic/journey-hd.' in u for u in media),media
      await page.screenshot(path=str(output/f'frame-{engine.name}-{width}-{fraction}.png'))
     t=await page.evaluate('()=>({start:__ljEntrance.trigger.start,end:__ljEntrance.trigger.end})')
-    assert .8*height<=t['end']-t['start']<=height
+    assert 1.2*height<=t['end']-t['start']<=1.3*height
     await position(page,'events');await verify_flow(page)
     paused=await page.locator('.entrance-video').evaluate('v=>v.paused');assert paused
     # Native decoder loads/ranges can also be tagged "fetch" by WebKit.
