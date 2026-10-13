@@ -39,8 +39,18 @@ async def main(base,output,args):
      assert state['muted'] and state['paused'] and 4.9<state['duration']<5.2,state
      assert all('/cinematic/journey.' in u or '/cinematic/journey-hd.' in u for u in media),media
      await page.screenshot(path=str(output/f'frame-{engine.name}-{width}-{fraction}.png'))
+    # Exercise a decoder fault after successful blob-backed playback. Recover
+    # through the same native source and prove actual paused decoding resumes.
+    blob=await page.locator('.entrance-video').evaluate('v=>v.currentSrc.startsWith("blob:")')
+    if blob:
+     await page.evaluate('''() => {
+      const video=__ljEntrance.video;
+      Object.defineProperty(video,'error',{configurable:true,value:{code:3,message:'FAKE isolated late decoder fault'}});
+      video.dispatchEvent(new Event('error')); delete video.error;
+     }''')
+     await page.wait_for_function('''()=>{const v=__ljEntrance.video;return !v.currentSrc.startsWith('blob:')&&v.readyState>=2&&v.paused&&!v.seeking&&Math.abs(v.currentTime-__ljEntrance.trigger.progress*v.duration)<.12}''',timeout=20000)
     t=await page.evaluate('()=>({start:__ljEntrance.trigger.start,end:__ljEntrance.trigger.end})')
-    assert .8*height<=t['end']-t['start']<=height
+    assert 1.2*height<=t['end']-t['start']<=1.3*height
     await position(page,'events');await verify_flow(page)
     paused=await page.locator('.entrance-video').evaluate('v=>v.paused');assert paused
     # Native decoder loads/ranges can also be tagged "fetch" by WebKit.
@@ -49,7 +59,7 @@ async def main(base,output,args):
     assert 1<=len(fetches)<=2 and len(set(fetches))==len(fetches),(fetches,network)
     assert len(set(media))<=2 and all(r['url'] in set(fetches) for r in network),(fetches,network)
     assert not errors,errors
-    rows.append({'engine':engine.name,'width':width,'forward_reverse_decoded':True,'one_entrance_clip':True,'format_attempts':len(fetches),'explicit_fetches':fetches,'network_requests':network,'pin_span':t['end']-t['start']})
+    rows.append({'engine':engine.name,'width':width,'forward_reverse_decoded':True,'one_entrance_clip':True,'late_blob_fault_recovered':blob,'format_attempts':len(fetches),'explicit_fetches':fetches,'network_requests':network,'pin_span':t['end']-t['start']})
     await page.close()
    page=await browser.new_page(viewport={'width':390,'height':844},reduced_motion='reduce')
    await page.goto(base);await verify_flow(page)
