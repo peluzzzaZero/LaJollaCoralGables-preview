@@ -677,6 +677,14 @@
         const decoded = played && video.readyState >= 2;
         video.primedURL = decoded ? source : null;
         video.pause(); video.resumeSeek?.();
+        if (!decoded && video.readyState === 0 && video.networkSource && !video.nativeSource) {
+          // Some WebKit loaders can stall on an otherwise complete blob. Let
+          // the native MP4/range loader recover instead of replaying that blob.
+          const blobURL = video.filmURL;
+          video.nativeSource = true; video.filmURL = video.networkSource;
+          video.dataset.delivery = 'native'; video.src = video.filmURL; video.load();
+          if (blobURL.startsWith('blob:')) URL.revokeObjectURL(blobURL);
+        }
         if (decoded && video.frameRequested && !video.seeking) video.classList.add('is-decoded');
         video.primeRetryAt = decoded ? 0 : Date.now() + 250;
         if (!decoded && !video.error && video.frameRequested) retryTimer = setTimeout(() => primeVideo(video), 250);
@@ -735,12 +743,14 @@
         if (controller.signal.aborted || attempt >= formats.length) return;
         const format = formats[attempt++];
         const actualSource = wide && format === 'mp4' ? wide : source;
-        fetch('assets/venue/cinematic/' + actualSource + '.' + format, { signal: controller.signal })
+        const networkSource = 'assets/venue/cinematic/' + actualSource + '.' + format;
+        fetch(networkSource, { signal: controller.signal })
           .then(response => { if (!response.ok) throw new Error('film'); return response.blob(); })
           .then(blob => {
             if (controller.signal.aborted) return;
             video.primeCleanup?.();
-            if (video.filmURL) URL.revokeObjectURL(video.filmURL);
+            if (video.filmURL?.startsWith('blob:')) URL.revokeObjectURL(video.filmURL);
+            video.networkSource = networkSource; video.nativeSource = false; video.dataset.delivery = 'blob';
             video.filmURL = URL.createObjectURL(blob); video.dataset.format = format; video.dataset.source = actualSource;
             video.src = video.filmURL; video.preload = 'auto'; video.load();
             // Start the muted mobile decoder before metadata: WebKit can defer
@@ -755,8 +765,8 @@
         const state = filmStates[index]; state.controller?.abort(); state.controller = null; state.loaded = false;
         video.primeCleanup?.(); video.primedURL = null; video.suspendFrame();
         video.onerror = null; video.pause(); video.replaceChildren(); video.removeAttribute('src'); video.classList.remove('is-decoded'); video.preload = 'none'; video.load();
-        if (video.filmURL) URL.revokeObjectURL(video.filmURL);
-        video.filmURL = null; delete video.dataset.format; delete video.dataset.source;
+        if (video.filmURL?.startsWith('blob:')) URL.revokeObjectURL(video.filmURL);
+        video.filmURL = null; video.networkSource = null; video.nativeSource = false; delete video.dataset.delivery; delete video.dataset.format; delete video.dataset.source;
       });
     }
     function goTo(index, focus) {

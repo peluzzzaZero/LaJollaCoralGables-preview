@@ -19,6 +19,11 @@ async def main(base,output,webkit=False,webkit_only=False):
             if width < 650:
                 await page.add_init_script("""{
                     const play=HTMLMediaElement.prototype.play;
+                    const ready=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'readyState');
+                    Object.defineProperty(HTMLMediaElement.prototype,'readyState',{configurable:true,get(){
+                        if(this.dataset.cinemaFilm==='details' && this.src.startsWith('blob:')) return 0;
+                        return ready.get.call(this);
+                    }});
                     window.primeRequests=0;
                     HTMLMediaElement.prototype.play=function(){
                         if(this.dataset.cinemaFilm==='details' && ++window.primeRequests===1)
@@ -55,6 +60,7 @@ async def main(base,output,webkit=False,webkit_only=False):
             assert last-first>3,(first,last)
             if width<650:
                 assert await page.evaluate('primeRequests') >= 2, 'Rejected mobile prime did not retry'
+                assert await page.locator('[data-cinema-film=details]').get_attribute('data-delivery') == 'native', 'Stalled blob did not recover through the native loader'
                 assert await page.locator('[data-cinema-film=details]').get_attribute('data-source')=='details-mobile-hq'
             else:
                 assert await page.locator('[data-cinema-film=details]').get_attribute('data-source') is None
@@ -104,7 +110,7 @@ async def main(base,output,webkit=False,webkit_only=False):
                     try:
                         await page.wait_for_function("""({progress,limit})=>{const v=document.querySelector('[data-cinema-film=details]');return v.readyState>=2&&!v.seeking&&(progress<.5?v.currentTime<limit:v.currentTime>limit)&&v.currentTime>0;}""",arg={'progress':progress,'limit':limit})
                     except Exception:
-                        state=await page.evaluate("""() => ({width:innerWidth,height:innerHeight,scroll:scrollY,scene:document.getElementById('cinema').dataset.scene,trigger:ScrollTrigger.getById('cinematic-journey')?.progress,videos:Array.from(document.querySelectorAll('[data-cinema-film]')).map(v=>({name:v.dataset.cinemaFilm,source:v.dataset.source,format:v.dataset.format,time:v.currentTime,duration:Number.isFinite(v.duration)?v.duration:null,ready:v.readyState,network:v.networkState,seeking:v.seeking,paused:v.paused,ended:v.ended,error:v.error?.code,decoded:v.classList.contains('is-decoded'),priming:!!v.priming,primeAttempts:v.primeAttempts,primeFailure:v.primeFailure,frameRequested:!!v.frameRequested,opacity:getComputedStyle(v).opacity,mp4:v.canPlayType('video/mp4'),webm:v.canPlayType('video/webm')}))})""")
+                        state=await page.evaluate("""() => ({width:innerWidth,height:innerHeight,scroll:scrollY,scene:document.getElementById('cinema').dataset.scene,trigger:ScrollTrigger.getById('cinematic-journey')?.progress,videos:Array.from(document.querySelectorAll('[data-cinema-film]')).map(v=>({name:v.dataset.cinemaFilm,source:v.dataset.source,format:v.dataset.format,time:v.currentTime,duration:Number.isFinite(v.duration)?v.duration:null,ready:v.readyState,network:v.networkState,seeking:v.seeking,paused:v.paused,ended:v.ended,error:v.error?.code,decoded:v.classList.contains('is-decoded'),priming:!!v.priming,primeAttempts:v.primeAttempts,primeFailure:v.primeFailure,delivery:v.dataset.delivery,frameRequested:!!v.frameRequested,opacity:getComputedStyle(v).opacity,mp4:v.canPlayType('video/mp4'),webm:v.canPlayType('video/webm')}))})""")
                         print('WEBKIT DIAGNOSTIC '+json.dumps({'requested_progress':progress,'state':state}),flush=True)
                         (output/'webkit-state.json').write_text(json.dumps(state,indent=2))
                         await page.screenshot(path=str(output/'webkit-failed.png'))
