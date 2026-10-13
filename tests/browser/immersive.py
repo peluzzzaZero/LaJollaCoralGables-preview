@@ -38,6 +38,22 @@ async def main(base, output, webkit=False):
                     await page.locator('.inquire-link').click()
                     await page.frame_locator('.booking-frame').locator('h1').wait_for()
                     assert page.url==url and len(requests)==1
+                    # The recovery action must remain readable if the provider fails.
+                    fallback=page.locator('.booking-fallback a')
+                    for state in ['normal','hover','focus']:
+                        if state=='hover':await fallback.hover()
+                        if state=='focus':await fallback.focus()
+                        contrast=await fallback.evaluate('''e=>{
+                            const luminance=color=>{
+                                const c=color.match(/[\\d.]+/g).slice(0,3).map(Number).map(v=>{
+                                    v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;
+                                });return c[0]*.2126+c[1]*.7152+c[2]*.0722;
+                            };
+                            const a=luminance(getComputedStyle(e).color);
+                            const b=luminance(getComputedStyle(e.closest('dialog')).backgroundColor);
+                            return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+                        }''')
+                        assert contrast>=4.5,(engine.name,width,language,state,contrast)
                     await page.screenshot(path=str(output/f'calendar-{engine.name}-{width}-{language}.png'))
                     await page.keyboard.press('Escape')
                     await page.wait_for_function('!document.body.classList.contains("booking-open")')

@@ -1530,6 +1530,7 @@ html { scrollbar-gutter: stable; }
 .GMP-attribution { font: 400 14px/1.5 var(--font-body); color: #1f1f1f; white-space: nowrap; letter-spacing: normal; }
 .cinema-scroll .GMP-attribution { color: white; }
 .motion-page .booking-viewer { --ink: #f2eee3; --line: #f2eee34d; --line-soft: #f2eee330; background: #102019; color: var(--ink); }
+.motion-page .booking-fallback a { color: var(--ink); }
 .motion-page .cinema-scroll .cinema-footer .cinema-position { max-width: 50%; }
 @media (max-width: 650px) {
   .motion-page .cinema-scroll .cinema-footer { gap: 14px; left: 16px; right: 16px; }
