@@ -21,6 +21,18 @@ class QuietHandler(SimpleHTTPRequestHandler):
         pass
 
 
+async def mock_booking(route):
+    await route.fulfill(content_type='text/html', body='<html><body><h1>Mock calendar</h1><button>Calendar control</button></body></html>')
+
+async def check_direct_booking(page):
+    assert '/planning.html' not in page.url, 'Visit must stay over the film'
+    await page.locator('#booking-viewer').wait_for(state='visible')
+    await page.frame_locator('.booking-frame').locator('h1').wait_for()
+    assert 'bookings.cloud.microsoft/book/' in await page.locator('.booking-frame').get_attribute('src')
+    await page.keyboard.press('Escape')
+    await page.locator('#booking-viewer').wait_for(state='hidden')
+    await page.wait_for_function('!document.body.classList.contains("booking-open")')
+
 async def scroll(page, y):
     await page.evaluate("""y => {
       if (window.__ljLenis) window.__ljLenis.scrollTo(y, {immediate: true});
@@ -63,6 +75,7 @@ async def snapshot(page, output, name):
 async def check_visit_entry(browser, base):
     context = await browser.new_context(viewport={"width": 390, "height": 844})
     page = await context.new_page()
+    await page.route('https://bookings.cloud.microsoft/**', mock_booking)
     mail_requests = []
     async def deny_mail(route):
         mail_requests.append(route.request.url)
@@ -142,6 +155,7 @@ async def review_motion(browser, base, output, viewports=None):
             context=await browser.new_context(viewport={'width':width,'height':height})
             await context.route('https://api.web3forms.com/**',lambda route:route.abort())
             page=await context.new_page();errors=[];transfers=[]
+            await page.route('https://bookings.cloud.microsoft/**', mock_booking)
             page.on('pageerror',lambda e:errors.append(str(e)))
             page.on('request',lambda request:transfers.append(request.url))
             await page.goto(base,wait_until='networkidle');await page.evaluate('document.fonts.ready')
@@ -230,10 +244,10 @@ async def review_motion(browser, base, output, viewports=None):
             await page.locator('button[data-scene="4"]').focus();await page.keyboard.press('Enter')
             await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="4"')
             await page.locator('.cinema-story:visible .cinema-inquiry').click()
-            await page.wait_for_url('**/planning.html')
-            assert await page.locator('[data-booking-opener]').count()==1
+            await check_direct_booking(page)
+            assert await page.locator('[data-booking-opener]').count()>=1
             assert await page.locator('html').get_attribute('lang')==language
-            assert await page.evaluate("document.activeElement.id==='quote-title'")
+            assert await page.evaluate("document.activeElement.matches('[data-booking-opener]')")
             assert not errors,errors
             reports.append({'width':width,'height':height,'language':language,'nine_chapters':'passed','one_motion':'passed','complete_forward_reverse_films':'passed','disclosures_and_gallery':'passed','no_overlap':'passed'})
             await context.close();print(f'PASS single motion {width}x{height} {language}',flush=True)
@@ -244,6 +258,7 @@ async def review_navigation(browser,base,output):
     for width in [390,838,1280]:
         context=await browser.new_context(viewport={'width':width,'height':884})
         page=await context.new_page()
+        await page.route('https://bookings.cloud.microsoft/**', mock_booking)
         await page.goto(base+'#rentals',wait_until='networkidle')
         await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="5"')
         assert await page.evaluate("document.activeElement.id==='rentals'")
@@ -253,23 +268,23 @@ async def review_navigation(browser,base,output):
         await page.locator('[data-lang="es"]').click()
         await page.locator('#rentals .chapter-close').click()
         await page.locator('.inquire-link').click()
-        await page.wait_for_url('**/planning.html')
+        await check_direct_booking(page)
         assert await page.locator('html').get_attribute('lang')=='es'
         assert await page.locator('form').count()==0
-        assert await page.locator('[data-booking-opener]').count()==1
+        assert await page.locator('[data-booking-opener]').count()>=1
         assert await page.locator('#inquiry-selection').count()==0
-        await page.locator('.logo').click();await page.wait_for_url('**/index.html')
+        await page.locator('.logo').click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="0"')
         if width<=900:
             await page.locator('.mobile-menu summary').click();target=page.locator('.mobile-chapters a[href="#visit"]')
         else:target=page.locator('.chapter-nav a[href="#visit"]')
         await target.click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="2"')
         assert await page.locator('.mobile-menu').get_attribute('open') is None
         await page.locator('.cinema-directory > summary').click();await page.locator('button[data-scene="8"]').click();await page.wait_for_function('document.querySelector("#cinema").dataset.scene==="8"')
-        await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
-        assert await page.locator('[data-booking-opener]').is_visible()
-        assert await page.evaluate('ScrollTrigger.getAll().length')==0
+        await page.locator('.cinema-inquiry:visible').click();await check_direct_booking(page)
+        assert await page.locator('.inquire-link').is_visible()
+        assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.vars.id==="cinematic-journey").length')==1
         assert await page.locator('a[href$="#vendors"]').count()==0
-        results.append({'width':width,'deep_links':'passed','language':'passed','services':'informational','single_visit_action':'passed'})
+        results.append({'width':width,'deep_links':'passed','language':'passed','services':'informational','direct_visit_calendar':'passed'})
         await context.close()
     return results
 
@@ -283,6 +298,7 @@ async def review_fallbacks(browser,base,output):
             await context.route('**/*gsap*',lambda route:route.abort());await context.route('**/*ScrollTrigger*',lambda route:route.abort())
         if mode=='no-script':await context.route('**/script.js*',lambda route:route.abort())
         page=await context.new_page();transfers=[];errors=[];page.on('request',lambda req:transfers.append(req.url));page.on('pageerror',lambda e:errors.append(str(e)))
+        await page.route('https://bookings.cloud.microsoft/**', mock_booking)
         await page.route('https://api.web3forms.com/**',lambda route:route.abort());await page.goto(base,wait_until='networkidle')
         if mode!='storage-denied':
             assert await page.locator('.cinema-story:visible').count()==9
@@ -291,8 +307,8 @@ async def review_fallbacks(browser,base,output):
             assert await page.locator('#events-content .occasion').count()==10
             assert await page.locator('#events-content').is_visible()
         else:
-            await travel(page,.965,8);await page.locator('.cinema-inquiry:visible').click();await page.wait_for_url('**/planning.html')
-            assert await page.locator('[data-booking-opener]').is_visible()
+            await travel(page,.965,8);await page.locator('.cinema-inquiry:visible').click();await check_direct_booking(page)
+            assert await page.locator('.inquire-link').is_visible()
             assert await page.locator('#quote-form').count()==0
         assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
         assert not errors,errors
@@ -300,6 +316,7 @@ async def review_fallbacks(browser,base,output):
         await context.close();results.append({'mode':mode,'complete_content':'passed'})
     for failure in ['mp4','all']:
         page=await browser.new_page(viewport={'width':838,'height':884})
+        await page.route('https://bookings.cloud.microsoft/**', mock_booking)
         await page.route('**/assets/venue/cinematic/*.mp4',lambda route:route.abort())
         if failure=='all':await page.route('**/assets/venue/cinematic/*.webm',lambda route:route.abort())
         await page.goto(base,wait_until='networkidle');await travel(page,.265,2)
@@ -320,6 +337,7 @@ async def check_venue_media(browser, base, output):
     for width, height in ((390, 844), (768, 1024), (1280, 900)):
         for language in ("en", "es"):
             page = await browser.new_page(viewport={"width": width, "height": height})
+            await page.route('https://bookings.cloud.microsoft/**', mock_booking)
             await page.route("https://api.web3forms.com/**", lambda route: route.abort())
             requests = []
             page.on("request", lambda request: requests.append(request.url))
@@ -364,7 +382,7 @@ async def check_venue_media(browser, base, output):
             await viewer.locator(".film-close").click()
             assert await viewer.is_hidden()
             await page.locator('[data-i18n="visit.cta"]').click()
-            await page.wait_for_url("**/planning.html")
+            await check_direct_booking(page)
             assert await page.locator('form').count() == 0
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
             results.append({"width": width, "language": language, "no_initial_video_transfer": "passed", "both_films_decoded": "passed", "single_player": "passed", "modal_keyboard_close_focus": "passed", "venue_inquiry": "passed"})
@@ -372,6 +390,7 @@ async def check_venue_media(browser, base, output):
     # Without scripts the two real file links remain usable, and no player adds page height.
     context = await browser.new_context(java_script_enabled=False, viewport={"width": 390, "height": 844})
     page = await context.new_page()
+    await page.route('https://bookings.cloud.microsoft/**', mock_booking)
     await page.goto(base, wait_until="networkidle")
     assert await page.locator("#film-viewer").is_hidden()
     links = page.locator(".house-films a")
@@ -388,6 +407,7 @@ async def check_venue_media(browser, base, output):
     # Both formats failing keeps the genuine poster, readable error and direct file link.
     for failure in ("mp4", "all"):
         page = await browser.new_page(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
+        await page.route('https://bookings.cloud.microsoft/**', mock_booking)
         await page.route("https://api.web3forms.com/**", lambda route: route.abort())
         await page.route("**/assets/venue/*.mp4", lambda route: route.abort())
         if failure == "all":
@@ -412,6 +432,7 @@ async def check_photos(browser,base,output):
     reports=[]
     for width in [390,1280]:
         page=await browser.new_page(viewport={"width":width,"height":900})
+        await page.route('https://bookings.cloud.microsoft/**', mock_booking)
         await page.goto(base,wait_until="networkidle");await travel(page,.265,2)
         before=await page.evaluate("scrollY");opener=page.locator(".cinema-detail:visible")
         await opener.click();viewer=page.locator("#photo-viewer");await viewer.wait_for(state="visible")

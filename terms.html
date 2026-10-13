@@ -41,7 +41,7 @@
 </script>
 <meta name="color-scheme" content="light"/>
 <link href="assets/favicon.ico" rel="icon" sizes="any"/>
-<link href="styles.css?v=1.16.5" rel="stylesheet"/>
+<link href="styles.css?v=1.17.0" rel="stylesheet"/>
 <link href="assets/fonts/Manrope-latin.woff2" as="font" crossorigin="" rel="preload" type="font/woff2"/></head>
 <body class="legal-page">
 <header class="site-header">
@@ -50,7 +50,7 @@
 <img class="logo-mark-img" src="assets/brand/logo-lj-oval-sage.png" alt="" width="40" height="48"/>
 <span class="logo-text"><b>La Jolla</b><i>Coral Gables</i></span>
 </a>
-<a class="inquire-link" href="planning.html" data-i18n="form.planning">Schedule a visit</a>
+<a class="inquire-link" href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" data-booking-opener="" target="_blank" rel="noopener noreferrer" data-i18n="form.planning">Schedule a visit</a>
 </div>
 </header>
 <main class="legal">
@@ -61,6 +61,8 @@
 <p>La Jolla Coral Gables is at 301 Alcazar Avenue, Coral Gables, and is managed by Epic Lux Management.</p>
 <h2>Visit appointments</h2>
 <p>Use Microsoft Bookings to schedule a venue tour. A tour appointment does not reserve a space or a date for an event and is not an event contract. Event arrangements must be confirmed directly with the La Jolla team. This site does not take payment.</p>
+<h2>Selected guest reviews</h2>
+<p>When available, the on-page selection shows five-star reviews supplied by Google Maps in its relevance order. Authors, dates and original source links remain attached. This selection is not the venue’s overall rating. Google Maps content is subject to <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener noreferrer">Google Maps Terms</a>.</p>
 <h2>Contact</h2>
 <p><a href="tel:+17862908813">786-290-8813</a><br/><a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a><br/>301 Alcazar Avenue, Coral Gables</p>
 </article>
@@ -70,6 +72,8 @@
 <p>La Jolla Coral Gables está en 301 Alcazar Avenue, Coral Gables, y la gestiona Epic Lux Management.</p>
 <h2>Citas para visitas</h2>
 <p>Use Microsoft Bookings para agendar una visita al lugar. Una cita de visita no reserva un espacio ni una fecha para un evento y no es un contrato de evento. Los acuerdos para eventos deben confirmarse directamente con el equipo de La Jolla. Este sitio no cobra.</p>
+<h2>Selección de reseñas</h2>
+<p>Cuando están disponibles, la selección dentro de la página muestra reseñas de cinco estrellas proporcionadas por Google Maps en su orden de relevancia. Se conservan el autor, la fecha y el enlace a la fuente original. Esta selección no es la puntuación global del lugar. El contenido de Google Maps está sujeto a los <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener noreferrer">Términos de Google Maps</a>.</p>
 <h2>Contacto</h2>
 <p><a href="tel:+17862908813">786-290-8813</a><br/><a href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a><br/>301 Alcazar Avenue, Coral Gables</p>
 </article>
@@ -81,6 +85,12 @@
 <p>© <span id="year"></span> La Jolla Coral Gables.</p>
 </div>
 </footer>
-<script src="script.js?v=1.16.5"></script>
+<dialog id="booking-viewer" class="booking-viewer" aria-labelledby="booking-title" aria-describedby="booking-help">
+<header class="booking-header"><h2 id="booking-title" data-i18n="booking.dialogTitle">Schedule your visit</h2><button class="booking-close" type="button" data-i18n="booking.close" data-i18n-attr="aria-label" aria-label="Close booking calendar">×</button></header>
+<p id="booking-help" data-i18n="booking.help">Select a date and time in the calendar. Your visit is confirmed when Bookings completes the reservation. Check the time zone shown before booking.</p>
+<iframe class="booking-frame" title="La Jolla venue tour booking calendar" data-i18n="booking.frameTitle" data-i18n-attr="title" referrerpolicy="no-referrer"></iframe>
+<p class="booking-fallback"><span data-i18n="booking.fallback">If the calendar does not load,</span> <a href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" target="_blank" rel="noopener noreferrer" data-i18n="booking.external">open the booking page in a new tab</a>.</p>
+</dialog>
+<script src="script.js?v=1.17.0"></script>
 </body>
 </html>
