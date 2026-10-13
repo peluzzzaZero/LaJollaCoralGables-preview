@@ -109,6 +109,8 @@ async def check_reader_legibility(body):
     data=await body.evaluate("""e=>({background:getComputedStyle(e.closest('.cinema-story')).backgroundColor,
       headings:[...e.querySelectorAll('h2,h3')].map(h=>({text:h.textContent.trim(),colour:getComputedStyle(h).color,size:parseFloat(getComputedStyle(h).fontSize),level:h.tagName})),
       prose:[...e.querySelectorAll('.alcazar-copy > p:not(.eyebrow),.team-role')].map(t=>({text:t.textContent.trim(),colour:getComputedStyle(t).color}))})""")
+    opacity=await body.evaluate('e=>{let alpha=1;for(let n=e;n;n=n.parentElement) alpha*=Number(getComputedStyle(n).opacity);return alpha;}')
+    assert opacity>=.999, ('Reader contrast is compromised by ancestor opacity',opacity)
     for item in data['headings']:
         ratio=reader_contrast(item['colour'],data['background'])
         assert ratio>=3,(item['text'],'reader heading contrast',ratio)

@@ -11,3 +11,7 @@ The full-screen timeline is preserved. Desktop uses the approved panorama as a c
 Photo assembly is used only for the ballroom and brand detail. A native directory replaces the constant nine-label strip. Media remains muted, lazily delivered and poster-first, with the bounded WebKit startup and coalesced seeking intact. Visual review is required separately from CI: passing tests does not establish subjective design quality. Production DNS/GoDaddy Live and native mail configuration remain unchanged.
 
 Desktop follow-up v1.15.1: the owner approved the mobile presentation but identified desktop problems. Six horizontal camera intervals now give each beat usable movement, with four five-second pans of unchanged original photographs. This preserves architecture and avoids the huge portrait history crop and nearly static long panorama. These photo pans are explicitly documented, not described as filmed interiors. Desktop-only short-window typography and height-aware refresh do not change phone layout or toolbar behavior.
+
+## v1.16.4 owner correction
+
+The owner rejected the cream reader and the all-sans typography as visually inconsistent. Open readers now use an opaque forest surface, a compact desktop side panel and one content column. Self-hosted Cormorant Garamond titles pair with Manrope body copy and controls. This latest feedback supersedes the v1.15 one-font direction; the approved imagery and film remain authoritative.
