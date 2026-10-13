@@ -1,7 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /server/
-Disallow: /tests/
-Disallow: /admin/
-Disallow: /api/
 Sitemap: https://lajollacoralgables.com/sitemap.xml

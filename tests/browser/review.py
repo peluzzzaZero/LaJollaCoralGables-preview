@@ -13,7 +13,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.async_api import async_playwright
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get('LAJOLLA_WEB_ROOT', Path(__file__).resolve().parents[2]))
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -156,8 +156,18 @@ async def review_motion(browser, base, output, viewports=None):
                 await travel(page,p,n)
                 assert await page.locator('.cinema-story:visible').count()==1
                 assert await page.locator('.cinema-detail:visible').count()==(1 if n in [2,4,5,6] else 0)
-                heading=page.locator(f'[data-scene-copy="{n}"] > h1,[data-scene-copy="{n}"] > h3')
-                ink=await heading.evaluate('e=>{const r=document.createRange();r.selectNodeContents(e);const b=r.getBoundingClientRect();return {x:b.x,right:b.right};}')
+                heading=page.locator(f'[data-scene-copy="{n}"] > h1,[data-scene-copy="{n}"] > h2')
+                # Screen-reader context is intentionally clipped; measure the visible title's ink.
+                ink=await heading.evaluate("""e=>{
+                  const walker=document.createTreeWalker(e,NodeFilter.SHOW_TEXT);
+                  const rects=[];let node;
+                  while(node=walker.nextNode()) {
+                    if(!node.textContent.trim()||node.parentElement.closest('.sr-only,[hidden]')) continue;
+                    const range=document.createRange();range.selectNodeContents(node);
+                    rects.push(...range.getClientRects());
+                  }
+                  return {x:Math.min(...rects.map(r=>r.x)),right:Math.max(...rects.map(r=>r.right))};
+                }""")
                 card=await page.locator(f'[data-scene-copy="{n}"]').bounding_box()
                 assert ink['x']>=card['x']-1 and ink['right']<=card['x']+card['width']+1,('heading clips',width,language,n,ink,card)
                 assert card['y']>=68 and card['y']+card['height']<=height-85,('reading',width,language,n,card)

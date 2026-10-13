@@ -69,12 +69,15 @@ jobs:
           python -m pip install -r tests/browser/requirements.txt
           python -m playwright install --with-deps chromium webkit ffmpeg
       - name: Responsive, accessibility and simulated form review
+        env:
+          LAJOLLA_WEB_ROOT: ${{ github.workspace }}/dist
         run: |
           python tests/browser/review.py --output review-artifacts
           python tests/browser/motion-quality.py --output review-artifacts/motion --webkit
           python tests/browser/desktop-review.py --output review-artifacts/desktop
           python tests/browser/footer-review.py --output review-artifacts/footer
           python tests/browser/reader-transitions.py --webkit --output review-artifacts/readers
+          python tests/browser/public-foundation.py --output review-artifacts/foundation
       - name: Node visit route and calendar without real submissions
         run: |
           INQUIRY_ENABLED=false MAIL_SETUP_ENABLED=false PORT=13317 HOST=127.0.0.1 npm start > /tmp/lajolla-node-preview.log 2>&1 &
@@ -100,6 +103,30 @@ jobs:
           name: browser-review-${{ github.sha }}
           path: review-artifacts
           retention-days: 14
+
+      - name: Package only the reviewed public website for Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publish:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [review, review-v14, release]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish the reviewed public-only artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
 
   review-v14:
     if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'main')

@@ -11,3 +11,6 @@ private-data/
 
 node_modules/
 npm-debug.log*
+
+# Generated public-only Pages package.
+dist/

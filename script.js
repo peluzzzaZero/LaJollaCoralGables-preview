@@ -7,6 +7,16 @@
 
   const I18N = {
     en: {
+      "meta.locale": "en_US",
+      "meta.title.home": "Historic Wedding & Event Venue in Coral Gables | La Jolla",
+      "meta.description.home": "Explore La Jolla, a historic venue in Coral Gables for weddings, private gatherings and events. Discover the spaces and schedule a venue tour.",
+      "meta.title.visit": "Schedule a Venue Tour | La Jolla Coral Gables",
+      "meta.description.visit": "Choose an available time to visit La Jolla in Coral Gables. Meet the team and explore the spaces. A tour appointment does not reserve an event.",
+      "meta.title.privacy": "Privacy | La Jolla Coral Gables",
+      "meta.description.privacy": "How La Jolla Coral Gables uses Microsoft Bookings for venue tours, and how to contact the team about information you share.",
+      "meta.title.terms": "Visit Terms | La Jolla Coral Gables",
+      "meta.description.terms": "Information about arranging a venue tour at La Jolla Coral Gables. Event dates and arrangements must be confirmed directly with the venue team.",
+      "hero.context": " — Historic event venue in Coral Gables",
 
       "motion.head.history": "Coral Gables.",
       "motion.head.visit": "The ballroom.",
@@ -126,7 +136,7 @@
       "rentals.short": "From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.",
       "rentals.more": "More about our services",
 
-      "nav.inquire": "Inquire",
+      "nav.inquire": "Schedule a visit",
       "hero.est": "Coral Gables · Est. 1928",
       "hero.title": "A jewel in Coral Gables",
       "hero.cta": "Request a private quote",
@@ -179,7 +189,7 @@
       "rentals.eyebrow": "Rentals & event services",
       "rentals.title": "At La Jolla & beyond",
       "rentals.intro":
-        "From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Inquire for rentals, custom packages and full-service event production.",
+        "From individual rentals to complete event production, our services extend beyond the walls of La Jolla. Furniture, décor, tabletop, glassware, staging, production elements and more are available for events both at La Jolla and at locations throughout South Florida. Whether you're hosting with us or bringing your event to another venue, our team can provide the elements and services needed to bring your vision together. Talk with our team about rentals, custom packages and full-service event production.",
       "rentals.servicesTitle": "Everything your event needs",
       "rentals.servicesLede":
         "From a single service to complete event production, our team brings together the elements needed to transform your vision into an unforgettable experience.",
@@ -267,6 +277,16 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "meta.locale": "es_US",
+      "meta.title.home": "Espacio histórico para bodas y eventos en Coral Gables | La Jolla",
+      "meta.description.home": "Conozca La Jolla, un espacio histórico de Coral Gables para bodas, celebraciones privadas y eventos. Descubra los espacios y agende una visita.",
+      "meta.title.visit": "Agende una visita | La Jolla Coral Gables",
+      "meta.description.visit": "Elija un horario disponible para visitar La Jolla en Coral Gables. Conozca al equipo y los espacios. Una visita no reserva un evento.",
+      "meta.title.privacy": "Privacidad | La Jolla Coral Gables",
+      "meta.description.privacy": "Cómo La Jolla Coral Gables usa Microsoft Bookings para las visitas y cómo contactar al equipo sobre la información que usted comparte.",
+      "meta.title.terms": "Términos de las visitas | La Jolla Coral Gables",
+      "meta.description.terms": "Información sobre las visitas a La Jolla Coral Gables. Las fechas y los acuerdos de eventos deben confirmarse directamente con el equipo.",
+      "hero.context": " — Espacio histórico para eventos en Coral Gables",
       "motion.head.history": "Coral Gables.",
       "motion.head.visit": "El salón.",
       "motion.head.events": "Su ocasión.",
@@ -386,7 +406,7 @@
       "rentals.short": "Desde una renta puntual hasta la producción integral. En La Jolla o en el lugar que usted elija en el sur de Florida.",
       "rentals.more": "Más sobre nuestros servicios",
 
-      "nav.inquire": "Consultar",
+      "nav.inquire": "Agende una visita",
       "hero.est": "Coral Gables · Est. 1928",
       "hero.title": "Una joya en Coral Gables",
       "hero.cta": "Solicitar cotización privada",
@@ -490,7 +510,7 @@
       "quote.intro": "Elija un horario disponible para visitar el espacio.",
       "booking.title": "Venga a conocer la casa",
       "booking.intro": "Elija un horario disponible para visitar el lugar.",
-      "booking.open": "Agendar una visita",
+      "booking.open": "Agende una visita",
       "booking.separate": "La cita para visitar el lugar no reserva un espacio para un evento.",
       "booking.dialogTitle": "Agende su visita",
       "booking.help": "Seleccione una fecha y hora en el calendario. Su visita queda confirmada cuando Bookings completa la reserva. Compruebe la zona horaria indicada antes de reservar.",

@@ -33,7 +33,7 @@ test("MonteCarlo ships from the brand font file", () => {
 
 test("opening clearly states the offer and leads to both settings and internal planning", () => {
   const opening = html.slice(html.indexOf('id="hero"'), html.indexOf('id="history"'));
-  assert.match(opening, /<h1[^>]*>La Jolla<\/h1>/);
+  assert.match(opening, /<h1[^>]*>La Jolla<span class="sr-only" data-i18n="hero.context">/);
   assert.match(opening, /href="planning.html"/);
   assert.match(opening, /href="#events"/);
   assert.match(opening, /href="#rentals"/);
