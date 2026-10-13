@@ -17,7 +17,7 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     services:
       mysql:
         image: mysql:8.4
@@ -58,6 +58,8 @@ jobs:
           git fetch --no-tags origin "$BASE_SHA"
           node scripts/check-version.mjs "$BASE_SHA"
       - name: Brand, content and release checks
+        env:
+          GOOGLE_MAPS_BROWSER_KEY: ${{ vars.GOOGLE_MAPS_BROWSER_KEY }}
         run: |
           node --check script.js
           npm ci --ignore-scripts --no-audit --no-fund
@@ -78,6 +80,8 @@ jobs:
           python tests/browser/footer-review.py --output review-artifacts/footer
           python tests/browser/reader-transitions.py --webkit --output review-artifacts/readers
           python tests/browser/public-foundation.py --output review-artifacts/foundation
+          python tests/browser/immersive.py --webkit --output review-artifacts/immersive
+          python tests/browser/social.py --webkit --output review-artifacts/social
       - name: Node visit route and calendar without real submissions
         run: |
           INQUIRY_ENABLED=false MAIL_SETUP_ENABLED=false PORT=13317 HOST=127.0.0.1 npm start > /tmp/lajolla-node-preview.log 2>&1 &

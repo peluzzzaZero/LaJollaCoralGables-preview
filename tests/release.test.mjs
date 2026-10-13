@@ -61,7 +61,7 @@ test('the internal planning page has the same version and unique real IDs', () =
   for (const [, target] of planning.matchAll(/\bfor="([^"]+)"/g)) assert.ok(ids.includes(target), target);
 });
 
-test('all public information remains in nine native chapters and visits have a separate route', () => {
+test('all public information remains in nine native chapters and visits open the calendar over the film', () => {
   for (const id of ['hero', 'history', 'visit', 'events', 'alcazar', 'rentals', 'gallery', 'team', 'planning']) {
     assert.match(html, new RegExp(`<article id="${id}"[^>]*data-scene-copy=`));
   }
@@ -73,5 +73,6 @@ test('all public information remains in nine native chapters and visits have a s
   assert.equal(planning.includes('<form'), false);
   assert.equal(planning.includes('id="quote-form"'), false);
   assert.ok(planning.includes('id="booking-viewer"'));
-  assert.ok(html.includes('href="planning.html"'));
+  assert.ok(html.includes('id="booking-viewer"'));
+  assert.equal(html.includes('href="planning.html"'), false);
 });

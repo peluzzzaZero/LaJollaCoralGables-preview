@@ -7,6 +7,13 @@
 
   const I18N = {
     en: {
+      "social.reviewsTitle": "Guest experiences",
+      "social.reviewsIntro": "Discover the house through the people who have celebrated here.",
+      "social.reviewsLoad": "See selected guest reviews",
+      "social.reviewsSource": "Read guest reviews on Google Maps",
+      "social.houseTitle": "From the house",
+      "social.houseIntro": "Follow our celebrations and the life of the house.",
+      "social.facebookLoad": "See the latest Facebook posts",
       "meta.locale": "en_US",
       "meta.title.home": "Historic Wedding & Event Venue in Coral Gables | La Jolla",
       "meta.description.home": "Explore La Jolla, a historic venue in Coral Gables for weddings, private gatherings and events. Discover the spaces and schedule a venue tour.",
@@ -277,6 +284,13 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "social.reviewsTitle": "Experiencias de nuestros invitados",
+      "social.reviewsIntro": "Conozca la casa a través de quienes han celebrado aquí.",
+      "social.reviewsLoad": "Ver una selección de reseñas",
+      "social.reviewsSource": "Leer reseñas en Google Maps",
+      "social.houseTitle": "Desde la casa",
+      "social.houseIntro": "Siga nuestras celebraciones y la vida de la casa.",
+      "social.facebookLoad": "Ver las últimas publicaciones de Facebook",
       "meta.locale": "es_US",
       "meta.title.home": "Espacio histórico para bodas y eventos en Coral Gables | La Jolla",
       "meta.description.home": "Conozca La Jolla, un espacio histórico de Coral Gables para bodas, celebraciones privadas y eventos. Descubra los espacios y agende una visita.",
@@ -1161,7 +1175,10 @@
         // Retain native new-tab gestures and the ordinary link without JS.
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button) return;
         event.preventDefault();
-        opener = link;
+        opener = link.closest(".chapter-more")?.querySelector("summary") || link;
+        closeChapterDetails();
+        document.querySelectorAll(".cinema-directory[open], .contact-directory[open], .mobile-menu[open]")
+          .forEach(function (menu) { menu.open = false; });
         viewer.showModal();
         document.body.classList.add("booking-open");
         // Load Microsoft only after an explicit request. Keep the same frame
@@ -1174,6 +1191,32 @@
     viewer.addEventListener("close", function () {
       document.body.classList.remove("booking-open");
       if (opener) opener.focus({ preventScroll: true });
+    });
+  }
+
+  function initContactPanel() {
+    const directory = document.querySelector(".contact-directory");
+    if (!directory) return;
+    directory.classList.add("contact-ready");
+    const summary = directory.querySelector("summary");
+    const panel = directory.querySelector(".contact-panel");
+    function close(returnFocus) {
+      directory.open = false;
+      if (returnFocus) summary.focus({ preventScroll: true });
+    }
+    directory.querySelector(".contact-close").addEventListener("click", function () { close(true); });
+    directory.addEventListener("toggle", function () {
+      if (!directory.open) return;
+      closeChapterDetails();
+      document.querySelectorAll(".cinema-directory[open], .mobile-menu[open]")
+        .forEach(function (menu) { menu.open = false; });
+      panel.scrollTop = 0;
+    });
+    document.addEventListener("click", function (event) {
+      if (directory.open && !directory.contains(event.target)) close(false);
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && directory.open && !document.querySelector("dialog[open]")) close(true);
     });
   }
 
@@ -1191,6 +1234,7 @@
     initStory(initCinematicWindow());
     initVenueFilms();
     initBookingCalendar();
+    initContactPanel();
     initYear();
     if (document.body.classList.contains("planning-page")) {
       const title = document.getElementById("quote-title");

@@ -1,8 +1,8 @@
-import { copyFile, lstat, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { copyFile, lstat, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, extname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const publicFiles = Object.freeze(['index.html', 'planning.html', 'privacy.html', 'terms.html',
+export const publicFiles = Object.freeze(['index.html', 'planning.html', 'privacy.html', 'terms.html', 'social.js',
   'styles.css', 'script.js', 'robots.txt', 'sitemap.xml', 'CNAME']);
 const mediaTypes = new Set(['.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.ico', '.mp4', '.webm']);
 const supportFiles = new Set(['vendor/gsap.min.js', 'vendor/ScrollTrigger.min.js',
@@ -16,7 +16,7 @@ function publicAsset(path) {
 
 // A closed root-file list and asset-type list keep source, credentials, tooling
 // and review documents out of Pages. Rebuild instead of retaining stale files.
-export async function buildSite(sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')) {
+export async function buildSite(sourceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..'), options = {}) {
   const destination = resolve(sourceRoot, 'dist');
   for (const path of publicFiles) {
     if (!(await lstat(resolve(sourceRoot, path))).isFile()) throw new Error(`Not a regular public file: ${path}`);
@@ -32,6 +32,15 @@ export async function buildSite(sourceRoot = resolve(dirname(fileURLToPath(impor
     count++;
   }
   for (const path of publicFiles) await copy(path);
+  const browserKey = options.browserKey ?? process.env.GOOGLE_MAPS_BROWSER_KEY ?? '';
+  if (browserKey) {
+    if (!/^[A-Za-z0-9_-]{20,120}$/.test(browserKey)) throw new Error('Invalid Maps browser key format.');
+    const homepage = resolve(destination, 'index.html');
+    const html = await readFile(homepage, 'utf8');
+    const marker = '<meta name="google-maps-browser-key" content=""/>';
+    if (!html.includes(marker)) throw new Error('Missing Maps browser configuration marker.');
+    await writeFile(homepage, html.replace(marker, `<meta name="google-maps-browser-key" content="${browserKey}"/>`));
+  }
   async function assets(directory = '') {
     for (const entry of await readdir(resolve(sourceRoot, 'assets', directory), { withFileTypes: true })) {
       if (entry.name.startsWith('.')) continue;

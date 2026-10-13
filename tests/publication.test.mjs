@@ -6,6 +6,17 @@ import { resolve } from 'node:path';
 import { buildSite, publicFiles } from '../scripts/build-site.mjs';
 
 const root = new URL('../', import.meta.url);
+test('only an explicit restricted browser key can fill the public reviews configuration', async () => {
+  const source = await fixture();
+  try {
+    await writeFile(resolve(source, 'index.html'), '<meta name="google-maps-browser-key" content=""/>');
+    let built = await buildSite(source, { browserKey: '' });
+    assert.equal(await readFile(resolve(built.destination, 'index.html'), 'utf8'), '<meta name="google-maps-browser-key" content=""/>');
+    built = await buildSite(source, { browserKey: 'FAKE_BROWSER_KEY_FOR_ISOLATED_TEST' });
+    assert.match(await readFile(resolve(built.destination, 'index.html'), 'utf8'), /content="FAKE_BROWSER_KEY_FOR_ISOLATED_TEST"/);
+    await assert.rejects(buildSite(source, { browserKey: 'bad"><script>' }), /Invalid Maps browser key/);
+  } finally { await rm(source, { recursive: true, force: true }); }
+});
 async function fixture() {
   const path = await mkdtemp(resolve(tmpdir(), 'lajolla-public-'));
   await mkdir(resolve(path, 'assets/vendor'), { recursive: true });
@@ -24,7 +35,7 @@ test('publishing excludes internal/future root files and private asset metadata 
     await writeFile(resolve(source, 'assets/vendor/gsap.min.js'), 'approved library');
     await mkdir(resolve(source, 'dist/server'), { recursive: true });
     await writeFile(resolve(source, 'dist/server/app.mjs'), 'stale private file');
-    const { destination } = await buildSite(source);
+    const { destination } = await buildSite(source, { browserKey: '' });
     for (const file of ['server/app.mjs', 'AGENTS.md', 'package.json', '.env', 'future-private.txt',
       'assets/provenance.json', 'assets/secrets.txt', 'assets/tool.js']) {
       await assert.rejects(access(resolve(destination, file)), { code: 'ENOENT' });
@@ -40,14 +51,18 @@ test('a symlink cannot bring files outside the approved assets into the publicat
   try {
     await writeFile(resolve(source, 'private.webp'), 'not a public asset');
     await symlink(resolve(source, 'private.webp'), resolve(source, 'assets/leak.webp'));
-    await assert.rejects(buildSite(source), /Symlink is not a public asset/);
+    await assert.rejects(buildSite(source, { browserKey: '' }), /Symlink is not a public asset/);
   } finally { await rm(source, { recursive: true, force: true }); }
 });
 
 test('the actual public package preserves pages, fonts and seekable media bytes', async () => {
   for (const file of [...publicFiles, 'assets/venue/cinematic/journey.mp4',
     'assets/venue/cinematic/details-mobile-hq.mp4', 'assets/fonts/CormorantGaramond-latin.woff2']) {
-    assert.deepEqual(await readFile(new URL(`dist/${file}`, root)), await readFile(new URL(file, root)), file);
+    let actual = await readFile(new URL(`dist/${file}`, root));
+    if (file === 'index.html') {
+      actual = Buffer.from(actual.toString().replace(/(<meta name="google-maps-browser-key" content=")[A-Za-z0-9_-]*("\/>)/, '$1$2'));
+    }
+    assert.deepEqual(actual, await readFile(new URL(file, root)), file);
   }
 });
 
