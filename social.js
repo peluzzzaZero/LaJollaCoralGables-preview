@@ -71,12 +71,18 @@
   function initMap(container) {
     const button = container.querySelector('.location-map-load');
     if (!button) return;
-    button.addEventListener('click', function () {
+    button.addEventListener('click', function (event) {
+      // Without this script the link simply opens Google Maps in a new tab.
+      event.preventDefault();
       const frame = document.createElement('iframe');
       const url = new URL('https://www.google.com/maps');
       url.searchParams.set('q', 'La Jolla, 301 Alcazar Avenue, Coral Gables, FL');
       url.searchParams.set('output', 'embed');
-      const show = () => { url.searchParams.set('hl', language()); frame.src = url.href; frame.title = messages().map; };
+      const show = () => {
+        frame.title = messages().map;
+        if (url.searchParams.get('hl') === language()) return;
+        url.searchParams.set('hl', language()); frame.src = url.href;
+      };
       show(); frame.loading = 'lazy';
       frame.referrerPolicy = 'strict-origin-when-cross-origin'; frame.allowFullscreen = true;
       container.append(frame); container.classList.add('is-open'); frame.focus();

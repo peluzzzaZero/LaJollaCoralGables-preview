@@ -16,6 +16,8 @@ async def main(base,output,args):
    await page.wait_for_function('document.activeElement.id==="events-title"')
    for language in ['en','es']:
     await page.locator(f'[data-lang="{language}"]').click()
+    fit=await page.evaluate('()=>{const n=document.querySelector(".chapter-nav").getBoundingClientRect(),a=document.querySelector(".header-actions").getBoundingClientRect(),l=document.querySelector("#header .logo").getBoundingClientRect();return l.right<=n.left&&n.right<=a.left}')
+    assert fit,('Header navigation overlaps',width,language)
     for name in ['history','visit','rentals','events']:
      await page.locator(f'.chapter-nav a[href="#{name}"]').click()
      await page.wait_for_function('id=>location.hash==="#"+id',arg=name)
