@@ -1998,7 +1998,8 @@ html { scrollbar-gutter: stable; }
 @media (max-width: 900px) {
   .landing-social .guest-voices { grid-template-columns: 1fr; margin-top: 48px; padding-top: 32px; }
   .landing-social .guest-reviews { grid-column: 1; grid-row: auto; }
-  .location-map { min-height: 0; aspect-ratio: 4 / 3; }
+  /* An explicit height: WebKit gives a stretched grid item whose children are all absolute a zero height despite aspect-ratio. */
+  .location-map { min-height: 0; aspect-ratio: auto; height: clamp(240px, 62vw, 460px); }
 }
 @media (max-width: 650px) {
   .landing-effects .house-grid > li { translate: calc(var(--scatter-x, 0px) * var(--scatter, 0)) calc(var(--scatter, 0) * 50px); }
