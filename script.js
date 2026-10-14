@@ -783,7 +783,7 @@
         element.style.removeProperty('--light-x'); element.style.removeProperty('--light-y');
       });
     });
-    let frame = 0, observer, reveal, sceneObserver;
+    let frame = 0, observer, reveal;
     const clamp = value => Math.max(0, Math.min(1, value));
     const ease = value => value * value * (3 - 2 * value);
     // Scroll-scrubbed scenes. Every one settles on the complete, readable
@@ -871,6 +871,7 @@
       } },
     ].filter(scene => scene && scene.element);
     const activeScenes = new Set();
+    let liveScenes = [];
     let cardTops = [], configuredWidth = 0, preload;
     function measureScatter() {
       const grid = document.querySelector('.brand-grid');
@@ -897,7 +898,17 @@
         photo.style.setProperty('--photo-drift', (position * Math.min(38, image.offsetHeight * .04)).toFixed(2) + 'px');
         photo.style.setProperty('--photo-scale', (1.09 + Math.abs(position) * .04).toFixed(4));
       }
-      for (const scene of activeScenes) scene.update();
+      // Scenes near the viewport are decided from geometry in this same frame, so a
+      // jump or a late observer callback never leaves a pose behind the scroll.
+      const near = liveScenes.map(scene => {
+        const box = scene.element.getBoundingClientRect();
+        return box.bottom > -innerHeight * .25 && box.top < innerHeight * 1.25;
+      });
+      liveScenes.forEach((scene, index) => {
+        // A scene that has just left gets one last update and settles at its end.
+        if (near[index] || activeScenes.has(scene)) scene.update();
+        if (near[index]) activeScenes.add(scene); else activeScenes.delete(scene);
+      });
       for (const section of sections) {
         const box = section.getBoundingClientRect();
         if (box.bottom < 0 || box.top > innerHeight) continue;
@@ -907,7 +918,7 @@
     }
     function schedule() { if (!frame) frame = requestAnimationFrame(draw); }
     function configure() {
-      observer?.disconnect(); reveal?.disconnect(); sceneObserver?.disconnect(); visible.clear(); activeScenes.clear();
+      observer?.disconnect(); reveal?.disconnect(); visible.clear(); activeScenes.clear(); liveScenes = [];
       inked.forEach(plainWords);
       prints.forEach(print => { print.style.removeProperty('--arrive'); print.style.removeProperty('--covered'); });
       occasions.forEach(occasion => occasion.classList.remove('is-current'));
@@ -951,17 +962,9 @@
         }, { rootMargin: '200% 0px' });
         preload.observe(album);
       }
-      const live = scenes.filter(scene => !scene.staged || albumStaged);
-      const byElement = new Map(live.map(scene => [scene.element, scene]));
-      sceneObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          const scene = byElement.get(entry.target);
-          if (entry.isIntersecting) activeScenes.add(scene); else { activeScenes.delete(scene); scene.update(); }
-        });
-        schedule();
-      }, { rootMargin: '25% 0px' });
+      liveScenes = scenes.filter(scene => !scene.staged || albumStaged);
       // Write the first poses now, so a restored scroll never shows the stacked defaults.
-      live.forEach(scene => { scene.update(); sceneObserver.observe(scene.element); });
+      liveScenes.forEach(scene => scene.update());
       schedule();
     }
     // Translation replaces the inked paragraphs with plain text.
