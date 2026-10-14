@@ -62,13 +62,13 @@ test('the internal planning page has the same version and unique real IDs', () =
 });
 
 test('all landing information is visible in normal sections with same-page visits', () => {
-  for (const id of ['hero', 'history', 'visit', 'events', 'alcazar', 'rentals', 'gallery', 'team', 'planning']) {
+  for (const id of ['hero', 'history', 'visit', 'events', 'alcazar', 'rentals', 'social', 'team', 'location', 'planning']) {
     assert.match(html, new RegExp(`<(?:article|section) id="${id}"`));
   }
   assert.equal((html.match(/class="chapter-more"/g) || []).length, 0);
   assert.equal((html.match(/<details\b/g) || []).length, 1);
   assert.equal((html.match(/class="occasion"/g) || []).length, 10);
-  assert.equal((html.match(/class="brand-card[^"]*"/g) || []).length, 7);
+  assert.equal((html.match(/class="brand-card[^"]*"/g) || []).length, 0);
   assert.equal((html.match(/class="team-card reveal"/g) || []).length, 2);
   assert.equal(html.includes('<form'), false);
   assert.equal(planning.includes('<form'), false);

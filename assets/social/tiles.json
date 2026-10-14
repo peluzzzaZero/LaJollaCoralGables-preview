@@ -1,0 +1,38 @@
+[
+  {
+    "name": "house-facade",
+    "source": "assets/venue/facade.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-street",
+    "source": "assets/venue/facade-wide.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-hall",
+    "source": "assets/venue/hall-piano.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-garden",
+    "source": "assets/venue/garden.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-stair",
+    "source": "assets/venue/staircase.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-music",
+    "source": "assets/venue/music-detail.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  }
+]

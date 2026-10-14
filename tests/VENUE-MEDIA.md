@@ -7,13 +7,13 @@ The empty white ballroom is described simply as the ballroom. The stair/music ph
 ```json
 [
   {
-    "asset": "assets/venue/ballroom.jpg",
+    "asset": "assets/venue/hall.jpg",
     "source": "WhatsApp Image 2026-10-05 at 01.53.51.jpeg",
     "sha256": "ea85d1ad8863e14d6734aa06491c9542c68bea7237a8707dc63f88ee1ae72d61",
     "treatment": "Original JPEG, unedited"
   },
   {
-    "asset": "assets/venue/ballroom-piano.jpg",
+    "asset": "assets/venue/hall-piano.jpg",
     "source": "WhatsApp Image 2026-10-05 at 01.53.51 (3).jpeg",
     "sha256": "711b2a09f180381ce5277f30fe9ddae69eff8fd07af41efdb38b7a2fb3df59b8",
     "treatment": "Original JPEG, unedited"

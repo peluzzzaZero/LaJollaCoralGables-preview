@@ -49,17 +49,17 @@ async def verify_scenes(page,language):
   assert await paragraph.locator('.ink-word').evaluate_all('w=>w.every(e=>getComputedStyle(e).opacity==="1")'),key
  # Scenes measured from untransformed references retrace the same pose after a fling.
  async def poses():
-  return await page.evaluate('()=>[...document.querySelectorAll(".brand-card")].map(e=>e.style.getPropertyValue("--scatter")).concat([document.querySelector(".planning-seal").style.getPropertyValue("--stamp")])')
+  return await page.evaluate('()=>[...document.querySelectorAll(".house-grid > li")].map(e=>e.style.getPropertyValue("--scatter")).concat([document.querySelector(".planning-seal").style.getPropertyValue("--stamp")])')
  mid='e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.85)'
- await page.locator('.brand-grid').evaluate(mid);await page.wait_for_timeout(300);first=await poses()
+ await page.locator('.house-grid').evaluate(mid);await page.wait_for_timeout(300);first=await poses()
  await page.evaluate('scrollTo(0,document.body.scrollHeight)');await page.wait_for_timeout(150)
  await page.evaluate('scrollTo(0,0)');await page.wait_for_timeout(150)
- await page.locator('.brand-grid').evaluate(mid);await page.wait_for_timeout(300)
+ await page.locator('.house-grid').evaluate(mid);await page.wait_for_timeout(300)
  assert await poses()==first,'Scatter and seal must reverse along the same path'
  # Settled scenes return to the readable layout.
- await page.locator('.brand-grid').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.5)')
+ await page.locator('.house-grid').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.5)')
  await page.wait_for_timeout(300)
- assert await page.locator('.brand-card').first.evaluate('e=>Number(e.style.getPropertyValue("--scatter"))')==0
+ assert await page.locator('.house-grid > li').first.evaluate('e=>Number(e.style.getPropertyValue("--scatter"))')==0
  await page.locator('.rentals-quiet').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.6)')
  await page.wait_for_timeout(300)
  assert await page.locator('.rentals-quiet li').evaluate_all('items=>items.every(e=>Number(e.style.getPropertyValue("--enter"))===0)')
@@ -131,9 +131,9 @@ async def main(base,output,args):
      if width>=884:assert first['width']>other['width']*1.8,'Weddings must span the occasion list'
      sizes=await page.locator('.occasion h3').evaluate_all('items=>items.map(e=>parseFloat(getComputedStyle(e).fontSize))')
      assert sizes[0]>max(sizes[1:]),'Only the wedding title should receive the larger treatment'
-     window=page.locator('.ballroom-photo .photo-window')
+     window=page.locator('.hall-photo .photo-window')
      await window.scroll_into_view_if_needed();await page.wait_for_timeout(1000)
-     picture=await window.bounding_box();caption=await page.locator('.ballroom-photo figcaption').bounding_box()
+     picture=await window.bounding_box();caption=await page.locator('.hall-photo figcaption').bounding_box()
      assert picture['y']+picture['height']<=caption['y'], 'Photo movement must not paint over its caption'
      assert await window.evaluate('e=>getComputedStyle(e).overflow') in ['clip','hidden']
      assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.pin).length')==1,'Only the entrance film uses a GSAP pin'

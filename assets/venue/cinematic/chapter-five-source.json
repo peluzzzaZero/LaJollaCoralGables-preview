@@ -1,6 +1,6 @@
 {
   "version": "1.14.1",
-  "reason": "Replace the generated/optical-flow ballroom take with owner-supplied captured exterior video. Chapter 05 now traverses more than three seconds of recorded camera movement in its own reading band.",
+  "reason": "Replace the generated/optical-flow hall take with owner-supplied captured exterior video. Chapter 05 now traverses more than three seconds of recorded camera movement in its own reading band.",
   "sources": {
     "details": {
       "path": "assets/venue/facade-details.mp4",
