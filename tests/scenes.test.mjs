@@ -49,5 +49,5 @@ test('scenes never hide content with zero opacity, wipes or edge-on tilts', () =
   assert.equal(/opacity:\s*0(?:\s|;|$)/.test(scenes), false);
   assert.equal(/rotate[XY]\(/.test(scenes), false);
   assert.equal(/clip-path/.test(scenes), false);
-  assert.match(scenes, /opacity: clamp\(\.3,/);
+  assert.match(scenes, /opacity: clamp\(\.45,/);
 });

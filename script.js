@@ -957,13 +957,14 @@
         });
         schedule();
       }, { rootMargin: '25% 0px' });
-      live.forEach(scene => sceneObserver.observe(scene.element));
+      // Write the first poses now, so a restored scroll never shows the stacked defaults.
+      live.forEach(scene => { scene.update(); sceneObserver.observe(scene.element); });
       schedule();
     }
     // Translation replaces the inked paragraphs with plain text.
     window.addEventListener('lajolla-language', () => {
       if (!document.body.classList.contains('landing-effects')) return;
-      inked.forEach(inkWords); schedule();
+      inked.forEach(inkWords); measureScatter(); schedule();
     });
     window.addEventListener('resize', () => {
       if (!document.body.classList.contains('landing-effects') || innerWidth === configuredWidth) return;
