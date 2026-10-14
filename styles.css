@@ -2041,13 +2041,15 @@ html { scrollbar-gutter: stable; }
 /* v1.25: the name "La Jolla" is drawn with the script lettering of the house's own brochure
    (vector outlines taken from the brochure lockup), only where it reads as the name. The text stays
    in the DOM for screen readers, translation and search; the drawing takes the current color. */
+.logo-text b, .entrance-copy h1, .footer-logo, .location-name { --name-h: 1.3em; }
+@supports (mask: url("x")) or (-webkit-mask: url("x")) {
 .logo-text b, .entrance-copy h1, .footer-logo, .location-name {
-  --name-h: 1.3em;
   display: block; height: var(--name-h); width: calc(var(--name-h) * 2.847); max-width: 100%;
   background: currentColor;
   -webkit-mask: url("assets/brand/la-jolla-script.svg") left center / contain no-repeat;
   mask: url("assets/brand/la-jolla-script.svg") left center / contain no-repeat;
   text-indent: 200%; white-space: nowrap; overflow: hidden; letter-spacing: 0;
+}
 }
 .logo-text b { --name-h: 1.55em; margin-bottom: .1em; }
 .location-name { --name-h: 1.6em; margin-bottom: .2em; }
@@ -2057,7 +2059,7 @@ html { scrollbar-gutter: stable; }
 /* v1.25: chapter titles use the brochure's flowing script. Great Vibes (OFL, self-hosted) is the
    closest free match to the brochure's titles; body text and small headings keep their fonts. */
 @font-face { font-family: 'Great Vibes'; src: url('assets/fonts/GreatVibes-latin.woff2') format('woff2'); font-style: normal; font-weight: 400; font-display: swap; }
-.landing-page { --font-script: "Great Vibes", "MonteCarlo", "Cormorant Garamond", Georgia, serif; }
+.landing-page { --font-script: "Great Vibes", "Cormorant Garamond", Georgia, serif; }
 .landing-section .section-title { font-family: var(--font-script); font-weight: 400; font-size: clamp(52px, 6.2vw, 92px); line-height: 1.12; letter-spacing: 0; }
 /* v1.25: section photographs rise gently from a soft veil the first time they enter the screen.
    They never start fully hidden. `translate` composes with the parallax `transform`, and without
@@ -2067,10 +2069,13 @@ html { scrollbar-gutter: stable; }
 .landing-effects .house-stream li:nth-child(3n + 2) img { transition-delay: .12s; }
 .landing-effects .house-stream li:nth-child(3n) img { transition-delay: .24s; }
 .landing-effects .team-card + .team-card img[data-photo-fade] { transition-delay: .15s; }
+/* Photographs inside clipped frames (the façade card, the Instagram tiles) only brighten, so no edge shows. */
+.landing-effects :is(.location-map img[data-photo-fade], .house-tile img) { translate: none; }
 /* Without the mask (Windows high contrast, print), the name shows as plain text again. */
 @media (forced-colors: active), print {
   .logo-text b, .entrance-copy h1, .footer-logo, .location-name { height: auto; width: auto; background: none; -webkit-mask: none; mask: none; text-indent: 0; overflow: visible; }
 }
+@media print { .landing-effects :is(img[data-photo-fade], .house-tile img) { opacity: 1; translate: none; } }
 /* Great Vibes rises higher than MonteCarlo: give the tour lockup room under the capitals, and keep
    the step numerals in the serif so I, II, III stay readable. */
 .landing-page .lockup-script { line-height: 1.25; margin-top: .12em; }

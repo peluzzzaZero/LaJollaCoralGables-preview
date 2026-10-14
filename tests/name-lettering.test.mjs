@@ -13,7 +13,7 @@ test("the name lettering is the brochure's own vector outline, with no embedded 
 });
 
 test("only the name uses the lettering, and it follows the surrounding color", () => {
-  const rule = css.match(/\.logo-text b, \.entrance-copy h1, \.footer-logo, \.location-name \{([^}]*)\}/);
+  const rule = css.match(/@supports \(mask: url\("x"\)\) or \(-webkit-mask: url\("x"\)\) \{\s*\.logo-text b, \.entrance-copy h1, \.footer-logo, \.location-name \{([^}]*)\}/);
   assert.ok(rule, "name lettering rule");
   assert.match(rule[1], /mask: url\("assets\/brand\/la-jolla-script\.svg"\)/);
   assert.match(rule[1], /-webkit-mask: url\("assets\/brand\/la-jolla-script\.svg"\)/);
@@ -27,7 +27,10 @@ test("the name stays real text for screen readers, translation and search", () =
   assert.match(index, /<h1 id="hero-title">La Jolla<span class="sr-only"/);
   assert.match(index, /<p class="footer-logo">La Jolla<\/p>/);
   assert.match(index, /<span class="location-name" translate="no">La Jolla<\/span>/);
-  for (const page of ["privacy.html", "terms.html", "planning.html"]) assert.match(read(page), /La Jolla<\/b>/);
+  for (const page of ["index.html", "privacy.html", "terms.html", "planning.html"]) {
+    assert.match(read(page), /La Jolla<\/b>/);
+    assert.match(read(page), /<link href="assets\/brand\/la-jolla-script\.svg" as="image" crossorigin="" rel="preload"/);
+  }
 });
 
 test("the lettering records where it came from and who approved it", async () => {
@@ -54,7 +57,9 @@ test("section photographs fade up once, only with motion allowed", () => {
   const js = read("script.js");
   assert.equal((index.match(/<img data-photo-fade=""/g) || []).length, 5);
   assert.match(js, /querySelectorAll\('\[data-photo-fade\], \.house-tile img'\)\.forEach\(photo => reveal\.observe\(photo\)\)/);
-  // The reveal observer only exists once reduced motion and save-data are ruled out.
-  assert.ok(js.indexOf("[data-photo-fade]") > js.indexOf("if (reduced.matches || saveData"));
+  // The fade only exists once reduced motion, save-data and missing IntersectionObserver are ruled out.
+  const guard = js.indexOf("if (reduced.matches || saveData || !('IntersectionObserver' in window)) return;");
+  assert.ok(guard > 0 && js.indexOf("[data-photo-fade]") > guard);
+  assert.match(css, /@media print \{ \.landing-effects :is\(img\[data-photo-fade\], \.house-tile img\) \{ opacity: 1;/);
   assert.match(css, /\.landing-effects :is\(img\[data-photo-fade\], \.house-tile img\) \{ opacity: \.4; translate: 0 22px;/);
 });

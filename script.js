@@ -974,6 +974,11 @@
       interactive.forEach(element => { element.style.removeProperty('--light-x'); element.style.removeProperty('--light-y'); });
       progress.style.removeProperty('--reading-progress');
       if (reduced.matches || saveData || !('IntersectionObserver' in window)) return;
+      // Photographs already on screen (a restored scroll or a deep link) count as arrived, so they never dim first.
+      document.querySelectorAll('[data-photo-fade], .house-tile img').forEach(photo => {
+        const box = photo.getBoundingClientRect();
+        if (box.bottom > 0 && box.top < innerHeight) photo.classList.add('has-arrived');
+      });
       document.body.classList.add('landing-effects');
       // Only three photographs drift. Complete text never fades or follows scroll.
       observer = new IntersectionObserver(entries => {
