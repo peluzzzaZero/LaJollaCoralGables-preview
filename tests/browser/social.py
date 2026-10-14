@@ -28,11 +28,10 @@ async def main(base, output, webkit=False):
                         if mode=='failure':await route.abort()
                         else:await route.fulfill(content_type='application/javascript',body=SDK.replace('rating:5','rating:1') if mode=='empty' else SDK)
                     await page.route('https://maps.googleapis.com/**',google)
-                    async def googlemap(route):
-                        requests.append('map')
-                        assert 'output=embed' in route.request.url and 'Alcazar' in route.request.url
-                        await route.fulfill(content_type='text/html',body='<html><body>FAKE GOOGLE MAP</body></html>')
-                    await page.route(re.compile(r'^https://www\.google\.com/maps\?'),googlemap)
+                    async def googleweb(route):
+                        requests.append('google-web')
+                        await route.fulfill(content_type='text/html',body='<html><body>FAKE GOOGLE MAPS</body></html>')
+                    await page.context.route(re.compile(r'^https://www\.google\.com/'),googleweb)
                     await page.route('**/*.mp4',lambda route:route.abort());await page.route('**/*.webm',lambda route:route.abort())
                     await page.goto(base);assert not requests,'Social providers must not preload'
                     await position(page,'social')
@@ -62,21 +61,23 @@ async def main(base, output, webkit=False):
                             await page.locator('[data-lang=es]').click()
                             assert 'no están disponibles' in await page.locator('.reviews-status').inner_text()
                         assert requests==['google']
-                    assert await page.locator('.location-map iframe').count()==0,'The map waits for the visitor'
-                    link=page.locator('.location-map-load')
-                    await link.scroll_into_view_if_needed()
-                    box=await page.locator('.location-map').bounding_box()
-                    assert box and box['height']>=200,('The map frame needs a real height in every engine',engine.name,width,box)
-                    hit=await link.evaluate('a=>{const r=a.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===a}')
-                    assert hit,('The map control must receive pointer clicks',engine.name,width)
-                    await link.click()
-                    await page.locator('.location-map iframe').wait_for()
-                    for _ in range(50):
-                        if 'map' in requests:break
-                        await page.wait_for_timeout(100)
-                    assert requests[-1]=='map' and requests.count('map')==1,requests
-                    assert await page.locator('.location-map-load').is_hidden()
-                    assert 'Alcazar' in await page.locator('.location-map iframe').get_attribute('title')
+                    card=page.locator('a.location-map')
+                    await card.scroll_into_view_if_needed()
+                    box=await card.bounding_box()
+                    assert box and box['height']>=200,('The map card needs a real height in every engine',engine.name,width,box)
+                    hit=await page.locator('.location-map-load').evaluate('a=>{const r=a.getBoundingClientRect();return a.closest("a.location-map").contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}')
+                    assert hit,('The map card must receive taps',engine.name,width)
+                    href=await card.get_attribute('href')
+                    assert href.startswith('https://www.google.com/maps/search/?api=1&') and 'query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0' in href and '301+Alcazar+Avenue' in href,href
+                    assert await card.get_attribute('target')=='_blank'
+                    assert await page.locator('main iframe').count()==0 and 'google-web' not in requests,'No embedded Google map'
+                    async with page.expect_popup() as opened:
+                        await card.click()
+                    popup=await opened.value
+                    await popup.wait_for_load_state()
+                    assert 'query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0' in popup.url and 'FAKE GOOGLE MAPS' in await popup.content(),popup.url
+                    assert page.url.startswith(base),'The card opens Google Maps in a new tab and keeps the site open'
+                    await popup.close();requests.remove('google-web')
                     for href in ['https://www.google.com/maps/dir/?api=1','https://search.google.com/local/writereview?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0','tel:+17862908813']:
                         assert await page.locator('main a[href^="'+href+'"]').count()==1,href
                     await page.screenshot(path=str(output/f'reviews-{engine.name}-{width}-{mode}.png'))
