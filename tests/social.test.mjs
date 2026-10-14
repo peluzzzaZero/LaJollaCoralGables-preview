@@ -34,17 +34,24 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
   assert.ok(html.indexOf('<div class="house-stream">') > html.indexOf('id="team"'), "inside the team chapter");
   const tiles = [...stream.matchAll(/<li><a class="house-tile" href="([^"]+)"([^>]*)>(.*?)<\/a><\/li>/g)];
   assert.equal(tiles.length, tileList.length);
-  assert.ok(tiles.length >= 3 && tiles.length <= 12);
+  assert.ok([3, 6, 9, 12].includes(tiles.length), "full rows at 3 and 6 columns");
   for (const [index, [, href, attributes, inner]] of tiles.entries()) {
     assert.equal(href, tileList[index].href, "index.html follows tiles.json; run python scripts/social-tiles.py");
     assert.ok(allowedLinks.some((link) => link.test(href)), href);
-    assert.match(attributes, /tabindex="-1" aria-hidden="true"/, "the handle link is the accessible route");
+    if (href === instagram) assert.match(attributes, /tabindex="-1" aria-hidden="true"/, "the handle link is the accessible route");
+    else {
+      const key = `social.tile.${tileList[index].name}`;
+      assert.match(attributes, new RegExp(`aria-label="[^"]{8,}" data-i18n="${key.replaceAll(".", "\\.")}" data-i18n-attr="aria-label"`));
+      assert.doesNotMatch(attributes, /tabindex|aria-hidden/);
+      assert.equal(js.split(`"${key}":`).length, 3, key);
+    }
     const [tag, src] = inner.match(/<img src="([^"]+)"[^>]*>/);
     const entry = manifest.find((item) => item.asset === src);
     assert.ok(entry, `${src} is recorded in assets/social/source.json`);
     assert.equal(src, `assets/social/${tileList[index].name}.webp`);
     assert.equal(entry.source, tileList[index].source);
     assert.ok(entry.ownerApproval?.trim(), `${src} records the owner approval`);
+    assert.equal(entry.ownerApproval, tileList[index].ownerApproval.trim(), "tiles.json and source.json agree");
     assert.equal(sha256(src), entry.sha256, src);
     assert.equal(sha256(entry.source), entry.sourceSha256, entry.source);
     assert.match(entry.source, /^assets\/(venue|brand|instagram)\//);
