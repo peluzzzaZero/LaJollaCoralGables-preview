@@ -90,3 +90,9 @@ The approved original JPEGs and facade films remain unchanged. Additional WebP d
 ## v1.14.1 — remove the distorted ballroom take from the landing
 
 Chapter 05 and the following motion chapters use five-second cuts of the original supplied facade films. Mobile uses centre crops of the same recorded frames. No generated ballroom or optical-flow-retimed room take is referenced by the landing. Original room photographs and old version assets remain unchanged for provenance. The new source offsets, hashes and silent delivery files are recorded in `assets/venue/cinematic/chapter-five-source.json`; these films show the venue exterior and do not establish a filmed interior identity for The Lexington.
+
+## Venue doorway — owner delivery, 14 October 2026
+
+`cinematic/entrance-walk` is cut from the owner's own film `LA Jolla.mov` (3840×2160, 60 fps, 20.5 s, H.264), shared on 14 October 2026. It keeps the front doors with the etched "La Jolla" glass (0.3–2.03 s) and the walk past reception into the hall (2.05–7.65 s), joined with a 0.4 s dissolve at the original cut. No pixels are generated or retouched. Silent, 30 fps; H.264 1280×720 and 854×480 with faststart, VP9 WebM alternatives. The poster is the actual frame at 0.3 s.
+
+It sits over the approved hall photograph in "An invitation inside", plays once, muted, when 60% visible, rests on its last frame and offers "Step inside again". It is not pinned or scroll-scrubbed. Reduced motion and data saving keep the photograph only; nothing is transferred before the photograph is within one viewport.

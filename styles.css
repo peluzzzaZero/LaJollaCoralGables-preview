@@ -2080,3 +2080,14 @@ html { scrollbar-gutter: stable; }
    the step numerals in the serif so I, II, III stay readable. */
 .landing-page .lockup-script { line-height: 1.25; margin-top: .12em; }
 .landing-page .tour-steps li::before { font-family: var(--font-display); font-size: clamp(30px, 2.8vw, 40px); letter-spacing: .04em; }
+
+/* Venue entrance: the real walk through the front doors, played once. */
+.hall-photo .photo-window { position: relative; }
+/* The photograph stays visible underneath until the film actually plays. */
+.venue-entrance { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; visibility: hidden; pointer-events: none; background: transparent; }
+.venue-entrance.is-playing { visibility: visible; animation: venue-entrance-in .6s ease both; }
+@keyframes venue-entrance-in { from { opacity: .4; } to { opacity: 1; } }
+.venue-replay { position: absolute; right: 12px; bottom: 12px; padding: 8px 14px; border: 1px solid #f5f1e699; border-radius: 999px; background: #2b2b2899; color: #f5f1e6; font: 500 12px/1 var(--font-body); letter-spacing: .04em; cursor: pointer; backdrop-filter: blur(4px); }
+.venue-replay:hover, .venue-replay:focus-visible { background: #5e7060e6; }
+.venue-replay[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .venue-entrance, .venue-replay { display: none; } }

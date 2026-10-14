@@ -131,6 +131,7 @@
       "visit.title": "Picture your occasion here.",
       "visit.intro": "From the light-filled hall to the smallest architectural detail, take a closer look at La Jolla.",
       "visit.hall": "The hall · a space to make your own",
+      "visit.enterAgain": "Step inside again",
       "visit.stair": "A different perspective",
       "visit.music": "Details with character",
       "visit.garden": "Garden light",
@@ -434,6 +435,7 @@
       "visit.title": "Imagine su ocasión aquí.",
       "visit.intro": "Desde el salón lleno de luz hasta el más pequeño detalle arquitectónico, conozca La Jolla más de cerca.",
       "visit.hall": "El salón · un espacio para hacerlo suyo",
+      "visit.enterAgain": "Volver a entrar",
       "visit.stair": "Otra perspectiva",
       "visit.music": "Detalles con carácter",
       "visit.garden": "La luz del jardín",
@@ -801,6 +803,48 @@
     window.__ljEntrance = { get trigger() { return trigger; }, video };
   }
 
+  // The real walk through La Jolla's front doors. It plays once, muted, when
+  // the hall photograph is in view and rests on its last frame. Reduced
+  // motion and data saving keep the approved photograph only.
+  function initVenueEntrance() {
+    const video = document.querySelector('[data-venue-entrance]');
+    if (!video || !('IntersectionObserver' in window)) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData) return;
+    const replay = video.parentElement.querySelector('.venue-replay');
+    const name = window.innerWidth >= 700 ? 'entrance-walk' : 'entrance-walk-mobile';
+    let loaded = false, played = false;
+    function load() {
+      if (loaded) return; loaded = true;
+      video.poster = 'assets/venue/cinematic/entrance-walk-poster.webp';
+      for (const format of ['mp4', 'webm']) {
+        if (!video.canPlayType('video/' + format)) continue;
+        const source = document.createElement('source');
+        source.src = 'assets/venue/cinematic/' + name + '.' + format; source.type = 'video/' + format;
+        video.append(source);
+      }
+      // Only the last format failing means the film is unavailable.
+      video.lastElementChild?.addEventListener('error', fail);
+      video.preload = 'auto'; video.load();
+    }
+    function fail() { video.classList.remove('is-playing'); replay.hidden = true; }
+    function play() {
+      if (document.hidden || document.querySelector('dialog[open]')) return;
+      video.currentTime = 0; replay.hidden = true;
+      video.classList.add('is-playing');
+      video.play()?.catch(() => video.classList.remove('is-playing'));
+    }
+    video.addEventListener('ended', () => { replay.hidden = false; });
+    video.addEventListener('error', fail);
+    replay.addEventListener('click', play);
+    new IntersectionObserver((entries, observer) => {
+      if (entries.some(entry => entry.isIntersecting)) { load(); observer.disconnect(); }
+    }, { rootMargin: '100% 0px' }).observe(video);
+    new IntersectionObserver((entries, observer) => {
+      if (played || !entries.some(entry => entry.intersectionRatio >= .6)) return;
+      played = true; observer.disconnect(); load(); play();
+    }, { threshold: [.6] }).observe(video);
+  }
+
   function initLandingMotion() {
     if (!document.body.classList.contains('landing-page')) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -1131,6 +1175,7 @@
     initChapterMenu();
     // Resolve the menu layout before positioning or focusing an anchor.
     initEntranceZoom();
+    initVenueEntrance();
     initLandingMotion();
     initAnchorNavigation();
     initBookingCalendar();
