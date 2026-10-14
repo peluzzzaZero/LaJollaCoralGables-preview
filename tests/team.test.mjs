@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
@@ -54,10 +55,15 @@ test("team shows Julie's and Patricia's portraits as round photographs", () => {
   assert.ok(rule, "portrait rule");
   assert.match(rule[1], /border-radius:\s*50%/);
   assert.match(rule[1], /object-fit:\s*cover/);
+  const manifest = JSON.parse(readFileSync(new URL("../assets/team/source.json", import.meta.url), "utf8"));
   for (const name of ["julie-arias", "patricia-mir"]) {
     const bytes = readFileSync(new URL(`../assets/team/${name}.webp`, import.meta.url));
     assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
+    assert.equal(bytes.subarray(12, 16).toString(), "VP8 ");
+    assert.equal(bytes.readUInt16LE(26) & 0x3fff, 480, `${name} width`);
+    assert.equal(bytes.readUInt16LE(28) & 0x3fff, 480, `${name} height`);
     assert.ok(bytes.length < 60_000, `${name} stays light`);
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), manifest.assets[`${name}.webp`].sha256, `${name} matches its manifest`);
   }
 });
 
