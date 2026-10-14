@@ -68,6 +68,11 @@ async def main(base, output, webkit=False):
                         assert await page.locator('.social-links a[href="'+url+'"]').count()==1
                     assert requests.count('facebook')==0,'The images-only landing must not embed additional media'
                     assert await page.locator('.house-stream iframe').count()==0
+                    tiles=page.locator('.house-tile img');assert await tiles.count()==6
+                    await page.locator('.house-stream').scroll_into_view_if_needed()
+                    await page.wait_for_function("[...document.querySelectorAll('.house-tile img')].every(i=>i.complete&&i.naturalWidth===640)")
+                    assert await page.evaluate("getComputedStyle(document.querySelector('.house-grid')).gridTemplateColumns.split(' ').length")==(6 if width>900 else 3)
+                    assert all(href=='https://www.instagram.com/lajollacoralgables/' for href in await page.locator('.house-tile').evaluate_all('a=>a.map(x=>x.href)'))
                     assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
                     assert not errors,errors
                     rows.append({'engine':engine.name,'width':width,'mode':mode,'lazy':True,'only_positive':True})

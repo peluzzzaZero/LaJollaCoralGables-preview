@@ -1747,13 +1747,12 @@ html { scrollbar-gutter: stable; }
 .house-handle a:hover .house-handle-cta, .house-handle a:focus-visible .house-handle-cta { text-decoration: underline; text-underline-offset: 3px; }
 .house-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
 .house-tile { display: block; aspect-ratio: 4 / 5; padding: 6px; background: var(--paper); border: 1px solid var(--line); transition: border-color .3s, box-shadow .3s; }
-.house-tile img { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--cream-deep); transition: filter .6s var(--ease); filter: saturate(.92) sepia(.06); }
+.house-tile img { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--cream-deep); }
 .house-tile:hover, .house-tile:focus-visible { border-color: var(--sage-deep); box-shadow: 0 10px 32px #61493414; }
-.house-tile:hover img, .house-tile:focus-visible img { filter: none; }
 .house-tile:focus-visible { outline: 2px solid var(--sage-deep); outline-offset: 3px; }
 @media (max-width: 900px) { .house-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .house-grid { gap: 8px; } .house-tile { padding: 4px; } }
-@media (prefers-reduced-motion: reduce) { .house-tile, .house-tile img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .house-tile { transition: none; } }
 @media (prefers-reduced-motion: reduce) { .social-links a { transition: none; } }
 .reviews-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .reviews-results > .GMP-attribution, .reviews-results > .reviews-selection, .reviews-results > .review-provider { grid-column: 1 / -1; margin-bottom: 0; }
