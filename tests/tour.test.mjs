@@ -71,7 +71,9 @@ test("every tour image has recorded brochure provenance and owner approval", asy
   for (const [name, entry] of Object.entries(record.assets)) {
     const bytes = readFileSync(new URL(`../assets/tour/${name}`, import.meta.url));
     assert.equal(createHash("sha256").update(bytes).digest("hex"), entry.sha256, name);
-    assert.match(entry.approval, /2026-10-14/);
+    assert.match(entry.approvedBy, /\S/, `${name} approvedBy`);
+    assert.match(entry.approvedOn, /^\d{4}-\d{2}-\d{2}$/, `${name} approvedOn`);
+    assert.match(entry.rights, /\S/, `${name} rights`);
     assert.ok(bytes.length < 150_000, `${name} delivery budget`);
   }
 });
