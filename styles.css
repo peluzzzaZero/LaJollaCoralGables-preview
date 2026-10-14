@@ -2069,8 +2069,8 @@ html { scrollbar-gutter: stable; }
 .landing-effects .house-stream li:nth-child(3n + 2) img { transition-delay: .12s; }
 .landing-effects .house-stream li:nth-child(3n) img { transition-delay: .24s; }
 .landing-effects .team-card + .team-card img[data-photo-fade] { transition-delay: .15s; }
-/* Photographs inside clipped frames (the façade card, the Instagram tiles) only brighten, so no edge shows. */
-.landing-effects :is(.location-map img[data-photo-fade], .house-tile img) { translate: none; }
+/* Photographs inside clipped frames (the façade card, the Instagram tiles, the drifting hall) only brighten, so no edge shows. */
+.landing-effects :is(.location-map img[data-photo-fade], [data-landing-parallax] img[data-photo-fade], .house-tile img) { translate: none; }
 /* Without the mask (Windows high contrast, print), the name shows as plain text again. */
 @media (forced-colors: active), print {
   .logo-text b, .entrance-copy h1, .footer-logo, .location-name { height: auto; width: auto; background: none; -webkit-mask: none; mask: none; text-indent: 0; overflow: visible; }

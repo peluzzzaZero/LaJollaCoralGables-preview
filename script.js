@@ -974,7 +974,7 @@
       interactive.forEach(element => { element.style.removeProperty('--light-x'); element.style.removeProperty('--light-y'); });
       progress.style.removeProperty('--reading-progress');
       if (reduced.matches || saveData || !('IntersectionObserver' in window)) return;
-      // Photographs already on screen (a restored scroll or a deep link) count as arrived, so they never dim first.
+      // Photographs already on screen at load (a restored scroll) count as arrived, so they never dim first.
       document.querySelectorAll('[data-photo-fade], .house-tile img').forEach(photo => {
         const box = photo.getBoundingClientRect();
         if (box.bottom > 0 && box.top < innerHeight) photo.classList.add('has-arrived');
@@ -988,7 +988,12 @@
       photos.forEach(photo => observer.observe(photo));
       // Three one-time image reveals complement the continuous photo motion.
       reveal = new IntersectionObserver(entries => entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.classList.add('has-arrived'); reveal.unobserve(entry.target); }
+        if (!entry.isIntersecting) return;
+        reveal.unobserve(entry.target);
+        // A lazy photograph rises once its bytes are here, so the fade is never spent on an empty frame.
+        const arrive = () => entry.target.classList.add('has-arrived');
+        if (entry.target.tagName === 'IMG' && !entry.target.complete) ['load', 'error'].forEach(type => entry.target.addEventListener(type, arrive, { once: true }));
+        else arrive();
       }), { threshold: .08, rootMargin: '30px' });
       document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => reveal.observe(element));
       // Section photographs fade up once, the first time each one enters the screen.
