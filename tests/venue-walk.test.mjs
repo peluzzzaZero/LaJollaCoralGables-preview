@@ -18,7 +18,7 @@ test('the venue walk wraps the approved hall photograph and its caption', () => 
   assert.match(video, /muted=""/);
   assert.match(video, /preload="none"/);
   assert.doesNotMatch(video, /autoplay|loop|src=|poster=/);
-  for (const key of ['visit.walkDoors', 'visit.walkHall', 'visit.walkWelcome']) assert.equal((js.match(new RegExp(`"${key.replace('.', '\\.')}"`, 'g')) || []).length, 2, key);
+  for (const key of ['visit.walkDoors', 'visit.walkHall', 'visit.walkWelcome', 'visit.noteWelcome', 'visit.noteHall', 'visit.noteYours']) assert.equal((js.match(new RegExp(`"${key.replace('.', '\\.')}"`, 'g')) || []).length, 2, key);
 });
 
 test('the walk is scroll-drawn with native sticky staging, never played or pinned', () => {

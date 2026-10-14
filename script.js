@@ -134,6 +134,12 @@
       "visit.walkDoors": "The front doors",
       "visit.walkHall": "The hall",
       "visit.walkWelcome": "Welcome to La Jolla",
+      "visit.noteWelcomeKicker": "I · The welcome",
+      "visit.noteWelcome": "Your visit begins at the front doors.",
+      "visit.noteHallKicker": "II · The hall",
+      "visit.noteHall": "A light-filled hall, ready for your vision.",
+      "visit.noteYoursKicker": "III · Your occasion",
+      "visit.noteYours": "Picture it with your guests.",
       "visit.stair": "A different perspective",
       "visit.music": "Details with character",
       "visit.garden": "Garden light",
@@ -440,6 +446,12 @@
       "visit.walkDoors": "La entrada",
       "visit.walkHall": "El salón",
       "visit.walkWelcome": "Bienvenidos a La Jolla",
+      "visit.noteWelcomeKicker": "I · La bienvenida",
+      "visit.noteWelcome": "Su visita empieza en la puerta.",
+      "visit.noteHallKicker": "II · El salón",
+      "visit.noteHall": "Un salón lleno de luz, listo para su idea.",
+      "visit.noteYoursKicker": "III · Su ocasión",
+      "visit.noteYours": "Imagínelo con sus invitados.",
       "visit.stair": "Otra perspectiva",
       "visit.music": "Detalles con carácter",
       "visit.garden": "La luz del jardín",
@@ -816,6 +828,7 @@
     const video = walk?.querySelector('.venue-walk-film');
     if (!video || !('IntersectionObserver' in window) || navigator.connection?.saveData) return;
     const figure = walk.querySelector('.hall-photo');
+    const notes = [...walk.querySelectorAll('[data-walk-from]')].map(el => ({ el, from: +el.dataset.walkFrom, to: +el.dataset.walkTo }));
     const motion = matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)');
     const formats = ['mp4', 'webm'].filter(format => video.canPlayType('video/' + format));
     let enabled = false, near = false, requested = false, sourceIndex = 0, objectURL = null, controller = null, frame = 0, progress = 0;
@@ -842,6 +855,11 @@
       const open = Math.max(0, Math.min(1, (progress - .12) / .26));
       walk.style.setProperty('--walk-arch', (1 - open * open * (3 - 2 * open)).toFixed(4));
       walk.dataset.step = progress < .25 ? 'doors' : 'hall';
+      // Each note owns a stretch of the walk: it rises in, holds, then leaves.
+      notes.forEach(note => {
+        const t = (progress - note.from) / (note.to - note.from);
+        note.el.style.setProperty('--note', Math.max(-.2, Math.min(1.2, t)).toFixed(4));
+      });
       if (video.readyState >= 1 && Number.isFinite(video.duration) && !video.seeking) {
         const time = Math.min(video.duration - .04, progress * video.duration);
         if (Math.abs(video.currentTime - time) > .015) { try { video.currentTime = time; } catch (_) { /* Keep the poster. */ } }
@@ -870,6 +888,7 @@
         video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); video.classList.remove('is-decoded');
         if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
         ['--walk', '--walk-arch'].forEach(prop => walk.style.removeProperty(prop)); delete walk.dataset.step;
+        notes.forEach(note => note.el.style.removeProperty('--note'));
       }
     }
     configure();
