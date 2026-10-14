@@ -713,6 +713,12 @@
       entrance.dataset.progress = desired.toFixed(3);
       stage.style.setProperty('--entrance-progress', desired.toFixed(4));
       stage.dataset.phase = desired < .34 ? 'arrival' : desired < .72 ? 'house' : 'occasion';
+      const start = desired < .34 ? 0 : desired < .72 ? .34 : .72;
+      const end = desired < .34 ? .34 : desired < .72 ? .72 : 1;
+      const phraseProgress = (desired - start) / (end - start);
+      stage.style.setProperty('--phrase-travel', ((.5 - phraseProgress) * 72).toFixed(2) + 'px');
+      stage.style.setProperty('--phrase-scale', (1.08 - phraseProgress * .16).toFixed(4));
+      stage.style.setProperty('--title-travel', (Math.sin(desired * Math.PI) * 24).toFixed(2) + 'px');
       active = self.isActive && !document.hidden && !document.querySelector('dialog[open]');
       if (!active) { finishPrime(); video.pause(); return; }
       if (desired > .001 && !started) { started = true; nextSource(); }
@@ -726,7 +732,7 @@
       video.removeAttribute('src'); video.load(); video.preload = 'none'; video.classList.remove('is-decoded');
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null; loadFailed = false; networkURL = null; nativeSource = false;
       sourceIndex = 0; primeAttempts = 0; started = false;
-      stage.style.removeProperty('--entrance-progress'); delete stage.dataset.phase;
+      stage.style.removeProperty('--entrance-progress'); ['--phrase-travel', '--phrase-scale', '--title-travel'].forEach(name => stage.style.removeProperty(name)); delete stage.dataset.phase;
     }
     if (window.gsap && window.ScrollTrigger && !saveData) {
       gsap.registerPlugin(ScrollTrigger);
@@ -758,6 +764,20 @@
     const saveData = !!navigator.connection?.saveData;
     const photos = [...document.querySelectorAll('[data-landing-parallax]')];
     const visible = new Set();
+    const sections = [...document.querySelectorAll('.landing-section')];
+    const interactive = [...document.querySelectorAll('.occasion, .brand-card, .social-links a, .visit-invitation')];
+    // Decorative light follows the pointer; links and complete copy stay native.
+    interactive.forEach(element => {
+      element.addEventListener('pointermove', event => {
+        if (reduced.matches || saveData || event.pointerType !== 'mouse') return;
+        const box = element.getBoundingClientRect();
+        element.style.setProperty('--light-x', ((event.clientX - box.left) / box.width * 100).toFixed(1) + '%');
+        element.style.setProperty('--light-y', ((event.clientY - box.top) / box.height * 100).toFixed(1) + '%');
+      }, { passive: true });
+      element.addEventListener('pointerleave', () => {
+        element.style.removeProperty('--light-x'); element.style.removeProperty('--light-y');
+      });
+    });
     let frame = 0, observer, reveal;
     const progress = document.createElement('span');
     progress.className = 'landing-reading-progress'; progress.setAttribute('aria-hidden', 'true');
@@ -770,7 +790,14 @@
       for (const photo of visible) {
         const image = photo.querySelector('img'), box = image.getBoundingClientRect();
         const position = Math.max(-1, Math.min(1, (box.top + box.height / 2 - innerHeight / 2) / innerHeight));
-        photo.style.setProperty('--photo-drift', (position * Math.min(24, image.offsetHeight * .025)).toFixed(2) + 'px');
+        photo.style.setProperty('--photo-drift', (position * Math.min(38, image.offsetHeight * .04)).toFixed(2) + 'px');
+        photo.style.setProperty('--photo-scale', (1.09 + Math.abs(position) * .04).toFixed(4));
+      }
+      for (const section of sections) {
+        const box = section.getBoundingClientRect();
+        if (box.bottom < 0 || box.top > innerHeight) continue;
+        const travel = Math.max(0, Math.min(1, (innerHeight - box.top) / (innerHeight * .75)));
+        section.style.setProperty('--section-arrival', travel.toFixed(4));
       }
     }
     function schedule() { if (!frame) frame = requestAnimationFrame(draw); }
@@ -778,7 +805,9 @@
       observer?.disconnect(); reveal?.disconnect(); visible.clear();
       if (frame) cancelAnimationFrame(frame); frame = 0;
       document.body.classList.remove('landing-effects');
-      photos.forEach(photo => photo.style.removeProperty('--photo-drift'));
+      photos.forEach(photo => { photo.style.removeProperty('--photo-drift'); photo.style.removeProperty('--photo-scale'); });
+      sections.forEach(section => section.style.removeProperty('--section-arrival'));
+      interactive.forEach(element => { element.style.removeProperty('--light-x'); element.style.removeProperty('--light-y'); });
       progress.style.removeProperty('--reading-progress');
       if (reduced.matches || saveData || !('IntersectionObserver' in window)) return;
       document.body.classList.add('landing-effects');

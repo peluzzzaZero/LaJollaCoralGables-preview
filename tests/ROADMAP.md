@@ -142,3 +142,7 @@ Next improvements, in order of useful evidence:
 ## v1.19.0 — visible motion without a second scroll world
 
 The owner found the first beige landing too static. Add layered arrival phrases, an advancing frame and a moving title alongside the only entrance zoom. Below, three photographed scenes receive native scroll depth and three one-time reveals; keep every paragraph visible and all later sections unpinned. Emphasize Weddings with one full-width editorial tile, with captions safely outside each moving image window. Reduced motion disables decoration. The next evidence priorities remain actual celebration photography, verified venue facts and an owner-configured Google review connection.
+
+## v1.20.0 — continuous entrance typography and editorial interaction
+
+Respond to the owner’s feedback that captions and normal sections feel static: bind each caption's travel/scale directly to scroll, add restrained depth, pointer light and keyboard occasion focus. Keep one initial film, complete native-flow content, original assets and warm event styling. Verify reduced-motion reset, fast reverse scroll, readable copy and reservation navigation before publication.
