@@ -83,7 +83,7 @@ test("assets/social publishes only recorded mosaic images", () => {
 });
 
 test("social content loads no third-party embeds, scripts or video", () => {
-  for (const id of ["social", "tour"]) {
+  for (const id of ["team", "social", "tour"]) {
     const start = html.indexOf(`<article id="${id}"`);
     assert.ok(start > 0, id);
     assert.doesNotMatch(html.slice(start, html.indexOf("</article>", start)), /<iframe|<script|<video/, id);

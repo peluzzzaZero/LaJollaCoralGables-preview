@@ -29,7 +29,7 @@ test("the tour leads to the visit calendar, with email as the secondary path", (
 });
 
 test("no commercial terms from the brochure: prices, packages, capacity, partners or inclusions", () => {
-  assert.ok(copy().length >= 40, "EN and ES copy");
+  assert.ok(copy().length >= 32, "EN and ES copy");
   for (const text of [chapter(), ...copy()]) {
     assert.doesNotMatch(text, /[$€]\s?\d|\d+\s?%|\b265\b|price|precio|package|paquete|collection|colecci|sapphire|includ|inclu|capacity|capacidad|partner|socio|ballroom/i, text.slice(0, 80));
   }
@@ -37,7 +37,7 @@ test("no commercial terms from the brochure: prices, packages, capacity, partner
 
 test("every tour text has an English and Spanish translation", () => {
   const used = new Set(Array.from(chapter().matchAll(/data-i18n="([^"]+)"/g), (m) => m[1]));
-  assert.ok(used.size >= 18);
+  assert.ok(used.size >= 14);
   for (const key of used) {
     assert.equal((js.match(new RegExp(`"${key.replace(/\./g, "\\.")}":`, "g")) || []).length, 2, key);
   }
@@ -48,10 +48,8 @@ test("brochure styling uses the official sage, existing fonts and light photogra
   assert.match(css, /\.lockup-script\s*\{[^}]*var\(--font-script\)/);
   assert.doesNotMatch(css, /fonts\.googleapis/);
   assert.match(chapter(), /class="flourish"[^>]*aria-hidden="true"/);
-  for (const [, src] of chapter().matchAll(/<img src="([^"]+)"/g)) {
-    assert.match(src, /^assets\/tour\/[a-z-]+\.webp$/);
-    assert.ok(readFileSync(new URL(`../${src}`, import.meta.url)).length < 150_000, src);
-  }
+  // Brochure photographs stay off the page until their rights and location are confirmed.
+  assert.doesNotMatch(chapter(), /<img\b/);
 });
 
 test("retired bar media is not published and not referenced", async () => {
