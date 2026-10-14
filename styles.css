@@ -1877,7 +1877,7 @@ html { scrollbar-gutter: stable; }
 .landing-effects .occasion.is-current .occasion-number { color: var(--forest); transform: scale(1.5); }
 @media (min-width: 1051px) {
   .landing-effects .occasion-visual { position: sticky; }
-  .landing-effects .occasion-counter { display: block; position: absolute; top: 18px; right: 22px; font: 400 64px/1 var(--font-display); color: var(--paper); text-shadow: 0 2px 18px #30261e66; }
+  .landing-effects .occasion-counter { display: block; position: absolute; top: 18px; right: 22px; font: 400 52px/1 var(--font-display); color: var(--paper); text-shadow: 0 2px 18px #30261e66; }
 }
 
 /* Scene 5: The Lexington — upstairs, into deep green and gold. */

@@ -837,27 +837,30 @@
         if (albumIndex) albumIndex.textContent = String(prints.filter((print, index) => !index || travel - index + 1 > .35).length).padStart(2, '0');
       } },
       occasions.length && { element: document.querySelector('.events-list'), update() {
-        let current = 0, distance = Infinity;
-        occasions.forEach((occasion, index) => {
-          const box = occasion.getBoundingClientRect(), gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
-          if (gap < distance) { distance = gap; current = index; }
+        // Mark the whole row nearest the middle: two-column rows share one top.
+        const boxes = occasions.map(occasion => occasion.getBoundingClientRect());
+        let row = 0, distance = Infinity;
+        boxes.forEach(box => {
+          const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
+          if (gap < distance) { distance = gap; row = box.top; }
         });
-        occasions.forEach((occasion, index) => occasion.classList.toggle('is-current', index === current));
-        if (occasionCounter) occasionCounter.textContent = String(current + 1).padStart(2, '0');
+        const current = [];
+        occasions.forEach((occasion, index) => {
+          const on = Math.abs(boxes[index].top - row) < 2;
+          occasion.classList.toggle('is-current', on);
+          if (on) current.push(String(index + 1).padStart(2, '0'));
+        });
+        if (occasionCounter) occasionCounter.textContent = current.join(' · ');
       } },
       services.length && { element: document.querySelector('.rentals-quiet'), update() {
-        services.forEach(item => {
-          const box = item.getBoundingClientRect();
-          item.style.setProperty('--enter', (1 - ease(clamp((innerHeight * 1.02 - box.top) / (innerHeight * .32)))).toFixed(4));
-        });
+        // Read every position before writing, so one frame needs one layout.
+        const tops = services.map(item => item.getBoundingClientRect().top);
+        services.forEach((item, index) => item.style.setProperty('--enter', (1 - ease(clamp((innerHeight * 1.02 - tops[index]) / (innerHeight * .32)))).toFixed(4)));
       } },
       cards.length && { element: document.querySelector('.brand-grid'), update() {
         // Measure the untransformed grid, never the moving plate itself.
-        const grid = document.querySelector('.brand-grid').getBoundingClientRect();
-        cards.forEach(card => {
-          const box = { top: grid.top + card.offsetTop };
-          card.style.setProperty('--scatter', (1 - ease(clamp((innerHeight * 1.05 - box.top) / (innerHeight * .6)))).toFixed(4));
-        });
+        const grid = document.querySelector('.brand-grid').getBoundingClientRect().top;
+        cardTops.forEach((top, index) => cards[index].style.setProperty('--scatter', (1 - ease(clamp((innerHeight * 1.05 - grid - top) / (innerHeight * .6)))).toFixed(4)));
       } },
       seal && { element: seal, update() {
         const box = { top: seal.offsetParent.getBoundingClientRect().top + seal.offsetTop };
@@ -865,9 +868,11 @@
       } },
     ].filter(scene => scene && scene.element);
     const activeScenes = new Set();
+    let cardTops = [], configuredWidth = 0, preload;
     function measureScatter() {
       const grid = document.querySelector('.brand-grid');
       if (!grid) return;
+      cardTops = cards.map(card => card.offsetTop);
       cards.forEach((card, index) => {
         // Gather the plates towards the middle of the table before they settle.
         // The grid is positioned, so offsets ignore the scatter transforms.
@@ -908,6 +913,8 @@
       seal?.style.removeProperty('--stamp');
       if (albumIndex) albumIndex.textContent = '01';
       album?.classList.remove('is-staged');
+      preload?.disconnect();
+      prints.forEach(print => { print.querySelector('img').loading = 'lazy'; });
       if (frame) cancelAnimationFrame(frame); frame = 0;
       document.body.classList.remove('landing-effects');
       photos.forEach(photo => { photo.style.removeProperty('--photo-drift'); photo.style.removeProperty('--photo-scale'); });
@@ -929,10 +936,17 @@
       document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => reveal.observe(element));
       inked.forEach(inkWords); measureScatter();
       const albumStaged = staging();
+      configuredWidth = innerWidth;
       if (albumStaged) {
         album.classList.add('is-staged');
-        // Off-stage prints are clipped, so lazy loading would wait until each one slides in.
-        prints.forEach(print => { print.querySelector('img').loading = 'eager'; });
+        // Off-stage prints are clipped, so lazy loading would wait until each one
+        // slides in. Load them together once the album is two screens away.
+        preload = new IntersectionObserver(entries => {
+          if (!entries.some(entry => entry.isIntersecting)) return;
+          prints.forEach(print => { print.querySelector('img').loading = 'eager'; });
+          preload.disconnect();
+        }, { rootMargin: '200% 0px' });
+        preload.observe(album);
       }
       const live = scenes.filter(scene => !scene.staged || albumStaged);
       const byElement = new Map(live.map(scene => [scene.element, scene]));
@@ -951,12 +965,17 @@
       if (!document.body.classList.contains('landing-effects')) return;
       inked.forEach(inkWords); schedule();
     });
-    window.addEventListener('resize', () => { if (document.body.classList.contains('landing-effects')) measureScatter(); }, { passive: true });
+    window.addEventListener('resize', () => {
+      if (!document.body.classList.contains('landing-effects') || innerWidth === configuredWidth) return;
+      if (staging() !== album?.classList.contains('is-staged')) configure(); else { configuredWidth = innerWidth; measureScatter(); }
+    }, { passive: true });
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule, { passive: true });
     document.addEventListener('visibilitychange', schedule);
     reduced.addEventListener('change', configure);
-    roomy.addEventListener('change', configure);
+    // A collapsing toolbar can cross the height threshold mid-scroll; only a
+    // width change (rotation or window resize) re-decides the staged album.
+    roomy.addEventListener('change', () => { if (innerWidth !== configuredWidth) configure(); });
     configure();
   }
 

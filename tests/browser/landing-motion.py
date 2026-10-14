@@ -16,6 +16,22 @@ async def verify_scenes(page,language):
  assert abs(middle['stage'])<1 and 0<sum(middle['arrive'])<4,middle
  assert end['arrive']==[1,1,1,1] and end['index']=='04',end
  assert back==middle,(back,middle)
+ # Repeated flings in both directions land on identical poses.
+ first=await album_at(page,.3)
+ for fraction in [.95,.05,.7,.15]:await album_at(page,fraction)
+ assert await album_at(page,.3)==first
+ # Translating mid-album keeps the stage and its pose.
+ other='es' if language=='en' else 'en'
+ await page.locator(f'[data-lang="{other}"]').click();await page.wait_for_timeout(300)
+ assert (await album_at(page,.3))['arrive']==first['arrive']
+ await page.locator(f'[data-lang="{language}"]').click();await page.wait_for_timeout(300)
+ # Every occasion, including the right-hand column, becomes the current one.
+ seen=set();box=await page.locator('.events-list').bounding_box()
+ top=await page.evaluate('document.querySelector(".events-list").getBoundingClientRect().top+scrollY')
+ for step in range(0,int(box['height'])+200,40):
+  await page.evaluate('y=>scrollTo(0,y)',top+step-page.viewport_size['height']*.5);await page.wait_for_timeout(30)
+  seen.update(await page.locator('.occasion').evaluate_all('items=>items.map((e,i)=>e.classList.contains("is-current")?i:-1).filter(i=>i>=0)'))
+ assert seen==set(range(10)),seen
  for print_ in await page.locator('.album-print').all():
   assert (await print_.locator('figcaption').inner_text()).strip()
  # Inked paragraphs keep their exact translated text and finish fully legible.
@@ -44,7 +60,7 @@ async def verify_scenes(page,language):
  await page.locator('.rentals-quiet').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.6)')
  await page.wait_for_timeout(300)
  assert await page.locator('.rentals-quiet li').evaluate_all('items=>items.every(e=>Number(e.style.getPropertyValue("--enter"))===0)')
- assert await page.locator('.occasion.is-current').count()<=1
+ assert await page.locator('.occasion.is-current').count()<=2
 
 async def main(base,output,args):
  output.mkdir(parents=True,exist_ok=True);rows=[]
