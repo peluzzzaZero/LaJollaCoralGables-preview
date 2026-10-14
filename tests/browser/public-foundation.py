@@ -60,7 +60,7 @@ async def main(base, output):
                     assert await page.locator('form').count()==0
                     if filename=='index.html':
                         assert await page.locator('main details').count()==0
-                        assert await page.locator('main .landing-section').count()==8
+                        assert await page.locator('main .landing-section').count()==9
                         header=await page.locator('.header-inner').bounding_box()
                         logo=await page.locator('#header .logo').bounding_box()
                         actions=await page.locator('.header-actions').bounding_box()

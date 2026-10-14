@@ -7,6 +7,16 @@
 
   const I18N = {
     en: {
+      "nav.location": "Location",
+      "location.kicker": "Reviews & location",
+      "location.title": "Loved by our guests, easy to find.",
+      "location.reviewsInvite": "Every review on our Google listing is written by a guest. Read them in full, or tell future guests about your own celebration.",
+      "location.reviewsWrite": "Share your experience",
+      "location.findTitle": "Visit the house",
+      "location.directions": "Get directions",
+      "location.apple": "Open in Apple Maps",
+      "location.mapLoad": "Show the map",
+      "location.mapNote": "The map is provided by Google and only loads when you open it.",
       "social.reviewsTitle": "Guest experiences",
       "social.reviewsIntro": "Discover the house through the people who have celebrated here.",
       "social.reviewsLoad": "See selected guest reviews",
@@ -295,6 +305,16 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "nav.location": "Ubicación",
+      "location.kicker": "Opiniones y ubicación",
+      "location.title": "Querida por nuestros invitados, fácil de encontrar.",
+      "location.reviewsInvite": "Cada reseña de nuestra ficha de Google la escribe un invitado. Léalas completas o cuente a futuros invitados cómo fue su celebración.",
+      "location.reviewsWrite": "Comparta su experiencia",
+      "location.findTitle": "Visite la casa",
+      "location.directions": "Cómo llegar",
+      "location.apple": "Abrir en Apple Maps",
+      "location.mapLoad": "Ver el mapa",
+      "location.mapNote": "El mapa lo ofrece Google y solo se carga cuando usted lo abre.",
       "social.reviewsTitle": "Experiencias de nuestros invitados",
       "social.reviewsIntro": "Conozca la casa a través de quienes han celebrado aquí.",
       "social.reviewsLoad": "Ver una selección de reseñas",

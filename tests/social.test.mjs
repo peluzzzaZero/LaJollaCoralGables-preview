@@ -95,3 +95,26 @@ test("the mosaic strings exist in both languages and no profile description is i
   const cards = html.slice(html.indexOf('<nav class="social-links"'), html.indexOf("</nav>", html.indexOf('<nav class="social-links"')));
   for (const card of cards.match(/<a [^]*?<\/a>/g)) assert.match(card, /^<a [^>]*><span>[A-Za-z]+<\/span><small>[^<]+<\/small><span aria-hidden="true">↗<\/span><\/a>$/);
 });
+
+test("reviews and location share one chapter with real links and no preloaded map", () => {
+  const start = html.indexOf('<article id="location"');
+  const end = html.indexOf("</article>", html.indexOf('class="location-card"'));
+  assert.ok(start !== -1 && end > start, "location chapter");
+  assert.ok(start > html.indexOf('<article id="team"') && start < html.indexOf('<article id="planning"'), "between the team and the invitation");
+  const section = html.slice(start, end);
+  assert.match(section, /data-guest-reviews/);
+  assert.equal(html.match(/data-guest-reviews/g).length, 1, "one reviews component");
+  assert.match(section, /href="https:\/\/search\.google\.com\/local\/writereview\?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
+  assert.match(section, /href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=[^"]+&amp;destination_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
+  assert.match(section, /301 Alcazar Avenue/);
+  assert.match(section, /href="tel:\+17862908813"/);
+  assert.equal(section.includes("<iframe"), false, "the map loads only on request");
+  assert.doesNotMatch(section, /★|\b[1-5](\.\d)? ?\/ ?5\b|aggregateRating/, "no invented rating");
+  for (const key of ["nav.location", "location.title", "location.mapLoad", "location.directions", "location.reviewsWrite"])
+    assert.equal(js.split(`"${key}":`).length - 1, 2, `${key} in EN and ES`);
+});
+
+test("the quiet site credit sits at the very bottom of the footer", () => {
+  const footer = html.slice(html.indexOf('<footer id="footer"'), html.indexOf("</footer>"));
+  assert.match(footer, /<p class="wrap footer-credit" translate="no">powered by peluzzza<\/p>\n<\/div>\n?$/);
+});

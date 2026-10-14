@@ -2,8 +2,8 @@
   'use strict';
   const placeId = 'ChIJWbeTzJu32YgRbGDUdwzI0W0';
   const copy = {
-    en: { loading: 'Loading guest reviews…', empty: 'Read guest experiences on Google Maps.', unavailable: 'Reviews are unavailable here at the moment. You can read them on Google Maps.', selected: 'Selected five-star reviews, in Google Maps relevance order.', source: 'View original review', facebook: 'Latest posts from La Jolla on Facebook' },
-    es: { loading: 'Cargando reseñas…', empty: 'Lea las experiencias de nuestros invitados en Google Maps.', unavailable: 'Las reseñas no están disponibles aquí en este momento. Puede leerlas en Google Maps.', selected: 'Selección de reseñas de cinco estrellas, en el orden de relevancia de Google Maps.', source: 'Ver reseña original', facebook: 'Últimas publicaciones de La Jolla en Facebook' }
+    en: { loading: 'Loading guest reviews…', empty: 'Read guest experiences on Google Maps.', unavailable: 'Reviews are unavailable here at the moment. You can read them on Google Maps.', selected: 'Selected five-star reviews, in Google Maps relevance order.', source: 'View original review', facebook: 'Latest posts from La Jolla on Facebook', map: 'Map of La Jolla, 301 Alcazar Avenue, Coral Gables' },
+    es: { loading: 'Cargando reseñas…', empty: 'Lea las experiencias de nuestros invitados en Google Maps.', unavailable: 'Las reseñas no están disponibles aquí en este momento. Puede leerlas en Google Maps.', selected: 'Selección de reseñas de cinco estrellas, en el orden de relevancia de Google Maps.', source: 'Ver reseña original', facebook: 'Últimas publicaciones de La Jolla en Facebook', map: 'Mapa de La Jolla, 301 Alcazar Avenue, Coral Gables' }
   };
   const language = () => document.documentElement.lang === 'es' ? 'es' : 'en';
   const messages = () => copy[language()];
@@ -66,7 +66,24 @@
     }
     return true;
   }
+  // The Google map is a keyless embed that loads only after the visitor asks
+  // for it; until then the section shows the house and plain map links.
+  function initMap(container) {
+    const button = container.querySelector('.location-map-load');
+    if (!button) return;
+    button.addEventListener('click', function () {
+      const frame = document.createElement('iframe');
+      const url = new URL('https://www.google.com/maps');
+      url.searchParams.set('q', 'La Jolla Ballroom, 301 Alcazar Avenue, Coral Gables, FL');
+      url.searchParams.set('hl', language()); url.searchParams.set('output', 'embed');
+      frame.src = url.href; frame.title = messages().map; frame.loading = 'lazy';
+      frame.referrerPolicy = 'no-referrer-when-downgrade'; frame.allowFullscreen = true;
+      container.append(frame); container.classList.add('is-open'); frame.focus();
+      window.addEventListener('lajolla-language', function () { frame.title = messages().map; });
+    }, { once: true });
+  }
   document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-location-map]').forEach(initMap);
     const key = document.querySelector('meta[name="google-maps-browser-key"]')?.content || '';
     if (!/^[A-Za-z0-9_-]{20,120}$/.test(key)) return;
     document.querySelectorAll('[data-guest-reviews]').forEach(function (section) {

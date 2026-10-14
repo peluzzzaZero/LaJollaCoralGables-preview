@@ -33,9 +33,14 @@ async def main(base, output, webkit=False):
                         await route.fulfill(content_type='text/html',body='<html><body>FAKE FACEBOOK TIMELINE</body></html>')
                     await page.route('https://maps.googleapis.com/**',google)
                     await page.route('https://www.facebook.com/plugins/**',facebook)
+                    async def googlemap(route):
+                        requests.append('map')
+                        assert 'output=embed' in route.request.url and 'Alcazar' in route.request.url
+                        await route.fulfill(content_type='text/html',body='<html><body>FAKE GOOGLE MAP</body></html>')
+                    await page.route('https://www.google.com/maps?**',googlemap)
                     await page.route('**/*.mp4',lambda route:route.abort());await page.route('**/*.webm',lambda route:route.abort())
                     await page.goto(base);assert not requests,'Social providers must not preload'
-                    await position(page,'events')
+                    await position(page,'location')
                     button=page.locator('.reviews-load')
                     if mode=='disabled':assert await button.is_hidden()
                     else:
@@ -62,6 +67,14 @@ async def main(base, output, webkit=False):
                             await page.locator('[data-lang=es]').click()
                             assert 'no están disponibles' in await page.locator('.reviews-status').inner_text()
                         assert requests==['google']
+                    assert await page.locator('.location-map iframe').count()==0,'The map waits for the visitor'
+                    await page.locator('.location-map-load').click()
+                    await page.locator('.location-map iframe').wait_for()
+                    assert requests[-1]=='map' and requests.count('map')==1
+                    assert await page.locator('.location-map-load').is_hidden()
+                    assert 'Alcazar' in await page.locator('.location-map iframe').get_attribute('title')
+                    for href in ['https://www.google.com/maps/dir/?api=1','https://search.google.com/local/writereview?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0','tel:+17862908813']:
+                        assert await page.locator('#location a[href^="'+href+'"]').count()==1,href
                     await page.screenshot(path=str(output/f'reviews-{engine.name}-{width}-{mode}.png'))
                     await position(page,'team')
                     for url in ['https://www.instagram.com/lajollacoralgables/','https://www.tiktok.com/@lajollacoralgables','https://www.pinterest.com/LaJollaCoralGables/','https://www.facebook.com/lajollaballroom']:
