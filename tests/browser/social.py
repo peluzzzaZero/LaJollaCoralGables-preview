@@ -17,7 +17,7 @@ async def main(base, output, webkit=False):
     async with async_playwright() as p:
         for engine in [p.chromium]+([p.webkit] if webkit else []):
             browser=await engine.launch()
-            for width,height in [(320,600),(884,884)]:
+            for width,height in [(320,600),(884,884),(1280,800)]:
                 for mode in ['success','empty','failure','disabled']:
                     page=await browser.new_page(viewport={'width':width,'height':height});requests=[];errors=[]
                     page.on('pageerror',lambda e:errors.append(str(e)))

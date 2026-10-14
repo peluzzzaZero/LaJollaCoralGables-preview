@@ -29,10 +29,11 @@ function webpSize(path) {
 test("the house stream shows recorded local photos that open the Instagram profile", () => {
   const stream = houseStream();
   assert.ok(html.indexOf('<div class="house-stream">') > html.indexOf('id="team"'), "inside the team chapter");
-  const tiles = [...stream.matchAll(/<li><a class="house-tile" href="([^"]+)"[^>]*>(.*?)<\/a><\/li>/g)];
+  const tiles = [...stream.matchAll(/<li><a class="house-tile" href="([^"]+)"([^>]*)>(.*?)<\/a><\/li>/g)];
   assert.equal(tiles.length, manifest.length);
-  for (const [, href, inner] of tiles) {
+  for (const [, href, attributes, inner] of tiles) {
     assert.equal(href, instagram);
+    assert.match(attributes, /tabindex="-1"/, "one keyboard stop for the mosaic");
     const [tag, src] = inner.match(/<img src="([^"]+)"[^>]*>/);
     const entry = manifest.find((item) => item.asset === src);
     assert.ok(entry, `${src} is recorded in assets/social/source.json`);
@@ -42,7 +43,6 @@ test("the house stream shows recorded local photos that open the Instagram profi
     assert.deepEqual(webpSize(src), [640, 800], src);
     assert.match(tag, /width="640" height="800" loading="lazy"/);
     assert.match(tag, /alt="[^"]{12,}"/);
-    assert.match(inner, /<span class="sr-only" data-i18n="social.instagramOpen">/);
   }
   for (const [tag] of html.slice(html.indexOf('<div class="house-stream">'), html.indexOf("</nav>", html.indexOf('<div class="house-stream">'))).matchAll(/<a [^>]*>/g)) {
     assert.match(tag, /target="_blank"/);
@@ -58,6 +58,6 @@ test("social content loads no third-party embeds, scripts or video", () => {
 
 test("every new social string exists in both languages and is used", () => {
   const keys = [...new Set([...html.matchAll(/data-i18n="(social\.(?:instagram|tiktok|pinterest|facebook)[A-Za-z]+|social\.alt\.[a-z]+)"/g)].map((m) => m[1]))];
-  assert.ok(keys.length >= 12, "mosaic, card and alt keys");
+  assert.ok(keys.length >= 11, "mosaic, card and alt keys");
   for (const key of keys) assert.equal(js.split(`"${key}":`).length, 3, key);
 });
