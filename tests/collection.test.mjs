@@ -52,3 +52,15 @@ test("retired bar media is not published and not referenced", async () => {
     for (const file of [html, js, css]) assert.equal(file.includes(path), false, path);
   }
 });
+
+test("the chapter invites a private tour first, with email as the secondary path", () => {
+  const section = chapter();
+  const tour = section.indexOf("data-booking-opener");
+  const mail = section.indexOf('href="mailto:');
+  assert.ok(tour > 0 && mail > tour, "tour button before the email link");
+  assert.match(section, /href="https:\/\/bookings\.cloud\.microsoft\/book\/[^"]+" data-booking-opener/);
+  for (const [, src] of section.matchAll(/<img src="([^"]+)"/g)) {
+    assert.match(src, /^assets\/collection\/[a-z-]+\.webp$/);
+    assert.ok(readFileSync(new URL(`../${src}`, import.meta.url)).length < 150_000, src);
+  }
+});
