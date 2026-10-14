@@ -1,0 +1,20 @@
+{
+  "source": "Two portrait photographs sent by the owner (Dan) in the project thread on 2026-10-14 for the team section: the first of Patricia Mir, the second of Julie Arias, the other person named in that section.",
+  "assets": {
+    "julie-arias.webp": {
+      "original": "foto-2.jpg, 1086x1448",
+      "treatment": "background removed (rembg, BiRefNet portrait model); scaled so both faces match (eye line to chin 135 px, eyes at y=190); centred on the face in a 680x620 transparent WebP (q80); the edges of the original photo and the lower body fade out softly; the company name printed on the jacket lapel is retouched out (OpenCV inpainting) so no brand mark appears",
+      "sha256": "fea26abc8994ba72ec480182ca3d83bf0fbd1a487f06fd70720fd91563f367cc"
+    },
+    "patricia-mir.webp": {
+      "original": "foto-1-patricia.jpg, 2268x3024",
+      "treatment": "background removed (rembg, BiRefNet portrait model); scaled so both faces match (eye line to chin 135 px, eyes at y=190); centred on the face in a 680x620 transparent WebP (q80); the edges of the original photo and the lower body fade out softly",
+      "sha256": "2945e3a05b49a9d4002aa25672ea049e2466d14ca61cc04be92cf0940ba8fe72"
+    }
+  },
+  "approvedBy": "Dan, site owner, in the project thread",
+  "approvedOn": "2026-10-14",
+  "approvalQuote": "La primera es patricia y la seguda es la otra... actualiza la parte do de esta el sitio que pone sus nombres y actualiza sus fotos como un recuadro circular",
+  "rights": "Supplied by the owner for the venue's team section; originals are not committed",
+  "revision": "The owner did not like circular ID-style crops (\"así parece un DNI\") and asked for cut-out silhouettes in the space, proportional to each other (2026-10-14)."
+}
