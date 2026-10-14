@@ -3,8 +3,8 @@
   "assets": {
     "julie-arias.webp": {
       "original": "foto-2.jpg, 1086x1448",
-      "treatment": "background removed (rembg, BiRefNet portrait model); scaled so both faces match (eye line to chin 135 px, eyes at y=190); centred on the face in a 680x620 transparent WebP (q80); the edges of the original photo and the lower body fade out softly",
-      "sha256": "ea39439946bb7d2334e882682501e3ac6bf6e9b03b758273e5987e1e048f4a5f"
+      "treatment": "background removed (rembg, BiRefNet portrait model); scaled so both faces match (eye line to chin 135 px, eyes at y=190); centred on the face in a 680x620 transparent WebP (q80); the edges of the original photo and the lower body fade out softly; the company name printed on the jacket lapel is retouched out (OpenCV inpainting) so no brand mark appears",
+      "sha256": "fea26abc8994ba72ec480182ca3d83bf0fbd1a487f06fd70720fd91563f367cc"
     },
     "patricia-mir.webp": {
       "original": "foto-1-patricia.jpg, 2268x3024",
