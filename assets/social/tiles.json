@@ -1,0 +1,38 @@
+[
+  {
+    "name": "house-facade",
+    "source": "assets/venue/facade.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Already published on the site as approved venue photography"
+  },
+  {
+    "name": "house-plaque",
+    "source": "assets/brand/mood-plaque.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "name": "house-evening",
+    "source": "assets/brand/hero-facade.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "name": "house-seal",
+    "source": "assets/brand/wax-seal-photo.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "name": "house-monogram",
+    "source": "assets/brand/leaves-monogram.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "name": "house-suite",
+    "source": "assets/brand/flatlay-suite.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  }
+]

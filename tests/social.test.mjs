@@ -7,6 +7,9 @@ const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
 const manifest = JSON.parse(readFileSync(new URL("../assets/social/source.json", import.meta.url), "utf8"));
 const instagram = "https://www.instagram.com/lajollacoralgables/";
+const tileList = JSON.parse(readFileSync(new URL("../assets/social/tiles.json", import.meta.url), "utf8"));
+const allowedLinks = [/^https:\/\/www\.instagram\.com\/lajollacoralgables\/$/, /^https:\/\/www\.instagram\.com\/(p|reel)\/[A-Za-z0-9_-]{5,40}\/$/,
+  /^https:\/\/www\.tiktok\.com\/@lajollacoralgables\/video\/[0-9]{8,25}$/, /^https:\/\/www\.pinterest\.com\/pin\/[0-9]{6,25}\/$/];
 const sha256 = (path) => createHash("sha256").update(readFileSync(new URL(`../${path}`, import.meta.url))).digest("hex");
 
 function houseStream() {
@@ -26,20 +29,25 @@ function webpSize(path) {
   return [1 + (bits & 0x3fff), 1 + ((bits >> 14) & 0x3fff)];
 }
 
-test("the house stream shows recorded local photos that open the Instagram profile", () => {
+test("the house stream shows the recorded tiles.json photos, each opening La Jolla's own profile or post", () => {
   const stream = houseStream();
   assert.ok(html.indexOf('<div class="house-stream">') > html.indexOf('id="team"'), "inside the team chapter");
   const tiles = [...stream.matchAll(/<li><a class="house-tile" href="([^"]+)"([^>]*)>(.*?)<\/a><\/li>/g)];
-  assert.equal(tiles.length, 6);
-  for (const [, href, attributes, inner] of tiles) {
-    assert.equal(href, instagram);
+  assert.equal(tiles.length, tileList.length);
+  assert.ok(tiles.length >= 3 && tiles.length <= 12);
+  for (const [index, [, href, attributes, inner]] of tiles.entries()) {
+    assert.equal(href, tileList[index].href, "index.html follows tiles.json; run python scripts/social-tiles.py");
+    assert.ok(allowedLinks.some((link) => link.test(href)), href);
     assert.match(attributes, /tabindex="-1" aria-hidden="true"/, "the handle link is the accessible route");
     const [tag, src] = inner.match(/<img src="([^"]+)"[^>]*>/);
     const entry = manifest.find((item) => item.asset === src);
     assert.ok(entry, `${src} is recorded in assets/social/source.json`);
+    assert.equal(src, `assets/social/${tileList[index].name}.webp`);
+    assert.equal(entry.source, tileList[index].source);
+    assert.ok(entry.ownerApproval?.trim(), `${src} records the owner approval`);
     assert.equal(sha256(src), entry.sha256, src);
     assert.equal(sha256(entry.source), entry.sourceSha256, entry.source);
-    assert.match(entry.source, /^assets\/(venue|brand)\//);
+    assert.match(entry.source, /^assets\/(venue|brand|instagram)\//);
     assert.deepEqual(webpSize(src), [640, 800], src);
     assert.match(tag, /alt="" width="640" height="800" loading="lazy"/);
     const small = src.replace(".webp", "-320.webp");
