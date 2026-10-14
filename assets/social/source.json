@@ -5,7 +5,7 @@
     "source": "assets/venue/facade.jpg",
     "sourceSha256": "e4ae9dbabf2b4f0d42dddb96cf694ebbc974c93421ceaaeb3ea8ec935c6cc0e2",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Already published on the site as approved venue photography"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-facade-320.webp",
@@ -13,7 +13,7 @@
     "source": "assets/social/house-facade.webp",
     "sourceSha256": "ea5c42bc5bbe42e5cbf4d5fb81c4fb5397a4c87affbbda8222a5be28768cf1e9",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Already published on the site as approved venue photography"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-plaque.webp",
