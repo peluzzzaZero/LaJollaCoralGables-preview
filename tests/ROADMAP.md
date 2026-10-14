@@ -146,3 +146,7 @@ The owner found the first beige landing too static. Add layered arrival phrases,
 ## v1.20.0 — continuous entrance typography and editorial interaction
 
 Respond to the owner’s feedback that captions and normal sections feel static: bind each caption's travel/scale directly to scroll, add restrained depth, pointer light and keyboard occasion focus. Keep one initial film, complete native-flow content, original assets and warm event styling. Verify reduced-motion reset, fast reverse scroll, readable copy and reservation navigation before publication.
+
+## v1.21.0 — a visit told in scenes
+
+The owner asked for storytelling closer to Apple's product pages and narrative studio sites: a mix of film and photography where each section advances like a scene, not a full scroll world. Keep the single approved film; give each chapter its own reversible scroll scene (doorway arch, inked history, stacked printed photographs of the spaces, current-occasion index, deep green Lexington, written services, spread identity plates, sealed invitation). Correct the mobile detail grid and caption strips. Verify reduced motion, SaveData and no-JS fallbacks, EN/ES at every reviewed width and readable settled states before publication. At the owner’s request the release also brings the social profiles into the content: a local, embed-free six-image mosaic opening Instagram in the team chapter. Next: owner-chosen posts with permalinks, then an optional automatic feed through the official Instagram API.

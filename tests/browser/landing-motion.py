@@ -3,6 +3,68 @@ import json
 from playwright.async_api import async_playwright
 from review import run, verify_flow
 
+async def album_at(page,fraction):
+ await page.evaluate('f=>{const a=document.querySelector(".venue-album");scrollTo(0,a.getBoundingClientRect().top+scrollY+(a.offsetHeight-innerHeight)*f)}',fraction)
+ await page.wait_for_timeout(250)
+ return await page.evaluate('()=>({stage:document.querySelector(".album-stage").getBoundingClientRect().top,arrive:[...document.querySelectorAll(".album-print")].map(e=>Number(e.style.getPropertyValue("--arrive"))),index:document.querySelector(".album-index").textContent})')
+
+async def verify_scenes(page,language):
+ # The four detail photographs arrive in order inside one sticky stage and reverse.
+ assert await page.locator('.album-stage').evaluate('e=>getComputedStyle(e).position')=='sticky'
+ start=await album_at(page,0);middle=await album_at(page,.5);end=await album_at(page,1);back=await album_at(page,.5)
+ assert start['arrive']==[1,0,0,0] and start['index']=='01',start
+ assert abs(middle['stage'])<1 and 0<sum(middle['arrive'])<4,middle
+ assert end['arrive']==[1,1,1,1] and end['index']=='04',end
+ assert back==middle,(back,middle)
+ # Repeated flings in both directions land on identical poses.
+ first=await album_at(page,.3)
+ for fraction in [.95,.05,.7,.15]:await album_at(page,fraction)
+ assert await album_at(page,.3)==first
+ # Translating mid-album keeps the stage and its pose.
+ other='es' if language=='en' else 'en'
+ await page.locator(f'[data-lang="{other}"]').click();await page.wait_for_timeout(300)
+ assert (await album_at(page,.3))['arrive']==first['arrive']
+ await page.locator(f'[data-lang="{language}"]').click();await page.wait_for_timeout(300)
+ # Every occasion, including the right-hand column, becomes the current one.
+ seen=set();steps=[];box=await page.locator('.events-list').bounding_box()
+ top=await page.evaluate('document.querySelector(".events-list").getBoundingClientRect().top+scrollY')
+ for step in range(0,int(box['height'])+200,40):
+  # Wait for two rendered frames, not a fixed delay: WebKit can defer rendering
+  # while the section's images decode, and the scene updates in the frame.
+  await page.evaluate('y=>new Promise(done=>{scrollTo(0,y);requestAnimationFrame(()=>requestAnimationFrame(done))})',top+step-page.viewport_size['height']*.5)
+  current=await page.locator('.occasion').evaluate_all('items=>items.map((e,i)=>e.classList.contains("is-current")?i:-1).filter(i=>i>=0)')
+  seen.update(current);steps.append(current)
+ assert seen==set(range(10)),(page.context.browser.browser_type.name,page.viewport_size,seen,steps)
+ for print_ in await page.locator('.album-print').all():
+  assert (await print_.locator('figcaption').inner_text()).strip()
+ # Inked paragraphs keep their exact translated text and finish fully legible.
+ for paragraph in await page.locator('[data-ink]').all():
+  key=await paragraph.get_attribute('data-i18n')
+  assert await page.evaluate('document.documentElement.lang')==language
+  words=await paragraph.locator('.ink-word').all_inner_texts()
+  assert ' '.join(words)==' '.join((await paragraph.inner_text()).split()),key
+  assert await paragraph.locator('.ink-word').count()>3
+  await paragraph.evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.3)')
+  await page.wait_for_timeout(500)
+  assert await paragraph.locator('.ink-word').evaluate_all('w=>w.every(e=>getComputedStyle(e).opacity==="1")'),key
+ # Scenes measured from untransformed references retrace the same pose after a fling.
+ async def poses():
+  return await page.evaluate('()=>[...document.querySelectorAll(".brand-card")].map(e=>e.style.getPropertyValue("--scatter")).concat([document.querySelector(".planning-seal").style.getPropertyValue("--stamp")])')
+ mid='e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.85)'
+ await page.locator('.brand-grid').evaluate(mid);await page.wait_for_timeout(300);first=await poses()
+ await page.evaluate('scrollTo(0,document.body.scrollHeight)');await page.wait_for_timeout(150)
+ await page.evaluate('scrollTo(0,0)');await page.wait_for_timeout(150)
+ await page.locator('.brand-grid').evaluate(mid);await page.wait_for_timeout(300)
+ assert await poses()==first,'Scatter and seal must reverse along the same path'
+ # Settled scenes return to the readable layout.
+ await page.locator('.brand-grid').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.5)')
+ await page.wait_for_timeout(300)
+ assert await page.locator('.brand-card').first.evaluate('e=>Number(e.style.getPropertyValue("--scatter"))')==0
+ await page.locator('.rentals-quiet').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.6)')
+ await page.wait_for_timeout(300)
+ assert await page.locator('.rentals-quiet li').evaluate_all('items=>items.every(e=>Number(e.style.getPropertyValue("--enter"))===0)')
+ assert await page.locator('.occasion.is-current').count()<=2
+
 async def main(base,output,args):
  output.mkdir(parents=True,exist_ok=True);rows=[]
  async with async_playwright() as p:
@@ -74,10 +136,18 @@ async def main(base,output,args):
      picture=await window.bounding_box();caption=await page.locator('.ballroom-photo figcaption').bounding_box()
      assert picture['y']+picture['height']<=caption['y'], 'Photo movement must not paint over its caption'
      assert await window.evaluate('e=>getComputedStyle(e).overflow') in ['clip','hidden']
-     assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.pin).length')==1,'Later posts must never be pinned'
+     assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.pin).length')==1,'Only the entrance film uses a GSAP pin'
+     await verify_scenes(page,language)
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
      await page.screenshot(path=str(output/f'depth-{engine.name}-{width}-{language}.png'))
      rows.append({'engine':engine.name,'width':width,'language':language,'arrival_layers':True,'photo_depth':True,'reading_flow':True})
+    # Short or landscape screens keep the photographs as an ordinary readable grid.
+    await page.set_viewport_size({'width':844,'height':390});await page.wait_for_timeout(300)
+    assert not await page.locator('.venue-album').evaluate('e=>e.classList.contains("is-staged")')
+    assert await page.locator('.album-print').evaluate_all('items=>items.every(e=>getComputedStyle(e).position==="static"&&e.getBoundingClientRect().width>150)')
+    assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+    await page.set_viewport_size({'width':width,'height':height});await page.wait_for_timeout(300)
+    assert await page.locator('.venue-album').evaluate('e=>e.classList.contains("is-staged")')
     await page.emulate_media(reduced_motion='reduce');await page.wait_for_timeout(150)
     assert await image.evaluate('e=>getComputedStyle(e).transform')=='none'
     assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='none'
@@ -90,6 +160,9 @@ async def main(base,output,args):
     await invitation.focus();await page.wait_for_timeout(500)
     assert await invitation.evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove focused booking lift'
 
+    assert await page.locator('.ink-word').count()==0,'Reduced motion must restore plain paragraphs'
+    assert await page.locator('.album-stage').evaluate('e=>getComputedStyle(e).position')!='sticky'
+    assert await page.locator('.album-print').evaluate_all('items=>items.every(e=>getComputedStyle(e).position==="static"&&getComputedStyle(e).transform==="none")')
     await verify_flow(page);assert not errors,errors;await page.close()
    await browser.close()
  (output/'results.json').write_text(json.dumps(rows,indent=2))
