@@ -166,3 +166,7 @@ The owner shared the client's brochure; the goal of the site is the tour. Bring 
 ## v1.24.0 — the team, in person
 
 The owner sent portraits of Patricia Mir and Julie Arias. Replace the team monograms with matching cut-out portraits (no ID-style circles) with translated alt text; keep names, roles and order. Next: photographs of the house for the tour chapter.
+
+## v1.25.0 — the name, in the house's lettering
+
+The owner asked that the name be written as in the brochure, only the name. Draw "La Jolla" in the header, opening title, location card and footer with the brochure's own script outlines (CSS mask, current color, real text kept). Next: photographs of the house for the tour chapter.

@@ -2037,3 +2037,19 @@ html { scrollbar-gutter: stable; }
 @media (max-width: 760px) {
   .tour-steps { grid-template-columns: 1fr; }
 }
+
+/* v1.25: the name "La Jolla" is drawn with the script lettering of the house's own brochure
+   (vector outlines taken from the brochure lockup), only where it reads as the name. The text stays
+   in the DOM for screen readers, translation and search; the drawing takes the current color. */
+.logo-text b, .entrance-copy h1, .footer-logo, .location-name {
+  --name-h: 1.3em;
+  display: block; height: var(--name-h); width: calc(var(--name-h) * 2.847); max-width: 100%;
+  background: currentColor;
+  -webkit-mask: url("assets/brand/la-jolla-script.svg") left center / contain no-repeat;
+  mask: url("assets/brand/la-jolla-script.svg") left center / contain no-repeat;
+  text-indent: 200%; white-space: nowrap; overflow: hidden; letter-spacing: 0;
+}
+.logo-text b { --name-h: 1.55em; margin-bottom: .1em; }
+.location-name { --name-h: 1.6em; margin-bottom: .2em; }
+.landing-footer .footer-logo { --name-h: 1.5em; }
+.entrance-copy h1 { --name-h: 1em; }
