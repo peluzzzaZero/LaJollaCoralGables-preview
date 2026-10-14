@@ -5,6 +5,7 @@ import { readFileSync, readdirSync } from "node:fs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
+const social = readFileSync(new URL("../social.js", import.meta.url), "utf8");
 const manifest = JSON.parse(readFileSync(new URL("../assets/social/source.json", import.meta.url), "utf8"));
 const instagram = "https://www.instagram.com/lajollacoralgables/";
 const tileList = JSON.parse(readFileSync(new URL("../assets/social/tiles.json", import.meta.url), "utf8"));
@@ -118,7 +119,9 @@ test("the location chapter has real links and no preloaded map", () => {
   assert.match(section, /href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=[^"]+&amp;destination_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
   assert.match(section, /301 Alcazar Avenue/);
   assert.match(section, /href="tel:\+17862908813"/);
-  assert.equal(section.includes("<iframe"), false, "the map loads only on request");
+  assert.equal(section.includes("<iframe"), false, "no embedded map");
+  assert.match(section, /<a class="location-map" href="https:\/\/www\.google\.com\/maps\/search\/\?api=1&amp;query=[^"]*301\+Alcazar\+Avenue[^"]*&amp;query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer">/);
+  assert.doesNotMatch(social, /output=embed|createElement\('iframe'\)/, "no keyless Google embed");
   for (const key of ["nav.location", "location.title", "location.mapLoad", "location.directions", "location.reviewsWrite", "social.eyebrow"])
     assert.equal(js.split(`"${key}":`).length - 1, 2, `${key} in EN and ES`);
 });
