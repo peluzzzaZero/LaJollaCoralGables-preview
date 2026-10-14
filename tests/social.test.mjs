@@ -43,6 +43,8 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
       const key = `social.tile.${tileList[index].name}`;
       assert.match(attributes, new RegExp(`aria-label="[^"]{8,}" data-i18n="${key.replaceAll(".", "\\.")}" data-i18n-attr="aria-label"`));
       assert.doesNotMatch(attributes, /tabindex|aria-hidden/);
+      const label = tileList[index].label.en.trim().replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("'", "&#x27;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+      assert.ok(attributes.includes(`aria-label="${label}"`), "the HTML label is the English tiles.json label");
       const labels = [...js.matchAll(new RegExp(`"${key.replaceAll(".", "\\.")}": ("(?:[^"\\\\]|\\\\.)*")`, "g"))].map((m) => JSON.parse(m[1]));
       assert.deepEqual(labels, [tileList[index].label.en.trim(), tileList[index].label.es.trim()], key);
       assert.ok(tileList[index].postApproval?.trim(), `${key} records the owner's post confirmation`);
@@ -73,7 +75,8 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
 });
 
 test("assets/social publishes only recorded mosaic images", () => {
-  const published = readdirSync(new URL("../assets/social/", import.meta.url)).filter((file) => file.endsWith(".webp")).sort();
+  const published = readdirSync(new URL("../assets/social/", import.meta.url))
+    .filter((file) => /\.(svg|png|jpe?g|webp|avif|ico|mp4|webm)$/i.test(file)).sort();
   assert.deepEqual(published, manifest.map((entry) => entry.asset.replace("assets/social/", "")).sort());
 });
 

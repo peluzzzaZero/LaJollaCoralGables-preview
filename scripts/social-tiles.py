@@ -2,7 +2,8 @@
 
 Edit tiles.json (order, source image, link, owner approval and, for a post
 link, the owner's post confirmation and its EN/ES label). Keep owner originals
-in media/instagram/, which is never published, then run `python scripts/social-tiles.py`. It crops new
+in media/instagram/: the website never serves them, but they are committed to the
+repository, so they must carry no location data, then run `python scripts/social-tiles.py`. It crops new
 or changed sources to 4:5 WebP at 640 and 320 px, refreshes
 assets/social/source.json, rewrites the mosaic list in index.html and the post
 labels in script.js. `--check` changes nothing and fails when a file is out of
@@ -10,6 +11,7 @@ date. Requires Pillow only when an image has to be (re)built.
 """
 import argparse
 import hashlib
+import html as markup
 import io
 import json
 import re
@@ -31,6 +33,8 @@ POSTS = [re.compile(p) for p in (
 )]
 LARGE = 'Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits'
 SMALL = '640x800 tile resized to 320x400, WebP quality 78'
+# Extensions scripts/build-site.mjs publishes from assets/.
+MEDIA = {'.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.ico', '.mp4', '.webm'}
 LIST = re.compile(r'(<ul class="house-grid"[^>]*>\n)(.*?)(</ul>)', re.S)
 LABELS = re.compile(r'(      // house-tiles:start[^\n]*\n)(.*?)(      // house-tiles:end\n)', re.S)
 
@@ -43,8 +47,17 @@ def sha256(path):
     return sha256_bytes((ROOT / path).read_bytes())
 
 
+def has_location(path):
+    try:
+        from PIL import Image
+    except ImportError:
+        return False
+    with Image.open(path) as image:
+        return bool(image.getexif().get_ifd(0x8825))
+
+
 def load_tiles():
-    tiles = json.loads(TILES.read_text())
+    tiles = json.loads(TILES.read_text(encoding='utf-8'))
     if len(tiles) not in (6, 12):
         sys.exit('The mosaic needs 6 or 12 tiles so the 6-column desktop and 3-column mobile rows stay full.')
     files = set()
@@ -56,10 +69,12 @@ def load_tiles():
             if file in files:
                 sys.exit(f'{name}: {file} would overwrite another tile')
             files.add(file)
-        # media/ is not published: owner originals (and their EXIF) stay out of the site.
+        # media/ is not served by the website, but it is in the repository.
         if not re.fullmatch(r'(assets/(venue|brand)|media/instagram)/[A-Za-z0-9._/-]+', source) or '..' in source \
                 or not (ROOT / source).is_file():
             sys.exit(f'{name}: source must be an existing file in media/instagram, assets/venue or assets/brand: {source!r}')
+        if source.startswith('media/') and has_location(ROOT / source):
+            sys.exit(f'{name}: {source} carries GPS location data; export it without location before committing')
         if not tile.get('ownerApproval', '').strip():
             sys.exit(f'{name}: record the owner approval for this image')
         if href == PROFILE:
@@ -85,6 +100,7 @@ def encode(tile, known):
     else:
         from PIL import Image, ImageOps
         image = ImageOps.exif_transpose(Image.open(ROOT / tile['source']))
+        image.info.pop('exif', None)
         icc = image.info.get('icc_profile')
         image = image.convert('RGB')
         width, height = image.size
@@ -94,7 +110,7 @@ def encode(tile, known):
             print(f"Warning: {tile['source']} is smaller than 640x800 and will be enlarged.", file=sys.stderr)
         left, top = (width - crop_w) // 2, (height - crop_h) // 2
         image = image.crop((left, top, left + crop_w, top + crop_h)).resize((640, 800), Image.LANCZOS)
-        extra = {'icc_profile': icc} if icc else {}
+        extra = {'exif': b'', **({'icc_profile': icc} if icc else {})}
         buffer = io.BytesIO()
         image.save(buffer, 'WEBP', quality=78, method=6, **extra)
         large_bytes = buffer.getvalue()
@@ -121,7 +137,7 @@ def tile_html(tile):
         return (f'<li><a class="house-tile" href="{PROFILE}" target="_blank" rel="noopener noreferrer" '
                 f'tabindex="-1" aria-hidden="true">{image}</a></li>\n')
     key = f"social.tile.{tile['name']}"
-    label = tile['label']['en'].strip().replace('&', '&amp;').replace('"', '&quot;')
+    label = markup.escape(tile['label']['en'].strip(), quote=True)
     return (f'<li><a class="house-tile" href="{tile["href"]}" target="_blank" rel="noopener noreferrer" '
             f'aria-label="{label}" data-i18n="{key}" data-i18n-attr="aria-label">{image}</a></li>\n')
 
@@ -136,18 +152,18 @@ def main():
     parser.add_argument('--check', action='store_true', help='fail instead of writing when files are out of date')
     args = parser.parse_args()
     tiles = load_tiles()
-    known = {entry['asset']: entry for entry in json.loads(MANIFEST.read_text())}
+    known = {entry['asset']: entry for entry in json.loads(MANIFEST.read_text(encoding='utf-8'))}
     images, entries = {}, []
     for tile in tiles:
         files, built = encode(tile, known)
         images.update(files)
         entries += built
-    html = INDEX.read_text()
+    html = INDEX.read_text(encoding='utf-8')
     match = LIST.search(html)
     if not match:
         sys.exit('index.html has no house-grid list.')
     page = html[:match.start(2)] + ''.join(tile_html(tile) for tile in tiles) + html[match.end(2):]
-    js = SCRIPT.read_text()
+    js = SCRIPT.read_text(encoding='utf-8')
     blocks = list(LABELS.finditer(js))
     if len(blocks) != 2:
         sys.exit('script.js needs one house-tiles block in each language.')
@@ -155,8 +171,9 @@ def main():
         js = js[:block.start(2)] + labels_js(tiles, lang) + js[block.end(2):]
     texts = {MANIFEST: json.dumps(entries, indent=2, ensure_ascii=False) + '\n', INDEX: page, SCRIPT: js}
     keep = {ROOT / f"assets/social/{t['name']}{suffix}.webp" for t in tiles for suffix in ('', '-320')}
-    unused = sorted(p for p in (ROOT / 'assets/social').glob('*.webp') if p not in keep)
-    changed = [path for path, text in texts.items() if path.read_text() != text] + list(images) + unused
+    unused = sorted(p for p in (ROOT / 'assets/social').iterdir()
+                    if p.suffix.lower() in MEDIA and p not in keep)
+    changed = [path for path, text in texts.items() if path.read_text(encoding='utf-8') != text] + list(images) + unused
     if args.check:
         if changed:
             sys.exit('Out of date, run python scripts/social-tiles.py: ' + ', '.join(str(p.relative_to(ROOT)) for p in changed))
@@ -165,7 +182,7 @@ def main():
     for path, data in images.items():
         path.write_bytes(data)
     for path, text in texts.items():
-        path.write_text(text)
+        path.write_text(text, encoding='utf-8', newline='\n')
     for path in unused:
         path.unlink()
     print(f'House mosaic rebuilt: {len(tiles)} tiles.' + (f' Removed {len(unused)} unused images.' if unused else ''))
