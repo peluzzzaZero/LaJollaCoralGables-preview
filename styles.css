@@ -2094,7 +2094,7 @@ html { scrollbar-gutter: stable; }
    the steps settle in, and the caption arrives with the hall. */
 .venue-walk-welcome { display: none; }
 .venue-walk.is-walking .venue-walk-welcome { display: block; position: absolute; left: 0; right: 0; top: 34%; text-align: center; font: 400 clamp(40px, 6vw, 92px)/1.1 var(--font-script); color: #fffaf0; text-shadow: 0 2px 24px #3b2e2466; pointer-events: none; transform: translateY(calc(min(1, var(--walk, 0) * 4.5) * -64svh)) scale(calc(1 + min(1, var(--walk, 0) * 4.5) * .35)); }
-.venue-walk.is-walking .venue-walk-welcome small { display: block; margin-bottom: .4em; font: 500 11px/1 var(--font-body); letter-spacing: .26em; text-transform: uppercase; }
+.venue-walk.is-walking .venue-walk-welcome small { display: inline-block; margin-bottom: .6em; padding: 7px 12px; background: #3b2e2459; font: 500 11px/1 var(--font-body); letter-spacing: .26em; text-transform: uppercase; text-shadow: none; }
 .venue-walk.is-walking .venue-walk-welcome > span { display: block; }
 /* Story notes: a cream card with a sage rule, pinned to a place in the room.
    --note runs 0→1 over its stretch; the card rises in, holds, and slips out of
