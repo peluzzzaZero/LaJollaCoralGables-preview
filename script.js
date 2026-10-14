@@ -1039,7 +1039,8 @@
     const initialHash = location.hash;
     function targetFor(hash) {
       const id = hash.slice(1);
-      return document.getElementById(id === 'quote' ? 'planning' : id === 'possibilities' ? 'events' : id);
+      const aliases = { quote: 'planning', possibilities: 'events', gallery: 'social', collection: 'tour' };
+      return document.getElementById(aliases[id] || id);
     }
     function go(target, smooth) {
       if (!target) return;
