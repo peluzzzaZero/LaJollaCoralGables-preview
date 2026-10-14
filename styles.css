@@ -2081,13 +2081,31 @@ html { scrollbar-gutter: stable; }
 .landing-page .lockup-script { line-height: 1.25; margin-top: .12em; }
 .landing-page .tour-steps li::before { font-family: var(--font-display); font-size: clamp(30px, 2.8vw, 40px); letter-spacing: .04em; }
 
-/* Venue entrance: the real walk through the front doors, played once. */
-.hall-photo .photo-window { position: relative; }
-/* The photograph stays visible underneath until the film actually plays. */
-.venue-entrance { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; visibility: hidden; pointer-events: none; background: transparent; }
-.venue-entrance.is-playing { visibility: visible; animation: venue-entrance-in .6s ease both; }
-@keyframes venue-entrance-in { from { opacity: .4; } to { opacity: 1; } }
-.venue-replay { position: absolute; right: 12px; bottom: 12px; padding: 8px 14px; border: 1px solid #f5f1e699; border-radius: 999px; background: #2b2b2899; color: #f5f1e6; font: 500 12px/1 var(--font-body); letter-spacing: .04em; cursor: pointer; backdrop-filter: blur(4px); }
-.venue-replay:hover, .venue-replay:focus-visible { background: #5e7060e6; }
-.venue-replay[hidden] { display: none; }
-@media (prefers-reduced-motion: reduce) { .venue-entrance, .venue-replay { display: none; } }
+/* Venue walk: the real film through the front doors, drawn by the scroll.
+   Without .is-walking the hall photograph keeps its approved layout. */
+.venue-walk-steps, .venue-walk-film { display: none; }
+.venue-walk.is-walking { height: calc(100svh + 130svh); margin: 24px 0 40px; }
+.venue-walk.is-walking .hall-photo, .landing-effects .venue-walk.is-walking .hall-photo.has-arrived { box-shadow: none; transform: none; }
+.venue-walk.is-walking .hall-photo { position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); margin: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.venue-walk.is-walking .photo-window { position: relative; width: min(100%, calc((100svh - 230px) * 16 / 9)); aspect-ratio: 16 / 9; margin: 0 auto; overflow: hidden; transform-origin: 50% 100%; transform: scale(calc(1 - var(--walk-arch, 1) * .16)); border-radius: calc(var(--walk-arch, 1) * 50vmin) calc(var(--walk-arch, 1) * 50vmin) 2px 2px / calc(var(--walk-arch, 1) * 30vmin) calc(var(--walk-arch, 1) * 30vmin) 2px 2px; box-shadow: 0 30px 60px -30px #61493459; }
+.venue-walk.is-walking .photo-window > img { width: 100%; height: 100%; object-fit: cover; }
+.venue-walk.is-walking .venue-walk-film { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: transparent; }
+/* Each beat enters on its own: the greeting rises off the doors as they open,
+   the steps settle in, and the caption arrives with the hall. */
+.venue-walk-welcome { display: none; }
+.venue-walk.is-walking .venue-walk-welcome { display: block; position: absolute; left: 0; right: 0; top: 38%; text-align: center; font: 400 clamp(40px, 6vw, 92px)/1.1 var(--font-script); color: #fffaf0; text-shadow: 0 2px 24px #3b2e2466; pointer-events: none; transform: translateY(calc(min(1, var(--walk, 0) * 4.5) * -64svh)) scale(calc(1 + min(1, var(--walk, 0) * 4.5) * .35)); }
+.venue-walk.is-walking .venue-walk-steps { transform: translateY(calc((1 - min(1, var(--walk, 0) * 8)) * 10px)); }
+.venue-walk.is-walking figcaption { width: min(100%, calc((100svh - 230px) * 16 / 9)); margin: 0 auto; text-align: center; opacity: clamp(.45, calc(var(--walk, 0) * 4 - 1.5), 1); transform: translateY(calc((1 - min(1, var(--walk, 0) * 2)) * 14px)); }
+.venue-walk.is-walking .venue-walk-steps { display: flex; align-items: center; justify-content: center; gap: 14px; font: 500 11px/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft, #6b5a4a); }
+.venue-walk-steps > span:not(.venue-walk-track) { opacity: .55; transition: opacity .4s; }
+.venue-walk[data-step="doors"] .venue-walk-steps > span:first-child, .venue-walk[data-step="hall"] .venue-walk-steps > span:last-child { opacity: 1; }
+.venue-walk-track { display: block; width: 120px; height: 1px; background: #61493433; }
+.venue-walk-track i { display: block; width: 100%; height: 100%; background: #5e7060; transform: scaleX(calc(.04 + var(--walk, 0) * .96)); transform-origin: left; }
+@media (max-width: 650px) {
+  .venue-walk.is-walking { height: calc(100svh + 110svh); }
+  .venue-walk.is-walking .hall-photo { top: var(--header-h); height: calc(100svh - var(--header-h)); }
+  .venue-walk.is-walking .photo-window, .venue-walk.is-walking figcaption { width: min(100%, calc(100svh - 260px)); }
+  .venue-walk.is-walking .photo-window { aspect-ratio: 1; }
+  .venue-walk-track { width: 70px; }
+}
+@media (prefers-reduced-motion: reduce) { .venue-walk.is-walking { height: auto; } .venue-walk-film, .venue-walk-steps, .venue-walk-welcome { display: none; } }

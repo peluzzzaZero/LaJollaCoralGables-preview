@@ -12,9 +12,9 @@ async def main(base,output,args):
     page=await browser.new_page(viewport={'width':width,'height':height});media=[];network=[];errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
     def record_media(request):
-     # The venue doorway film loads later, near its own section; this review
+     # The venue walk film loads later, near its own section; this review
      # follows the entrance film only.
-     if request.url.endswith(('.mp4','.webm')) and '/cinematic/entrance-walk' not in request.url:
+     if request.url.endswith(('.mp4','.webm')) and '/cinematic/venue-walk' not in request.url:
       media.append(request.url)
       network.append({'url':request.url,'type':request.resource_type,'range':request.headers.get('range')})
     page.on('request',record_media)

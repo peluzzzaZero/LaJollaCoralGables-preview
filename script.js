@@ -131,7 +131,9 @@
       "visit.title": "Picture your occasion here.",
       "visit.intro": "From the light-filled hall to the smallest architectural detail, take a closer look at La Jolla.",
       "visit.hall": "The hall · a space to make your own",
-      "visit.enterAgain": "Step inside again",
+      "visit.walkDoors": "The front doors",
+      "visit.walkHall": "The hall",
+      "visit.walkWelcome": "Welcome to La Jolla",
       "visit.stair": "A different perspective",
       "visit.music": "Details with character",
       "visit.garden": "Garden light",
@@ -435,7 +437,9 @@
       "visit.title": "Imagine su ocasión aquí.",
       "visit.intro": "Desde el salón lleno de luz hasta el más pequeño detalle arquitectónico, conozca La Jolla más de cerca.",
       "visit.hall": "El salón · un espacio para hacerlo suyo",
-      "visit.enterAgain": "Volver a entrar",
+      "visit.walkDoors": "La entrada",
+      "visit.walkHall": "El salón",
+      "visit.walkWelcome": "Bienvenidos a La Jolla",
       "visit.stair": "Otra perspectiva",
       "visit.music": "Detalles con carácter",
       "visit.garden": "La luz del jardín",
@@ -803,46 +807,75 @@
     window.__ljEntrance = { get trigger() { return trigger; }, video };
   }
 
-  // The real walk through La Jolla's front doors. It plays once, muted, when
-  // the hall photograph is in view and rests on its last frame. Reduced
-  // motion and data saving keep the approved photograph only.
-  function initVenueEntrance() {
-    const video = document.querySelector('[data-venue-entrance]');
-    if (!video || !('IntersectionObserver' in window)) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData) return;
-    const replay = video.parentElement.querySelector('.venue-replay');
-    const name = window.innerWidth >= 700 ? 'entrance-walk' : 'entrance-walk-mobile';
-    let loaded = false, played = false;
+  // The real walk through La Jolla's front doors, drawn by the scroll inside
+  // "An invitation inside". The frame opens from the arch the opening film
+  // ends on. Native sticky staging only; the opening film keeps the one pin.
+  // Reduced motion, data saving and short screens keep the approved photograph.
+  function initVenueWalk() {
+    const walk = document.querySelector('[data-venue-walk]');
+    const video = walk?.querySelector('.venue-walk-film');
+    if (!video || !('IntersectionObserver' in window) || navigator.connection?.saveData) return;
+    const figure = walk.querySelector('.hall-photo');
+    const motion = matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)');
+    const formats = ['mp4', 'webm'].filter(format => video.canPlayType('video/' + format));
+    let enabled = false, near = false, requested = false, sourceIndex = 0, objectURL = null, controller = null, frame = 0, progress = 0;
+    const name = () => innerWidth > 650 ? 'venue-walk' : 'venue-walk-mobile';
     function load() {
-      if (loaded) return; loaded = true;
-      video.poster = 'assets/venue/cinematic/entrance-walk-poster.webp';
-      for (const format of ['mp4', 'webm']) {
-        if (!video.canPlayType('video/' + format)) continue;
-        const source = document.createElement('source');
-        source.src = 'assets/venue/cinematic/' + name + '.' + format; source.type = 'video/' + format;
-        video.append(source);
+      if (requested || !enabled || sourceIndex >= formats.length) return;
+      requested = true;
+      const format = formats[sourceIndex++];
+      controller = new AbortController();
+      // Complete the small clip before seeking, as the opening film does.
+      fetch('assets/venue/cinematic/' + name() + '.' + format, { signal: controller.signal })
+        .then(response => { if (!response.ok) throw new Error('Walk unavailable'); return response.blob(); })
+        .then(blob => { objectURL = URL.createObjectURL(blob); video.src = objectURL; video.preload = 'auto'; video.load(); })
+        .catch(() => { if (!controller.signal.aborted) { requested = false; load(); } });
+    }
+    function seek() {
+      frame = 0;
+      if (!enabled) return;
+      const box = walk.getBoundingClientRect();
+      const span = box.height - figure.offsetHeight - parseFloat(getComputedStyle(figure).top || 0);
+      progress = Math.max(0, Math.min(1, -box.top / Math.max(1, span)));
+      walk.style.setProperty('--walk', progress.toFixed(4));
+      // The doors read as an arch until the cut, then the hall opens.
+      const open = Math.max(0, Math.min(1, (progress - .12) / .26));
+      walk.style.setProperty('--walk-arch', (1 - open * open * (3 - 2 * open)).toFixed(4));
+      walk.dataset.step = progress < .25 ? 'doors' : 'hall';
+      if (video.readyState >= 1 && Number.isFinite(video.duration) && !video.seeking) {
+        const time = Math.min(video.duration - .04, progress * video.duration);
+        if (Math.abs(video.currentTime - time) > .015) { try { video.currentTime = time; } catch (_) { /* Keep the poster. */ } }
       }
-      // Only the last format failing means the film is unavailable.
-      video.lastElementChild?.addEventListener('error', fail);
-      video.preload = 'auto'; video.load();
     }
-    function fail() { video.classList.remove('is-playing'); replay.hidden = true; }
-    function play() {
-      if (document.hidden || document.querySelector('dialog[open]')) return;
-      video.currentTime = 0; replay.hidden = true;
-      video.classList.add('is-playing');
-      video.play()?.catch(() => video.classList.remove('is-playing'));
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(seek); };
+    video.addEventListener('loadeddata', () => { video.classList.add('is-decoded'); seek(); });
+    video.addEventListener('seeked', () => { if (video.readyState >= 2) seek(); });
+    video.addEventListener('error', () => { if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null; requested = false; load(); });
+    new IntersectionObserver(entries => {
+      near = entries.some(entry => entry.isIntersecting);
+      if (near) load();
+    }, { rootMargin: '100% 0px' }).observe(walk);
+    function configure() {
+      const want = motion.matches;
+      if (want === enabled) return;
+      enabled = want;
+      walk.classList.toggle('is-walking', enabled);
+      if (enabled) {
+        figure.removeAttribute('data-landing-parallax');
+        video.poster = 'assets/venue/cinematic/' + name() + '-poster.webp';
+        if (near) load();
+        seek();
+      } else {
+        controller?.abort(); requested = false; sourceIndex = 0;
+        video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); video.classList.remove('is-decoded');
+        if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
+        ['--walk', '--walk-arch'].forEach(prop => walk.style.removeProperty(prop)); delete walk.dataset.step;
+      }
     }
-    video.addEventListener('ended', () => { replay.hidden = false; });
-    video.addEventListener('error', fail);
-    replay.addEventListener('click', play);
-    new IntersectionObserver((entries, observer) => {
-      if (entries.some(entry => entry.isIntersecting)) { load(); observer.disconnect(); }
-    }, { rootMargin: '100% 0px' }).observe(video);
-    new IntersectionObserver((entries, observer) => {
-      if (played || !entries.some(entry => entry.intersectionRatio >= .6)) return;
-      played = true; observer.disconnect(); load(); play();
-    }, { threshold: [.6] }).observe(video);
+    configure();
+    motion.addEventListener?.('change', configure);
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule, { passive: true });
   }
 
   function initLandingMotion() {
@@ -1175,7 +1208,7 @@
     initChapterMenu();
     // Resolve the menu layout before positioning or focusing an anchor.
     initEntranceZoom();
-    initVenueEntrance();
+    initVenueWalk();
     initLandingMotion();
     initAnchorNavigation();
     initBookingCalendar();
