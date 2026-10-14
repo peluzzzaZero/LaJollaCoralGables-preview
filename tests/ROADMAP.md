@@ -154,3 +154,7 @@ The owner asked for storytelling closer to Apple's product pages and narrative s
 ## v1.22.0 — reviews, location and a quiet credit
 
 The owner liked the mobile scenes and asked for desktop polish of the entrance film and its frame, guest reviews and opinions together with the location, and a discreet gray "powered by peluzzza" at the very bottom. Per the client stakeholder, replace the brand plates with an Instagram chapter of venue photographs followed by guest reviews (Google, links to read and write; no invented testimonials or ratings) and the profiles, never say "ballroom", and lead the spaces with the piano photograph instead of the bar. Add a location chapter with address, phone, email, directions and a Google map that loads only on request, and start the desktop film below the opaque header so the frame is complete. Next: the owner's restricted Google browser key so selected five-star reviews appear on the page, and owner-chosen Instagram posts.
+
+## v1.22.1 — the location map opens Google Maps at La Jolla
+
+The owner reported from his phone that the location map showed the whole world, needed a tap and misbehaved once open. The keyless embed is removed; the facade card opens Google Maps in a new tab through the official Maps URL with La Jolla's Place ID, and nothing from Google loads inside the page. Next: confirm on a phone that the venue is marked, and a keyed Maps JavaScript map pinned by Place ID once the owner's browser key is active.
