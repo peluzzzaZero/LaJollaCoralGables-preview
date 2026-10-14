@@ -838,15 +838,17 @@
       } },
       occasions.length && { element: document.querySelector('.events-list'), update() {
         // Mark the whole row nearest the middle: two-column rows share one top.
-        const boxes = occasions.map(occasion => occasion.getBoundingClientRect());
+        // Layout offsets ignore the hover lift, so a hovered card stays in its row.
+        const list = occasions[0].offsetParent.getBoundingClientRect().top;
+        const rows = occasions.map(occasion => occasion.offsetTop);
         let row = 0, distance = Infinity;
-        boxes.forEach(box => {
-          const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
-          if (gap < distance) { distance = gap; row = box.top; }
+        occasions.forEach((occasion, index) => {
+          const gap = Math.abs(list + rows[index] + occasion.offsetHeight / 2 - innerHeight * .5);
+          if (gap < distance) { distance = gap; row = rows[index]; }
         });
         const current = [];
         occasions.forEach((occasion, index) => {
-          const on = Math.abs(boxes[index].top - row) < 2;
+          const on = Math.abs(rows[index] - row) < 2;
           occasion.classList.toggle('is-current', on);
           if (on) current.push(String(index + 1).padStart(2, '0'));
         });
@@ -964,7 +966,10 @@
     // Translation replaces the inked paragraphs with plain text.
     window.addEventListener('lajolla-language', () => {
       if (!document.body.classList.contains('landing-effects')) return;
-      inked.forEach(inkWords); measureScatter(); schedule();
+      inked.forEach(inkWords); measureScatter();
+      // The word count changes with the language; recompute every scene's pose at once.
+      scenes.forEach(scene => { if (!scene.staged || album.classList.contains('is-staged')) scene.update(); });
+      schedule();
     });
     window.addEventListener('resize', () => {
       if (!document.body.classList.contains('landing-effects') || innerWidth === configuredWidth) return;
