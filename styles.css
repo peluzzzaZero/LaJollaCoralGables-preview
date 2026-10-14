@@ -1976,7 +1976,7 @@ html { scrollbar-gutter: stable; }
 }
 
 /* The site credit stays quieter than the legal line above it. */
-.footer-credit { margin: 14px auto 0; font: 400 10px/1.4 var(--font-body); letter-spacing: .08em; color: #6f6459; text-align: center; }
+.footer-credit { margin: 14px auto 0; font: 400 10px/1.4 var(--font-body); letter-spacing: .08em; color: #655a50; text-align: center; }
 
 /* v1.22 — the brand wall gives way to the house on Instagram: photographs that
    settle like prints on a table, what guests say, then the profiles. */
