@@ -28,6 +28,15 @@ async def verify_scenes(page,language):
   await paragraph.evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.3)')
   await page.wait_for_timeout(500)
   assert await paragraph.locator('.ink-word').evaluate_all('w=>w.every(e=>getComputedStyle(e).opacity==="1")'),key
+ # Scenes measured from untransformed references retrace the same pose after a fling.
+ async def poses():
+  return await page.evaluate('()=>[...document.querySelectorAll(".brand-card")].map(e=>e.style.getPropertyValue("--scatter")).concat([document.querySelector(".planning-seal").style.getPropertyValue("--stamp")])')
+ mid='e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.85)'
+ await page.locator('.brand-grid').evaluate(mid);await page.wait_for_timeout(300);first=await poses()
+ await page.evaluate('scrollTo(0,document.body.scrollHeight)');await page.wait_for_timeout(150)
+ await page.evaluate('scrollTo(0,0)');await page.wait_for_timeout(150)
+ await page.locator('.brand-grid').evaluate(mid);await page.wait_for_timeout(300)
+ assert await poses()==first,'Scatter and seal must reverse along the same path'
  # Settled scenes return to the readable layout.
  await page.locator('.brand-grid').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.5)')
  await page.wait_for_timeout(300)
@@ -113,6 +122,13 @@ async def main(base,output,args):
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
      await page.screenshot(path=str(output/f'depth-{engine.name}-{width}-{language}.png'))
      rows.append({'engine':engine.name,'width':width,'language':language,'arrival_layers':True,'photo_depth':True,'reading_flow':True})
+    # Short or landscape screens keep the photographs as an ordinary readable grid.
+    await page.set_viewport_size({'width':844,'height':390});await page.wait_for_timeout(300)
+    assert not await page.locator('.venue-album').evaluate('e=>e.classList.contains("is-staged")')
+    assert await page.locator('.album-print').evaluate_all('items=>items.every(e=>getComputedStyle(e).position==="static"&&e.getBoundingClientRect().width>150)')
+    assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+    await page.set_viewport_size({'width':width,'height':height});await page.wait_for_timeout(300)
+    assert await page.locator('.venue-album').evaluate('e=>e.classList.contains("is-staged")')
     await page.emulate_media(reduced_motion='reduce');await page.wait_for_timeout(150)
     assert await image.evaluate('e=>getComputedStyle(e).transform')=='none'
     assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='none'

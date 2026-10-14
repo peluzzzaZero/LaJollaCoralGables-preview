@@ -722,6 +722,8 @@
       // The approach ends as a doorway: the film settles into an arch.
       const arch = Math.max(0, Math.min(1, (desired - .7) / .3));
       stage.style.setProperty('--entrance-arch', (arch * arch * (3 - 2 * arch)).toFixed(4));
+      // Clip the film only while it is an arch; the open frame stays unmasked.
+      if (arch > 0) stage.dataset.arch = ''; else delete stage.dataset.arch;
       active = self.isActive && !document.hidden && !document.querySelector('dialog[open]');
       if (!active) { finishPrime(); video.pause(); return; }
       if (desired > .001 && !started) { started = true; nextSource(); }
@@ -735,7 +737,7 @@
       video.removeAttribute('src'); video.load(); video.preload = 'none'; video.classList.remove('is-decoded');
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null; loadFailed = false; networkURL = null; nativeSource = false;
       sourceIndex = 0; primeAttempts = 0; started = false;
-      stage.style.removeProperty('--entrance-progress'); ['--phrase-travel', '--phrase-scale', '--title-travel', '--entrance-arch'].forEach(name => stage.style.removeProperty(name)); delete stage.dataset.phase;
+      stage.style.removeProperty('--entrance-progress'); ['--phrase-travel', '--phrase-scale', '--title-travel', '--entrance-arch'].forEach(name => stage.style.removeProperty(name)); delete stage.dataset.phase; delete stage.dataset.arch;
     }
     if (window.gsap && window.ScrollTrigger && !saveData) {
       gsap.registerPlugin(ScrollTrigger);
@@ -807,6 +809,10 @@
     const album = document.querySelector('[data-scene="album"]');
     const prints = album ? [...album.querySelectorAll('.album-print')] : [];
     const albumIndex = album?.querySelector('.album-index');
+    const albumStage = album?.querySelector('.album-stage');
+    // The sticky album needs room for a print and its caption, plus small-viewport units.
+    const roomy = matchMedia('(min-height: 600px), (min-width: 651px) and (min-height: 480px)');
+    const staging = () => !!album && roomy.matches && !!window.CSS?.supports?.('height', '1svh') && CSS.supports('overflow', 'clip');
     const occasions = [...document.querySelectorAll('.occasion')];
     const occasionCounter = document.querySelector('.occasion-counter');
     const services = [...document.querySelectorAll('.rentals-quiet li')];
@@ -815,12 +821,14 @@
     const scenes = [
       ...inked.map(element => ({ element, update() {
         const box = element.getBoundingClientRect();
-        const progress = clamp((innerHeight * .92 - box.top - box.height * .5) / (innerHeight * .42));
+        // Complete while the paragraph centre is still in the lower 60% of the view.
+        const progress = clamp((innerHeight * .95 - box.top - box.height * .5) / (innerHeight * .35));
         element.style.setProperty('--ink', (progress * (Number(element.style.getPropertyValue('--ink-count')) + 1)).toFixed(3));
       } })),
-      album && { element: album, update() {
+      album && { element: album, staged: true, update() {
+        // Use the stage's own height so a collapsing mobile URL bar cannot end the album early.
         const box = album.getBoundingClientRect();
-        const travel = clamp(-box.top / Math.max(1, box.height - innerHeight)) * (prints.length - 1);
+        const travel = clamp(-box.top / Math.max(1, box.height - albumStage.offsetHeight)) * (prints.length - 1);
         prints.forEach((print, index) => {
           // Each print travels for 70% of its interval, then rests to be seen.
           print.style.setProperty('--arrive', index ? ease(clamp((travel - index + 1) / .7)).toFixed(4) : '1');
@@ -844,13 +852,15 @@
         });
       } },
       cards.length && { element: document.querySelector('.brand-grid'), update() {
+        // Measure the untransformed grid, never the moving plate itself.
+        const grid = document.querySelector('.brand-grid').getBoundingClientRect();
         cards.forEach(card => {
-          const box = card.getBoundingClientRect();
+          const box = { top: grid.top + card.offsetTop };
           card.style.setProperty('--scatter', (1 - ease(clamp((innerHeight * 1.05 - box.top) / (innerHeight * .6)))).toFixed(4));
         });
       } },
       seal && { element: seal, update() {
-        const box = seal.getBoundingClientRect();
+        const box = { top: seal.offsetParent.getBoundingClientRect().top + seal.offsetTop };
         seal.style.setProperty('--stamp', ease(clamp((innerHeight * .98 - box.top) / (innerHeight * .38))).toFixed(4));
       } },
     ].filter(scene => scene && scene.element);
@@ -897,6 +907,7 @@
       cards.forEach(card => ['--scatter', '--scatter-x', '--scatter-r'].forEach(name => card.style.removeProperty(name)));
       seal?.style.removeProperty('--stamp');
       if (albumIndex) albumIndex.textContent = '01';
+      album?.classList.remove('is-staged');
       if (frame) cancelAnimationFrame(frame); frame = 0;
       document.body.classList.remove('landing-effects');
       photos.forEach(photo => { photo.style.removeProperty('--photo-drift'); photo.style.removeProperty('--photo-scale'); });
@@ -917,7 +928,14 @@
       }), { threshold: .08, rootMargin: '30px' });
       document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => reveal.observe(element));
       inked.forEach(inkWords); measureScatter();
-      const byElement = new Map(scenes.map(scene => [scene.element, scene]));
+      const albumStaged = staging();
+      if (albumStaged) {
+        album.classList.add('is-staged');
+        // Off-stage prints are clipped, so lazy loading would wait until each one slides in.
+        prints.forEach(print => { print.querySelector('img').loading = 'eager'; });
+      }
+      const live = scenes.filter(scene => !scene.staged || albumStaged);
+      const byElement = new Map(live.map(scene => [scene.element, scene]));
       sceneObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           const scene = byElement.get(entry.target);
@@ -925,7 +943,7 @@
         });
         schedule();
       }, { rootMargin: '25% 0px' });
-      scenes.forEach(scene => sceneObserver.observe(scene.element));
+      live.forEach(scene => sceneObserver.observe(scene.element));
       schedule();
     }
     // Translation replaces the inked paragraphs with plain text.
@@ -938,6 +956,7 @@
     window.addEventListener('resize', schedule, { passive: true });
     document.addEventListener('visibilitychange', schedule);
     reduced.addEventListener('change', configure);
+    roomy.addEventListener('change', configure);
     configure();
   }
 

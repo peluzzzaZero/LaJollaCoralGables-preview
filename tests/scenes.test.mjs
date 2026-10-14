@@ -23,7 +23,7 @@ test('the spaces album keeps the four approved detail photographs and their capt
 test('scenes use native sticky staging; the entrance film remains the only video and GSAP pin', () => {
   assert.equal((html.match(/<video\b/g) || []).length, 1);
   assert.equal((js.match(/pin:/g) || []).length, 1);
-  assert.match(css, /\.landing-effects \.album-stage \{ position: sticky;/);
+  assert.match(css, /\.landing-effects \.is-staged \.album-stage \{ position: sticky;/);
   assert.match(css, /\.landing-effects \.landing-section \{ overflow-x: clip; \}/);
 });
 
@@ -49,5 +49,5 @@ test('scenes never hide content with zero opacity, wipes or edge-on tilts', () =
   assert.equal(/opacity:\s*0(?:\s|;|$)/.test(scenes), false);
   assert.equal(/rotate[XY]\(/.test(scenes), false);
   assert.equal(/clip-path/.test(scenes), false);
-  assert.match(scenes, /opacity: clamp\(\.2,/);
+  assert.match(scenes, /opacity: clamp\(\.3,/);
 });
