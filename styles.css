@@ -434,7 +434,7 @@ html.js #rentals .reveal { opacity: 1; transform: none; }
 .team .section-title { font-size: 3.3rem; }
 .team-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
 .team-card { padding-top: 1.5rem; border-top: 1px solid var(--line-soft); }
-.team-photo.monogram { display: grid; place-items: center; width: 3.5rem; aspect-ratio: 1; border: 1px solid var(--line-soft); border-radius: 50%; font-size: 1.15rem; letter-spacing: .1em; color: var(--sage-deep); margin-bottom: 1.5rem; }
+.team-photo { display: block; width: min(100%, 24rem); height: auto; aspect-ratio: 680 / 620; object-fit: contain; margin: 0 auto 1.25rem; }
 .team-card h3 { font-size: clamp(2.5rem, 4vw, 4.2rem); line-height: 1.05; margin-bottom: .6rem; }
 .team-role { font-size: .8rem; text-transform: uppercase; letter-spacing: .15em; color: var(--sage-deep); }
 html.js #team .reveal { opacity: 1; transform: none; }
