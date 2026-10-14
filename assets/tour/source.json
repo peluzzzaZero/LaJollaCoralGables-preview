@@ -1,0 +1,40 @@
+{
+  "source": "Client brochure precios.pdf ('the Sapphire Collection', Adobe Illustrator export, 15 pages, shared by the owner on 2026-10-14). Images extracted with pdfimages; no text, prices or lace overlay from the brochure are used.",
+  "assets": {
+    "place-card.webp": {
+      "brochurePage": 8,
+      "embeddedImage": "img-008 (850x1275)",
+      "treatment": "centre crop to 4:5, 800x1000 WebP q80",
+      "location": "Not stated in the brochure; the page labels both as table details from the brochure and the alt text does not claim La Jolla",
+      "sha256": "75938bc1da0d06102f616147a5ab4d0ccaf82da24a9901b4ca098a76fff73cc7",
+      "approvedBy": "Dan, site owner, in the project thread",
+      "approvedOn": "2026-10-14",
+      "approvalQuote": "Las fotos están bien eh... podemos poner algunas buenas del propio pdf",
+      "rights": "Photograph from La Jolla's own client brochure, supplied by the owner for use on the venue's site",
+      "personalData": "None; the card reads only a table number (\"MESA 01\") and initials-like mark"
+    },
+    "calla-candles.webp": {
+      "brochurePage": 11,
+      "embeddedImage": "img-023 (1199x1601)",
+      "treatment": "centre crop to 4:5, guest names on two place cards blurred, 800x1000 WebP q80",
+      "location": "Not stated in the brochure; the page labels both as table details from the brochure and the alt text does not claim La Jolla",
+      "sha256": "63ca1c7eb1a49fe7fde7bbc62619c23751283a3083f42d86a24637dd113145ba",
+      "approvedBy": "Dan, site owner, in the project thread",
+      "approvedOn": "2026-10-14",
+      "approvalQuote": "Las fotos están bien eh... podemos poner algunas buenas del propio pdf",
+      "rights": "Photograph from La Jolla's own client brochure, supplied by the owner for use on the venue's site",
+      "personalData": "Two place cards carried guest names; both are blurred and unreadable"
+    },
+    "paper.webp": {
+      "brochurePage": 14,
+      "embeddedImage": "img-027 (937x1143), handmade paper texture",
+      "treatment": "inner crop, 600x700 WebP q72, used as a CSS background under a cream veil",
+      "sha256": "107e98659da25b3f48860bd7f25119e1ea23908a370411b4bbf776e722007b0c",
+      "approvedBy": "Dan, site owner, in the project thread",
+      "approvedOn": "2026-10-14",
+      "approvalQuote": "Las fotos están bien eh... podemos poner algunas buenas del propio pdf",
+      "rights": "Photograph from La Jolla's own client brochure, supplied by the owner for use on the venue's site"
+    }
+  },
+  "excluded": "Other brochure photographs carry speckles from the cut-out lace overlay, or show identifiable people; they are not used."
+}

@@ -16,4 +16,4 @@ npm-debug.log*
 dist/
 
 # Owner originals for the house mosaic; only the cropped tiles are committed.
-media/
+/media/

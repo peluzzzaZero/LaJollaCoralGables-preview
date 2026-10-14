@@ -67,12 +67,12 @@
 </script>
 <meta name="color-scheme" content="light"/>
 <meta name="google-maps-browser-key" content=""/>
-<meta name="application-version" content="1.22.1"/>
+<meta name="application-version" content="1.23.0"/>
 <link href="assets/favicon.ico" rel="icon" sizes="any"/>
 <link href="assets/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="assets/apple-touch-icon.png" rel="apple-touch-icon"/>
 <script>document.documentElement.classList.add("js");</script>
-<link href="styles.css?v=1.22.1" rel="stylesheet"/>
+<link href="styles.css?v=1.23.0" rel="stylesheet"/>
 <link href="assets/fonts/Manrope-latin.woff2" as="font" crossorigin="" rel="preload" type="font/woff2"/></head>
 <body id="top" class="landing-page">
 
@@ -91,6 +91,7 @@
 <a href="#visit" data-i18n="nav.visit">The spaces</a>
 <a href="#events" data-i18n="nav.occasions">Occasions</a>
 <a href="#rentals" data-i18n="nav.services">Services</a>
+<a href="#tour" data-i18n="nav.tour">Tour</a>
 <a href="#location" data-i18n="nav.location">Location</a>
 </nav>
 <div class="header-actions">
@@ -102,6 +103,7 @@
 <a href="#events" data-i18n="nav.occasions">Occasions</a>
 <a href="#alcazar">The Lexington</a>
 <a href="#rentals" data-i18n="nav.services">Services</a>
+<a href="#tour" data-i18n="nav.tour">Tour</a>
 <a href="#location" data-i18n="nav.location">Location</a>
 </nav>
 </details>
@@ -281,6 +283,39 @@
 </div>
 
 </article>
+<article id="tour" class="landing-section landing-tour" aria-labelledby="tour-title">
+<div class="wrap">
+<header class="tour-head reveal">
+<p class="eyebrow" data-i18n="tour.eyebrow">By appointment · 301 Alcazar Avenue</p>
+<h2 id="tour-title" class="tour-lockup"><span class="lockup-caps" data-i18n="tour.titleCaps">Come see the house</span> <span class="lockup-script" data-i18n="tour.titleScript">Your tour</span></h2>
+<svg class="flourish" viewBox="0 0 240 20" aria-hidden="true" focusable="false"><path d="M4 10h82M154 10h82M86 10c10-8 20-8 26 0c6 8 16 8 26 0M102 10c6-5 12-5 18 0c6 5 12 5 18 0"/><circle cx="120" cy="10" r="2.4"/></svg>
+<p class="tour-sub" data-i18n="tour.lede">The best way to imagine your occasion at La Jolla is in person.</p>
+</header>
+<ul class="tour-moments reveal" aria-label="Table details from La Jolla's brochure" data-i18n="tour.momentsLabel" data-i18n-attr="aria-label">
+<li><img src="assets/tour/place-card.webp" alt="A place card, glassware and white florals on a dressed table." data-i18n="tour.alt.table" data-i18n-attr="alt" width="800" height="1000" loading="lazy" decoding="async"/></li>
+<li><img src="assets/tour/calla-candles.webp" alt="Calla lilies and pillar candles along a table." data-i18n="tour.alt.calla" data-i18n-attr="alt" width="800" height="1000" loading="lazy" decoding="async"/></li>
+</ul>
+<p class="tour-moments-note reveal" data-i18n="tour.momentsNote">Table details from La Jolla's brochure.</p>
+<ol class="tour-steps reveal" role="list">
+<li><h3 data-i18n="tour.step1.title">Walk the house</h3><p data-i18n="tour.step1.body">Arches, ivy, garden light and the rooms that make La Jolla its own.</p></li>
+<li><h3 data-i18n="tour.step2.title">Picture your occasion</h3><p data-i18n="tour.step2.body">See the spaces with your celebration in mind, from the first welcome to the last dance.</p></li>
+<li><h3 data-i18n="tour.step3.title">Talk with our team</h3><p data-i18n="tour.step3.body">Share your date, your guests and your ideas, and ask everything you need.</p></li>
+</ol>
+<aside class="tour-paper reveal" aria-labelledby="tour-info-title">
+<h3 id="tour-info-title" data-i18n="tour.infoTitle">Good to know</h3>
+<ul>
+<li data-i18n="tour.info.appointment">Tours are by appointment; choose an available time in the calendar.</li>
+<li data-i18n="tour.info.reserve">A tour appointment does not reserve a space for an event.</li>
+<li data-i18n="tour.info.bring">Bring your ideas and inspiration to share with our team.</li>
+</ul>
+</aside>
+<section class="tour-invite reveal" aria-labelledby="tour-invite-title">
+<h3 id="tour-invite-title" class="lockup-script" data-i18n="tour.inviteTitle">We look forward to welcoming you</h3>
+<p class="tour-cta"><a class="btn btn-sage" href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" data-booking-opener="" target="_blank" rel="noopener noreferrer" data-i18n="tour.cta">Schedule your tour</a></p>
+<p class="tour-mail"><span data-i18n="tour.mailLead">Prefer to write?</span> <a class="text-link" href="mailto:info@lajollacoralgables.com">info@lajollacoralgables.com</a></p>
+</section>
+</div>
+</article>
 <article id="social" class="landing-section landing-social" aria-labelledby="social-title">
 <div class="wrap">
 <header class="section-head reveal">
@@ -416,7 +451,7 @@
 <iframe class="booking-frame" title="La Jolla venue tour booking calendar" data-i18n="booking.frameTitle" data-i18n-attr="title" referrerpolicy="no-referrer"></iframe>
 <p class="booking-fallback"><span data-i18n="booking.fallback">If the calendar does not load,</span> <a href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" target="_blank" rel="noopener noreferrer" data-i18n="booking.external">open the booking page in a new tab</a>.</p>
 </dialog>
-<script src="script.js?v=1.22.1"></script>
-<script src="social.js?v=1.22.1"></script>
+<script src="script.js?v=1.23.0"></script>
+<script src="social.js?v=1.23.0"></script>
 </body>
 </html>

@@ -158,3 +158,7 @@ The owner liked the mobile scenes and asked for desktop polish of the entrance f
 ## v1.22.1 — the location map opens Google Maps at La Jolla
 
 The owner reported from his phone that the location map showed the whole world, needed a tap and misbehaved once open. The keyless embed is removed; the facade card opens Google Maps in a new tab through the official Maps URL with La Jolla's Place ID, and nothing from Google loads inside the page. Next: confirm on a phone that the venue is marked, and a keyed Maps JavaScript map pinned by Place ID once the owner's browser key is active.
+
+## v1.23.0 — your tour
+
+The owner shared the client's brochure; the goal of the site is the tour. Bring the brochure's look (sage lockups, flourish, framed photographs, paper card) into a tour invitation after the services. Never its prices, packages, inclusions, capacity or partners; those are handled separately.

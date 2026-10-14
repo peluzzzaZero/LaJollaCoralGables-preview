@@ -740,6 +740,7 @@ html:not(.js) .quote-form { display: none; }
 .mobile-chapters { position: absolute; top: calc(100% + .8rem); right: -8rem; width: 19rem; background: var(--cream); border: 1px solid var(--line-soft); box-shadow: 0 10px 25px rgba(44,36,30,.08); padding: 1rem 1.5rem; }
 .mobile-chapters a { display: block; padding: .8rem 0; border-bottom: 1px solid var(--line); text-decoration: none; font-family: var(--font-display); font-size: 1.35rem; color: var(--ink); }
 .mobile-chapters a:last-child { border-bottom: 0; }
+.mobile-chapters { max-height: calc(100vh - var(--header-h, 4.5rem) - 1rem); max-height: calc(100dvh - var(--header-h, 4.5rem) - 1rem); overflow-y: auto; overscroll-behavior: contain; }
 @media (max-width: 900px) { .mobile-menu { display: block; } .header-actions { gap: .65rem; } }
 @media (min-width: 651px) and (max-height: 850px) { .rentals .section-head { position: static; } }
 @media (max-width: 650px) {
@@ -2004,3 +2005,39 @@ html { scrollbar-gutter: stable; }
   .landing-social .social-links { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .landing-effects .house-grid > li { translate: none; rotate: none; } }
+
+/* v1.23 — the tour invitation, in the language of the client brochure: sage lockups, flourish, paper card */
+:root { --brand-sage: #5e7060; --brand-sage-soft: #bfc9ad; }
+.landing-tour { background: #eef0e7; color: var(--ink); }
+.tour-head { text-align: center; max-width: 46rem; margin: 0 auto 52px; }
+.tour-head .eyebrow { color: #55665a; }
+.tour-lockup { margin: 18px 0 6px; color: var(--brand-sage); font-weight: 400; }
+.lockup-caps { display: block; font: 400 clamp(22px, 2.4vw, 34px)/1.15 var(--font-display); letter-spacing: .14em; text-transform: uppercase; }
+.lockup-script { display: block; font: 400 clamp(54px, 7.4vw, 108px)/1.05 var(--font-script); letter-spacing: 0; color: var(--brand-sage); }
+.flourish { display: block; width: min(240px, 60%); height: 20px; margin: 4px auto 18px; fill: var(--brand-sage); stroke: var(--brand-sage); stroke-width: 1.1; }
+.flourish path { fill: none; }
+.tour-sub { margin: 0; font: 400 clamp(17px, 1.5vw, 21px)/1.5 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.tour-moments { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(14px, 2vw, 28px); max-width: 52rem; margin: 0 auto; padding: 0; list-style: none; }
+.tour-moments li { border-block: 3px double var(--brand-sage); padding-block: 8px; }
+.tour-moments img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.tour-moments-note { max-width: 52rem; margin: .7rem auto 0; text-align: center; font-size: .82rem; letter-spacing: .04em; color: var(--ink-muted); }
+.tour-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 56px); max-width: 64rem; margin: clamp(44px, 5vw, 64px) auto 0; padding: 0; list-style: none; counter-reset: tour; }
+.tour-steps li { counter-increment: tour; text-align: center; }
+.tour-steps li::before { content: counter(tour, upper-roman); display: block; margin-bottom: 10px; font: 400 clamp(36px, 3.4vw, 48px)/1 var(--font-script); color: var(--brand-sage); }
+.tour-steps h3 { margin: 0 0 8px; font: 600 15px/1.4 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.tour-steps p { margin: 0; font: 400 clamp(16px, 1.35vw, 19px)/1.6 var(--font-display); color: var(--ink-soft); }
+.tour-paper { position: relative; max-width: 40rem; margin: clamp(48px, 6vw, 72px) auto 0; padding: clamp(30px, 4vw, 48px) clamp(24px, 4vw, 52px); background: linear-gradient(#f8f6efb8, #f8f6efb8), url(assets/tour/paper.webp) center / cover, #f8f6ef; box-shadow: 0 1px 0 rgba(44, 36, 30, .06), 0 22px 48px -18px rgba(44, 36, 30, .28); }
+.tour-paper::before { content: ""; position: absolute; inset: 10px; border: 1px solid rgba(94, 112, 96, .4); pointer-events: none; }
+.tour-paper h3 { margin: 0 0 18px; text-align: center; font: italic 400 clamp(28px, 3vw, 40px)/1.05 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--brand-sage); }
+.tour-paper ul { margin: 0; padding: 0; list-style: none; }
+.tour-paper li { position: relative; margin: 0 0 10px; padding-left: 20px; font: 400 clamp(16px, 1.3vw, 18px)/1.55 var(--font-display); color: var(--ink-soft); }
+.tour-paper li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-sage); }
+.tour-invite { max-width: 40rem; margin: clamp(52px, 6vw, 80px) auto 0; text-align: center; }
+.tour-invite h3.lockup-script { margin: 0; font-size: clamp(42px, 4.8vw, 66px); }
+.tour-cta { margin: 24px 0 0; }
+.tour-cta .btn-sage { background: var(--brand-sage); border-color: var(--brand-sage); color: #f8f6ef; }
+.tour-cta .btn-sage:hover { background: #4b5b4d; border-color: #4b5b4d; color: #f8f6ef; }
+.tour-mail { margin: 16px 0 0; font: 400 14px/1.5 var(--font-body); color: var(--ink-soft); }
+@media (max-width: 760px) {
+  .tour-steps { grid-template-columns: 1fr; }
+}
