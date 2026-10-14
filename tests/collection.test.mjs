@@ -25,6 +25,7 @@ test("the collection never publishes a price, deposit or fee figure", () => {
   for (const text of [chapter(), ...keys]) {
     assert.doesNotMatch(text, /[$€]\s?\d|\d\s?(?:USD|dollars|dólares)|\d+\s?%|valued at|valorad/i, text.slice(0, 80));
     assert.doesNotMatch(text, /ballroom/i);
+    assert.doesNotMatch(text, /\b265\b|capacity|capacidad|accommodates/i, "owner asked not to state capacity");
   }
 });
 
