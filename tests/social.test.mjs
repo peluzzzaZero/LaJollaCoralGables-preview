@@ -121,7 +121,8 @@ test("the location chapter has real links and no preloaded map", () => {
   assert.match(section, /href="tel:\+17862908813"/);
   assert.equal(section.includes("<iframe"), false, "no embedded map");
   assert.match(section, /<a class="location-map" href="https:\/\/www\.google\.com\/maps\/search\/\?api=1&amp;query=[^"]*301\+Alcazar\+Avenue[^"]*&amp;query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer">/);
-  assert.doesNotMatch(social, /output=embed|createElement\('iframe'\)/, "no keyless Google embed");
+  for (const [name, source] of [["social.js", social], ["script.js", js], ["index.html", html]])
+    assert.doesNotMatch(source, /output=embed|createElement\(\s*["'`]iframe["'`]\s*\)|google\.com\/maps\/embed/i, `no Google map embed in ${name}`);
   for (const key of ["nav.location", "location.title", "location.mapLoad", "location.directions", "location.reviewsWrite", "social.eyebrow"])
     assert.equal(js.split(`"${key}":`).length - 1, 2, `${key} in EN and ES`);
 });
