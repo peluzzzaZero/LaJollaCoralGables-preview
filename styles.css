@@ -1844,3 +1844,5 @@ html { scrollbar-gutter: stable; }
  .landing-page .entrance-copy, .landing-page .entrance-copy h1, .landing-page .landing-section .section-head, .landing-page .brand-card:hover, .landing-page .brand-card:hover img, .landing-page .occasion h3, .landing-page .occasion .link-arrow, .landing-page .visit-invitation .btn { transform: none; transition: none; }
  .landing-page .occasion::before, .landing-page .social-links a::before, .landing-page .visit-invitation::before { display: none; }
 }
+
+.landing-page .occasion-visit { display: inline-flex; gap: 8px; margin-top: 18px; font-size: 12px; }
