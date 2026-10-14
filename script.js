@@ -7,6 +7,7 @@
 
   const I18N = {
     en: {
+      "nav.tour": "Tour",
       "nav.location": "Location",
       "location.kicker": "Location",
       "location.title": "In the heart of Coral Gables.",
@@ -241,6 +242,23 @@
       "rentals.lighting": "Lighting",
       "rentals.other": "More services",
       "rentals.inquire": "Inquire",
+      "tour.eyebrow": "By appointment · 301 Alcazar Avenue",
+      "tour.titleCaps": "Come see the house",
+      "tour.titleScript": "Your tour",
+      "tour.lede": "The best way to imagine your occasion at La Jolla is in person.",
+      "tour.step1.title": "Walk the house",
+      "tour.step1.body": "Arches, ivy, garden light and the rooms that make La Jolla its own.",
+      "tour.step2.title": "Picture your occasion",
+      "tour.step2.body": "See the spaces with your celebration in mind, from the first welcome to the last dance.",
+      "tour.step3.title": "Talk with our team",
+      "tour.step3.body": "Share your date, your guests and your ideas, and ask everything you need.",
+      "tour.infoTitle": "Good to know",
+      "tour.info.appointment": "Tours are by appointment; choose an available time in the calendar.",
+      "tour.info.reserve": "A tour appointment does not reserve a space for an event.",
+      "tour.info.bring": "Bring your ideas and inspiration to share with our team.",
+      "tour.inviteTitle": "We look forward to welcoming you",
+      "tour.cta": "Schedule your tour",
+      "tour.mailLead": "Prefer to write?",
       "testimonial.eyebrow": "Guest voice",
       "testimonial.title": "Testimonial",
       "testimonial.quote": "A guest reflection will appear here.",
@@ -290,6 +308,7 @@
       "footer.rights": "All rights reserved.",
     },
     es: {
+      "nav.tour": "Tour",
       "nav.location": "Ubicación",
       "location.kicker": "Ubicación",
       "location.title": "En el corazón de Coral Gables.",
@@ -524,6 +543,23 @@
       "rentals.lighting": "Iluminación",
       "rentals.other": "Más servicios",
       "rentals.inquire": "Consultar",
+      "tour.eyebrow": "Con cita previa · 301 Alcazar Avenue",
+      "tour.titleCaps": "Venga a conocer la casa",
+      "tour.titleScript": "Su tour",
+      "tour.lede": "La mejor forma de imaginar su celebración en La Jolla es en persona.",
+      "tour.step1.title": "Recorra la casa",
+      "tour.step1.body": "Arcos, hiedra, luz de jardín y los rincones que hacen única a La Jolla.",
+      "tour.step2.title": "Imagine su celebración",
+      "tour.step2.body": "Vea los espacios pensando en su evento, desde la bienvenida hasta el último baile.",
+      "tour.step3.title": "Hable con nuestro equipo",
+      "tour.step3.body": "Cuéntenos su fecha, sus invitados y sus ideas, y pregunte todo lo que necesite.",
+      "tour.infoTitle": "Conviene saber",
+      "tour.info.appointment": "Los tours son con cita previa; elija un horario disponible en el calendario.",
+      "tour.info.reserve": "Una cita de tour no reserva un espacio para un evento.",
+      "tour.info.bring": "Traiga sus ideas e inspiración para compartirlas con nuestro equipo.",
+      "tour.inviteTitle": "Será un placer recibirle",
+      "tour.cta": "Agende su tour",
+      "tour.mailLead": "¿Prefiere escribirnos?",
       "testimonial.eyebrow": "Voz de un invitado",
       "testimonial.title": "Testimonio",
       "testimonial.quote": "Aquí aparecerá la reflexión de un invitado.",
@@ -997,7 +1033,8 @@
     const initialHash = location.hash;
     function targetFor(hash) {
       const id = hash.slice(1);
-      return document.getElementById(id === 'quote' ? 'planning' : id === 'possibilities' ? 'events' : id);
+      const aliases = { quote: 'planning', possibilities: 'events', gallery: 'social' };
+      return document.getElementById(aliases[id] || id);
     }
     function go(target, smooth) {
       if (!target) return;

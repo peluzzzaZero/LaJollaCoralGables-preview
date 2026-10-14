@@ -1,0 +1,17 @@
+{
+  "source": "Client brochure precios.pdf ('the Sapphire Collection', Adobe Illustrator export, 15 pages, shared by the owner on 2026-10-14). Images extracted with pdfimages; no text, prices or lace overlay from the brochure are used.",
+  "assets": {
+    "paper.webp": {
+      "brochurePage": 14,
+      "embeddedImage": "img-027 (937x1143), handmade paper texture",
+      "treatment": "inner crop, 600x700 WebP q72, used as a CSS background under a cream veil",
+      "sha256": "107e98659da25b3f48860bd7f25119e1ea23908a370411b4bbf776e722007b0c",
+      "approvedBy": "Dan, site owner, in the project thread",
+      "approvedOn": "2026-10-14",
+      "approvalQuote": "Las fotos están bien eh... podemos poner algunas buenas del propio pdf",
+      "rights": "Photograph from La Jolla's own client brochure, supplied by the owner for use on the venue's site"
+    }
+  },
+  "excluded": "Other brochure photographs carry speckles from the cut-out lace overlay, or show identifiable people; they are not used.",
+  "withdrawn": "v1.23.0 publishes no brochure photographs: where they were taken and whether their photographer allows web use is not recorded. They return only with the owner's explicit confirmation or are replaced by photographs of the house."
+}
