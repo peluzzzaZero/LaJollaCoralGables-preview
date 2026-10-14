@@ -43,7 +43,7 @@ async def main(base,output,args):
    context=await browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=await context.new_page();await page.goto(base)
    assert 'bookings.cloud.microsoft' in await page.locator('.inquire-link').get_attribute('href')
    await position(page,'footer');assert await page.locator('#footer a[href^="mailto:"]').is_visible()
-   assert await page.locator('.social-links a').count()==4
+   assert await page.locator('.social-links a').count()==3
    await context.close();await browser.close()
  (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Visit/contact: {len(rows)} EN/ES browser/viewport cases passed; no real bookings.')
 if __name__=='__main__':run(main)

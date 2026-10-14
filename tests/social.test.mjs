@@ -31,7 +31,7 @@ function webpSize(path) {
 
 test("the house stream shows the recorded tiles.json photos, each opening La Jolla's own profile or post", () => {
   const stream = houseStream();
-  assert.ok(html.indexOf('<div class="house-stream">') > html.indexOf('id="team"'), "inside the team chapter");
+  assert.ok(html.indexOf('<div class="house-stream">') > html.indexOf('<article id="social"') && html.indexOf('<div class="house-stream">') < html.indexOf('<article id="team"'), "inside the social chapter");
   const tiles = [...stream.matchAll(/<li><a class="house-tile" href="([^"]+)"([^>]*)>(.*?)<\/a><\/li>/g)];
   assert.equal(tiles.length, tileList.length);
   assert.ok([6, 12].includes(tiles.length), "full rows at 3 and 6 columns");
@@ -94,4 +94,48 @@ test("the mosaic strings exist in both languages and no profile description is i
   }
   const cards = html.slice(html.indexOf('<nav class="social-links"'), html.indexOf("</nav>", html.indexOf('<nav class="social-links"')));
   for (const card of cards.match(/<a [^]*?<\/a>/g)) assert.match(card, /^<a [^>]*><span>[A-Za-z]+<\/span><small>[^<]+<\/small><span aria-hidden="true">↗<\/span><\/a>$/);
+});
+
+test("the social chapter replaces the brand wall: photographs, guest reviews, then profiles", () => {
+  const start = html.indexOf('<article id="social"');
+  const end = html.indexOf('<article id="team"');
+  assert.ok(start > html.indexOf('<article id="rentals"') && end > start, "social chapter after the services");
+  assert.equal(html.includes('id="gallery"'), false);
+  assert.equal(html.includes("brand-card"), false);
+  const section = html.slice(start, end);
+  const order = ['class="house-stream"', 'data-guest-reviews', 'class="social-links"'].map((marker) => section.indexOf(marker));
+  assert.ok(order.every((at, index) => at > (order[index - 1] ?? 0)), "mosaic, reviews, profiles");
+  assert.equal(html.match(/data-guest-reviews/g).length, 1, "one reviews component");
+  assert.match(section, /href="https:\/\/search\.google\.com\/local\/writereview\?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
+  assert.doesNotMatch(section, /★|\b[1-5](\.\d)? ?\/ ?5\b|aggregateRating/, "no invented rating");
+});
+
+test("the location chapter has real links and no preloaded map", () => {
+  const start = html.indexOf('<article id="location"');
+  const end = html.indexOf('<article id="planning"');
+  assert.ok(start > html.indexOf('<article id="team"') && end > start, "between the team and the invitation");
+  const section = html.slice(start, end);
+  assert.match(section, /href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=[^"]+&amp;destination_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
+  assert.match(section, /301 Alcazar Avenue/);
+  assert.match(section, /href="tel:\+17862908813"/);
+  assert.equal(section.includes("<iframe"), false, "the map loads only on request");
+  for (const key of ["nav.location", "location.title", "location.mapLoad", "location.directions", "location.reviewsWrite", "social.eyebrow"])
+    assert.equal(js.split(`"${key}":`).length - 1, 2, `${key} in EN and ES`);
+});
+
+test("no public page, script or published file name says ballroom", async () => {
+  const { readdirSync, statSync } = await import("node:fs");
+  for (const file of ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "styles.css", "sitemap.xml"]) {
+    const text = readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
+    assert.doesNotMatch(text, /ballroom/i, file);
+    assert.doesNotMatch(text, /facebook\.com\/(?!privacy)/i, `${file}: no Facebook account is linked until the owner confirms it`);
+  }
+  const walk = (dir) => readdirSync(new URL(`../${dir}`, import.meta.url)).flatMap((name) =>
+    statSync(new URL(`../${dir}/${name}`, import.meta.url)).isDirectory() ? walk(`${dir}/${name}`) : [`${dir}/${name}`]);
+  assert.deepEqual(walk("assets").filter((path) => /ballroom/i.test(path)), []);
+});
+
+test("the quiet site credit sits at the very bottom of the footer", () => {
+  const footer = html.slice(html.indexOf('<footer id="footer"'), html.indexOf("</footer>"));
+  assert.match(footer, /<p class="wrap footer-credit" translate="no">powered by peluzzza<\/p>\n<\/div>\n?$/);
 });

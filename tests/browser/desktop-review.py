@@ -8,10 +8,16 @@ async def main(base,output,args):
   browser=await p.chromium.launch()
   for width,height in [(901,700),(1440,900),(1920,1080)]:
    page=await browser.new_page(viewport={'width':width,'height':height})
+   await page.goto(base);await page.evaluate('document.fonts.ready');await page.wait_for_function('document.getElementById("hero").classList.contains("entrance-scroll")')
+   header=await page.locator('#header').bounding_box();frame=await page.locator('.entrance-frame').bounding_box();film=await page.locator('.entrance-film').bounding_box()
+   assert film['y']>=header['y']+header['height']-1,('Film hidden behind header',width,film,header)
+   assert frame['y']>=header['y']+header['height']+8,('Frame top hidden behind header',width,frame,header)
    await page.goto(base+'#events');await page.evaluate('document.fonts.ready')
    await page.wait_for_function('document.activeElement.id==="events-title"')
    for language in ['en','es']:
     await page.locator(f'[data-lang="{language}"]').click()
+    fit=await page.evaluate('()=>{const n=document.querySelector(".chapter-nav").getBoundingClientRect(),a=document.querySelector(".header-actions").getBoundingClientRect(),l=document.querySelector("#header .logo").getBoundingClientRect();return l.right<=n.left&&n.right<=a.left}')
+    assert fit,('Header navigation overlaps',width,language)
     for name in ['history','visit','rentals','events']:
      await page.locator(f'.chapter-nav a[href="#{name}"]').click()
      await page.wait_for_function('id=>location.hash==="#"+id',arg=name)

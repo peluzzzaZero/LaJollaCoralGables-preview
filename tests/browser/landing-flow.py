@@ -27,7 +27,7 @@ async def main(base,output,args):
      for language in ['en','es'] if mode!='no-js' else ['en']:
       if mode!='no-js':await page.locator(f'[data-lang="{language}"]').click()
       await verify_flow(page)
-      for name in ['history','events','alcazar','gallery','team']:
+      for name in ['history','events','alcazar','social','team','location']:
        await position(page,name)
        # Body text and all headings must remain opaque, never a hidden reader.
        state=await page.locator('#'+name).evaluate('''e=>({height:e.getBoundingClientRect().height,visible:[...e.querySelectorAll('h2,h3,p')].filter(n=>n.textContent.trim()).every(n=>{let opacity=1;for(let a=n;a;a=a.parentElement)opacity*=Number(getComputedStyle(a).opacity);return opacity>=.999&&!n.closest('[hidden],[inert]')})})''')

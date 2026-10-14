@@ -2,8 +2,8 @@
   "version": "1.14.0",
   "sources": {
     "house": "Approved facade-wide.jpg, photo-conditioned motion",
-    "ballroom": "Approved ballroom.jpg, photo-conditioned motion",
-    "ballroom-mobile": "Native portrait generation from a cropped approved ballroom photograph; only the faithful first 0.9 seconds are retimed to approximately five seconds. Later changed furniture is excluded.",
+    "hall": "Approved hall.jpg, photo-conditioned motion",
+    "hall-mobile": "Native portrait generation from a cropped approved hall photograph; only the faithful first 0.9 seconds are retimed to approximately five seconds. Later changed furniture is excluded.",
     "journey-hd": "Re-encode of the original user-supplied 1920x1080 approach; no AI upscaling.",
     "architecture": "Unchanged approved architecture.jpg animated with a 3.5% centre zoom; no AI regeneration or inferred geometry."
   },
@@ -49,7 +49,7 @@
       "bytes": 128252,
       "sha256": "9cbea1fa312621b4052f246a55d966d173dda0d3674861c71e747205aa9559dd"
     },
-    "ballroom.mp4": {
+    "hall.mp4": {
       "bytes": 1555329,
       "sha256": "cacd1d649cfbf3d42931776d56636aa4435acc965fc3fa7278d3ee50a1081593",
       "duration_seconds": 5.041667,
@@ -63,7 +63,7 @@
         }
       ]
     },
-    "ballroom.webm": {
+    "hall.webm": {
       "bytes": 1215253,
       "sha256": "918ab997a4a2b4604af0608441d49cfbe61378cb5221e5457ad564e2725a2b3b",
       "duration_seconds": 5.042,
@@ -77,11 +77,11 @@
         }
       ]
     },
-    "ballroom-poster.webp": {
+    "hall-poster.webp": {
       "bytes": 49724,
       "sha256": "c2c02195c490ebfadb8222fb82fb4c160baf1d13cb6b601f2965ab89fc109d07"
     },
-    "ballroom-mobile.mp4": {
+    "hall-mobile.mp4": {
       "bytes": 892648,
       "sha256": "89dd0468f0bb508df4df3ee4a49b84f0487b1985cbe8c825f67a9e0a4f17a42a",
       "duration_seconds": 4.666667,
@@ -95,7 +95,7 @@
         }
       ]
     },
-    "ballroom-mobile.webm": {
+    "hall-mobile.webm": {
       "bytes": 868970,
       "sha256": "1a13a7954a9ff9ed63678d69c39fbbc59490f147e75db773ac45cea9249e92db",
       "duration_seconds": 4.667,
@@ -109,7 +109,7 @@
         }
       ]
     },
-    "ballroom-mobile-poster.webp": {
+    "hall-mobile-poster.webp": {
       "bytes": 20508,
       "sha256": "051c2f247a4cc6b6d896465970d77354dfca791746220b962bb9c1de5a30aa69"
     },
