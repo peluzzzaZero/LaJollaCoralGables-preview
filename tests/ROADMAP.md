@@ -155,6 +155,6 @@ The owner asked for storytelling closer to Apple's product pages and narrative s
 
 The owner liked the mobile scenes and asked for desktop polish of the entrance film and its frame, guest reviews and opinions together with the location, and a discreet gray "powered by peluzzza" at the very bottom. Per the client stakeholder, replace the brand plates with an Instagram chapter of venue photographs followed by guest reviews (Google, links to read and write; no invented testimonials or ratings) and the profiles, never say "ballroom", and lead the spaces with the piano photograph instead of the bar. Add a location chapter with address, phone, email, directions and a Google map that loads only on request, and start the desktop film below the opaque header so the frame is complete. Next: the owner's restricted Google browser key so selected five-star reviews appear on the page, and owner-chosen Instagram posts.
 
-## v1.23.0 — the Sapphire Collection
+## v1.23.0 — your tour
 
-The owner shared the client's Sapphire Collection brochure. Bring its information (two collections, what they include, capacity, schedule, partners, practical notes) and its look (sage lockups, flourish, paper card) into a new chapter after the services, never its unconfirmed prices. Keep the beige base; sage is the accent.
+The owner shared the client's brochure; the goal of the site is the tour. Bring the brochure's look (sage lockups, flourish, framed photographs, paper card) into a tour invitation after the services. Never its prices, packages, inclusions, capacity or partners; those are handled separately.

@@ -4,7 +4,7 @@ from pathlib import Path
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.async_api import async_playwright
 ROOT=Path(os.environ.get('LAJOLLA_WEB_ROOT',Path(__file__).resolve().parents[2]))
-CHAPTERS=['history','visit','events','alcazar','rentals','collection','social','team','location','planning']
+CHAPTERS=['history','visit','events','alcazar','rentals','tour','social','team','location','planning']
 class QuietHandler(SimpleHTTPRequestHandler):
  def log_message(self,*_):pass
 async def mock_booking(route):
