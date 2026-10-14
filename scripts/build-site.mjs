@@ -5,10 +5,16 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 export const publicFiles = Object.freeze(['index.html', 'planning.html', 'privacy.html', 'terms.html', 'social.js',
   'styles.css', 'script.js', 'robots.txt', 'sitemap.xml', 'CNAME']);
 const mediaTypes = new Set(['.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.ico', '.mp4', '.webm']);
+// Retired originals stay in the repository as evidence but are never published:
+// the stakeholder asked that the bar photograph and its films stop being shown.
+export const retiredMedia = Object.freeze(new Set(['venue/hall.jpg', 'venue/cinematic/hall.mp4',
+  'venue/cinematic/hall.webm', 'venue/cinematic/hall-poster.webp', 'venue/cinematic/hall-mobile.mp4',
+  'venue/cinematic/hall-mobile.webm', 'venue/cinematic/hall-mobile-poster.webp']));
 const supportFiles = new Set(['vendor/gsap.min.js', 'vendor/ScrollTrigger.min.js',
   'fonts/OFL.txt', 'fonts/Manrope-OFL.txt', 'fonts/CormorantGaramond-OFL.txt']);
 
 function publicAsset(path) {
+  if (retiredMedia.has(path)) return false;
   if (supportFiles.has(path)) return true;
   const extension = extname(path).toLowerCase();
   return mediaTypes.has(extension) || (path.startsWith('fonts/') && ['.woff', '.woff2', '.ttf'].includes(extension));

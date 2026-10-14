@@ -2005,3 +2005,54 @@ html { scrollbar-gutter: stable; }
   .landing-social .social-links { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .landing-effects .house-grid > li { translate: none; rotate: none; } }
+
+/* v1.23 — the Sapphire Collection: brochure lockups, brand sage accents, paper card */
+:root { --brand-sage: #5e7060; --brand-sage-soft: #bfc9ad; }
+.landing-collection { background: #eef0e7; color: var(--ink); }
+.collection-head { text-align: center; max-width: 46rem; margin: 0 auto 56px; }
+.collection-head .eyebrow { color: #55665a; }
+.collection-lockup { margin: 18px 0 6px; color: var(--brand-sage); font-weight: 400; }
+.lockup-caps { display: block; font: 400 clamp(24px, 2.6vw, 36px)/1.1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; }
+.lockup-script { display: block; font: 400 clamp(54px, 7.4vw, 108px)/1.05 var(--font-script); letter-spacing: 0; color: var(--brand-sage); }
+.flourish { display: block; width: min(240px, 60%); height: 20px; margin: 4px auto 18px; fill: var(--brand-sage); stroke: var(--brand-sage); stroke-width: 1.1; }
+.flourish path { fill: none; }
+.collection-sub { margin: 0; font: 400 clamp(15px, 1.3vw, 18px)/1.5 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.collection-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 80px); position: relative; max-width: 64rem; margin: 0 auto; }
+.collection-pair::before { content: ""; position: absolute; left: 50%; top: 8px; bottom: 8px; width: 1px; background: rgba(94, 112, 96, .35); }
+.collection-card h3 { margin: 0 0 12px; font: 500 clamp(26px, 2.4vw, 34px)/1.15 var(--font-display); color: var(--ink); }
+.collection-card p { margin: 0; font: 400 clamp(16px, 1.35vw, 19px)/1.65 var(--font-display); color: var(--ink-soft); }
+.collection-card-story { text-align: right; }
+.collection-tag { font: 600 11px/1.4 var(--font-body) !important; letter-spacing: .16em; text-transform: uppercase; color: #55665a !important; margin-bottom: 8px !important; }
+.collection-detail { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 80px); max-width: 64rem; margin: clamp(48px, 6vw, 80px) auto 0; }
+.collection-detail h3, .collection-partners h3 { margin: 0 0 16px; font: 600 15px/1.4 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.collection-story h3.lockup-script { font: 400 clamp(42px, 4.6vw, 62px)/1.05 var(--font-script); margin-bottom: 8px; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--brand-sage); }
+.collection-included ul { margin: 0; padding: 0; list-style: none; }
+.collection-included li { position: relative; padding: 0 0 8px 20px; font: 400 clamp(16px, 1.3vw, 18px)/1.55 var(--font-display); color: var(--ink-soft); }
+.collection-included li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-sage); }
+.collection-story p { margin: 0; font: 400 clamp(16px, 1.3vw, 18px)/1.65 var(--font-display); color: var(--ink-soft); }
+.collection-story .collection-note { margin-top: 12px; font-style: italic; }
+.collection-facts { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 64rem; margin: clamp(48px, 6vw, 80px) auto 0; border-block: 1px solid rgba(94, 112, 96, .35); }
+.collection-facts > div { padding: 22px 18px; text-align: center; }
+.collection-facts > div + div { border-left: 1px solid rgba(94, 112, 96, .25); }
+.collection-facts dt { font: 600 11px/1.4 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: #55665a; }
+.collection-facts dd { margin: 8px 0 0; font: 400 clamp(17px, 1.5vw, 21px)/1.4 var(--font-display); color: var(--ink); }
+.collection-partners { max-width: 44rem; margin: clamp(44px, 5vw, 64px) auto 0; text-align: center; }
+.collection-partners p { margin: 0; font: italic 400 clamp(16px, 1.35vw, 19px)/1.6 var(--font-display); color: var(--ink-soft); }
+.collection-partner-names { color: var(--ink); }
+.collection-paper { position: relative; max-width: 44rem; margin: clamp(48px, 6vw, 72px) auto 0; padding: clamp(32px, 4vw, 52px) clamp(24px, 4vw, 56px); background: #f8f6ef; box-shadow: 0 1px 0 rgba(44, 36, 30, .06), 0 22px 48px -18px rgba(44, 36, 30, .28); }
+.collection-paper::before { content: ""; position: absolute; inset: 10px; border: 1px solid rgba(94, 112, 96, .4); pointer-events: none; }
+.collection-paper h3 { margin: 0; text-align: center; font: italic 400 clamp(30px, 3.4vw, 46px)/1.05 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--brand-sage); }
+.collection-paper-sub { margin: 8px 0 22px; text-align: center; font: italic 400 16px/1.5 var(--font-display); color: var(--ink-soft); }
+.collection-paper ul { margin: 0; padding: 0; list-style: none; }
+.collection-paper li { margin: 0 0 12px; font: 400 clamp(16px, 1.3vw, 18px)/1.55 var(--font-display); color: var(--ink-soft); }
+.collection-paper li b { color: var(--ink); font-weight: 700; }
+.collection-cta { margin: clamp(40px, 5vw, 56px) 0 0; text-align: center; }
+.collection-cta .btn-sage { background: var(--brand-sage); border-color: var(--brand-sage); color: #f8f6ef; }
+.collection-cta .btn-sage:hover { background: #4b5b4d; border-color: #4b5b4d; color: #f8f6ef; }
+@media (max-width: 760px) {
+  .collection-pair, .collection-detail { grid-template-columns: 1fr; }
+  .collection-pair::before { display: none; }
+  .collection-card-story { text-align: left; padding-top: 28px; border-top: 1px solid rgba(94, 112, 96, .35); }
+  .collection-facts { grid-template-columns: 1fr; }
+  .collection-facts > div + div { border-left: 0; border-top: 1px solid rgba(94, 112, 96, .25); }
+}
