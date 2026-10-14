@@ -1606,7 +1606,6 @@ html { scrollbar-gutter: stable; }
 .landing-events .occasion-body { padding: 0; font: 400 14px/1.75 var(--font-body); }
 .landing-events .occasion-body p { margin: 0; }
 .landing-events .occasion-visual { top: 110px; }
-.landing-events .social-scenes { width: min(100% - 80px, 1240px); margin: 64px auto 32px; }
 .section-action { margin-top: 32px; }
 .landing-alcazar { color: var(--ink); background: var(--cream-deep); }
 .landing-alcazar .alcazar-grid { grid-template-columns: 1.15fr .85fr; align-items: center; }
@@ -1659,7 +1658,7 @@ html { scrollbar-gutter: stable; }
   .brand-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 650px) {
-  .landing-page .wrap, .landing-events .social-scenes, .landing-team .social-scenes { width: calc(100% - 40px); }
+  .landing-page .wrap, .landing-team .social-scenes { width: calc(100% - 40px); }
   .entrance-stage { min-height: 560px; }
   .entrance-copy { bottom: 90px; }
   .entrance-copy h1 { font-size: clamp(64px, 18vw, 100px); margin-block: 18px; }
@@ -1940,9 +1939,9 @@ html { scrollbar-gutter: stable; }
   .landing-effects .ink-word { opacity: 1; }
 }
 
-/* v1.22 — desktop entrance: the header is opaque, so the film and its frame
+/* v1.22 — tablet/desktop entrance: the header is opaque, so the film and its frame
    start below it instead of hiding their top edge behind the bar. */
-@media (min-width: 901px) {
+@media (min-width: 651px) {
   .entrance-film, .entrance-shade { top: var(--header-h); height: calc(100% - var(--header-h)); }
   .entrance-scroll .entrance-frame { inset: calc(var(--header-h) + 16px + var(--entrance-progress, 0) * 16px) calc(16px + var(--entrance-progress, 0) * 16px) calc(16px + var(--entrance-progress, 0) * 16px); }
   .entrance-scroll .entrance-choreography { top: calc(var(--header-h) + 64px); }
@@ -1976,5 +1975,5 @@ html { scrollbar-gutter: stable; }
   .review-invite { padding: 24px; }
 }
 
-/* The site credit: present for anyone looking, invisible to anyone who is not. */
-.footer-credit { margin: 14px auto 0; font: 400 10px/1.4 var(--font-body); letter-spacing: .08em; color: #8b8074; text-align: center; }
+/* The site credit stays quieter than the legal line above it. */
+.footer-credit { margin: 14px auto 0; font: 400 10px/1.4 var(--font-body); letter-spacing: .08em; color: #80756a; text-align: center; }

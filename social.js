@@ -75,11 +75,12 @@
       const frame = document.createElement('iframe');
       const url = new URL('https://www.google.com/maps');
       url.searchParams.set('q', 'La Jolla Ballroom, 301 Alcazar Avenue, Coral Gables, FL');
-      url.searchParams.set('hl', language()); url.searchParams.set('output', 'embed');
-      frame.src = url.href; frame.title = messages().map; frame.loading = 'lazy';
-      frame.referrerPolicy = 'no-referrer-when-downgrade'; frame.allowFullscreen = true;
+      url.searchParams.set('output', 'embed');
+      const show = () => { url.searchParams.set('hl', language()); frame.src = url.href; frame.title = messages().map; };
+      show(); frame.loading = 'lazy';
+      frame.referrerPolicy = 'strict-origin-when-cross-origin'; frame.allowFullscreen = true;
       container.append(frame); container.classList.add('is-open'); frame.focus();
-      window.addEventListener('lajolla-language', function () { frame.title = messages().map; });
+      window.addEventListener('lajolla-language', show);
     }, { once: true });
   }
   document.addEventListener('DOMContentLoaded', function () {
