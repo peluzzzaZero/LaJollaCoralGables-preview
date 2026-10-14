@@ -83,6 +83,13 @@ async def main(base,output,args):
     assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='none'
     assert await page.evaluate('!__ljEntrance.trigger')
     assert await page.locator('.landing-reading-progress').is_hidden()
+    await page.locator('.occasion').nth(1).locator('a').focus()
+    await page.wait_for_timeout(500)
+    assert await page.locator('.occasion h3').nth(1).evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove focused occasion travel'
+    invitation=page.locator('.visit-invitation .btn')
+    await invitation.focus();await page.wait_for_timeout(500)
+    assert await invitation.evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove focused booking lift'
+
     await verify_flow(page);assert not errors,errors;await page.close()
    await browser.close()
  (output/'results.json').write_text(json.dumps(rows,indent=2))

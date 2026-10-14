@@ -1828,20 +1828,20 @@ html { scrollbar-gutter: stable; }
 .landing-effects .social-links a { position: relative; isolation: isolate; }
 .landing-effects .occasion:hover::before, .landing-effects .occasion:focus-within::before, .landing-effects .social-links a:hover::before, .landing-effects .social-links a:focus-visible::before, .landing-effects .visit-invitation:hover::before, .landing-effects .visit-invitation:focus-within::before { opacity: 1; }
 .landing-page .occasion h3, .landing-page .occasion .occasion-number, .landing-page .occasion .link-arrow { transition: transform .45s cubic-bezier(.22, 1, .36, 1), color .3s; }
-.landing-page .occasion:hover h3, .landing-page .occasion:focus-within h3 { transform: translateX(8px); color: var(--forest); }
-.landing-page .occasion:hover .link-arrow, .landing-page .occasion:focus-within .link-arrow { transform: translate(4px, -4px); display: inline-block; }
+.landing-effects .occasion:hover h3, .landing-effects .occasion:focus-within h3 { transform: translateX(8px); color: var(--forest); }
+.landing-effects .occasion:hover .link-arrow, .landing-effects .occasion:focus-within .link-arrow { transform: translate(4px, -4px); display: inline-block; }
 .landing-page .brand-card { overflow: clip; transition: box-shadow .5s, transform .5s; }
 .landing-page .brand-card img { transition: transform .8s cubic-bezier(.22, 1, .36, 1); }
-.landing-page .brand-card:hover img { transform: scale(1.05); }
-.landing-page .brand-card:hover { transform: translateY(-6px); box-shadow: 0 28px 48px -24px #61493466; }
+.landing-effects .brand-card:hover img { transform: scale(1.05); }
+.landing-effects .brand-card:hover { transform: translateY(-6px); box-shadow: 0 28px 48px -24px #61493466; }
 .landing-page .brand-card figcaption { position: relative; z-index: 1; background: var(--paper); }
 .landing-page .visit-invitation { padding-inline: 24px; background: var(--cream); }
 .landing-page .visit-invitation .btn { box-shadow: 0 6px 20px #61493420; transition: box-shadow .3s, transform .3s; }
-.landing-page .visit-invitation .btn:hover, .landing-page .visit-invitation .btn:focus-visible { transform: translateY(-3px); box-shadow: 0 12px 24px #61493440; }
+.landing-effects .visit-invitation .btn:hover, .landing-effects .visit-invitation .btn:focus-visible { transform: translateY(-3px); box-shadow: 0 12px 24px #61493440; }
 @media (max-width: 650px) { .entrance-scroll .entrance-phrase { transform-origin: center; } }
-@media (hover: none) { .landing-page .brand-card:hover, .landing-page .brand-card:hover img, .landing-page .occasion:hover h3 { transform: none; } }
+@media (hover: none) { .landing-effects .brand-card:hover, .landing-effects .brand-card:hover img, .landing-effects .occasion:hover h3 { transform: none; } }
 @media (prefers-reduced-motion: reduce) {
- .landing-page .entrance-copy, .landing-page .entrance-copy h1, .landing-page .landing-section .section-head, .landing-page .brand-card:hover, .landing-page .brand-card:hover img, .landing-page .occasion h3, .landing-page .occasion .link-arrow, .landing-page .visit-invitation .btn { transform: none; transition: none; }
+ .landing-page .entrance-copy, .landing-page .entrance-copy h1, .landing-page .landing-section .section-head, .landing-effects .brand-card:hover, .landing-effects .brand-card:hover img, .landing-page .occasion h3, .landing-page .occasion .link-arrow, .landing-page .visit-invitation .btn { transform: none; transition: none; }
  .landing-page .occasion::before, .landing-page .social-links a::before, .landing-page .visit-invitation::before { display: none; }
 }
 
