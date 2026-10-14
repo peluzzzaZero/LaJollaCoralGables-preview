@@ -1,0 +1,10 @@
+{
+  "file": "assets/brand/la-jolla-script.svg",
+  "sha256": "f2cbd2805e2af4b1646b79c08a3203884a86f8f38a146a440c990530938f7eeb",
+  "source": "The house's own brochure \"the Sapphire Collection\" (PDF supplied by the owner on 2026-10-14), page 6, the \"La Jolla / CORAL GABLES\" lockup",
+  "sourceSha256": "328b74b9997a67e08a10a41ed3db80c45ef428f182ccfd3a27cd26151fba38b2",
+  "method": "The brochure's text is converted to outlines; the six script outlines of \"La Jolla\" were copied unchanged as one SVG path (no font file is embedded).",
+  "approvedBy": "Dan (site owner)",
+  "approvedOn": "2026-10-14",
+  "rights": "The house's own brand lettering from its own brochure, used by the owner's instruction for the name only."
+}

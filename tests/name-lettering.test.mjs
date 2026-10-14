@@ -29,3 +29,32 @@ test("the name stays real text for screen readers, translation and search", () =
   assert.match(index, /<span class="location-name" translate="no">La Jolla<\/span>/);
   for (const page of ["privacy.html", "terms.html", "planning.html"]) assert.match(read(page), /La Jolla<\/b>/);
 });
+
+test("the lettering records where it came from and who approved it", async () => {
+  const { createHash } = await import("node:crypto");
+  const source = JSON.parse(read("assets/brand/la-jolla-script.source.json"));
+  assert.equal(source.sha256, createHash("sha256").update(svg).digest("hex"));
+  assert.match(source.approvedBy, /owner/);
+});
+
+test("the name falls back to plain text where masks are dropped", () => {
+  assert.match(css, /@media \(forced-colors: active\), print \{\s*\.logo-text b, \.entrance-copy h1, \.footer-logo, \.location-name \{[^}]*mask: none;[^}]*text-indent: 0;/);
+});
+
+test("chapter titles use the self-hosted brochure script, body text does not", () => {
+  assert.match(css, /@font-face \{ font-family: 'Great Vibes'; src: url\('assets\/fonts\/GreatVibes-latin\.woff2'\)/);
+  assert.match(css, /\.landing-page \{ --font-script: "Great Vibes"/);
+  assert.match(css, /\.landing-section \.section-title \{ font-family: var\(--font-script\)/);
+  assert.match(read("assets/fonts/GreatVibes-OFL.txt"), /SIL Open Font License/);
+  assert.doesNotMatch(css, /fonts\.(googleapis|gstatic)\.com/);
+});
+
+test("section photographs fade up once, only with motion allowed", () => {
+  const index = read("index.html");
+  const js = read("script.js");
+  assert.equal((index.match(/<img data-photo-fade=""/g) || []).length, 5);
+  assert.match(js, /querySelectorAll\('\[data-photo-fade\], \.house-tile img'\)\.forEach\(photo => reveal\.observe\(photo\)\)/);
+  // The reveal observer only exists once reduced motion and save-data are ruled out.
+  assert.ok(js.indexOf("[data-photo-fade]") > js.indexOf("if (reduced.matches || saveData"));
+  assert.match(css, /\.landing-effects :is\(img\[data-photo-fade\], \.house-tile img\) \{ opacity: \.4; translate: 0 22px;/);
+});

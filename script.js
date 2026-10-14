@@ -986,6 +986,8 @@
         if (entry.isIntersecting) { entry.target.classList.add('has-arrived'); reveal.unobserve(entry.target); }
       }), { threshold: .08, rootMargin: '30px' });
       document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => reveal.observe(element));
+      // Section photographs fade up once, the first time each one enters the screen.
+      document.querySelectorAll('[data-photo-fade], .house-tile img').forEach(photo => reveal.observe(photo));
       inked.forEach(inkWords); measureScatter();
       const albumStaged = staging();
       configuredWidth = innerWidth;
