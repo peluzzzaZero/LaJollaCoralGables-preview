@@ -11,7 +11,7 @@ export const retiredMedia = Object.freeze(new Set(['venue/hall.jpg', 'venue/cine
   'venue/cinematic/hall.webm', 'venue/cinematic/hall-poster.webp', 'venue/cinematic/hall-mobile.mp4',
   'venue/cinematic/hall-mobile.webm', 'venue/cinematic/hall-mobile-poster.webp']));
 const supportFiles = new Set(['vendor/gsap.min.js', 'vendor/ScrollTrigger.min.js',
-  'fonts/OFL.txt', 'fonts/Manrope-OFL.txt', 'fonts/CormorantGaramond-OFL.txt']);
+  'fonts/OFL.txt', 'fonts/Manrope-OFL.txt', 'fonts/CormorantGaramond-OFL.txt', 'fonts/GreatVibes-OFL.txt']);
 
 export function publicAsset(path) {
   if (retiredMedia.has(path)) return false;
