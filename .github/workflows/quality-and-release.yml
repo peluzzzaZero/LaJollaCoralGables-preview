@@ -65,6 +65,7 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run build
           MAIL_MYSQL_TEST=true npm test
+          python scripts/social-tiles.py --check
           git diff --check
       - name: Install browser review dependencies
         run: |

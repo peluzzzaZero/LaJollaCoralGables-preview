@@ -1,7 +1,8 @@
 """Rebuild the house mosaic from assets/social/tiles.json.
 
 Edit tiles.json (order, source image, link, owner approval and, for a post
-link, its EN/ES label), then run `python scripts/social-tiles.py`. It crops new
+link, the owner's post confirmation and its EN/ES label). Keep owner originals
+in media/instagram/, which is never published, then run `python scripts/social-tiles.py`. It crops new
 or changed sources to 4:5 WebP at 640 and 320 px, refreshes
 assets/social/source.json, rewrites the mosaic list in index.html and the post
 labels in script.js. `--check` changes nothing and fails when a file is out of
@@ -44,8 +45,8 @@ def sha256(path):
 
 def load_tiles():
     tiles = json.loads(TILES.read_text())
-    if len(tiles) not in (3, 6, 9, 12):
-        sys.exit('The mosaic needs 3, 6, 9 or 12 tiles so the 3- and 6-column rows stay full.')
+    if len(tiles) not in (6, 12):
+        sys.exit('The mosaic needs 6 or 12 tiles so the 6-column desktop and 3-column mobile rows stay full.')
     files = set()
     for tile in tiles:
         name, source, href = tile.get('name', ''), tile.get('source', ''), tile.get('href', '')
@@ -55,15 +56,18 @@ def load_tiles():
             if file in files:
                 sys.exit(f'{name}: {file} would overwrite another tile')
             files.add(file)
-        if not re.fullmatch(r'assets/(venue|brand|instagram)/[A-Za-z0-9._/-]+', source) or '..' in source \
+        # media/ is not published: owner originals (and their EXIF) stay out of the site.
+        if not re.fullmatch(r'(assets/(venue|brand)|media/instagram)/[A-Za-z0-9._/-]+', source) or '..' in source \
                 or not (ROOT / source).is_file():
-            sys.exit(f'{name}: source must be an existing file in assets/venue, assets/brand or assets/instagram: {source!r}')
+            sys.exit(f'{name}: source must be an existing file in media/instagram, assets/venue or assets/brand: {source!r}')
         if not tile.get('ownerApproval', '').strip():
             sys.exit(f'{name}: record the owner approval for this image')
         if href == PROFILE:
             continue
         if not any(post.match(href) for post in POSTS):
             sys.exit(f'{name}: href must be the Instagram profile or a post permalink: {href!r}')
+        if not tile.get('postApproval', '').strip():
+            sys.exit(f'{name}: record the owner confirming La Jolla published this post and that the image is from it')
         label = tile.get('label', {})
         if not all(isinstance(label.get(lang), str) and 8 <= len(label[lang].strip()) <= 160 for lang in ('en', 'es')):
             sys.exit(f'{name}: a post link needs a label with "en" and "es" text describing the post')
@@ -150,7 +154,9 @@ def main():
     for block, lang in reversed(list(zip(blocks, ('en', 'es')))):
         js = js[:block.start(2)] + labels_js(tiles, lang) + js[block.end(2):]
     texts = {MANIFEST: json.dumps(entries, indent=2, ensure_ascii=False) + '\n', INDEX: page, SCRIPT: js}
-    changed = [path for path, text in texts.items() if path.read_text() != text] + list(images)
+    keep = {ROOT / f"assets/social/{t['name']}{suffix}.webp" for t in tiles for suffix in ('', '-320')}
+    unused = sorted(p for p in (ROOT / 'assets/social').glob('*.webp') if p not in keep)
+    changed = [path for path, text in texts.items() if path.read_text() != text] + list(images) + unused
     if args.check:
         if changed:
             sys.exit('Out of date, run python scripts/social-tiles.py: ' + ', '.join(str(p.relative_to(ROOT)) for p in changed))
@@ -160,9 +166,9 @@ def main():
         path.write_bytes(data)
     for path, text in texts.items():
         path.write_text(text)
-    keep = {f"{t['name']}{suffix}.webp" for t in tiles for suffix in ('', '-320')}
-    unused = sorted(p.name for p in (ROOT / 'assets/social').glob('*.webp') if p.name not in keep)
-    print(f'House mosaic rebuilt: {len(tiles)} tiles.' + (f' Unused images you may delete: {", ".join(unused)}' if unused else ''))
+    for path in unused:
+        path.unlink()
+    print(f'House mosaic rebuilt: {len(tiles)} tiles.' + (f' Removed {len(unused)} unused images.' if unused else ''))
 
 
 if __name__ == '__main__':

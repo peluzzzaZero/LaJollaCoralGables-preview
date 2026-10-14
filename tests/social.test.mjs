@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
@@ -34,7 +34,7 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
   assert.ok(html.indexOf('<div class="house-stream">') > html.indexOf('id="team"'), "inside the team chapter");
   const tiles = [...stream.matchAll(/<li><a class="house-tile" href="([^"]+)"([^>]*)>(.*?)<\/a><\/li>/g)];
   assert.equal(tiles.length, tileList.length);
-  assert.ok([3, 6, 9, 12].includes(tiles.length), "full rows at 3 and 6 columns");
+  assert.ok([6, 12].includes(tiles.length), "full rows at 3 and 6 columns");
   for (const [index, [, href, attributes, inner]] of tiles.entries()) {
     assert.equal(href, tileList[index].href, "index.html follows tiles.json; run python scripts/social-tiles.py");
     assert.ok(allowedLinks.some((link) => link.test(href)), href);
@@ -43,7 +43,9 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
       const key = `social.tile.${tileList[index].name}`;
       assert.match(attributes, new RegExp(`aria-label="[^"]{8,}" data-i18n="${key.replaceAll(".", "\\.")}" data-i18n-attr="aria-label"`));
       assert.doesNotMatch(attributes, /tabindex|aria-hidden/);
-      assert.equal(js.split(`"${key}":`).length, 3, key);
+      const labels = [...js.matchAll(new RegExp(`"${key.replaceAll(".", "\\.")}": ("(?:[^"\\\\]|\\\\.)*")`, "g"))].map((m) => JSON.parse(m[1]));
+      assert.deepEqual(labels, [tileList[index].label.en.trim(), tileList[index].label.es.trim()], key);
+      assert.ok(tileList[index].postApproval?.trim(), `${key} records the owner's post confirmation`);
     }
     const [tag, src] = inner.match(/<img src="([^"]+)"[^>]*>/);
     const entry = manifest.find((item) => item.asset === src);
@@ -54,7 +56,7 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
     assert.equal(entry.ownerApproval, tileList[index].ownerApproval.trim(), "tiles.json and source.json agree");
     assert.equal(sha256(src), entry.sha256, src);
     assert.equal(sha256(entry.source), entry.sourceSha256, entry.source);
-    assert.match(entry.source, /^assets\/(venue|brand|instagram)\//);
+    assert.match(entry.source, /^(assets\/(venue|brand)|media\/instagram)\//);
     assert.deepEqual(webpSize(src), [640, 800], src);
     assert.match(tag, /alt="" width="640" height="800" loading="lazy"/);
     const small = src.replace(".webp", "-320.webp");
@@ -68,6 +70,11 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
     assert.match(tag, /target="_blank"/);
     assert.match(tag, /rel="noopener noreferrer"/);
   }
+});
+
+test("assets/social publishes only recorded mosaic images", () => {
+  const published = readdirSync(new URL("../assets/social/", import.meta.url)).filter((file) => file.endsWith(".webp")).sort();
+  assert.deepEqual(published, manifest.map((entry) => entry.asset.replace("assets/social/", "")).sort());
 });
 
 test("social content loads no third-party embeds, scripts or video", () => {
