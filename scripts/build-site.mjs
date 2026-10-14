@@ -13,7 +13,7 @@ export const retiredMedia = Object.freeze(new Set(['venue/hall.jpg', 'venue/cine
 const supportFiles = new Set(['vendor/gsap.min.js', 'vendor/ScrollTrigger.min.js',
   'fonts/OFL.txt', 'fonts/Manrope-OFL.txt', 'fonts/CormorantGaramond-OFL.txt']);
 
-function publicAsset(path) {
+export function publicAsset(path) {
   if (retiredMedia.has(path)) return false;
   if (supportFiles.has(path)) return true;
   const extension = extname(path).toLowerCase();

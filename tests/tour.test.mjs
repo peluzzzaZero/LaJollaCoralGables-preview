@@ -61,3 +61,33 @@ test("retired bar media is not published and not referenced", async () => {
     for (const file of [html, js, css]) assert.equal(file.includes(path), false, path);
   }
 });
+
+test("every tour image has recorded brochure provenance and owner approval", async () => {
+  const { createHash } = await import("node:crypto");
+  const { readdirSync } = await import("node:fs");
+  const record = JSON.parse(readFileSync(new URL("../assets/tour/source.json", import.meta.url), "utf8"));
+  const files = readdirSync(new URL("../assets/tour/", import.meta.url)).filter((f) => f.endsWith(".webp")).sort();
+  assert.deepEqual(Object.keys(record.assets).sort(), files);
+  for (const [name, entry] of Object.entries(record.assets)) {
+    const bytes = readFileSync(new URL(`../assets/tour/${name}`, import.meta.url));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), entry.sha256, name);
+    assert.match(entry.approval, /2026-10-14/);
+    assert.ok(bytes.length < 150_000, `${name} delivery budget`);
+  }
+});
+
+test("the paper card's background is valid CSS with the colour in the final layer", () => {
+  const rule = css.match(/\.tour-paper\s*\{[^}]*\}/)[0];
+  const background = rule.match(/background:\s*([^;]+);/)[1];
+  const layers = background.split(/,(?![^(]*\))/).map((layer) => layer.trim());
+  assert.ok(layers.length >= 2);
+  for (const layer of layers.slice(0, -1)) assert.doesNotMatch(layer, /^#[0-9a-f]{3,8}\b|\s#[0-9a-f]{3,8}$/i, layer);
+  assert.match(background, /url\(assets\/tour\/paper\.webp\)/);
+});
+
+test("the build leaves retired bar media out of the published site", async () => {
+  const { publicAsset, retiredMedia } = await import("../scripts/build-site.mjs");
+  for (const path of retiredMedia) assert.equal(publicAsset(path), false, path);
+  assert.equal(publicAsset("tour/paper.webp"), true);
+  assert.equal(publicAsset("venue/hall-piano.jpg"), true);
+});

@@ -2026,7 +2026,7 @@ html { scrollbar-gutter: stable; }
 .tour-steps li::before { content: counter(tour, upper-roman); display: block; margin-bottom: 10px; font: 400 clamp(36px, 3.4vw, 48px)/1 var(--font-script); color: var(--brand-sage); }
 .tour-steps h3 { margin: 0 0 8px; font: 600 15px/1.4 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
 .tour-steps p { margin: 0; font: 400 clamp(16px, 1.35vw, 19px)/1.6 var(--font-display); color: var(--ink-soft); }
-.tour-paper { position: relative; max-width: 40rem; margin: clamp(48px, 6vw, 72px) auto 0; padding: clamp(30px, 4vw, 48px) clamp(24px, 4vw, 52px); background: #f8f6ef linear-gradient(#f8f6efb8, #f8f6efb8), url(assets/tour/paper.webp) center / cover; box-shadow: 0 1px 0 rgba(44, 36, 30, .06), 0 22px 48px -18px rgba(44, 36, 30, .28); }
+.tour-paper { position: relative; max-width: 40rem; margin: clamp(48px, 6vw, 72px) auto 0; padding: clamp(30px, 4vw, 48px) clamp(24px, 4vw, 52px); background: linear-gradient(#f8f6efb8, #f8f6efb8), url(assets/tour/paper.webp) center / cover, #f8f6ef; box-shadow: 0 1px 0 rgba(44, 36, 30, .06), 0 22px 48px -18px rgba(44, 36, 30, .28); }
 .tour-paper::before { content: ""; position: absolute; inset: 10px; border: 1px solid rgba(94, 112, 96, .4); pointer-events: none; }
 .tour-paper h3 { margin: 0 0 18px; text-align: center; font: italic 400 clamp(28px, 3vw, 40px)/1.05 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--brand-sage); }
 .tour-paper ul { margin: 0; padding: 0; list-style: none; }
