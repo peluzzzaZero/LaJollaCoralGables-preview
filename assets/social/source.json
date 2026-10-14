@@ -1,0 +1,98 @@
+[
+  {
+    "asset": "assets/social/house-facade.webp",
+    "sha256": "ea5c42bc5bbe42e5cbf4d5fb81c4fb5397a4c87affbbda8222a5be28768cf1e9",
+    "source": "assets/venue/facade.jpg",
+    "sourceSha256": "e4ae9dbabf2b4f0d42dddb96cf694ebbc974c93421ceaaeb3ea8ec935c6cc0e2",
+    "treatment": "Centered 4:5 crop of the approved repository image, resized to 640x800, WebP quality 78; no other edits",
+    "ownerApproval": "Already published on the site as approved venue photography"
+  },
+  {
+    "asset": "assets/social/house-facade-320.webp",
+    "sha256": "cbd489d3995396abfee9859183e2c5058cd89c11d128534289a50040e4d315d9",
+    "source": "assets/social/house-facade.webp",
+    "sourceSha256": "ea5c42bc5bbe42e5cbf4d5fb81c4fb5397a4c87affbbda8222a5be28768cf1e9",
+    "treatment": "640x800 tile resized to 320x400, WebP quality 78",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-plaque.webp",
+    "sha256": "f1143013f5c7a6af8f69e3ef3732349c05e15e5e6d38092e2ae8ab803e1749b6",
+    "source": "assets/brand/mood-plaque.jpg",
+    "sourceSha256": "69a1d21cae237246e83dc6ef8446cf4bf5eac4be529efdb7f54a16159bc29744",
+    "treatment": "Centered 4:5 crop of the approved repository image, resized to 640x800, WebP quality 78; no other edits",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-plaque-320.webp",
+    "sha256": "509b31e96385fc7c315f9f47c1f94cd240c2fe9b452b697c203cdb3c4516c56f",
+    "source": "assets/social/house-plaque.webp",
+    "sourceSha256": "f1143013f5c7a6af8f69e3ef3732349c05e15e5e6d38092e2ae8ab803e1749b6",
+    "treatment": "640x800 tile resized to 320x400, WebP quality 78",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-evening.webp",
+    "sha256": "7e1cc1ae60e7c2d3b0759c73e61d98bdac9aea32d56d662b07b53c1cf0d1da01",
+    "source": "assets/brand/hero-facade.jpg",
+    "sourceSha256": "2925a898a2cdc44286eeb637a5bb6908b0930694649334592cd9364a332338d1",
+    "treatment": "Centered 4:5 crop of the approved repository image, resized to 640x800, WebP quality 78; no other edits",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-evening-320.webp",
+    "sha256": "bdbd87144920f84a20c303cade0270535bd445cd74c390e7fd7b766a9af35ba1",
+    "source": "assets/social/house-evening.webp",
+    "sourceSha256": "7e1cc1ae60e7c2d3b0759c73e61d98bdac9aea32d56d662b07b53c1cf0d1da01",
+    "treatment": "640x800 tile resized to 320x400, WebP quality 78",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-seal.webp",
+    "sha256": "c7002e3c41829216b786fb4a5b76da51a4ea239ed498d3e8b92e12e3d46dcc71",
+    "source": "assets/brand/wax-seal-photo.jpg",
+    "sourceSha256": "1bdfeabfe0f1f5b898949564eccc09b6d9556f7e356bbfb9e557742c92504bb9",
+    "treatment": "Centered 4:5 crop of the approved repository image, resized to 640x800, WebP quality 78; no other edits",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-seal-320.webp",
+    "sha256": "36375f4c517aa606b4286984806c6f4b8985eaad281e93d1a0ecb4712da3eee6",
+    "source": "assets/social/house-seal.webp",
+    "sourceSha256": "c7002e3c41829216b786fb4a5b76da51a4ea239ed498d3e8b92e12e3d46dcc71",
+    "treatment": "640x800 tile resized to 320x400, WebP quality 78",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-monogram.webp",
+    "sha256": "056a9b2a777fd87700f3abf44d76c66d069deabe4317c0af9c1f9fce1895760e",
+    "source": "assets/brand/leaves-monogram.jpg",
+    "sourceSha256": "680ae5401b65d423dcc4fc5a3ccd5ba3cd125e1f1a53b318aa51350ee722c608",
+    "treatment": "Centered 4:5 crop of the approved repository image, resized to 640x800, WebP quality 78; no other edits",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-monogram-320.webp",
+    "sha256": "e393435a6a4d68f0a5bd7c16cb4fc581d87aa940be58b5c3669b7ce932361e56",
+    "source": "assets/social/house-monogram.webp",
+    "sourceSha256": "056a9b2a777fd87700f3abf44d76c66d069deabe4317c0af9c1f9fce1895760e",
+    "treatment": "640x800 tile resized to 320x400, WebP quality 78",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-suite.webp",
+    "sha256": "474221fbd5a9a595b5c763d7a72d943767044fec877e30e918fdaf8292dfacc0",
+    "source": "assets/brand/flatlay-suite.jpg",
+    "sourceSha256": "eb54abb91ed132e75a13319da970c7f034ea14cf5b4072570b6cc0ff0a06f9c2",
+    "treatment": "Centered 4:5 crop of the approved repository image, resized to 640x800, WebP quality 78; no other edits",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  },
+  {
+    "asset": "assets/social/house-suite-320.webp",
+    "sha256": "bbe822d63618dc7b16c83c9a0dd84095c1a7276aac1458e93b4add15ad69407f",
+    "source": "assets/social/house-suite.webp",
+    "sourceSha256": "474221fbd5a9a595b5c763d7a72d943767044fec877e30e918fdaf8292dfacc0",
+    "treatment": "640x800 tile resized to 320x400, WebP quality 78",
+    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+  }
+]

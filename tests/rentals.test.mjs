@@ -21,7 +21,7 @@ const LABELS = [
 
 function rentalsSection() {
   const start = html.indexOf('id="rentals"');
-  const end = html.indexOf('id="testimonial"');
+  const end = html.indexOf("<article ", start);
   assert.ok(start !== -1 && end > start, "rentals section");
   return html.slice(start, end).replaceAll("&amp;", "&");
 }
