@@ -16,7 +16,7 @@ test("the entrance has a stable full-height frame", () => {
 });
 
 test("landing uses the approved venue and styling photographs", () => {
-  for (const name of ["venue/web/architecture", "welcome-table", "mood-card-flowers", "flower-plaque"]) {
+  for (const name of ["venue/web/architecture", "welcome-table", "mood-card-flowers"]) {
     assert.equal(html.includes(name), true, name);
   }
 });

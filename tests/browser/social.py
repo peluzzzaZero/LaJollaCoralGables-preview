@@ -40,7 +40,7 @@ async def main(base, output, webkit=False):
                     await page.route('https://www.google.com/maps?**',googlemap)
                     await page.route('**/*.mp4',lambda route:route.abort());await page.route('**/*.webm',lambda route:route.abort())
                     await page.goto(base);assert not requests,'Social providers must not preload'
-                    await position(page,'location')
+                    await position(page,'social')
                     button=page.locator('.reviews-load')
                     if mode=='disabled':assert await button.is_hidden()
                     else:
@@ -74,9 +74,9 @@ async def main(base, output, webkit=False):
                     assert await page.locator('.location-map-load').is_hidden()
                     assert 'Alcazar' in await page.locator('.location-map iframe').get_attribute('title')
                     for href in ['https://www.google.com/maps/dir/?api=1','https://search.google.com/local/writereview?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0','tel:+17862908813']:
-                        assert await page.locator('#location a[href^="'+href+'"]').count()==1,href
+                        assert await page.locator('main a[href^="'+href+'"]').count()==1,href
                     await page.screenshot(path=str(output/f'reviews-{engine.name}-{width}-{mode}.png'))
-                    await position(page,'team')
+                    await position(page,'social')
                     for url in ['https://www.instagram.com/lajollacoralgables/','https://www.tiktok.com/@lajollacoralgables','https://www.pinterest.com/LaJollaCoralGables/','https://www.facebook.com/lajollaballroom']:
                         assert await page.locator('.social-links a[href="'+url+'"]').count()==1
                     assert requests.count('facebook')==0,'The images-only landing must not embed additional media'
@@ -88,7 +88,7 @@ async def main(base, output, webkit=False):
                     assert [t['href'] for t in json.loads((Path(__file__).resolve().parents[2]/'assets/social/tiles.json').read_text())]==await page.locator('.house-tile').evaluate_all('a=>a.map(x=>x.getAttribute("href"))')
                     if mode=='success':
                         await page.locator('.house-stream').screenshot(path=str(output/f'house-{engine.name}-{width}-es.png'))
-                        assert await page.locator('.house-grid').get_attribute('aria-label')=='La Jolla: la casa y su identidad'
+                        assert await page.locator('.house-grid').get_attribute('aria-label')=='La Jolla en Instagram: la casa'
                         assert 'Vea más en Instagram' in await page.locator('.house-handle').inner_text()
                     assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
                     assert not errors,errors

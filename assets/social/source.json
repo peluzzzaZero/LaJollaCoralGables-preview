@@ -16,83 +16,83 @@
     "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-plaque.webp",
-    "sha256": "f1143013f5c7a6af8f69e3ef3732349c05e15e5e6d38092e2ae8ab803e1749b6",
-    "source": "assets/brand/mood-plaque.jpg",
-    "sourceSha256": "69a1d21cae237246e83dc6ef8446cf4bf5eac4be529efdb7f54a16159bc29744",
+    "asset": "assets/social/house-street.webp",
+    "sha256": "45a23e80e0fa5daafef12ba2962cd49dbd5b14def0ff5e4bcfe971da123cdc62",
+    "source": "assets/venue/facade-wide.jpg",
+    "sourceSha256": "fcc920b88d09115951ea6019a99b360290ecde29f56bc8301f2b7efee7b80a76",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-plaque-320.webp",
-    "sha256": "509b31e96385fc7c315f9f47c1f94cd240c2fe9b452b697c203cdb3c4516c56f",
-    "source": "assets/social/house-plaque.webp",
-    "sourceSha256": "f1143013f5c7a6af8f69e3ef3732349c05e15e5e6d38092e2ae8ab803e1749b6",
+    "asset": "assets/social/house-street-320.webp",
+    "sha256": "5c395f5463daec660074dc0e034171a43ecdb2a6e816b3667ab0e4628f30119b",
+    "source": "assets/social/house-street.webp",
+    "sourceSha256": "45a23e80e0fa5daafef12ba2962cd49dbd5b14def0ff5e4bcfe971da123cdc62",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-evening.webp",
-    "sha256": "7e1cc1ae60e7c2d3b0759c73e61d98bdac9aea32d56d662b07b53c1cf0d1da01",
-    "source": "assets/brand/hero-facade.jpg",
-    "sourceSha256": "2925a898a2cdc44286eeb637a5bb6908b0930694649334592cd9364a332338d1",
+    "asset": "assets/social/house-hall.webp",
+    "sha256": "62dad97b864be0ee9bdfd377e807c5327e7cd0b9bcfae58568a685a0ce28ce0d",
+    "source": "assets/venue/hall-piano.jpg",
+    "sourceSha256": "711b2a09f180381ce5277f30fe9ddae69eff8fd07af41efdb38b7a2fb3df59b8",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-evening-320.webp",
-    "sha256": "bdbd87144920f84a20c303cade0270535bd445cd74c390e7fd7b766a9af35ba1",
-    "source": "assets/social/house-evening.webp",
-    "sourceSha256": "7e1cc1ae60e7c2d3b0759c73e61d98bdac9aea32d56d662b07b53c1cf0d1da01",
+    "asset": "assets/social/house-hall-320.webp",
+    "sha256": "f0434d7d0386cde8ce7148756ef6957ebd8cc90c6710bf0101d7004194938ddb",
+    "source": "assets/social/house-hall.webp",
+    "sourceSha256": "62dad97b864be0ee9bdfd377e807c5327e7cd0b9bcfae58568a685a0ce28ce0d",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-seal.webp",
-    "sha256": "c7002e3c41829216b786fb4a5b76da51a4ea239ed498d3e8b92e12e3d46dcc71",
-    "source": "assets/brand/wax-seal-photo.jpg",
-    "sourceSha256": "1bdfeabfe0f1f5b898949564eccc09b6d9556f7e356bbfb9e557742c92504bb9",
+    "asset": "assets/social/house-garden.webp",
+    "sha256": "0fdc3464921bb82062e8647a181d74e45fa712a5e4e1aaa7c6be34d5363155f9",
+    "source": "assets/venue/garden.jpg",
+    "sourceSha256": "cf14daffd1d5a89a22762509228b7fe0094a89dffa9f6ffd1122f387c37ab096",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-seal-320.webp",
-    "sha256": "36375f4c517aa606b4286984806c6f4b8985eaad281e93d1a0ecb4712da3eee6",
-    "source": "assets/social/house-seal.webp",
-    "sourceSha256": "c7002e3c41829216b786fb4a5b76da51a4ea239ed498d3e8b92e12e3d46dcc71",
+    "asset": "assets/social/house-garden-320.webp",
+    "sha256": "8245531fc47d46d2bf8d843ec2c356c9469cb1be9c5e2a03f2b8175831c90b7d",
+    "source": "assets/social/house-garden.webp",
+    "sourceSha256": "0fdc3464921bb82062e8647a181d74e45fa712a5e4e1aaa7c6be34d5363155f9",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-monogram.webp",
-    "sha256": "056a9b2a777fd87700f3abf44d76c66d069deabe4317c0af9c1f9fce1895760e",
-    "source": "assets/brand/leaves-monogram.jpg",
-    "sourceSha256": "680ae5401b65d423dcc4fc5a3ccd5ba3cd125e1f1a53b318aa51350ee722c608",
+    "asset": "assets/social/house-stair.webp",
+    "sha256": "3eef07235ce84e46abd0370c91df22cc0a09f77dbeead263f5c55e4ab7bf7abf",
+    "source": "assets/venue/staircase.jpg",
+    "sourceSha256": "8cdabf41d05b0d92c7596fc8e9ca60c89192244a0516e26a463baf468fbe5358",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-monogram-320.webp",
-    "sha256": "e393435a6a4d68f0a5bd7c16cb4fc581d87aa940be58b5c3669b7ce932361e56",
-    "source": "assets/social/house-monogram.webp",
-    "sourceSha256": "056a9b2a777fd87700f3abf44d76c66d069deabe4317c0af9c1f9fce1895760e",
+    "asset": "assets/social/house-stair-320.webp",
+    "sha256": "41be48ead561c280f9dd986e6363dfe7e71db9337b5077f7b4e93762e9517ee6",
+    "source": "assets/social/house-stair.webp",
+    "sourceSha256": "3eef07235ce84e46abd0370c91df22cc0a09f77dbeead263f5c55e4ab7bf7abf",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-suite.webp",
-    "sha256": "474221fbd5a9a595b5c763d7a72d943767044fec877e30e918fdaf8292dfacc0",
-    "source": "assets/brand/flatlay-suite.jpg",
-    "sourceSha256": "eb54abb91ed132e75a13319da970c7f034ea14cf5b4072570b6cc0ff0a06f9c2",
+    "asset": "assets/social/house-music.webp",
+    "sha256": "c9633cff020887fbef64a23fb40bdd19fecf1656998de86a1ab5f50d4fdf820a",
+    "source": "assets/venue/music-detail.jpg",
+    "sourceSha256": "88e5769a192c868a6454dd0653d06cf628c057dfa68c70204dc86530a6390d39",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-suite-320.webp",
-    "sha256": "bbe822d63618dc7b16c83c9a0dd84095c1a7276aac1458e93b4add15ad69407f",
-    "source": "assets/social/house-suite.webp",
-    "sourceSha256": "474221fbd5a9a595b5c763d7a72d943767044fec877e30e918fdaf8292dfacc0",
+    "asset": "assets/social/house-music-320.webp",
+    "sha256": "afc88c296db3591f90ecefbbbf3ee87fe930593795ace93fe205c9bc12e39fc8",
+    "source": "assets/social/house-music.webp",
+    "sourceSha256": "c9633cff020887fbef64a23fb40bdd19fecf1656998de86a1ab5f50d4fdf820a",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   }
 ]

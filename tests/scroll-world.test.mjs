@@ -22,8 +22,8 @@ test('delivered motion files match the probed silent media and stay within web b
       assert.ok(bytes.indexOf(Buffer.from('moov')) < bytes.indexOf(Buffer.from('mdat')), `${name}: metadata must precede frames for faststart`);
     }
   }
-  const portrait = manifest.assets['ballroom-mobile.mp4'].streams[0];
+  const portrait = manifest.assets['hall-mobile.mp4'].streams[0];
   assert.ok(portrait.width < portrait.height);
-  assert.match(manifest.sources['ballroom-mobile'], /first 0\.9 seconds/);
+  assert.match(manifest.sources['hall-mobile'], /first 0\.9 seconds/);
   assert.match(manifest.free_generation_trial.status, /rejected/);
 });

@@ -59,7 +59,7 @@ Historical native-form preparation used a same-origin API. Current public pages 
 
 ## Cinematic art direction
 
-The interface pairs self-hosted Cormorant Garamond titles with Manrope body copy and controls, warm ivory/beige/taupe, visible factual room/occasion copy and one short entrance zoom followed by normal native scrolling. The ballroom is supported by its original photograph, and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
+The interface pairs self-hosted Cormorant Garamond titles with Manrope body copy and controls, warm ivory/beige/taupe, visible factual room/occasion copy and one short entrance zoom followed by normal native scrolling. The main hall is supported by its original photograph (the client asks that the site never call it a ballroom), and detail captions distinguish house/brand imagery from verified room views. Desktop avoids enlarging portrait recordings; phones retain native captured frames. See [the art-direction review](tests/CINEMATIC-ART-DIRECTION.md) and the source manifest. No additional generation or production launch is implied.
 
 ## Public-only Pages deployment
 

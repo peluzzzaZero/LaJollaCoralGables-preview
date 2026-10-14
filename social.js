@@ -74,7 +74,7 @@
     button.addEventListener('click', function () {
       const frame = document.createElement('iframe');
       const url = new URL('https://www.google.com/maps');
-      url.searchParams.set('q', 'La Jolla Ballroom, 301 Alcazar Avenue, Coral Gables, FL');
+      url.searchParams.set('q', 'La Jolla, 301 Alcazar Avenue, Coral Gables, FL');
       url.searchParams.set('output', 'embed');
       const show = () => { url.searchParams.set('hl', language()); frame.src = url.href; frame.title = messages().map; };
       show(); frame.loading = 'lazy';

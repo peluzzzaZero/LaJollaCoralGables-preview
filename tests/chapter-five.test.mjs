@@ -7,7 +7,7 @@ const manifest=JSON.parse(readFileSync(new URL('assets/venue/cinematic/chapter-f
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 test('chapter 05 uses recorded references and silent, bounded, faststart cuts',()=>{
  const html=readFileSync(new URL('index.html',root),'utf8');
- assert.doesNotMatch(html,/data-cinema-film="ballroom"|ballroom-mobile-(?:poster|source)/);
+ assert.doesNotMatch(html,/data-cinema-film="hall"|hall-mobile-(?:poster|source)/);
  for(const source of Object.values(manifest.sources)) assert.equal(hash(readFileSync(new URL(source.path,root))),source.sha256);
  for(const [name,record] of Object.entries(manifest.assets)){
   const bytes=readFileSync(new URL('assets/venue/cinematic/'+name,root));assert.equal(hash(bytes),record.sha256,name);assert.equal(bytes.length,record.bytes);

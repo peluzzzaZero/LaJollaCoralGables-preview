@@ -11,7 +11,7 @@
       "duration_seconds": 5
     },
     "room-wide": {
-      "path": "assets/venue/ballroom-piano.jpg",
+      "path": "assets/venue/hall-piano.jpg",
       "sha256": "711b2a09f180381ce5277f30fe9ddae69eff8fd07af41efdb38b7a2fb3df59b8",
       "zoom_start": 1,
       "zoom_end": 1.065,

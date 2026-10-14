@@ -6,33 +6,33 @@
     "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "name": "house-plaque",
-    "source": "assets/brand/mood-plaque.jpg",
+    "name": "house-street",
+    "source": "assets/venue/facade-wide.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "name": "house-evening",
-    "source": "assets/brand/hero-facade.jpg",
+    "name": "house-hall",
+    "source": "assets/venue/hall-piano.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "name": "house-seal",
-    "source": "assets/brand/wax-seal-photo.jpg",
+    "name": "house-garden",
+    "source": "assets/venue/garden.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "name": "house-monogram",
-    "source": "assets/brand/leaves-monogram.jpg",
+    "name": "house-stair",
+    "source": "assets/venue/staircase.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "name": "house-suite",
-    "source": "assets/brand/flatlay-suite.jpg",
+    "name": "house-music",
+    "source": "assets/venue/music-detail.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Approved by the owner for publication in this mosaic on 2026-10-14 (v1.21.0 release thread); not previously shown on the site"
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   }
 ]
