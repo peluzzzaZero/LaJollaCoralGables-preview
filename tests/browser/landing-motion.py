@@ -26,12 +26,13 @@ async def verify_scenes(page,language):
  assert (await album_at(page,.3))['arrive']==first['arrive']
  await page.locator(f'[data-lang="{language}"]').click();await page.wait_for_timeout(300)
  # Every occasion, including the right-hand column, becomes the current one.
- seen=set();box=await page.locator('.events-list').bounding_box()
+ seen=set();steps=[];box=await page.locator('.events-list').bounding_box()
  top=await page.evaluate('document.querySelector(".events-list").getBoundingClientRect().top+scrollY')
  for step in range(0,int(box['height'])+200,40):
   await page.evaluate('y=>scrollTo(0,y)',top+step-page.viewport_size['height']*.5);await page.wait_for_timeout(30)
-  seen.update(await page.locator('.occasion').evaluate_all('items=>items.map((e,i)=>e.classList.contains("is-current")?i:-1).filter(i=>i>=0)'))
- assert seen==set(range(10)),seen
+  current=await page.locator('.occasion').evaluate_all('items=>items.map((e,i)=>e.classList.contains("is-current")?i:-1).filter(i=>i>=0)')
+  seen.update(current);steps.append(current)
+ assert seen==set(range(10)),(page.context.browser.browser_type.name,page.viewport_size,seen,steps)
  for print_ in await page.locator('.album-print').all():
   assert (await print_.locator('figcaption').inner_text()).strip()
  # Inked paragraphs keep their exact translated text and finish fully legible.

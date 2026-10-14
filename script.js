@@ -838,12 +838,13 @@
       } },
       occasions.length && { element: document.querySelector('.events-list'), update() {
         // Mark the whole row nearest the middle: two-column rows share one top.
-        // Layout offsets ignore the hover lift, so a hovered card stays in its row.
-        const list = occasions[0].offsetParent.getBoundingClientRect().top;
-        const rows = occasions.map(occasion => occasion.offsetTop);
+        // Measure the list items, which never move: the hover lift and focus cues
+        // transform the card inside, so a hovered or focused card stays in its row.
+        const boxes = occasions.map(occasion => occasion.parentElement.getBoundingClientRect());
+        const rows = boxes.map(box => box.top);
         let row = 0, distance = Infinity;
-        occasions.forEach((occasion, index) => {
-          const gap = Math.abs(list + rows[index] + occasion.offsetHeight / 2 - innerHeight * .5);
+        boxes.forEach((box, index) => {
+          const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
           if (gap < distance) { distance = gap; row = rows[index]; }
         });
         const current = [];
