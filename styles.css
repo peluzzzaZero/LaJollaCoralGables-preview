@@ -2017,10 +2017,6 @@ html { scrollbar-gutter: stable; }
 .flourish { display: block; width: min(240px, 60%); height: 20px; margin: 4px auto 18px; fill: var(--brand-sage); stroke: var(--brand-sage); stroke-width: 1.1; }
 .flourish path { fill: none; }
 .tour-sub { margin: 0; font: 400 clamp(17px, 1.5vw, 21px)/1.5 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
-.tour-moments { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(14px, 2vw, 28px); max-width: 52rem; margin: 0 auto; padding: 0; list-style: none; }
-.tour-moments li { border-block: 3px double var(--brand-sage); padding-block: 8px; }
-.tour-moments img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
-.tour-moments-note { max-width: 52rem; margin: .7rem auto 0; text-align: center; font-size: .82rem; letter-spacing: .04em; color: var(--ink-muted); }
 .tour-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 56px); max-width: 64rem; margin: clamp(44px, 5vw, 64px) auto 0; padding: 0; list-style: none; counter-reset: tour; }
 .tour-steps li { counter-increment: tour; text-align: center; }
 .tour-steps li::before { content: counter(tour, upper-roman); display: block; margin-bottom: 10px; font: 400 clamp(36px, 3.4vw, 48px)/1 var(--font-script); color: var(--brand-sage); }
