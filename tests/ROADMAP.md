@@ -165,4 +165,4 @@ The owner shared the client's brochure; the goal of the site is the tour. Bring 
 
 ## v1.24.0 — the team, in person
 
-The owner sent portraits of Patricia Mir and Julie Arias. Replace the team monograms with circular, face-centred, lightweight portraits with translated alt text; keep names, roles and order. Next: photographs of the house for the tour chapter.
+The owner sent portraits of Patricia Mir and Julie Arias. Replace the team monograms with matching cut-out portraits (no ID-style circles) with translated alt text; keep names, roles and order. Next: photographs of the house for the tour chapter.

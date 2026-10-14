@@ -39,7 +39,7 @@ test("team keeps Julie and Patricia with their roles in order", () => {
   assert.ok(patriciaRole > patricia, "Managing Director");
 });
 
-test("team shows Julie's and Patricia's portraits as round photographs", () => {
+test("team shows Julie's and Patricia's portraits as matching cut-out silhouettes", () => {
   const section = teamSection();
   const julie = section.indexOf('src="assets/team/julie-arias.webp"');
   const patricia = section.indexOf('src="assets/team/patricia-mir.webp"');
@@ -53,15 +53,16 @@ test("team shows Julie's and Patricia's portraits as round photographs", () => {
   assert.match(js, /"team\.pat\.photo": "Retrato de Patricia Mir"/);
   const rule = css.match(/\.team-photo\s*\{([^}]*)\}/);
   assert.ok(rule, "portrait rule");
-  assert.match(rule[1], /border-radius:\s*50%/);
-  assert.match(rule[1], /object-fit:\s*cover/);
+  assert.equal(/border-radius/.test(rule[1]), false, "no ID-style circle");
+  assert.match(rule[1], /aspect-ratio:\s*680\s*\/\s*620/);
   const manifest = JSON.parse(readFileSync(new URL("../assets/team/source.json", import.meta.url), "utf8"));
   for (const name of ["julie-arias", "patricia-mir"]) {
     const bytes = readFileSync(new URL(`../assets/team/${name}.webp`, import.meta.url));
     assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
-    assert.equal(bytes.subarray(12, 16).toString(), "VP8 ");
-    assert.equal(bytes.readUInt16LE(26) & 0x3fff, 480, `${name} width`);
-    assert.equal(bytes.readUInt16LE(28) & 0x3fff, 480, `${name} height`);
+    assert.equal(bytes.subarray(12, 16).toString(), "VP8X");
+    assert.ok(bytes[20] & 0x10, `${name} has a transparent background`);
+    assert.equal(bytes.readUIntLE(24, 3) + 1, 680, `${name} width`);
+    assert.equal(bytes.readUIntLE(27, 3) + 1, 620, `${name} height`);
     assert.ok(bytes.length < 60_000, `${name} stays light`);
     assert.equal(createHash("sha256").update(bytes).digest("hex"), manifest.assets[`${name}.webp`].sha256, `${name} matches its manifest`);
   }
