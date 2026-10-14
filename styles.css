@@ -1846,3 +1846,89 @@ html { scrollbar-gutter: stable; }
 }
 
 .landing-page .occasion-visit { display: inline-flex; gap: 8px; margin-top: 18px; font-size: 12px; }
+
+/* v1.21 — a visit told in scenes. Each scene is scrubbed by native scroll,
+   settles on the complete layout and disappears for reduced motion/SaveData. */
+/* Travelling lines and plates never widen the page; clip keeps sticky stages working. */
+.landing-effects .landing-section { overflow-x: clip; }
+/* Scene 1: the approach ends at a doorway, the film settling into an arch. */
+.entrance-scroll .entrance-film, .entrance-scroll .entrance-shade { transform-origin: 50% 100%; transform: scale(calc(1 - var(--entrance-arch, 0) * .14)); border-radius: calc(var(--entrance-arch, 0) * 50vmin) calc(var(--entrance-arch, 0) * 50vmin) 0 0 / calc(var(--entrance-arch, 0) * 34vmin) calc(var(--entrance-arch, 0) * 34vmin) 0 0; overflow: hidden; }
+.entrance-scroll .entrance-frame { opacity: calc(1 - var(--entrance-arch, 0)); }
+
+/* Scene 2: the house's story inks in, word by word, as it is read. */
+.landing-effects .ink-word { opacity: clamp(.2, calc(var(--ink, 999) - var(--i, 0)), 1); transition: opacity .2s linear; }
+.landing-effects .history-year { display: inline-block; transform: translateX(calc((1 - var(--section-arrival, 1)) * -48px)); }
+
+/* Scene 3: the rooms arrive as printed photographs laid on a table. */
+.venue-album { margin: 8px 0 48px; }
+.album-count { display: none; }
+.album-prints { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 24px; align-items: start; }
+.album-print { margin: 0; padding: 10px 10px 0; background: #fffdf8; box-shadow: 0 20px 44px -26px #30261e80, 0 1px 3px #30261e1f; min-width: 0; }
+.album-print img { display: block; width: 100%; height: auto; }
+.album-print--wide { grid-column: 1 / -1; }
+.album-print figcaption { display: flex; gap: 12px; align-items: baseline; padding: 14px 4px 16px; font: italic 400 20px/1.35 var(--font-display); color: var(--ink); }
+.landing-effects .venue-album { position: relative; height: calc(100svh + 3 * 78svh); margin: 0; }
+.landing-effects .album-stage { position: sticky; top: 0; height: 100svh; overflow: clip; }
+.landing-effects .album-count { display: block; position: absolute; z-index: 6; top: clamp(88px, 13svh, 128px); left: 0; margin: 0; font: 400 clamp(40px, 5vw, 64px)/1 var(--font-display); color: var(--sage-deep); letter-spacing: -.02em; }
+.landing-effects .album-total { font-size: .42em; letter-spacing: .08em; color: var(--ink-muted); }
+.landing-effects .album-prints { display: block; position: absolute; inset: 0; }
+.landing-effects .album-print { position: absolute; left: 50%; top: calc(50% + 34px); translate: -50% -50%; will-change: transform; transform: translateY(calc((1 - var(--arrive, 1)) * 110svh)) rotate(calc(var(--tilt, 0deg) * var(--arrive, 1))) scale(calc(1 - var(--covered, 0) * .05)); }
+.landing-effects .album-print--wide { width: min(100%, 820px, (100svh - 250px) * 1.6); }
+.landing-effects .album-print--tall { width: min(78%, 420px, (100svh - 270px) * .72); }
+.landing-effects .album-print:nth-child(1) { --tilt: -2.4deg; }
+.landing-effects .album-print:nth-child(2) { --tilt: 2.2deg; }
+.landing-effects .album-print:nth-child(3) { --tilt: -1.6deg; }
+.landing-effects .album-print:nth-child(4) { --tilt: 1.4deg; }
+
+/* Scene 4: an index of occasions that marks the one being read. */
+.occasion-counter { display: none; }
+.landing-page .occasion .occasion-number { display: inline-block; transition: transform .45s cubic-bezier(.22, 1, .36, 1), color .3s; }
+.landing-effects .occasion { box-shadow: inset 0 2px 0 -1px transparent; transition: box-shadow .5s; }
+.landing-effects .occasion.is-current { box-shadow: inset 0 2px 0 -1px var(--sage-deep); }
+.landing-effects .occasion.is-current .occasion-number { color: var(--forest); transform: scale(1.5); }
+@media (min-width: 1051px) {
+  .landing-effects .occasion-visual { position: sticky; }
+  .landing-effects .occasion-counter { display: block; position: absolute; top: 18px; right: 22px; font: 400 64px/1 var(--font-display); color: var(--paper); text-shadow: 0 2px 18px #30261e66; }
+}
+
+/* Scene 5: The Lexington — upstairs, into deep green and gold. */
+.landing-alcazar { --lexington: #27332b; background: var(--lexington); color: #f3ece1; }
+.landing-alcazar .section-title { color: #f3ece1; }
+.landing-alcazar .section-title::after { background: #c9a96b; }
+.landing-alcazar .alcazar-copy .eyebrow { color: #d6bb85; }
+.landing-alcazar .alcazar-copy > p:not(.eyebrow) { color: #e3dccf; }
+.landing-alcazar .btn-sage { background: #c9a96b; color: #1f2922; border-color: #c9a96b; }
+.landing-alcazar .btn-sage:hover { background: #f3ece1; border-color: #f3ece1; color: #1f2922; }
+.landing-alcazar .alcazar-visual img { border-radius: 50% 50% 0 0 / 34% 34% 0 0; box-shadow: 0 0 0 1px #c9a96b80, 0 0 0 10px var(--lexington), 0 0 0 11px #c9a96b4d; }
+.landing-effects .landing-alcazar .alcazar-visual { transform: translateY(calc((1 - var(--section-arrival, 1)) * 72px)) scale(calc(.84 + var(--section-arrival, 1) * .16)); transform-origin: 50% 100%; }
+
+/* Scene 6: services written onto the page, line by line. */
+.landing-effects .rentals-quiet li { translate: calc(var(--enter, 0) * 64px) 0; }
+
+/* Scene 7: the identity plates spread across the table and settle. */
+.brand-grid { position: relative; }
+.landing-page .brand-card figcaption { background: #eee4d7; }
+.landing-effects .brand-card { translate: calc(var(--scatter-x, 0px) * var(--scatter, 0)) calc(var(--scatter, 0) * 110px); rotate: calc(var(--scatter-r, 0deg) * var(--scatter, 0)); }
+
+/* Closing copy aligns with its heading; services read left to right. */
+.landing-planning .section-intro { margin-inline: 0; }
+.landing-rentals .section-head, .landing-rentals .services-about .section-intro { text-align: left; }
+
+/* Scene 8: the invitation is sealed. */
+.planning-seal { display: block; width: 52px; height: auto; margin-bottom: 20px; filter: sepia(.6) saturate(.6) brightness(.7); }
+.landing-effects .planning-seal { transform: scale(calc(2.2 - var(--stamp, 1) * 1.2)) rotate(calc((1 - var(--stamp, 1)) * -28deg)); transform-origin: 50% 60%; }
+
+@media (max-width: 650px) {
+  .album-prints { gap: 20px 12px; }
+  .album-print figcaption { font-size: 17px; padding-block: 12px 14px; }
+  .landing-effects .album-print { top: calc(50% + 40px); }
+  .landing-effects .album-print--wide { width: min(100%, (100svh - 250px) * 1.6); }
+  .landing-effects .album-count { top: 84px; font-size: 40px; }
+  .landing-effects .rentals-quiet li { translate: calc(var(--enter, 0) * 36px) 0; }
+  .landing-effects .brand-card { translate: calc(var(--scatter-x, 0px) * var(--scatter, 0)) calc(var(--scatter, 0) * 70px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .entrance-scroll .entrance-film, .entrance-scroll .entrance-shade, .landing-effects .landing-alcazar .alcazar-visual, .landing-effects .planning-seal, .landing-effects .history-year { transform: none; border-radius: 0; }
+  .landing-effects .rentals-quiet li, .landing-effects .brand-card { translate: none; rotate: none; }
+  .landing-effects .ink-word { opacity: 1; }
+}

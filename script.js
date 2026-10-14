@@ -719,6 +719,9 @@
       stage.style.setProperty('--phrase-travel', ((.5 - phraseProgress) * 72).toFixed(2) + 'px');
       stage.style.setProperty('--phrase-scale', (1.08 - phraseProgress * .16).toFixed(4));
       stage.style.setProperty('--title-travel', (Math.sin(desired * Math.PI) * 24).toFixed(2) + 'px');
+      // The approach ends as a doorway: the film settles into an arch.
+      const arch = Math.max(0, Math.min(1, (desired - .7) / .3));
+      stage.style.setProperty('--entrance-arch', (arch * arch * (3 - 2 * arch)).toFixed(4));
       active = self.isActive && !document.hidden && !document.querySelector('dialog[open]');
       if (!active) { finishPrime(); video.pause(); return; }
       if (desired > .001 && !started) { started = true; nextSource(); }
@@ -732,7 +735,7 @@
       video.removeAttribute('src'); video.load(); video.preload = 'none'; video.classList.remove('is-decoded');
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null; loadFailed = false; networkURL = null; nativeSource = false;
       sourceIndex = 0; primeAttempts = 0; started = false;
-      stage.style.removeProperty('--entrance-progress'); ['--phrase-travel', '--phrase-scale', '--title-travel'].forEach(name => stage.style.removeProperty(name)); delete stage.dataset.phase;
+      stage.style.removeProperty('--entrance-progress'); ['--phrase-travel', '--phrase-scale', '--title-travel', '--entrance-arch'].forEach(name => stage.style.removeProperty(name)); delete stage.dataset.phase;
     }
     if (window.gsap && window.ScrollTrigger && !saveData) {
       gsap.registerPlugin(ScrollTrigger);
@@ -778,7 +781,90 @@
         element.style.removeProperty('--light-x'); element.style.removeProperty('--light-y');
       });
     });
-    let frame = 0, observer, reveal;
+    let frame = 0, observer, reveal, sceneObserver;
+    const clamp = value => Math.max(0, Math.min(1, value));
+    const ease = value => value * value * (3 - 2 * value);
+    // Scroll-scrubbed scenes. Every one settles on the complete, readable
+    // layout and is removed for reduced motion, SaveData or missing observers.
+    const inked = [...document.querySelectorAll('[data-ink]')];
+    function inkWords(paragraph) {
+      const text = paragraph.textContent;
+      let index = 0;
+      paragraph.textContent = '';
+      text.split(/(\s+)/).forEach(part => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { paragraph.append(part); return; }
+        const word = document.createElement('span');
+        word.className = 'ink-word'; word.style.setProperty('--i', String(index++)); word.textContent = part;
+        paragraph.append(word);
+      });
+      paragraph.style.setProperty('--ink-count', String(index));
+    }
+    function plainWords(paragraph) {
+      if (paragraph.querySelector('.ink-word')) paragraph.textContent = paragraph.textContent;
+      paragraph.style.removeProperty('--ink'); paragraph.style.removeProperty('--ink-count');
+    }
+    const album = document.querySelector('[data-scene="album"]');
+    const prints = album ? [...album.querySelectorAll('.album-print')] : [];
+    const albumIndex = album?.querySelector('.album-index');
+    const occasions = [...document.querySelectorAll('.occasion')];
+    const occasionCounter = document.querySelector('.occasion-counter');
+    const services = [...document.querySelectorAll('.rentals-quiet li')];
+    const cards = [...document.querySelectorAll('.brand-card')];
+    const seal = document.querySelector('.planning-seal');
+    const scenes = [
+      ...inked.map(element => ({ element, update() {
+        const box = element.getBoundingClientRect();
+        const progress = clamp((innerHeight * .92 - box.top - box.height * .5) / (innerHeight * .42));
+        element.style.setProperty('--ink', (progress * (Number(element.style.getPropertyValue('--ink-count')) + 1)).toFixed(3));
+      } })),
+      album && { element: album, update() {
+        const box = album.getBoundingClientRect();
+        const travel = clamp(-box.top / Math.max(1, box.height - innerHeight)) * (prints.length - 1);
+        prints.forEach((print, index) => {
+          // Each print travels for 70% of its interval, then rests to be seen.
+          print.style.setProperty('--arrive', index ? ease(clamp((travel - index + 1) / .7)).toFixed(4) : '1');
+          print.style.setProperty('--covered', ease(clamp((travel - index) / .7)).toFixed(4));
+        });
+        if (albumIndex) albumIndex.textContent = String(prints.filter((print, index) => !index || travel - index + 1 > .35).length).padStart(2, '0');
+      } },
+      occasions.length && { element: document.querySelector('.events-list'), update() {
+        let current = 0, distance = Infinity;
+        occasions.forEach((occasion, index) => {
+          const box = occasion.getBoundingClientRect(), gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
+          if (gap < distance) { distance = gap; current = index; }
+        });
+        occasions.forEach((occasion, index) => occasion.classList.toggle('is-current', index === current));
+        if (occasionCounter) occasionCounter.textContent = String(current + 1).padStart(2, '0');
+      } },
+      services.length && { element: document.querySelector('.rentals-quiet'), update() {
+        services.forEach(item => {
+          const box = item.getBoundingClientRect();
+          item.style.setProperty('--enter', (1 - ease(clamp((innerHeight * 1.02 - box.top) / (innerHeight * .32)))).toFixed(4));
+        });
+      } },
+      cards.length && { element: document.querySelector('.brand-grid'), update() {
+        cards.forEach(card => {
+          const box = card.getBoundingClientRect();
+          card.style.setProperty('--scatter', (1 - ease(clamp((innerHeight * 1.05 - box.top) / (innerHeight * .6)))).toFixed(4));
+        });
+      } },
+      seal && { element: seal, update() {
+        const box = seal.getBoundingClientRect();
+        seal.style.setProperty('--stamp', ease(clamp((innerHeight * .98 - box.top) / (innerHeight * .38))).toFixed(4));
+      } },
+    ].filter(scene => scene && scene.element);
+    const activeScenes = new Set();
+    function measureScatter() {
+      const grid = document.querySelector('.brand-grid');
+      if (!grid) return;
+      cards.forEach((card, index) => {
+        // Gather the plates towards the middle of the table before they settle.
+        // The grid is positioned, so offsets ignore the scatter transforms.
+        card.style.setProperty('--scatter-x', ((grid.offsetWidth / 2 - card.offsetLeft - card.offsetWidth / 2) * .45).toFixed(1) + 'px');
+        card.style.setProperty('--scatter-r', (index % 2 ? 7 : -6) + (index % 3) * 1.5 + 'deg');
+      });
+    }
     const progress = document.createElement('span');
     progress.className = 'landing-reading-progress'; progress.setAttribute('aria-hidden', 'true');
     document.querySelector('#header')?.append(progress);
@@ -793,6 +879,7 @@
         photo.style.setProperty('--photo-drift', (position * Math.min(38, image.offsetHeight * .04)).toFixed(2) + 'px');
         photo.style.setProperty('--photo-scale', (1.09 + Math.abs(position) * .04).toFixed(4));
       }
+      for (const scene of activeScenes) scene.update();
       for (const section of sections) {
         const box = section.getBoundingClientRect();
         if (box.bottom < 0 || box.top > innerHeight) continue;
@@ -802,7 +889,14 @@
     }
     function schedule() { if (!frame) frame = requestAnimationFrame(draw); }
     function configure() {
-      observer?.disconnect(); reveal?.disconnect(); visible.clear();
+      observer?.disconnect(); reveal?.disconnect(); sceneObserver?.disconnect(); visible.clear(); activeScenes.clear();
+      inked.forEach(plainWords);
+      prints.forEach(print => { print.style.removeProperty('--arrive'); print.style.removeProperty('--covered'); });
+      occasions.forEach(occasion => occasion.classList.remove('is-current'));
+      services.forEach(item => item.style.removeProperty('--enter'));
+      cards.forEach(card => ['--scatter', '--scatter-x', '--scatter-r'].forEach(name => card.style.removeProperty(name)));
+      seal?.style.removeProperty('--stamp');
+      if (albumIndex) albumIndex.textContent = '01';
       if (frame) cancelAnimationFrame(frame); frame = 0;
       document.body.classList.remove('landing-effects');
       photos.forEach(photo => { photo.style.removeProperty('--photo-drift'); photo.style.removeProperty('--photo-scale'); });
@@ -822,8 +916,24 @@
         if (entry.isIntersecting) { entry.target.classList.add('has-arrived'); reveal.unobserve(entry.target); }
       }), { threshold: .08, rootMargin: '30px' });
       document.querySelectorAll('[data-landing-effect], .landing-section').forEach(element => reveal.observe(element));
+      inked.forEach(inkWords); measureScatter();
+      const byElement = new Map(scenes.map(scene => [scene.element, scene]));
+      sceneObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const scene = byElement.get(entry.target);
+          if (entry.isIntersecting) activeScenes.add(scene); else { activeScenes.delete(scene); scene.update(); }
+        });
+        schedule();
+      }, { rootMargin: '25% 0px' });
+      scenes.forEach(scene => sceneObserver.observe(scene.element));
       schedule();
     }
+    // Translation replaces the inked paragraphs with plain text.
+    window.addEventListener('lajolla-language', () => {
+      if (!document.body.classList.contains('landing-effects')) return;
+      inked.forEach(inkWords); schedule();
+    });
+    window.addEventListener('resize', () => { if (document.body.classList.contains('landing-effects')) measureScatter(); }, { passive: true });
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule, { passive: true });
     document.addEventListener('visibilitychange', schedule);

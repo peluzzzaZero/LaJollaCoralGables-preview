@@ -3,6 +3,40 @@ import json
 from playwright.async_api import async_playwright
 from review import run, verify_flow
 
+async def album_at(page,fraction):
+ await page.evaluate('f=>{const a=document.querySelector(".venue-album");scrollTo(0,a.getBoundingClientRect().top+scrollY+(a.offsetHeight-innerHeight)*f)}',fraction)
+ await page.wait_for_timeout(250)
+ return await page.evaluate('()=>({stage:document.querySelector(".album-stage").getBoundingClientRect().top,arrive:[...document.querySelectorAll(".album-print")].map(e=>Number(e.style.getPropertyValue("--arrive"))),index:document.querySelector(".album-index").textContent})')
+
+async def verify_scenes(page,language):
+ # The four detail photographs arrive in order inside one sticky stage and reverse.
+ assert await page.locator('.album-stage').evaluate('e=>getComputedStyle(e).position')=='sticky'
+ start=await album_at(page,0);middle=await album_at(page,.5);end=await album_at(page,1);back=await album_at(page,.5)
+ assert start['arrive']==[1,0,0,0] and start['index']=='01',start
+ assert abs(middle['stage'])<1 and 0<sum(middle['arrive'])<4,middle
+ assert end['arrive']==[1,1,1,1] and end['index']=='04',end
+ assert back==middle,(back,middle)
+ for print_ in await page.locator('.album-print').all():
+  assert (await print_.locator('figcaption').inner_text()).strip()
+ # Inked paragraphs keep their exact translated text and finish fully legible.
+ for paragraph in await page.locator('[data-ink]').all():
+  key=await paragraph.get_attribute('data-i18n')
+  assert await page.evaluate('document.documentElement.lang')==language
+  words=await paragraph.locator('.ink-word').all_inner_texts()
+  assert ' '.join(words)==' '.join((await paragraph.inner_text()).split()),key
+  assert await paragraph.locator('.ink-word').count()>3
+  await paragraph.evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY-innerHeight*.3)')
+  await page.wait_for_timeout(500)
+  assert await paragraph.locator('.ink-word').evaluate_all('w=>w.every(e=>getComputedStyle(e).opacity==="1")'),key
+ # Settled scenes return to the readable layout.
+ await page.locator('.brand-grid').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.5)')
+ await page.wait_for_timeout(300)
+ assert await page.locator('.brand-card').first.evaluate('e=>Number(e.style.getPropertyValue("--scatter"))')==0
+ await page.locator('.rentals-quiet').evaluate('e=>scrollTo(0,e.getBoundingClientRect().bottom+scrollY-innerHeight*.6)')
+ await page.wait_for_timeout(300)
+ assert await page.locator('.rentals-quiet li').evaluate_all('items=>items.every(e=>Number(e.style.getPropertyValue("--enter"))===0)')
+ assert await page.locator('.occasion.is-current').count()<=1
+
 async def main(base,output,args):
  output.mkdir(parents=True,exist_ok=True);rows=[]
  async with async_playwright() as p:
@@ -74,7 +108,8 @@ async def main(base,output,args):
      picture=await window.bounding_box();caption=await page.locator('.ballroom-photo figcaption').bounding_box()
      assert picture['y']+picture['height']<=caption['y'], 'Photo movement must not paint over its caption'
      assert await window.evaluate('e=>getComputedStyle(e).overflow') in ['clip','hidden']
-     assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.pin).length')==1,'Later posts must never be pinned'
+     assert await page.evaluate('ScrollTrigger.getAll().filter(t=>t.pin).length')==1,'Only the entrance film uses a GSAP pin'
+     await verify_scenes(page,language)
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
      await page.screenshot(path=str(output/f'depth-{engine.name}-{width}-{language}.png'))
      rows.append({'engine':engine.name,'width':width,'language':language,'arrival_layers':True,'photo_depth':True,'reading_flow':True})
@@ -90,6 +125,9 @@ async def main(base,output,args):
     await invitation.focus();await page.wait_for_timeout(500)
     assert await invitation.evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove focused booking lift'
 
+    assert await page.locator('.ink-word').count()==0,'Reduced motion must restore plain paragraphs'
+    assert await page.locator('.album-stage').evaluate('e=>getComputedStyle(e).position')!='sticky'
+    assert await page.locator('.album-print').evaluate_all('items=>items.every(e=>getComputedStyle(e).position==="static"&&getComputedStyle(e).transform==="none")')
     await verify_flow(page);assert not errors,errors;await page.close()
    await browser.close()
  (output/'results.json').write_text(json.dumps(rows,indent=2))
