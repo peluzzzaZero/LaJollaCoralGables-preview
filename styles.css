@@ -1990,11 +1990,11 @@ html { scrollbar-gutter: stable; }
 .landing-social .reviews-results { grid-template-columns: 1fr; }
 .landing-social .reviews-results:not(:empty) { margin-bottom: 24px; }
 .landing-social .review-invite { background: var(--paper); }
-.landing-social .social-links { margin-top: 48px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.landing-social .social-links { margin-top: 48px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .house-grid { position: relative; }
 @supports (overflow: clip) { .landing-effects .house-grid > li { translate: calc(var(--scatter-x, 0px) * var(--scatter, 0)) calc(var(--scatter, 0) * 90px); rotate: calc(var(--scatter-r, 0deg) * var(--scatter, 0)); } }
 .location-card { border-top: 0; padding-top: 0; }
-@media (max-width: 1050px) { .landing-social .social-links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .landing-social .social-links { grid-template-columns: 1fr; } }
 @media (max-width: 900px) {
   .landing-social .guest-voices { grid-template-columns: 1fr; margin-top: 48px; padding-top: 32px; }
   .landing-social .guest-reviews { grid-column: 1; grid-row: auto; }

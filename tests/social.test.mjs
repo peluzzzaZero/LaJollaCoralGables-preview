@@ -126,8 +126,9 @@ test("the location chapter has real links and no preloaded map", () => {
 test("no public page, script or published file name says ballroom", async () => {
   const { readdirSync, statSync } = await import("node:fs");
   for (const file of ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "styles.css", "sitemap.xml"]) {
-    const text = readFileSync(new URL(`../${file}`, import.meta.url), "utf8").replaceAll("facebook.com/lajollaballroom", "");
+    const text = readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
     assert.doesNotMatch(text, /ballroom/i, file);
+    assert.doesNotMatch(text, /facebook\.com\/(?!privacy)/i, `${file}: no Facebook account is linked until the owner confirms it`);
   }
   const walk = (dir) => readdirSync(new URL(`../${dir}`, import.meta.url)).flatMap((name) =>
     statSync(new URL(`../${dir}/${name}`, import.meta.url)).isDirectory() ? walk(`${dir}/${name}`) : [`${dir}/${name}`]);

@@ -27,12 +27,7 @@ async def main(base, output, webkit=False):
                         requests.append('google')
                         if mode=='failure':await route.abort()
                         else:await route.fulfill(content_type='application/javascript',body=SDK.replace('rating:5','rating:1') if mode=='empty' else SDK)
-                    async def facebook(route):
-                        requests.append('facebook')
-                        assert 'tabs=timeline' in route.request.url and 'lajollaballroom' in route.request.url
-                        await route.fulfill(content_type='text/html',body='<html><body>FAKE FACEBOOK TIMELINE</body></html>')
                     await page.route('https://maps.googleapis.com/**',google)
-                    await page.route('https://www.facebook.com/plugins/**',facebook)
                     async def googlemap(route):
                         requests.append('map')
                         assert 'output=embed' in route.request.url and 'Alcazar' in route.request.url
@@ -77,9 +72,9 @@ async def main(base, output, webkit=False):
                         assert await page.locator('main a[href^="'+href+'"]').count()==1,href
                     await page.screenshot(path=str(output/f'reviews-{engine.name}-{width}-{mode}.png'))
                     await position(page,'social')
-                    for url in ['https://www.instagram.com/lajollacoralgables/','https://www.tiktok.com/@lajollacoralgables','https://www.pinterest.com/LaJollaCoralGables/','https://www.facebook.com/lajollaballroom']:
+                    for url in ['https://www.instagram.com/lajollacoralgables/','https://www.tiktok.com/@lajollacoralgables','https://www.pinterest.com/LaJollaCoralGables/']:
                         assert await page.locator('.social-links a[href="'+url+'"]').count()==1
-                    assert requests.count('facebook')==0,'The images-only landing must not embed additional media'
+                    assert await page.locator('a[href*="facebook.com"]').count()==0,'No Facebook link until the owner supplies the right account'
                     assert await page.locator('.house-stream iframe').count()==0
                     tiles=page.locator('.house-tile img');assert await tiles.count()==len(json.loads((Path(__file__).resolve().parents[2]/'assets/social/tiles.json').read_text()))
                     await page.locator('.house-stream').scroll_into_view_if_needed()

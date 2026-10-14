@@ -2,8 +2,8 @@
   'use strict';
   const placeId = 'ChIJWbeTzJu32YgRbGDUdwzI0W0';
   const copy = {
-    en: { loading: 'Loading guest reviews…', empty: 'Read guest experiences on Google Maps.', unavailable: 'Reviews are unavailable here at the moment. You can read them on Google Maps.', selected: 'Selected five-star reviews, in Google Maps relevance order.', source: 'View original review', facebook: 'Latest posts from La Jolla on Facebook', map: 'Map of La Jolla, 301 Alcazar Avenue, Coral Gables' },
-    es: { loading: 'Cargando reseñas…', empty: 'Lea las experiencias de nuestros invitados en Google Maps.', unavailable: 'Las reseñas no están disponibles aquí en este momento. Puede leerlas en Google Maps.', selected: 'Selección de reseñas de cinco estrellas, en el orden de relevancia de Google Maps.', source: 'Ver reseña original', facebook: 'Últimas publicaciones de La Jolla en Facebook', map: 'Mapa de La Jolla, 301 Alcazar Avenue, Coral Gables' }
+    en: { loading: 'Loading guest reviews…', empty: 'Read guest experiences on Google Maps.', unavailable: 'Reviews are unavailable here at the moment. You can read them on Google Maps.', selected: 'Selected five-star reviews, in Google Maps relevance order.', source: 'View original review', map: 'Map of La Jolla, 301 Alcazar Avenue, Coral Gables' },
+    es: { loading: 'Cargando reseñas…', empty: 'Lea las experiencias de nuestros invitados en Google Maps.', unavailable: 'Las reseñas no están disponibles aquí en este momento. Puede leerlas en Google Maps.', selected: 'Selección de reseñas de cinco estrellas, en el orden de relevancia de Google Maps.', source: 'Ver reseña original', map: 'Mapa de La Jolla, 301 Alcazar Avenue, Coral Gables' }
   };
   const language = () => document.documentElement.lang === 'es' ? 'es' : 'en';
   const messages = () => copy[language()];
