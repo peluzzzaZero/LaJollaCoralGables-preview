@@ -29,7 +29,9 @@ async def verify_scenes(page,language):
  seen=set();steps=[];box=await page.locator('.events-list').bounding_box()
  top=await page.evaluate('document.querySelector(".events-list").getBoundingClientRect().top+scrollY')
  for step in range(0,int(box['height'])+200,40):
-  await page.evaluate('y=>scrollTo(0,y)',top+step-page.viewport_size['height']*.5);await page.wait_for_timeout(30)
+  # Wait for two rendered frames, not a fixed delay: WebKit can defer rendering
+  # while the section's images decode, and the scene updates in the frame.
+  await page.evaluate('y=>new Promise(done=>{scrollTo(0,y);requestAnimationFrame(()=>requestAnimationFrame(done))})',top+step-page.viewport_size['height']*.5)
   current=await page.locator('.occasion').evaluate_all('items=>items.map((e,i)=>e.classList.contains("is-current")?i:-1).filter(i=>i>=0)')
   seen.update(current);steps.append(current)
  assert seen==set(range(10)),(page.context.browser.browser_type.name,page.viewport_size,seen,steps)

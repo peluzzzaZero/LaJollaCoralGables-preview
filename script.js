@@ -982,20 +982,19 @@
     // A collapsing toolbar can cross the height threshold mid-scroll; only a
     // width change (rotation or window resize) re-decides the staged album.
     // WebKit can fire resize before the media query reflects the new viewport,
-    // so the width that decided the album is only replaced by configure() and the
-    // decision is checked again on the next frame.
-    let scatterWidth = 0;
-    function restage() {
+    // so the decision is checked again on the next frame before the new width
+    // is accepted.
+    function restage(settled) {
       if (!document.body.classList.contains('landing-effects') || innerWidth === configuredWidth) return;
       if (staging() !== album?.classList.contains('is-staged')) configure();
-      else if (innerWidth !== scatterWidth) { scatterWidth = innerWidth; measureScatter(); }
+      else if (settled) { configuredWidth = innerWidth; measureScatter(); }
     }
-    window.addEventListener('resize', () => { restage(); requestAnimationFrame(restage); }, { passive: true });
+    window.addEventListener('resize', () => { restage(false); requestAnimationFrame(() => restage(true)); }, { passive: true });
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule, { passive: true });
     document.addEventListener('visibilitychange', schedule);
     reduced.addEventListener('change', configure);
-    roomy.addEventListener('change', restage);
+    roomy.addEventListener('change', () => restage(true));
     configure();
   }
 
