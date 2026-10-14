@@ -84,6 +84,7 @@ jobs:
           python tests/browser/public-foundation.py --output review-artifacts/foundation
           python tests/browser/immersive.py --webkit --output review-artifacts/immersive
           python tests/browser/social.py --webkit --output review-artifacts/social
+          python tests/browser/venue-walk.py --webkit --output review-artifacts/venue-walk
       - name: Node visit route and calendar without real submissions
         run: |
           INQUIRY_ENABLED=false MAIL_SETUP_ENABLED=false PORT=13317 HOST=127.0.0.1 npm start > /tmp/lajolla-node-preview.log 2>&1 &

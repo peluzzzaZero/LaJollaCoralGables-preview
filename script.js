@@ -822,33 +822,71 @@
   // The real walk through La Jolla's front doors, drawn by the scroll inside
   // "An invitation inside". The frame opens from the arch the opening film
   // ends on. Native sticky staging only; the opening film keeps the one pin.
-  // Reduced motion, data saving and short screens keep the approved photograph.
+  // Reduced motion, data saving and short screens keep the approved photograph,
+  // which also stays visible until the film has decoded a frame.
   function initVenueWalk() {
     const walk = document.querySelector('[data-venue-walk]');
     const video = walk?.querySelector('.venue-walk-film');
     if (!video || !('IntersectionObserver' in window) || navigator.connection?.saveData) return;
     const figure = walk.querySelector('.hall-photo');
+    const parallax = figure.getAttribute('data-landing-parallax');
     const notes = [...walk.querySelectorAll('[data-walk-from]')].map(el => ({ el, from: +el.dataset.walkFrom, to: +el.dataset.walkTo }));
     const motion = matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)');
+    const wide = matchMedia('(min-width: 651px)');
     const formats = ['mp4', 'webm'].filter(format => video.canPlayType('video/' + format));
-    let enabled = false, near = false, requested = false, sourceIndex = 0, objectURL = null, controller = null, frame = 0, progress = 0;
-    const name = () => innerWidth > 650 ? 'venue-walk' : 'venue-walk-mobile';
+    let enabled = false, near = false, requested = false, sourceIndex = 0, objectURL = null, controller = null;
+    let networkURL = '', nativeSource = false, priming = false, primeTimer = 0, primeAttempts = 0, frame = 0, progress = 0, top = 0;
+    const name = () => wide.matches ? 'venue-walk' : 'venue-walk-mobile';
+    function reset() {
+      controller?.abort(); controller = null; requested = false; sourceIndex = 0; nativeSource = false;
+      clearTimeout(primeTimer); priming = false; primeAttempts = 0;
+      video.pause(); video.removeAttribute('src'); video.load(); video.classList.remove('is-decoded');
+      if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
+    }
+    function giveUp() {
+      // No source decoded: return to the approved photograph and its layout.
+      reset(); sourceIndex = formats.length; enabled = false;
+      walk.classList.remove('is-walking'); clean();
+    }
     function load() {
-      if (requested || !enabled || sourceIndex >= formats.length) return;
-      requested = true;
+      if (requested || !enabled) return;
+      if (sourceIndex >= formats.length) { giveUp(); return; }
+      requested = true; nativeSource = false; primeAttempts = 0;
       const format = formats[sourceIndex++];
+      networkURL = 'assets/venue/cinematic/' + name() + '.' + format;
       controller = new AbortController();
+      const { signal } = controller;
       // Complete the small clip before seeking, as the opening film does.
-      fetch('assets/venue/cinematic/' + name() + '.' + format, { signal: controller.signal })
+      fetch(networkURL, { signal })
         .then(response => { if (!response.ok) throw new Error('Walk unavailable'); return response.blob(); })
-        .then(blob => { objectURL = URL.createObjectURL(blob); video.src = objectURL; video.preload = 'auto'; video.load(); })
-        .catch(() => { if (!controller.signal.aborted) { requested = false; load(); } });
+        .then(blob => { if (signal.aborted) return; objectURL = URL.createObjectURL(blob); video.src = objectURL; video.preload = 'auto'; video.load(); prime(); })
+        .catch(() => { if (!signal.aborted) { requested = false; load(); } });
+    }
+    function useNativeSource() {
+      // WebKit can reject a blob; try its own loader once for this format.
+      if (!enabled || !objectURL || nativeSource) return false;
+      const previous = objectURL; objectURL = null; nativeSource = true; primeAttempts = 0;
+      video.src = networkURL; video.load(); URL.revokeObjectURL(previous); prime();
+      return true;
+    }
+    function finishPrime() {
+      if (!priming) return;
+      priming = false; clearTimeout(primeTimer); video.pause(); seek();
+      if (video.readyState === 0) useNativeSource();
+    }
+    function prime() {
+      // A muted play/pause lets iOS decode and paint seeked frames.
+      if (!enabled || !video.hasAttribute('src') || priming || primeAttempts >= 3 || video.readyState >= 2) return;
+      priming = true; primeAttempts++;
+      primeTimer = setTimeout(finishPrime, 1500);
+      try { video.play()?.then(finishPrime, finishPrime); } catch (_) { finishPrime(); }
     }
     function seek() {
       frame = 0;
       if (!enabled) return;
       const box = walk.getBoundingClientRect();
-      const span = box.height - figure.offsetHeight - parseFloat(getComputedStyle(figure).top || 0);
+      if (box.bottom < -innerHeight || box.top > innerHeight * 2) return;
+      const span = box.height - figure.offsetHeight - top;
       progress = Math.max(0, Math.min(1, -box.top / Math.max(1, span)));
       walk.style.setProperty('--walk', progress.toFixed(4));
       // The doors read as an arch until the cut, then the hall opens.
@@ -860,41 +898,50 @@
         const t = (progress - note.from) / (note.to - note.from);
         note.el.style.setProperty('--note', Math.max(-.2, Math.min(1.2, t)).toFixed(4));
       });
-      if (video.readyState >= 1 && Number.isFinite(video.duration) && !video.seeking) {
+      if (!priming && video.readyState >= 1 && Number.isFinite(video.duration) && !video.seeking) {
         const time = Math.min(video.duration - .04, progress * video.duration);
-        if (Math.abs(video.currentTime - time) > .015) { try { video.currentTime = time; } catch (_) { /* Keep the poster. */ } }
+        if (Math.abs(video.currentTime - time) > .015) { try { video.currentTime = time; } catch (_) { /* Keep the photograph. */ } }
       }
     }
+    const measure = () => { top = parseFloat(getComputedStyle(figure).top) || 0; };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(seek); };
     video.addEventListener('loadeddata', () => { video.classList.add('is-decoded'); seek(); });
-    video.addEventListener('seeked', () => { if (video.readyState >= 2) seek(); });
-    video.addEventListener('error', () => { if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null; requested = false; load(); });
+    video.addEventListener('seeked', () => { if (video.readyState >= 2) { video.classList.add('is-decoded'); seek(); } });
+    video.addEventListener('error', () => {
+      if (!video.hasAttribute('src') || useNativeSource()) return;
+      if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
+      video.classList.remove('is-decoded'); requested = false; load();
+    });
     new IntersectionObserver(entries => {
       near = entries.some(entry => entry.isIntersecting);
       if (near) load();
-    }, { rootMargin: '100% 0px' }).observe(walk);
+    }, { rootMargin: '200% 0px' }).observe(walk);
+    function clean() {
+      if (parallax !== null) figure.setAttribute('data-landing-parallax', parallax);
+      ['--walk', '--walk-arch'].forEach(prop => walk.style.removeProperty(prop)); delete walk.dataset.step;
+      notes.forEach(note => note.el.style.removeProperty('--note'));
+    }
     function configure() {
-      const want = motion.matches;
+      const want = motion.matches && sourceIndex < formats.length + (requested ? 1 : 0);
       if (want === enabled) return;
       enabled = want;
       walk.classList.toggle('is-walking', enabled);
       if (enabled) {
         figure.removeAttribute('data-landing-parallax');
-        video.poster = 'assets/venue/cinematic/' + name() + '-poster.webp';
+        measure();
         if (near) load();
         seek();
-      } else {
-        controller?.abort(); requested = false; sourceIndex = 0;
-        video.removeAttribute('src'); video.removeAttribute('poster'); video.load(); video.classList.remove('is-decoded');
-        if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
-        ['--walk', '--walk-arch'].forEach(prop => walk.style.removeProperty(prop)); delete walk.dataset.step;
-        notes.forEach(note => note.el.style.removeProperty('--note'));
-      }
+      } else { reset(); clean(); }
     }
     configure();
     motion.addEventListener?.('change', configure);
+    // Switching between the square phone clip and the wide clip reloads it.
+    wide.addEventListener?.('change', () => { if (!enabled) return; reset(); measure(); if (near) load(); });
+    window.addEventListener('pointerdown', prime, { passive: true });
+    window.addEventListener('touchstart', prime, { passive: true });
     addEventListener('scroll', schedule, { passive: true });
-    addEventListener('resize', schedule, { passive: true });
+    addEventListener('resize', () => { measure(); schedule(); }, { passive: true });
+    window.__ljVenueWalk = { video, get progress() { return progress; } };
   }
 
   function initLandingMotion() {

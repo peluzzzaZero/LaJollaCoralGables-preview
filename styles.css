@@ -2089,7 +2089,9 @@ html { scrollbar-gutter: stable; }
 .venue-walk.is-walking .hall-photo { position: sticky; top: var(--header-h); height: calc(100svh - var(--header-h)); margin: 0; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
 .venue-walk.is-walking .photo-window { position: relative; width: min(100%, calc((100svh - 230px) * 16 / 9)); aspect-ratio: 16 / 9; margin: 0 auto; overflow: hidden; transform-origin: 50% 100%; transform: scale(calc(1 - var(--walk-arch, 1) * .16)); border-radius: calc(var(--walk-arch, 1) * 50vmin) calc(var(--walk-arch, 1) * 50vmin) 2px 2px / calc(var(--walk-arch, 1) * 30vmin) calc(var(--walk-arch, 1) * 30vmin) 2px 2px; box-shadow: 0 30px 60px -30px #61493459; }
 .venue-walk.is-walking .photo-window > img { width: 100%; height: 100%; object-fit: cover; }
-.venue-walk.is-walking .venue-walk-film { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: transparent; }
+.venue-walk.is-walking .venue-walk-film { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: transparent; visibility: hidden; }
+/* The approved photograph stays until the film has painted a frame. */
+.venue-walk.is-walking .venue-walk-film.is-decoded { visibility: visible; }
 /* Each beat enters on its own: the greeting rises off the doors as they open,
    the steps settle in, and the caption arrives with the hall. */
 .venue-walk-welcome { display: none; }

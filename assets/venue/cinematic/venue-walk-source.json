@@ -1,0 +1,88 @@
+{
+  "source": "LA Jolla.mov",
+  "source_sha256": "26dc0219ecc5cc8dc5d9f1ea022639bffcfb5216939171730d6d0d1e3e4a18e6",
+  "source_bytes": 152917151,
+  "source_dimensions": [
+    3840,
+    2160
+  ],
+  "source_frame_rate": "60/1",
+  "source_duration_seconds": 20.5,
+  "provenance": "Owner's own film of the venue entrance, delivered in the project chat on 14 October 2026. Real recorded frames only: nothing generated, painted or retouched.",
+  "cut": {
+    "doors_seconds": [
+      0.3,
+      2.033
+    ],
+    "hall_seconds": [
+      2.05,
+      7.65
+    ],
+    "dissolve_seconds": 0.4
+  },
+  "encoding": {
+    "frame_rate": 30,
+    "mp4": "H.264 yuv420p, GOP 6 (-g 6 -keyint_min 6 -sc_threshold 0 -bf 0), faststart, no audio",
+    "webm": "VP9, GOP 12, no audio",
+    "mobile": "720x720 centre crop of the same frames"
+  },
+  "delivery": "Scroll-drawn (never played) inside a native sticky frame in 'An invitation inside'; fetched only near the section; the hall photograph remains until a frame decodes.",
+  "assets": {
+    "venue-walk.mp4": {
+      "bytes": 2046403,
+      "sha256": "d36fe1acda406b4db3a16382f356236bc65ae21382a23936b242dd883ce3b91d",
+      "codec": "h264",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "frame_rate": "30/1",
+      "duration_seconds": 6.933,
+      "streams": [
+        "video"
+      ]
+    },
+    "venue-walk.webm": {
+      "bytes": 2962246,
+      "sha256": "7cecc675f86cfecf511edfe3ab3b0f5aaa317b35ccb0765559862ca8c7d0c46d",
+      "codec": "vp9",
+      "dimensions": [
+        1280,
+        720
+      ],
+      "frame_rate": "30/1",
+      "duration_seconds": 6.933,
+      "streams": [
+        "video"
+      ]
+    },
+    "venue-walk-mobile.mp4": {
+      "bytes": 1094596,
+      "sha256": "42d7ae3b4e21dabbb8a24bb14c18d198ed3a517813cb6db4ba00c114984ef063",
+      "codec": "h264",
+      "dimensions": [
+        720,
+        720
+      ],
+      "frame_rate": "30/1",
+      "duration_seconds": 6.933,
+      "streams": [
+        "video"
+      ]
+    },
+    "venue-walk-mobile.webm": {
+      "bytes": 1838449,
+      "sha256": "eaf224c06d2bbda0ee5900499759f7ecffa42d1f1e4e645c19588c00b589c1f1",
+      "codec": "vp9",
+      "dimensions": [
+        720,
+        720
+      ],
+      "frame_rate": "30/1",
+      "duration_seconds": 6.933,
+      "streams": [
+        "video"
+      ]
+    }
+  }
+}
