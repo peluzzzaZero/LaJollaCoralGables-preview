@@ -71,8 +71,11 @@
   function initMap(container) {
     const button = container.querySelector('.location-map-load');
     if (!button) return;
-    button.addEventListener('click', function (event) {
-      // Without this script the link simply opens Google Maps in a new tab.
+    button.addEventListener('click', function open(event) {
+      // Without this script the link simply opens Google Maps in a new tab;
+      // modified clicks keep that behavior.
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      button.removeEventListener('click', open);
       event.preventDefault();
       const frame = document.createElement('iframe');
       const url = new URL('https://www.google.com/maps');
@@ -83,11 +86,11 @@
         if (url.searchParams.get('hl') === language()) return;
         url.searchParams.set('hl', language()); frame.src = url.href;
       };
-      show(); frame.loading = 'lazy';
+      frame.loading = 'lazy'; show();
       frame.referrerPolicy = 'strict-origin-when-cross-origin'; frame.allowFullscreen = true;
       container.append(frame); container.classList.add('is-open'); frame.focus();
       window.addEventListener('lajolla-language', show);
-    }, { once: true });
+    });
   }
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('[data-location-map]').forEach(initMap);
