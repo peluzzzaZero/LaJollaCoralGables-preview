@@ -162,3 +162,7 @@ The owner reported from his phone that the location map showed the whole world, 
 ## v1.23.0 — your tour
 
 The owner shared the client's brochure; the goal of the site is the tour. Bring the brochure's look (sage lockups, flourish, paper card) into a tour invitation after the services. Never its prices, packages, inclusions, capacity or partners; those are handled separately. Next: photographs for the chapter once the owner confirms the brochure's or supplies the house's.
+
+## v1.24.0 — the team, in person
+
+The owner sent portraits of Patricia Mir and Julie Arias. Replace the team monograms with circular, face-centred, lightweight portraits with translated alt text; keep names, roles and order. Next: photographs of the house for the tour chapter.

@@ -1,0 +1,19 @@
+{
+  "source": "Two portrait photographs sent by the owner (Dan) in the project thread on 2026-10-14 for the team section: the first of Patricia Mir, the second of Julie Arias, the other person named in that section.",
+  "assets": {
+    "julie-arias.webp": {
+      "original": "foto-2.jpg, 1086x1448",
+      "treatment": "square crop (73,120)-(1013,1060) centred on the face, excluding the jacket's lapel logo; 480x480 WebP q78, shown as a circle by CSS",
+      "sha256": "0c3052ea642d8a02d5761a4d1d6edd1de51b860284e636c3577f0898dffc58c5"
+    },
+    "patricia-mir.webp": {
+      "original": "foto-1-patricia.jpg, 2268x3024",
+      "treatment": "square crop (555,275)-(1705,1425) centred on the face; 480x480 WebP q78, shown as a circle by CSS",
+      "sha256": "66cde05c65fb3c8db3d1b6c542d74fd6365d8f9d669275d46d50d95fa9e38214"
+    }
+  },
+  "approvedBy": "Dan, site owner, in the project thread",
+  "approvedOn": "2026-10-14",
+  "approvalQuote": "La primera es patricia y la seguda es la otra... actualiza la parte do de esta el sitio que pone sus nombres y actualiza sus fotos como un recuadro circular",
+  "rights": "Supplied by the owner for the venue's team section; originals are not committed"
+}

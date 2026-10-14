@@ -36,8 +36,29 @@ test("team keeps Julie and Patricia with their roles in order", () => {
   assert.ok(julieRole > julie, "Executive Director");
   assert.ok(patricia > julieRole, "Patricia Mir");
   assert.ok(patriciaRole > patricia, "Managing Director");
-  assert.match(section, /<span>JA<\/span>/);
-  assert.match(section, /<span>PM<\/span>/);
+});
+
+test("team shows Julie's and Patricia's portraits as round photographs", () => {
+  const section = teamSection();
+  const julie = section.indexOf('src="assets/team/julie-arias.webp"');
+  const patricia = section.indexOf('src="assets/team/patricia-mir.webp"');
+  assert.ok(julie !== -1 && patricia > julie, "Julie's portrait, then Patricia's");
+  assert.ok(julie < section.indexOf("Julie Arias</h3>") && patricia < section.indexOf("Patricia Mir</h3>"), "each portrait above its name");
+  assert.ok(patricia > section.indexOf("Julie Arias</h3>"), "Patricia's portrait in her own card");
+  assert.match(section, /alt="Portrait of Julie Arias"/);
+  assert.match(section, /alt="Portrait of Patricia Mir"/);
+  assert.equal(/monogram|ballroom/i.test(section), false);
+  assert.match(js, /"team\.julie\.photo": "Retrato de Julie Arias"/);
+  assert.match(js, /"team\.pat\.photo": "Retrato de Patricia Mir"/);
+  const rule = css.match(/\.team-photo\s*\{([^}]*)\}/);
+  assert.ok(rule, "portrait rule");
+  assert.match(rule[1], /border-radius:\s*50%/);
+  assert.match(rule[1], /object-fit:\s*cover/);
+  for (const name of ["julie-arias", "patricia-mir"]) {
+    const bytes = readFileSync(new URL(`../assets/team/${name}.webp`, import.meta.url));
+    assert.equal(bytes.subarray(8, 12).toString(), "WEBP");
+    assert.ok(bytes.length < 60_000, `${name} stays light`);
+  }
 });
 
 test("team has exactly two cards and no public price", () => {
