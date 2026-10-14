@@ -57,7 +57,8 @@ test("the house stream shows the recorded tiles.json photos, each opening La Jol
     assert.ok(entry.ownerApproval?.trim(), `${src} records the owner approval`);
     assert.equal(entry.ownerApproval, tileList[index].ownerApproval.trim(), "tiles.json and source.json agree");
     assert.equal(sha256(src), entry.sha256, src);
-    assert.equal(sha256(entry.source), entry.sourceSha256, entry.source);
+    if (entry.source.startsWith("assets/")) assert.equal(sha256(entry.source), entry.sourceSha256, entry.source);
+    else assert.match(entry.sourceSha256, /^[0-9a-f]{64}$/, "git-ignored owner original keeps its recorded hash");
     assert.match(entry.source, /^(assets\/(venue|brand)|media\/instagram)\//);
     assert.deepEqual(webpSize(src), [640, 800], src);
     assert.match(tag, /alt="" width="640" height="800" loading="lazy"/);

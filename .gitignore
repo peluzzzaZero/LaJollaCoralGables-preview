@@ -14,3 +14,6 @@ npm-debug.log*
 
 # Generated public-only Pages package.
 dist/
+
+# Owner originals for the house mosaic; only the cropped tiles are committed.
+media/

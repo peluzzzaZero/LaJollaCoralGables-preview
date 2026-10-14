@@ -2,8 +2,8 @@
 
 Edit tiles.json (order, source image, link, owner approval and, for a post
 link, the owner's post confirmation and its EN/ES label). Keep owner originals
-in media/instagram/: the website never serves them, but they are committed to the
-repository, so they must carry no location data, then run `python scripts/social-tiles.py`. It crops new
+in media/instagram/, which git ignores: only the cropped tiles, written without
+metadata, are committed, then run `python scripts/social-tiles.py`. It crops new
 or changed sources to 4:5 WebP at 640 and 320 px, refreshes
 assets/social/source.json, rewrites the mosaic list in index.html and the post
 labels in script.js. `--check` changes nothing and fails when a file is out of
@@ -27,9 +27,9 @@ PROFILE = 'https://www.instagram.com/lajollacoralgables/'
 # Post URLs carry no account name: the owner confirms in `ownerApproval` that
 # each post was published by La Jolla's own account.
 POSTS = [re.compile(p) for p in (
-    r'https://www\.instagram\.com/(p|reel)/[A-Za-z0-9_-]{5,40}/$',
-    r'https://www\.tiktok\.com/@lajollacoralgables/video/[0-9]{8,25}$',
-    r'https://www\.pinterest\.com/pin/[0-9]{6,25}/$',
+    r'https://www\.instagram\.com/(p|reel)/[A-Za-z0-9_-]{5,40}/',
+    r'https://www\.tiktok\.com/@lajollacoralgables/video/[0-9]{8,25}',
+    r'https://www\.pinterest\.com/pin/[0-9]{6,25}/',
 )]
 LARGE = 'Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits'
 SMALL = '640x800 tile resized to 320x400, WebP quality 78'
@@ -47,15 +47,6 @@ def sha256(path):
     return sha256_bytes((ROOT / path).read_bytes())
 
 
-def has_location(path):
-    try:
-        from PIL import Image
-    except ImportError:
-        return False
-    with Image.open(path) as image:
-        return bool(image.getexif().get_ifd(0x8825))
-
-
 def load_tiles():
     tiles = json.loads(TILES.read_text(encoding='utf-8'))
     if len(tiles) not in (6, 12):
@@ -69,17 +60,17 @@ def load_tiles():
             if file in files:
                 sys.exit(f'{name}: {file} would overwrite another tile')
             files.add(file)
-        # media/ is not served by the website, but it is in the repository.
-        if not re.fullmatch(r'(assets/(venue|brand)|media/instagram)/[A-Za-z0-9._/-]+', source) or '..' in source \
-                or not (ROOT / source).is_file():
-            sys.exit(f'{name}: source must be an existing file in media/instagram, assets/venue or assets/brand: {source!r}')
-        if source.startswith('media/') and has_location(ROOT / source):
-            sys.exit(f'{name}: {source} carries GPS location data; export it without location before committing')
+        # media/ is git-ignored: owner originals stay on the owner's machine, and
+        # only the cropped, metadata-free tiles are committed and published.
+        if not re.fullmatch(r'(assets/(venue|brand)|media/instagram)/[A-Za-z0-9._/-]+', source) or '..' in source:
+            sys.exit(f'{name}: source must be in media/instagram, assets/venue or assets/brand: {source!r}')
+        if source.startswith('assets/') and not (ROOT / source).is_file():
+            sys.exit(f'{name}: {source} does not exist')
         if not tile.get('ownerApproval', '').strip():
             sys.exit(f'{name}: record the owner approval for this image')
         if href == PROFILE:
             continue
-        if not any(post.match(href) for post in POSTS):
+        if not any(post.fullmatch(href) for post in POSTS):
             sys.exit(f'{name}: href must be the Instagram profile or a post permalink: {href!r}')
         if not tile.get('postApproval', '').strip():
             sys.exit(f'{name}: record the owner confirming La Jolla published this post and that the image is from it')
@@ -92,12 +83,15 @@ def load_tiles():
 def encode(tile, known):
     """Return (files to write, manifest entries); reuse the files when the source is unchanged."""
     large, small = f"assets/social/{tile['name']}.webp", f"assets/social/{tile['name']}-320.webp"
-    source_hash = sha256(tile['source'])
+    present = (ROOT / tile['source']).is_file()
+    source_hash = sha256(tile['source']) if present else known.get(large, {}).get('sourceSha256')
     if (known.get(large, {}).get('source') == tile['source'] and known[large]['sourceSha256'] == source_hash
             and (ROOT / large).is_file() and (ROOT / small).is_file()
             and known[large]['sha256'] == sha256(large) and known.get(small, {}).get('sha256') == sha256(small)):
         large_bytes, small_bytes, files = (ROOT / large).read_bytes(), (ROOT / small).read_bytes(), {}
     else:
+        if not present:
+            sys.exit(f"{tile['name']}: put {tile['source']} on this machine to build its tile")
         from PIL import Image, ImageOps
         image = ImageOps.exif_transpose(Image.open(ROOT / tile['source']))
         image.info.pop('exif', None)
@@ -120,9 +114,10 @@ def encode(tile, known):
         files = {ROOT / large: large_bytes, ROOT / small: small_bytes}
     approval = tile['ownerApproval'].strip()
     large_hash = sha256_bytes(large_bytes)
+    post = {} if tile['href'] == PROFILE else {'post': tile['href'], 'postApproval': tile['postApproval'].strip()}
     return files, [
         {'asset': large, 'sha256': large_hash, 'source': tile['source'], 'sourceSha256': source_hash,
-         'treatment': LARGE, 'ownerApproval': approval},
+         'treatment': LARGE, 'ownerApproval': approval, **post},
         {'asset': small, 'sha256': sha256_bytes(small_bytes), 'source': large, 'sourceSha256': large_hash,
          'treatment': SMALL, 'ownerApproval': approval},
     ]
@@ -138,7 +133,7 @@ def tile_html(tile):
                 f'tabindex="-1" aria-hidden="true">{image}</a></li>\n')
     key = f"social.tile.{tile['name']}"
     label = markup.escape(tile['label']['en'].strip(), quote=True)
-    return (f'<li><a class="house-tile" href="{tile["href"]}" target="_blank" rel="noopener noreferrer" '
+    return (f'<li><a class="house-tile" href="{markup.escape(tile["href"])}" target="_blank" rel="noopener noreferrer" '
             f'aria-label="{label}" data-i18n="{key}" data-i18n-attr="aria-label">{image}</a></li>\n')
 
 
