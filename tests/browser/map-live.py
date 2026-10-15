@@ -13,9 +13,12 @@ async def main():
     async with async_playwright() as p:
         browser=await p.chromium.launch()
         page=await browser.new_page(viewport={'width':640,'height':420},locale='en-US')
-        await page.goto(src,wait_until='load',timeout=45000)
-        await page.wait_for_timeout(6000)
-        text=await page.evaluate('document.body.innerText')
+        # The embed refuses to render as a top-level page, so host it the way the site does.
+        await page.set_content(f'<body style="margin:0"><iframe src="{src}" style="border:0;width:640px;height:420px"></iframe></body>')
+        await page.wait_for_timeout(8000)
+        frame=page.frames[1]
+        text=await frame.evaluate('document.body.innerText')
+        print('MAP-LIVE frame url:',frame.url)
         print('MAP-LIVE url:',src)
         print('MAP-LIVE resolved address:', 'Alcazar' in text)
         print('MAP-LIVE text:',' | '.join(t.strip() for t in text.splitlines() if t.strip())[:400])
