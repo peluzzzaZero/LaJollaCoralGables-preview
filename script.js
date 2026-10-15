@@ -919,7 +919,7 @@
       if (!priming && video.readyState >= 1 && Number.isFinite(video.duration) && !video.seeking) {
         const time = Math.min(video.duration - .04, progress * video.duration);
         // Compare with the last request: engines may report a snapped frame time.
-        if (Math.abs(target - time) > .015) { target = time; try { video.currentTime = time; } catch (_) { /* Keep the photograph. */ } }
+        if (Math.abs(target - time) > .015 || Math.abs(video.currentTime - time) > .05) { target = time; try { video.currentTime = time; } catch (_) { /* Keep the photograph. */ } }
       }
     }
     const measure = () => { top = parseFloat(getComputedStyle(figure).top) || 0; };
@@ -927,7 +927,8 @@
     const decoded = () => { clearTimeout(decodeTimer); video.classList.add('is-decoded'); finishPrime(); seek(); };
     video.addEventListener('loadedmetadata', () => { target = -1; });
     video.addEventListener('loadeddata', decoded);
-    video.addEventListener('playing', () => finishPrime());
+    // The film is never played: a late play() after a prime ends is paused.
+    video.addEventListener('playing', () => { if (priming) finishPrime(); else { video.pause(); schedule(); } });
     video.addEventListener('seeked', () => { if (video.readyState >= 2) decoded(); });
     video.addEventListener('error', () => {
       // Only an error of the current source counts.
