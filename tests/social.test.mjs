@@ -120,6 +120,12 @@ test("the social chapter replaces the brand wall: photographs, guest reviews, th
     assert.match(quote, /<span translate="no">[A-Z][a-z]+( and [A-Z][a-z]+( [A-Z][a-z]+)?)? [A-Z]\.<\/span>/);
   }
   assert.ok(section.indexOf("data-review-quotes") < section.indexOf('class="review-invite"'), "excerpts before the Google invitation");
+  // Every excerpt and reviewer must match the owner-approved provenance record.
+  const record = readFileSync(new URL("./REVIEW-EXCERPTS.md", import.meta.url), "utf8");
+  for (const quote of quotes) {
+    const text = quote.match(/<p>(“[^<]+”)<\/p>/)[1], name = quote.match(/<span translate="no">([^<]+)<\/span>/)[1];
+    assert.ok(record.includes(`| ${name} |`) && record.includes(`| ${text} |`), `${name} excerpt is recorded`);
+  }
 });
 
 test("the location chapter shows a lazy map pinned at the address, plus real links", () => {
