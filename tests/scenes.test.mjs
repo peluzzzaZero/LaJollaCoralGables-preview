@@ -20,8 +20,9 @@ test('the spaces album keeps the four approved detail photographs and their capt
   assert.match(album, /class="album-count" aria-hidden="true"/);
 });
 
-test('scenes use native sticky staging; the entrance film remains the only video and GSAP pin', () => {
-  assert.equal((html.match(/<video\b/g) || []).length, 1);
+test('scenes use native sticky staging; the entrance film remains the only GSAP pin', () => {
+  // Two films: the pinned opening approach and the unpinned venue doorway.
+  assert.equal((html.match(/<video\b/g) || []).length, 2);
   assert.equal((js.match(/pin:/g) || []).length, 1);
   assert.match(css, /\.landing-effects \.is-staged \.album-stage \{ position: sticky;/);
   assert.match(css, /\.landing-effects \.landing-section \{ overflow-x: clip; \}/);

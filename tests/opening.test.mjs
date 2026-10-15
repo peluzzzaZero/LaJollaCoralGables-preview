@@ -51,7 +51,7 @@ test("only the entrance film is pinned; later content is in document flow", () =
   assert.equal(html.includes('class="reel-controls"'), false);
   assert.equal((html.match(/class="entrance-stage"/g) || []).length, 1);
   assert.match(js, /pin: stage/);
-  assert.equal((html.match(/<video\b/g) || []).length, 1);
+  assert.equal((html.match(/<video\b/g) || []).length, 2);
   assert.equal(html.includes('data-scene-copy'), false);
   assert.equal(js.includes('cinematic-journey'), false);
 });

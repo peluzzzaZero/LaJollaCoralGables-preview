@@ -18,7 +18,7 @@ async def position(page,section,progress=0):
  await page.wait_for_timeout(150)
 async def verify_flow(page):
  assert await page.locator('main details, .chapter-more, .cinema-story, .brand-track').count()==0
- assert await page.locator('main video').count()==1
+ assert await page.locator('main video').count()==2 and await page.locator('main video.venue-walk-film').count()==1
  assert await page.locator('.occasion').count()==10
  assert await page.locator('.rentals-quiet li').count()==10
  assert await page.locator('.brand-card').count()==0
@@ -71,7 +71,7 @@ async def main(base,output):
     assert await opener.evaluate('e=>e===document.activeElement')
     rows.append({'width':width,'language':language,'complete_visible_flow':True,'calendar':True})
    assert not errors,errors
-   assert all('/cinematic/journey.' in u or '/cinematic/journey-hd.' in u for u in media),media
+   assert all(any(f'/cinematic/{n}.' in u for n in ('journey','journey-hd','venue-walk','venue-walk-mobile')) for u in media),media
    assert await page.locator('form').count()==0
    await page.close()
   await browser.close()
