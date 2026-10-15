@@ -2137,6 +2137,7 @@ html { scrollbar-gutter: stable; }
 .review-quote blockquote p { margin: 0; font: 400 clamp(18px, 1.5vw, 20px)/1.45 var(--font-display); color: var(--ink); }
 .review-quote-by { margin: 0; font: 500 12px/1.4 var(--font-body); letter-spacing: .06em; color: var(--ink-muted); }
 .review-quote-by > span:first-child { color: var(--ink); }
+.review-quotes:focus-visible { outline: 2px solid var(--forest, #5e7060); outline-offset: 4px; }
 .review-quotes-source { margin: 0 0 24px; font: 400 12px/1.5 var(--font-body); color: var(--ink-muted); }
 .review-quotes[hidden] + .review-quotes-source { display: none; }
 @media (max-width: 900px) { .review-quotes { grid-auto-columns: minmax(240px, 84%); } }

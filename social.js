@@ -106,7 +106,7 @@
           observer.disconnect(); load();
         }, { rootMargin: '400px 0px' });
         observer.observe(section);
-      } else load();
+      }
       window.addEventListener('lajolla-language', function () {
         if (place) renderReviews(results, place);
         if (!status.hidden) status.textContent = messages()[status.dataset.state] || '';

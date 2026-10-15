@@ -120,6 +120,11 @@ test("the social chapter replaces the brand wall: photographs, guest reviews, th
     assert.match(quote, /<span translate="no">[A-Z][a-z]+( and [A-Z][a-z]+( [A-Z][a-z]+)?)? [A-Z]\.<\/span>/);
   }
   assert.ok(section.indexOf("data-review-quotes") < section.indexOf('class="review-invite"'), "excerpts before the Google invitation");
+  assert.match(section, /<ul class="review-quotes" role="list" tabindex="0"/, "keyboard users can scroll the excerpt row");
+  const workflow = readFileSync(new URL("../.github/workflows/quality-and-release.yml", import.meta.url), "utf8");
+  assert.match(workflow, /LAJOLLA_WEB_ROOT: \$\{\{ runner\.temp \}\}\/site-under-test/, "browser tests run on the keyless copy");
+  assert.ok(!/LAJOLLA_WEB_ROOT: \$\{\{ github\.workspace \}\}\/dist/.test(workflow), "browser tests never run on the keyed build");
+  assert.ok(!/else load\(\)/.test(readFileSync(new URL("../social.js", import.meta.url), "utf8")), "reviews never load without the visitor approaching");
   // Every excerpt and reviewer must match the owner-approved provenance record.
   const record = readFileSync(new URL("./REVIEW-EXCERPTS.md", import.meta.url), "utf8");
   for (const quote of quotes) {

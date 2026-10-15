@@ -45,7 +45,11 @@ async def main(base, output, webkit=False):
                         await page.wait_for_timeout(300);assert 'google' not in requests
                         assert await page.locator('.review-invite a[href*="query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"]').is_visible()
                         assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Written guest excerpts show without a key'
-                        assert await page.locator('.review-quotes').evaluate('e=>e.scrollWidth>=e.clientWidth')
+                        quotes=page.locator('.review-quotes')
+                        await quotes.focus();assert await quotes.evaluate('e=>document.activeElement===e'),'The excerpt row takes keyboard focus'
+                        if await quotes.evaluate('e=>e.scrollWidth>e.clientWidth+1'):
+                            await page.keyboard.press('ArrowRight');await page.wait_for_timeout(700)
+                            assert await quotes.evaluate('e=>e.scrollLeft>0'),'Keyboard reaches the last excerpts'
                     else:
                         if mode=='success':
                             await page.locator('.guest-review').wait_for()
