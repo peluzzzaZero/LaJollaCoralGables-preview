@@ -174,3 +174,7 @@ The owner asked that the name be written as in the brochure, then the titles, an
 ## v1.26.0 — the walk through the front doors
 
 The owner shared his own film of the entrance; stakeholders asked to keep the page's essence and only enrich the venue section. In "An invitation inside" the scroll draws a 6.9 s cut of the real film (front doors, then the walk into the hall) inside a sticky frame that opens from the hero's arch, with three short story notes. The approved hall photograph stays as the fallback. Next: photographs of the house for the tour chapter.
+
+## v1.27.0 — the map you can see, and reviews that appear
+
+The owner asked to see Google Maps in the Location chapter, pinned at the house, and the best Google reviews on the page. The chapter shows an embedded Google map of 301 Alcazar Ave, Coral Gables, FL 33134 (lazy, softened toward the palette) with "Open in Google Maps" by Place ID; selected five-star reviews now appear on their own as the visitor reaches them once the browser key is configured. Next: activate the owner's Google browser key, then confirm the map and reviews on a real phone.

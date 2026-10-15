@@ -114,7 +114,7 @@ test("the social chapter replaces the brand wall: photographs, guest reviews, th
   assert.doesNotMatch(section, /★|\b[1-5](\.\d)? ?\/ ?5\b|aggregateRating/, "no invented rating");
 });
 
-test("the location chapter has real links and no preloaded map", () => {
+test("the location chapter shows a lazy map pinned at the address, plus real links", () => {
   const start = html.indexOf('<article id="location"');
   const end = html.indexOf('<article id="planning"');
   assert.ok(start > html.indexOf('<article id="team"') && end > start, "between the team and the invitation");
@@ -122,11 +122,16 @@ test("the location chapter has real links and no preloaded map", () => {
   assert.match(section, /href="https:\/\/www\.google\.com\/maps\/dir\/\?api=1&amp;destination=[^"]+&amp;destination_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
   assert.match(section, /301 Alcazar Avenue/);
   assert.match(section, /href="tel:\+17862908813"/);
-  assert.equal(section.includes("<iframe"), false, "no embedded map");
-  assert.match(section, /<a class="location-map" href="https:\/\/www\.google\.com\/maps\/search\/\?api=1&amp;query=[^"]*301\+Alcazar\+Avenue[^"]*&amp;query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer">/);
-  for (const [name, source] of [["social.js", social], ["script.js", js], ["index.html", html]])
-    assert.doesNotMatch(source, /output=embed|createElement\(\s*["'`]iframe["'`]\s*\)|google\.com\/maps\/embed/i, `no Google map embed in ${name}`);
-  for (const key of ["nav.location", "location.title", "location.mapLoad", "location.directions", "location.reviewsWrite", "social.eyebrow"])
+  const frames = section.match(/<iframe [^>]*>/g) || [];
+  assert.equal(frames.length, 1, "one visible map");
+  // The full street address with ZIP: a bare venue name ("La Jolla") resolves to California or the world view.
+  assert.match(frames[0], /src="https:\/\/maps\.google\.com\/maps\?q=301\+Alcazar\+Ave%2C\+Coral\+Gables%2C\+FL\+33134&amp;z=16&amp;hl=en&amp;output=embed"/);
+  assert.match(frames[0], /loading="lazy"/);
+  assert.match(frames[0], /data-i18n="location\.mapTitle" data-i18n-attr="title"/);
+  assert.match(section, /<a class="location-map-load" href="https:\/\/www\.google\.com\/maps\/search\/\?api=1&amp;query=[^"]*301\+Alcazar\+Avenue[^"]*&amp;query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer"/);
+  assert.equal(html.match(/<iframe /g).length, 2, "only the map and the booking frame");
+  assert.doesNotMatch(social + js, /createElement\(\s*["'`]iframe["'`]\s*\)|google\.com\/maps\/embed/i, "no scripted map frames");
+  for (const key of ["nav.location", "location.title", "location.mapLoad", "location.mapTitle", "location.directions", "location.reviewsWrite", "social.eyebrow"])
     assert.equal(js.split(`"${key}":`).length - 1, 2, `${key} in EN and ES`);
 });
 

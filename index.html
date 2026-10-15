@@ -67,12 +67,12 @@
 </script>
 <meta name="color-scheme" content="light"/>
 <meta name="google-maps-browser-key" content=""/>
-<meta name="application-version" content="1.26.0"/>
+<meta name="application-version" content="1.27.0"/>
 <link href="assets/favicon.ico" rel="icon" sizes="any"/>
 <link href="assets/favicon-32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="assets/apple-touch-icon.png" rel="apple-touch-icon"/>
 <script>document.documentElement.classList.add("js");</script>
-<link href="styles.css?v=1.26.0" rel="stylesheet"/>
+<link href="styles.css?v=1.27.0" rel="stylesheet"/>
 <link href="assets/fonts/Manrope-latin.woff2" as="font" crossorigin="" rel="preload" type="font/woff2"/>
 <link href="assets/brand/la-jolla-script.svg" as="image" crossorigin="" rel="preload" type="image/svg+xml"/></head>
 <body id="top" class="landing-page">
@@ -334,7 +334,6 @@
 <h3 id="guest-voices-title" data-i18n="social.reviewsTitle">Guest experiences</h3>
 <p data-i18n="social.reviewsIntro">Discover the house through the people who have celebrated here.</p>
 <div class="guest-reviews" data-guest-reviews="">
-<button class="reviews-load" type="button" data-i18n="social.reviewsLoad" hidden="">See selected guest reviews</button>
 <p class="reviews-status" role="status" hidden=""></p><div class="reviews-results"></div>
 <div class="review-invite">
 <p class="review-source" translate="no">Google</p>
@@ -391,11 +390,10 @@
 <p class="location-actions"><a class="btn btn-sage" href="https://www.google.com/maps/dir/?api=1&amp;destination=La+Jolla%2C+301+Alcazar+Avenue%2C+Coral+Gables%2C+FL&amp;destination_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer" data-i18n="location.directions">Get directions</a><a class="text-link" href="https://maps.apple.com/?q=La+Jolla&amp;address=301+Alcazar+Avenue%2C+Coral+Gables%2C+FL" target="_blank" rel="noopener noreferrer" data-i18n="location.apple">Open in Apple Maps</a></p>
 
 </section>
-<a class="location-map" href="https://www.google.com/maps/search/?api=1&amp;query=La+Jolla%2C+301+Alcazar+Avenue%2C+Coral+Gables%2C+FL&amp;query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer">
-<img data-photo-fade="" src="assets/venue/web/facade.webp" alt="" width="768" height="1024" loading="lazy" decoding="async"/>
-<span class="location-map-load" data-i18n="location.mapLoad">Open in Google Maps</span>
-<span class="location-map-note" data-i18n="location.mapNote">Google Maps opens in a new tab with La Jolla marked.</span>
-</a>
+<div class="location-map" data-location-map="">
+<iframe class="location-map-frame" src="https://maps.google.com/maps?q=301+Alcazar+Ave%2C+Coral+Gables%2C+FL+33134&amp;z=16&amp;hl=en&amp;output=embed" title="Map of La Jolla at 301 Alcazar Avenue, Coral Gables" data-i18n="location.mapTitle" data-i18n-attr="title" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+<a class="location-map-load" href="https://www.google.com/maps/search/?api=1&amp;query=La+Jolla%2C+301+Alcazar+Avenue%2C+Coral+Gables%2C+FL&amp;query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0" target="_blank" rel="noopener noreferrer" data-i18n="location.mapLoad">Open in Google Maps</a>
+</div>
 </div>
 </div>
 </article>
@@ -443,7 +441,7 @@
 <iframe class="booking-frame" title="La Jolla venue tour booking calendar" data-i18n="booking.frameTitle" data-i18n-attr="title" referrerpolicy="no-referrer"></iframe>
 <p class="booking-fallback"><span data-i18n="booking.fallback">If the calendar does not load,</span> <a href="https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true" target="_blank" rel="noopener noreferrer" data-i18n="booking.external">open the booking page in a new tab</a>.</p>
 </dialog>
-<script src="script.js?v=1.26.0"></script>
-<script src="social.js?v=1.26.0"></script>
+<script src="script.js?v=1.27.0"></script>
+<script src="social.js?v=1.27.0"></script>
 </body>
 </html>

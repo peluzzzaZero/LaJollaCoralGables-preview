@@ -55,7 +55,7 @@ test("chapter titles use the self-hosted brochure script, body text does not", (
 test("section photographs fade up once, only with motion allowed", () => {
   const index = read("index.html");
   const js = read("script.js");
-  assert.equal((index.match(/<img data-photo-fade=""/g) || []).length, 5);
+  assert.equal((index.match(/<img data-photo-fade=""/g) || []).length, 4);
   assert.match(js, /querySelectorAll\('\[data-photo-fade\], \.house-tile img'\)\.forEach\(photo => reveal\.observe\(photo\)\)/);
   // The fade only exists once reduced motion, save-data and missing IntersectionObserver are ruled out.
   const guard = js.indexOf("if (reduced.matches || saveData || !('IntersectionObserver' in window)) return;");
