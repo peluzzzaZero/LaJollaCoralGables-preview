@@ -11,7 +11,7 @@ async def main(base,output,args):
   engines=([] if args.webkit_only else [p.chromium])+([p.webkit] if args.webkit or args.webkit_only else [])
   for engine in engines:
    browser=await engine.launch()
-   for width,height in [(390,844),(884,884),(1366,768)]:
+   for width,height in [(320,640),(390,844),(884,884),(1366,768)]:
     for language in ['en','es']:
      context=await browser.new_context(viewport={'width':width,'height':height});page=await context.new_page();errors=[];walk=[]
      page.on('pageerror',lambda e:errors.append(str(e)))
@@ -32,7 +32,7 @@ async def main(base,output,args):
       await scroll_to(page,target);await page.wait_for_timeout(40)
      await page.wait_for_timeout(900)
      state=await page.evaluate('({p:window.__ljVenueWalk.progress,t:window.__ljVenueWalk.video.currentTime,d:window.__ljVenueWalk.video.duration})')
-     assert abs(state['p']-.62)<.02 and abs(state['t']-state['p']*state['d'])<.12,(engine.name,width,language,state)
+     assert abs(state['p']-.62)<.02 and abs(state['t']-state['p']*state['d'])<.07,(engine.name,width,language,state)
      assert await page.evaluate(f'getComputedStyle({WALK}.querySelector(".venue-walk-film")).visibility')=='visible'
      await page.screenshot(path=str(output/f'walk-{engine.name}-{width}-{language}.png'))
      assert not errors,errors;await context.close()

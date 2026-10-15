@@ -835,18 +835,22 @@
     const wide = matchMedia('(min-width: 651px)');
     const formats = ['mp4', 'webm'].filter(format => video.canPlayType('video/' + format));
     let enabled = false, near = false, requested = false, sourceIndex = 0, objectURL = null, controller = null;
-    let networkURL = '', nativeSource = false, priming = false, primeTimer = 0, primeAttempts = 0, frame = 0, progress = 0, top = 0;
+    let networkURL = '', nativeSource = false, priming = false, primeTimer = 0, primeAttempts = 0, primeGeneration = 0, decodeTimer = 0, frame = 0, progress = 0, top = 0;
     const name = () => wide.matches ? 'venue-walk' : 'venue-walk-mobile';
     function reset() {
       controller?.abort(); controller = null; requested = false; sourceIndex = 0; nativeSource = false;
-      clearTimeout(primeTimer); priming = false; primeAttempts = 0;
+      clearTimeout(primeTimer); clearTimeout(decodeTimer); priming = false; primeAttempts = 0; primeGeneration++;
       video.pause(); video.removeAttribute('src'); video.load(); video.classList.remove('is-decoded');
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
     }
     function giveUp() {
-      // No source decoded: return to the approved photograph and its layout.
+      // No source decoded: return to the approved photograph and its layout,
+      // keeping the reader's place if they are inside or past the section.
+      const before = walk.getBoundingClientRect();
       reset(); sourceIndex = formats.length; enabled = false;
       walk.classList.remove('is-walking'); clean();
+      if (before.bottom < 0) scrollBy(0, walk.offsetHeight - before.height);
+      else if (before.top < 0) scrollBy(0, walk.getBoundingClientRect().top - top);
     }
     function load() {
       if (requested || !enabled) return;
@@ -859,17 +863,26 @@
       // Complete the small clip before seeking, as the opening film does.
       fetch(networkURL, { signal })
         .then(response => { if (!response.ok) throw new Error('Walk unavailable'); return response.blob(); })
-        .then(blob => { if (signal.aborted) return; objectURL = URL.createObjectURL(blob); video.src = objectURL; video.preload = 'auto'; video.load(); prime(); })
+        .then(blob => { if (signal.aborted) return; objectURL = URL.createObjectURL(blob); video.src = objectURL; video.preload = 'auto'; video.load(); watch(); prime(); })
         .catch(() => { if (!signal.aborted) { requested = false; load(); } });
     }
     function useNativeSource() {
       // WebKit can reject a blob; try its own loader once for this format.
       if (!enabled || !objectURL || nativeSource) return false;
-      const previous = objectURL; objectURL = null; nativeSource = true; primeAttempts = 0;
-      video.src = networkURL; video.load(); URL.revokeObjectURL(previous); prime();
+      clearTimeout(primeTimer); priming = false; primeGeneration++; primeAttempts = 0;
+      video.pause(); video.classList.remove('is-decoded');
+      const previous = objectURL; objectURL = null; nativeSource = true;
+      video.src = networkURL; video.load(); URL.revokeObjectURL(previous); watch(); prime();
       return true;
     }
-    function finishPrime() {
+    function watch() {
+      // A source that never paints (for example iOS Low Power Mode) gives up.
+      clearTimeout(decodeTimer);
+      decodeTimer = setTimeout(() => { if (enabled && !video.classList.contains('is-decoded')) giveUp(); }, 12000);
+    }
+    function finishPrime(generation) {
+      // Stale play() promises from an earlier source or prime are ignored.
+      if (generation !== undefined && generation !== primeGeneration) return;
       if (!priming) return;
       priming = false; clearTimeout(primeTimer); video.pause(); seek();
       if (video.readyState === 0) useNativeSource();
@@ -878,8 +891,9 @@
       // A muted play/pause lets iOS decode and paint seeked frames.
       if (!enabled || !video.hasAttribute('src') || priming || primeAttempts >= 3 || video.readyState >= 2) return;
       priming = true; primeAttempts++;
-      primeTimer = setTimeout(finishPrime, 1500);
-      try { video.play()?.then(finishPrime, finishPrime); } catch (_) { finishPrime(); }
+      const generation = ++primeGeneration;
+      primeTimer = setTimeout(() => finishPrime(generation), 1500);
+      try { video.play()?.then(() => finishPrime(generation), () => finishPrime(generation)); } catch (_) { finishPrime(generation); }
     }
     function seek() {
       frame = 0;
@@ -905,10 +919,14 @@
     }
     const measure = () => { top = parseFloat(getComputedStyle(figure).top) || 0; };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(seek); };
-    video.addEventListener('loadeddata', () => { video.classList.add('is-decoded'); seek(); });
-    video.addEventListener('seeked', () => { if (video.readyState >= 2) { video.classList.add('is-decoded'); seek(); } });
+    const decoded = () => { clearTimeout(decodeTimer); video.classList.add('is-decoded'); finishPrime(); seek(); };
+    video.addEventListener('loadeddata', decoded);
+    video.addEventListener('playing', () => finishPrime());
+    video.addEventListener('seeked', () => { if (video.readyState >= 2) decoded(); });
     video.addEventListener('error', () => {
-      if (!video.hasAttribute('src') || useNativeSource()) return;
+      // Only an error of the current source counts.
+      if (!video.error || !video.hasAttribute('src') || video.getAttribute('src') !== (objectURL || networkURL)) return;
+      if (useNativeSource()) return;
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
       video.classList.remove('is-decoded'); requested = false; load();
     });
@@ -922,7 +940,7 @@
       notes.forEach(note => note.el.style.removeProperty('--note'));
     }
     function configure() {
-      const want = motion.matches && sourceIndex < formats.length + (requested ? 1 : 0);
+      const want = motion.matches && CSS.supports?.('height', '1svh') && sourceIndex < formats.length + (requested ? 1 : 0);
       if (want === enabled) return;
       enabled = want;
       walk.classList.toggle('is-walking', enabled);

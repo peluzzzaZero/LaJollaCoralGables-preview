@@ -28,8 +28,9 @@ test('the walk is scroll-drawn with native sticky staging, never played or pinne
   assert.doesNotMatch(fn, /loop|pin:|ScrollTrigger|\.poster/);
   // Only a muted play/pause prime (as the opening film does), never playback.
   assert.equal((fn.match(/\.play\(/g) || []).length, 1);
-  assert.match(fn, /video\.play\(\)\?\.then\(finishPrime, finishPrime\)/);
-  assert.match(fn, /function finishPrime\(\) \{[^}]*video\.pause\(\)/);
+  assert.match(fn, /video\.play\(\)\?\.then\(\(\) => finishPrime\(generation\), \(\) => finishPrime\(generation\)\)/);
+  assert.match(fn, /generation !== primeGeneration/);
+  assert.match(css, /\.venue-walk\.is-walking figcaption \{(?![^}]*opacity)[^}]*\}/);
   assert.match(fn, /useNativeSource/);
   assert.match(css, /\.venue-walk\.is-walking \.hall-photo \{ position: sticky;/);
   assert.match(css, /\.venue-walk-steps, \.venue-walk-film \{ display: none; \}/);

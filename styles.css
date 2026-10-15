@@ -2109,7 +2109,7 @@ html { scrollbar-gutter: stable; }
 .venue-walk.is-walking .walk-note--right { right: 5%; bottom: auto; top: 8%; transform: translateY(calc((1 - var(--in)) * -160% - var(--out) * 160%)); border-left: 0; border-right: 2px solid #5e7060; text-align: right; }
 .venue-walk.is-walking .walk-note--center { left: 50%; translate: -50% 0; text-align: center; border-left: 0; border-top: 2px solid #5e7060; }
 .venue-walk.is-walking .venue-walk-steps { transform: translateY(calc((1 - min(1, var(--walk, 0) * 8)) * 10px)); }
-.venue-walk.is-walking figcaption { width: min(100%, calc((100svh - 230px) * 16 / 9)); margin: 0 auto; text-align: center; opacity: clamp(.45, calc(var(--walk, 0) * 4 - 1.5), 1); transform: translateY(calc((1 - min(1, var(--walk, 0) * 2)) * 14px)); }
+.venue-walk.is-walking figcaption { width: min(100%, calc((100svh - 230px) * 16 / 9)); margin: 0 auto; text-align: center; transform: translateY(calc((1 - min(1, var(--walk, 0) * 2)) * 14px)); }
 .venue-walk.is-walking .venue-walk-steps { display: flex; align-items: center; justify-content: center; gap: 14px; font: 500 11px/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft, #6b5a4a); }
 .venue-walk-steps > span:not(.venue-walk-track) { opacity: .55; transition: opacity .4s; }
 .venue-walk[data-step="doors"] .venue-walk-steps > span:first-child, .venue-walk[data-step="hall"] .venue-walk-steps > span:last-child { opacity: 1; }
