@@ -17,7 +17,12 @@ async def main():
         await page.set_content(f'<body style="margin:0"><iframe src="{src}" style="border:0;width:640px;height:420px"></iframe></body>')
         await page.wait_for_timeout(8000)
         frame=page.frames[1]
-        text=await frame.evaluate('document.body.innerText')
+        # Google draws the place card in a nested frame, so read every frame's text.
+        texts=[]
+        for f in page.frames[1:]:
+            try: texts.append(await f.evaluate('document.body ? document.body.innerText : ""'))
+            except Exception: pass
+        text='\n'.join(texts)
         print('MAP-LIVE frame url:',frame.url)
         print('MAP-LIVE url:',src)
         print('MAP-LIVE resolved address:', 'Alcazar' in text)
