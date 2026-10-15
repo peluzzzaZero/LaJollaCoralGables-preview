@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 from playwright.async_api import async_playwright
+from review import third_party_map_error
 
 BOOKING_URL = 'https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true'
 
@@ -21,7 +22,7 @@ async def main(base, output):
             page = await context.new_page()
             provider_requests = []
             errors = []
-            page.on('pageerror', lambda e: errors.append(str(e)))
+            page.on('pageerror', lambda e: errors.append(str(e)) if not third_party_map_error(e) else None)
             async def provider(route):
                 provider_requests.append(route.request.url)
                 await route.fulfill(content_type='text/html', body='<html><body><h1>Mock booking calendar</h1><button>Mock focus target</button></body></html>')

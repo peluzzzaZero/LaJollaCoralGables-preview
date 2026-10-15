@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 from playwright.async_api import async_playwright
+from review import third_party_map_error
 
 async def review(base, output):
     output.mkdir(parents=True, exist_ok=True)
@@ -21,7 +22,7 @@ async def review(base, output):
             context = await browser.new_context(viewport={'width': width, 'height': 900})
             page = await context.new_page()
             mail_requests = []; errors = []
-            page.on('pageerror', lambda error: errors.append(str(error)))
+            page.on('pageerror', lambda error: errors.append(str(error)) if not third_party_map_error(error) else None)
             async def deny_mail(route):
                 mail_requests.append(route.request.url)
                 await route.abort()

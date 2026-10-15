@@ -66,25 +66,47 @@
     }
     return true;
   }
+  // The map is visible from the start; only its labels follow the page language.
+  function syncMap() {
+    document.querySelectorAll('[data-location-map] iframe').forEach(function (frame) {
+      const url = new URL(frame.src);
+      if (url.searchParams.get('hl') === language()) return;
+      url.searchParams.set('hl', language()); frame.src = url.href;
+    });
+  }
   document.addEventListener('DOMContentLoaded', function () {
+    syncMap();
+    window.addEventListener('lajolla-language', syncMap);
     const key = document.querySelector('meta[name="google-maps-browser-key"]')?.content || '';
     if (!/^[A-Za-z0-9_-]{20,120}$/.test(key)) return;
     document.querySelectorAll('[data-guest-reviews]').forEach(function (section) {
-      const button = section.querySelector('.reviews-load'), status = section.querySelector('.reviews-status'), results = section.querySelector('.reviews-results');
+      const status = section.querySelector('.reviews-status'), results = section.querySelector('.reviews-results');
       let place;
-      button.hidden = false;
-      button.addEventListener('click', async function () {
-        button.disabled = true; status.hidden = false; status.dataset.state = 'loading'; status.textContent = messages().loading;
+      // Reviews appear on their own as the visitor approaches them; nothing from Google loads before.
+      async function load() {
+        status.hidden = false; status.dataset.state = 'loading'; status.textContent = messages().loading;
         try {
           const { Place } = await loadPlaces(key);
           place = new Place({ id: placeId });
           await place.fetchFields({ fields: ['reviews', 'attributions'] });
           const hasReviews = renderReviews(results, place);
+          // Google's own selection replaces the written excerpts once it loads.
+          if (hasReviews) section.querySelector('[data-review-quotes]')?.setAttribute('hidden', '');
           status.dataset.state = hasReviews ? 'ready' : 'empty';
           status.hidden = hasReviews; status.textContent = hasReviews ? '' : messages().empty;
-        } catch (_) { status.dataset.state = 'unavailable'; status.textContent = messages().unavailable; }
-        button.hidden = true;
-      });
+        } catch (_) {
+          // The written excerpts stay; only say Google is unavailable when nothing else is shown.
+          status.dataset.state = 'unavailable'; status.textContent = messages().unavailable;
+          status.hidden = !!section.querySelector('[data-review-quotes]:not([hidden])');
+        }
+      }
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(function (entries) {
+          if (!entries.some(entry => entry.isIntersecting)) return;
+          observer.disconnect(); load();
+        }, { rootMargin: '400px 0px' });
+        observer.observe(section);
+      }
       window.addEventListener('lajolla-language', function () {
         if (place) renderReviews(results, place);
         if (!status.hidden) status.textContent = messages()[status.dataset.state] || '';

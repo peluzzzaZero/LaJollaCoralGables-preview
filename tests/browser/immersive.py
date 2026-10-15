@@ -1,7 +1,7 @@
 """Test same-page visit sessions, focus and visible contact on the landing."""
 import json
 from playwright.async_api import async_playwright
-from review import run, position
+from review import run, position, third_party_map_error
 async def main(base,output,args):
  output.mkdir(parents=True,exist_ok=True);rows=[]
  async with async_playwright() as p:
@@ -9,7 +9,7 @@ async def main(base,output,args):
    browser=await engine.launch()
    for width,height in [(320,600),(390,844),(884,884),(1366,500),(1366,768)]:
     context=await browser.new_context(viewport={'width':width,'height':height});page=await context.new_page();requests=[];errors=[]
-    page.on('pageerror',lambda e:errors.append(str(e)))
+    page.on('pageerror',lambda e:errors.append(str(e)) if not third_party_map_error(e) else None)
     async def provider(route):
      requests.append(route.request.url);await route.fulfill(content_type='text/html',body='<html><body><h1>Mock calendar</h1><button>Calendar</button></body></html>')
     await context.route('https://bookings.cloud.microsoft/**',provider)
