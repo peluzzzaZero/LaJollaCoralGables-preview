@@ -94,7 +94,11 @@
           if (hasReviews) section.querySelector('[data-review-quotes]')?.setAttribute('hidden', '');
           status.dataset.state = hasReviews ? 'ready' : 'empty';
           status.hidden = hasReviews; status.textContent = hasReviews ? '' : messages().empty;
-        } catch (_) { status.dataset.state = 'unavailable'; status.textContent = messages().unavailable; }
+        } catch (_) {
+          // The written excerpts stay; only say Google is unavailable when nothing else is shown.
+          status.dataset.state = 'unavailable'; status.textContent = messages().unavailable;
+          status.hidden = !!section.querySelector('[data-review-quotes]:not([hidden])');
+        }
       }
       if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(function (entries) {

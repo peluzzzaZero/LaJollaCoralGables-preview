@@ -67,8 +67,10 @@ async def main(base, output, webkit=False):
                             assert await page.locator('.guest-review').count()==0
                         else:
                             await page.wait_for_function("document.querySelector('.reviews-status').textContent.includes('unavailable')")
+                            assert await page.locator('.reviews-status').is_hidden(),'No failure notice over the written excerpts'
                             await page.locator('[data-lang=es]').click()
-                            assert 'no están disponibles' in await page.locator('.reviews-status').inner_text()
+                        if mode in ('empty','failure'):
+                            assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Excerpts stay when Google has nothing to show'
                         assert requests.count('google')==1,requests
                     lang='es' if mode in ('success','failure') else 'en'
                     mapbox=page.locator('.location-map')
