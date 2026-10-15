@@ -12,7 +12,9 @@ async def main(base,output,args):
     page=await browser.new_page(viewport={'width':width,'height':height});media=[];network=[];errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
     def record_media(request):
-     if request.url.endswith(('.mp4','.webm')):
+     # The venue walk film loads later, near its own section; this review
+     # follows the entrance film only.
+     if request.url.endswith(('.mp4','.webm')) and '/cinematic/venue-walk' not in request.url:
       media.append(request.url)
       network.append({'url':request.url,'type':request.resource_type,'range':request.headers.get('range')})
     page.on('request',record_media)
@@ -26,7 +28,7 @@ async def main(base,output,args):
     })();''')
     await page.goto(base);await page.evaluate('document.fonts.ready')
     await page.wait_for_function('window.__ljEntrance?.trigger')
-    assert not media,'Entrance must not preload until scrolling'
+    assert not media and not await page.evaluate("performance.getEntriesByType('resource').some(e=>/\\.(mp4|webm)$/.test(e.name))"),'No film may preload until scrolling'
     await page.locator('#hero').click(position={'x':12,'y':90})
     for fraction in [.2,.5,.9,.4,.1,.75]:
      await page.evaluate('p=>{const t=window.__ljEntrance.trigger;window.scrollTo(0,t.start+(t.end-t.start)*p);ScrollTrigger.update()}',fraction)
