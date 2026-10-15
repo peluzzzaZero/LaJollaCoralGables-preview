@@ -37,7 +37,8 @@ test('the walk is scroll-drawn with native sticky staging, never played or pinne
   // The approved hall photograph shows until the film decodes, and returns if no source loads.
   assert.match(css, /\.venue-walk\.is-walking \.venue-walk-film \{[^}]*visibility: hidden; \}/);
   assert.match(css, /\.venue-walk\.is-walking \.venue-walk-film\.is-decoded \{ visibility: visible; \}/);
-  assert.match(fn, /function giveUp\(\) \{[^}]*classList\.remove\('is-walking'\)/);
+  assert.match(fn, /function collapse\(\) \{[^}]*classList\.remove\('is-walking'\)/);
+  assert.match(fn, /function giveUp\(\) \{ collapse\(\);/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{ \.venue-walk\.is-walking \{ height: auto; \}/);
 });
 

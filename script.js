@@ -829,32 +829,33 @@
     const video = walk?.querySelector('.venue-walk-film');
     if (!video || !('IntersectionObserver' in window) || navigator.connection?.saveData) return;
     const figure = walk.querySelector('.hall-photo');
-    const parallax = figure.getAttribute('data-landing-parallax');
     const notes = [...walk.querySelectorAll('[data-walk-from]')].map(el => ({ el, from: +el.dataset.walkFrom, to: +el.dataset.walkTo }));
     const motion = matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 600px), (prefers-reduced-motion: no-preference) and (min-width: 651px) and (min-height: 480px)');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const wide = matchMedia('(min-width: 651px)');
     const formats = ['mp4', 'webm'].filter(format => video.canPlayType('video/' + format));
     let enabled = false, near = false, requested = false, sourceIndex = 0, objectURL = null, controller = null;
-    let networkURL = '', nativeSource = false, priming = false, primeTimer = 0, primeAttempts = 0, primeGeneration = 0, decodeTimer = 0, frame = 0, progress = 0, top = 0;
+    let networkURL = '', nativeSource = false, priming = false, primeTimer = 0, primeAttempts = 0, primeGeneration = 0, decodeTimer = 0, target = -1, configuredWidth = 0, roomy = false, frame = 0, progress = 0, top = 0;
     const name = () => wide.matches ? 'venue-walk' : 'venue-walk-mobile';
     function reset() {
       controller?.abort(); controller = null; requested = false; sourceIndex = 0; nativeSource = false;
       clearTimeout(primeTimer); clearTimeout(decodeTimer); priming = false; primeAttempts = 0; primeGeneration++;
-      video.pause(); video.removeAttribute('src'); video.load(); video.classList.remove('is-decoded');
+      video.pause(); video.removeAttribute('src'); video.load(); video.classList.remove('is-decoded'); target = -1;
       if (objectURL) URL.revokeObjectURL(objectURL); objectURL = null;
     }
-    function giveUp() {
-      // No source decoded: return to the approved photograph and its layout,
-      // keeping the reader's place if they are inside or past the section.
+    function collapse() {
+      // Return to the approved photograph and its layout, keeping the
+      // reader's place if they are inside or past the section.
       const before = walk.getBoundingClientRect();
-      reset(); sourceIndex = formats.length; enabled = false;
-      walk.classList.remove('is-walking'); clean();
+      enabled = false; reset(); walk.classList.remove('is-walking'); clean();
       if (before.bottom < 0) scrollBy(0, walk.offsetHeight - before.height);
       else if (before.top < 0) scrollBy(0, walk.getBoundingClientRect().top - top);
     }
+    function giveUp() { collapse(); sourceIndex = formats.length; }
     function load() {
       if (requested || !enabled) return;
       if (sourceIndex >= formats.length) { giveUp(); return; }
+      clearTimeout(primeTimer); priming = false; primeGeneration++;
       requested = true; nativeSource = false; primeAttempts = 0;
       const format = formats[sourceIndex++];
       networkURL = 'assets/venue/cinematic/' + name() + '.' + format;
@@ -878,7 +879,10 @@
     function watch() {
       // A source that never paints (for example iOS Low Power Mode) gives up.
       clearTimeout(decodeTimer);
-      decodeTimer = setTimeout(() => { if (enabled && !video.classList.contains('is-decoded')) giveUp(); }, 12000);
+      decodeTimer = setTimeout(() => {
+        if (!enabled || video.classList.contains('is-decoded')) return;
+        if (document.hidden) watch(); else giveUp();
+      }, 12000);
     }
     function finishPrime(generation) {
       // Stale play() promises from an earlier source or prime are ignored.
@@ -889,7 +893,7 @@
     }
     function prime() {
       // A muted play/pause lets iOS decode and paint seeked frames.
-      if (!enabled || !video.hasAttribute('src') || priming || primeAttempts >= 3 || video.readyState >= 2) return;
+      if (!enabled || !video.hasAttribute('src') || priming || primeAttempts >= 3 || video.readyState >= 2 || video.seeking || video.classList.contains('is-decoded')) return;
       priming = true; primeAttempts++;
       const generation = ++primeGeneration;
       primeTimer = setTimeout(() => finishPrime(generation), 1500);
@@ -914,12 +918,14 @@
       });
       if (!priming && video.readyState >= 1 && Number.isFinite(video.duration) && !video.seeking) {
         const time = Math.min(video.duration - .04, progress * video.duration);
-        if (Math.abs(video.currentTime - time) > .015) { try { video.currentTime = time; } catch (_) { /* Keep the photograph. */ } }
+        // Compare with the last request: engines may report a snapped frame time.
+        if (Math.abs(target - time) > .015) { target = time; try { video.currentTime = time; } catch (_) { /* Keep the photograph. */ } }
       }
     }
     const measure = () => { top = parseFloat(getComputedStyle(figure).top) || 0; };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(seek); };
     const decoded = () => { clearTimeout(decodeTimer); video.classList.add('is-decoded'); finishPrime(); seek(); };
+    video.addEventListener('loadedmetadata', () => { target = -1; });
     video.addEventListener('loadeddata', decoded);
     video.addEventListener('playing', () => finishPrime());
     video.addEventListener('seeked', () => { if (video.readyState >= 2) decoded(); });
@@ -935,24 +941,32 @@
       if (near) load();
     }, { rootMargin: '200% 0px' }).observe(walk);
     function clean() {
-      if (parallax !== null) figure.setAttribute('data-landing-parallax', parallax);
       ['--walk', '--walk-arch'].forEach(prop => walk.style.removeProperty(prop)); delete walk.dataset.step;
       notes.forEach(note => note.el.style.removeProperty('--note'));
     }
     function configure() {
-      const want = motion.matches && CSS.supports?.('height', '1svh') && sourceIndex < formats.length + (requested ? 1 : 0);
+      const want = roomy && !reduced.matches && CSS.supports?.('height', '1svh') && sourceIndex < formats.length + (requested ? 1 : 0);
       if (want === enabled) return;
-      enabled = want;
-      walk.classList.toggle('is-walking', enabled);
-      if (enabled) {
-        figure.removeAttribute('data-landing-parallax');
-        measure();
-        if (near) load();
-        seek();
-      } else { reset(); clean(); }
+      if (!want) { collapse(); return; }
+      enabled = true;
+      walk.classList.add('is-walking');
+      // Once staged, the landing parallax never drives this figure again.
+      figure.removeAttribute('data-landing-parallax');
+      measure();
+      if (near) load();
+      seek();
     }
+    // A collapsing toolbar can cross the height threshold mid-scroll; as in
+    // the album, only a settled width change (rotation, window resize)
+    // re-decides the staging. Reduced motion applies at once.
+    function restage() {
+      if (innerWidth === configuredWidth) return;
+      configuredWidth = innerWidth; roomy = motion.matches; configure();
+    }
+    configuredWidth = innerWidth; roomy = motion.matches;
     configure();
-    motion.addEventListener?.('change', configure);
+    reduced.addEventListener?.('change', configure);
+    addEventListener('resize', () => requestAnimationFrame(restage), { passive: true });
     // Switching between the square phone clip and the wide clip reloads it.
     wide.addEventListener?.('change', () => { if (!enabled) return; reset(); measure(); if (near) load(); });
     window.addEventListener('pointerdown', prime, { passive: true });

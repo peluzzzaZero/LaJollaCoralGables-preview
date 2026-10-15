@@ -37,12 +37,22 @@ async def main(base,output,args):
      await page.screenshot(path=str(output/f'walk-{engine.name}-{width}-{language}.png'))
      assert not errors,errors;await context.close()
      rows.append({'engine':engine.name,'width':width,'language':language,**state})
+   # A collapsing phone toolbar (height only) never toggles the staging;
+   # a rotation (width change) re-decides it.
+   context=await browser.new_context(viewport={'width':390,'height':844});page=await context.new_page()
+   await page.goto(base);await scroll_to(page,.4);await page.wait_for_timeout(300)
+   await page.set_viewport_size({'width':390,'height':560});await page.wait_for_timeout(400)
+   assert await page.evaluate(f'{WALK}.classList.contains("is-walking")')
+   await page.set_viewport_size({'width':844,'height':390});await page.wait_for_timeout(400)
+   assert not await page.evaluate(f'{WALK}.classList.contains("is-walking")')
+   assert await page.evaluate('getComputedStyle(document.querySelector(".venue-walk .hall-photo img")).transform') in ('none','matrix(1, 0, 0, 1, 0, 0)');await context.close()
    # No source loads: the section returns to the approved photograph and layout.
    context=await browser.new_context(viewport={'width':1366,'height':768});page=await context.new_page()
    await context.route('**/cinematic/venue-walk*',lambda route:route.abort())
    await page.goto(base);await scroll_to(page,.3)
    await page.wait_for_function(f'!{WALK}.classList.contains("is-walking")',timeout=10000)
-   assert await page.locator('.venue-walk .hall-photo img').is_visible();await context.close()
+   assert await page.locator('.venue-walk .hall-photo img').is_visible()
+   assert await page.evaluate('getComputedStyle(document.querySelector(".venue-walk .hall-photo img")).transform') in ('none','matrix(1, 0, 0, 1, 0, 0)');await context.close()
    # Reduced motion keeps the photograph and never fetches the film.
    context=await browser.new_context(viewport={'width':390,'height':844},reduced_motion='reduce');page=await context.new_page();walk=[]
    page.on('request',lambda r:walk.append(r.url) if '/cinematic/venue-walk' in r.url else None)
