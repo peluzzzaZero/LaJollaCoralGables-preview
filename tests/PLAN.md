@@ -72,3 +72,5 @@ See [the review and reproduction instructions](REVIEW-2026-10-04.md). Keep the p
 Live Chromium checks confirmed the opening, translated service prefill, desktop inquiry navigation, and both legal pages. Inspecting the mobile capture exposed stale scroll coordinates after a native jump: this was corrected by synchronizing Lenis before calculating destinations. Regression checks now require the inquiry heading inside the viewport at all three widths in both languages, rather than merely checking that the form is present. No real email was sent.
 
 The implementation and publication pass is complete. Remaining items require external input or a separately authorized real email submission: confirm inbox delivery, Pat's primary tagline decision, and an approved guest testimonial. No public prices, invented content, or new imagery should be introduced to close these items.
+
+Update 2026-10-15 (v1.27.0): the owner supplied five-star reviews from the venue's Google listing and approved short written excerpts on the page; provenance in [REVIEW-EXCERPTS.md](REVIEW-EXCERPTS.md).

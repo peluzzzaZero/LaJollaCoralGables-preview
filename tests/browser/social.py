@@ -1,4 +1,4 @@
-"""Use provider doubles to verify lazy loading, attribution and positive selection."""
+"""Use provider doubles to verify lazy loading, the visible map, attribution and positive selection."""
 import argparse, asyncio, functools, json, re, threading
 from pathlib import Path
 from http.server import ThreadingHTTPServer
@@ -32,16 +32,29 @@ async def main(base, output, webkit=False):
                         requests.append('google-web')
                         await route.fulfill(content_type='text/html',body='<html><body>FAKE GOOGLE MAPS</body></html>')
                     await page.context.route(re.compile(r'^https://www\.google\.com/'),googleweb)
+                    async def googlemap(route):
+                        requests.append('google-map')
+                        await route.fulfill(content_type='text/html',body='<html><body style="margin:0;background:#cfd8c4">FAKE MAP</body></html>')
+                    await page.context.route(re.compile(r'^https://maps\.google\.com/maps\?'),googlemap)
                     await page.route('**/*.mp4',lambda route:route.abort());await page.route('**/*.webm',lambda route:route.abort())
-                    await page.goto(base);assert not requests,'Social providers must not preload'
+                    await page.goto(base);await page.wait_for_timeout(300);assert not requests,('Google must not preload',requests)
+                    assert await page.locator('.reviews-load').count()==0,'Reviews need no button'
                     await position(page,'social')
-                    button=page.locator('.reviews-load')
-                    if mode=='disabled':assert await button.is_hidden()
+                    await page.locator('[data-guest-reviews]').scroll_into_view_if_needed()
+                    if mode=='disabled':
+                        await page.wait_for_timeout(300);assert 'google' not in requests
+                        assert await page.locator('.review-invite a[href*="query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"]').is_visible()
+                        assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Written guest excerpts show without a key'
+                        quotes=page.locator('.review-quotes')
+                        await quotes.focus();assert await quotes.evaluate('e=>document.activeElement===e'),'The excerpt row takes keyboard focus'
+                        if await quotes.evaluate('e=>e.scrollWidth>e.clientWidth+1'):
+                            await page.keyboard.press('ArrowRight');await page.wait_for_timeout(700)
+                            assert await quotes.evaluate('e=>e.scrollLeft>0'),'Keyboard reaches the last excerpts'
                     else:
-                        await button.click()
                         if mode=='success':
                             await page.locator('.guest-review').wait_for()
                             assert await page.locator('.guest-review').count()==1
+                            assert await page.locator('.review-quotes').is_hidden(),'Google reviews replace the written excerpts'
                             assert await page.locator('.guest-review blockquote').inner_text()=='<b>Lovely celebration</b> in this test fixture.'
                             assert await page.locator('.guest-review blockquote b').count()==0
                             assert 'FAKE NEGATIVE REVIEW' not in await page.locator('.reviews-results').inner_text()
@@ -58,26 +71,40 @@ async def main(base, output, webkit=False):
                             assert await page.locator('.guest-review').count()==0
                         else:
                             await page.wait_for_function("document.querySelector('.reviews-status').textContent.includes('unavailable')")
+                            assert await page.locator('.reviews-status').is_hidden(),'No failure notice over the written excerpts'
                             await page.locator('[data-lang=es]').click()
-                            assert 'no están disponibles' in await page.locator('.reviews-status').inner_text()
-                        assert requests==['google']
-                    card=page.locator('a.location-map')
-                    await card.scroll_into_view_if_needed()
-                    box=await card.bounding_box()
-                    assert box and box['height']>=200,('The map card needs a real height in every engine',engine.name,width,box)
-                    hit=await page.locator('.location-map-load').evaluate('a=>{const r=a.getBoundingClientRect();return a.closest("a.location-map").contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}')
-                    assert hit,('The map card must receive taps',engine.name,width)
+                        if mode in ('empty','failure'):
+                            assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Excerpts stay when Google has nothing to show'
+                        assert requests.count('google')==1,requests
+                    lang='es' if mode in ('success','failure') else 'en'
+                    mapbox=page.locator('.location-map')
+                    await mapbox.scroll_into_view_if_needed()
+                    box=await mapbox.bounding_box()
+                    assert box and box['height']>=200,('The map needs a real height in every engine',engine.name,width,box)
+                    frame=page.locator('.location-map iframe')
+                    src=await frame.get_attribute('src')
+                    assert src.startswith('https://maps.google.com/maps?q=301+Alcazar+Ave%2C+Coral+Gables%2C+FL+33134&') and 'output=embed' in src and f'hl={lang}' in src,src
+                    fbox=await frame.bounding_box();assert fbox and abs(fbox['height']-box['height'])<4 and abs(fbox['width']-box['width'])<4,'The map fills its frame'
+                    await page.wait_for_function("()=>{const f=document.querySelector('.location-map iframe');return !!f.contentWindow}")
+                    for _ in range(40):
+                        if 'google-map' in requests:break
+                        await page.wait_for_timeout(100)
+                    assert 'google-map' in requests,'The visible map loads once the visitor reaches it'
+                    assert await frame.get_attribute('title')==('Mapa de La Jolla en 301 Alcazar Avenue, Coral Gables' if lang=='es' else 'Map of La Jolla at 301 Alcazar Avenue, Coral Gables')
+                    card=page.locator('a.location-map-load')
+                    hit=await card.evaluate('a=>{const r=a.getBoundingClientRect();return a.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}')
+                    assert hit,('The Google Maps button must receive taps',engine.name,width)
                     href=await card.get_attribute('href')
                     assert href.startswith('https://www.google.com/maps/search/?api=1&') and 'query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0' in href and '301+Alcazar+Avenue' in href,href
                     assert await card.get_attribute('target')=='_blank'
-                    assert await page.locator('main iframe').count()==0 and 'google-web' not in requests,'No embedded Google map'
+                    assert await page.locator('main iframe').count()==1,'Only the map is embedded in the page'
                     async with page.expect_popup() as opened:
                         await card.click()
                     popup=await opened.value
                     await popup.wait_for_load_state()
                     assert 'query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0' in popup.url and 'FAKE GOOGLE MAPS' in await popup.content(),popup.url
-                    assert page.url.startswith(base),'The card opens Google Maps in a new tab and keeps the site open'
-                    await popup.close();requests.remove('google-web')
+                    assert page.url.startswith(base),'The button opens Google Maps in a new tab and keeps the site open'
+                    await popup.close()
                     for href in ['https://www.google.com/maps/dir/?api=1','https://search.google.com/local/writereview?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0','tel:+17862908813']:
                         assert await page.locator('main a[href^="'+href+'"]').count()==1,href
                     await page.screenshot(path=str(output/f'reviews-{engine.name}-{width}-{mode}.png'))

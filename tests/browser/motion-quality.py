@@ -1,7 +1,7 @@
 """Decode the single entrance forward/reverse and verify a bounded pin/fallbacks."""
 import json
 from playwright.async_api import async_playwright
-from review import run, scroll, position, verify_flow
+from review import run, scroll, position, verify_flow, third_party_map_error
 async def main(base,output,args):
  output.mkdir(parents=True,exist_ok=True);rows=[]
  async with async_playwright() as p:
@@ -10,7 +10,7 @@ async def main(base,output,args):
    browser=await engine.launch()
    for width,height in [(390,844),(884,884),(1920,900)]:
     page=await browser.new_page(viewport={'width':width,'height':height});media=[];network=[];errors=[]
-    page.on('pageerror',lambda e:errors.append(str(e)))
+    page.on('pageerror',lambda e:errors.append(str(e)) if not third_party_map_error(e) else None)
     def record_media(request):
      # The venue walk film loads later, near its own section; this review
      # follows the entrance film only.

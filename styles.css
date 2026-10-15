@@ -1519,7 +1519,7 @@ html { scrollbar-gutter: stable; }
 .contact-ready .contact-close { display: inline-block; }
 .social-scenes { margin-block: 28px; padding-block: 24px; border-block: 1px solid var(--line); }
 .social-scenes > h3 { font: 500 26px/1.15 var(--font-display); }
-.social-load, .reviews-load { font: 500 13px/1.4 var(--font-body); color: inherit; background: transparent; border: 1px solid var(--line); padding: 12px 16px; margin-bottom: 16px; }
+.social-load { font: 500 13px/1.4 var(--font-body); color: inherit; background: transparent; border: 1px solid var(--line); padding: 12px 16px; margin-bottom: 16px; }
 .social-load { display: none; }
 .social-ready .social-load { display: inline-block; }
 .social-frame iframe { display: block; width: 100%; max-width: 500px; border: 0; margin-block: 16px; background: var(--paper); }
@@ -1965,10 +1965,11 @@ html { scrollbar-gutter: stable; }
 .location-name { font: 500 22px/1.3 var(--font-display); }
 .location-contact { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 0 0 22px; font-size: 15px; }
 .location-map { display: block; color: inherit; text-decoration: none; position: relative; min-height: 360px; aspect-ratio: 16 / 10; overflow: hidden; background: var(--cream-deep); border: 1px solid var(--line); }
-.location-map > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(.75) brightness(.82); }
-.location-map-load { text-decoration: none; position: absolute; inset: 0; z-index: 1; width: max-content; height: max-content; margin: auto; font: 500 13px/1.4 var(--font-body); letter-spacing: .04em; color: var(--ink); background: var(--paper); border: 1px solid var(--line); padding: 14px 22px; cursor: pointer; box-shadow: 0 10px 30px #34271f40; }
-.location-map:hover .location-map-load, .location-map:focus-visible .location-map-load { background: var(--forest); color: var(--paper); }
-.location-map-note { display: block; position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 10px 14px; font: 400 11px/1.4 var(--font-body); color: var(--cream); background: #34271fcc; }
+/* v1.27 — the map is shown, pinned at the house, softened toward the beige palette. */
+.location-map-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: saturate(.7) sepia(.12); }
+.location-place { display: grid; gap: 12px; align-content: start; }
+.location-map-load { justify-self: end; text-decoration: none; font: 500 13px/1.4 var(--font-body); letter-spacing: .04em; color: var(--ink); background: var(--paper); border: 1px solid var(--line); padding: 12px 18px; }
+.location-map-load:hover, .location-map-load:focus-visible { background: var(--forest); color: var(--paper); }
 @media (max-width: 900px) {
   .location-grid { grid-template-columns: 1fr; gap: 44px; margin-top: 28px; }
   .review-invite { padding: 24px; }
@@ -2070,7 +2071,7 @@ html { scrollbar-gutter: stable; }
 .landing-effects .house-stream li:nth-child(3n) img { transition-delay: .24s; }
 .landing-effects .team-card + .team-card img[data-photo-fade] { transition-delay: .15s; }
 /* Photographs inside clipped frames (the façade card, the Instagram tiles, the drifting hall) only brighten, so no edge shows. */
-.landing-effects :is(.location-map img[data-photo-fade], [data-landing-parallax] img[data-photo-fade], .house-tile img) { translate: none; }
+.landing-effects :is([data-landing-parallax] img[data-photo-fade], .house-tile img) { translate: none; }
 /* Without the mask (Windows high contrast, print), the name shows as plain text again. */
 @media (forced-colors: active), print {
   .logo-text b, .entrance-copy h1, .footer-logo, .location-name { height: auto; width: auto; background: none; -webkit-mask: none; mask: none; text-indent: 0; overflow: visible; }
@@ -2127,3 +2128,16 @@ html { scrollbar-gutter: stable; }
   .venue-walk.is-walking .walk-note > span { font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) { .venue-walk.is-walking { height: auto; } .venue-walk-film, .venue-walk-steps, .venue-walk-welcome, .walk-note { display: none; } }
+
+/* v1.27 — a few words from guests, read as a quiet row of cards (swipe on phones). */
+.guest-reviews { min-width: 0; }
+.review-quotes { min-width: 0; max-width: 100%; list-style: none; margin: 0 0 12px; padding: 0 0 10px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 46%); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: thin; }
+.review-quote { scroll-snap-align: start; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; background: var(--paper); border: 1px solid var(--line); border-top: 2px solid var(--forest); padding: 24px 22px 20px; }
+.review-quote blockquote { margin: 0; }
+.review-quote blockquote p { margin: 0; font: 400 clamp(18px, 1.5vw, 20px)/1.45 var(--font-display); color: var(--ink); }
+.review-quote-by { margin: 0; font: 500 12px/1.4 var(--font-body); letter-spacing: .06em; color: var(--ink-muted); }
+.review-quote-by > span:first-child { color: var(--ink); }
+.review-quotes:focus-visible { outline: 2px solid var(--forest, #5e7060); outline-offset: 4px; }
+.review-quotes-source { margin: 0 0 24px; font: 400 12px/1.5 var(--font-body); color: var(--ink-muted); }
+.review-quotes[hidden] + .review-quotes-source { display: none; }
+@media (max-width: 900px) { .review-quotes { grid-auto-columns: minmax(240px, 84%); } }

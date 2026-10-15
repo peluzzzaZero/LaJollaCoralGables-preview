@@ -1,10 +1,13 @@
 """Review the complete editorial landing, real media and inert calendar."""
-import argparse, asyncio, functools, json, os, threading
+import argparse, asyncio, functools, json, os, re, threading
 from pathlib import Path
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.async_api import async_playwright
 ROOT=Path(os.environ.get('LAJOLLA_WEB_ROOT',Path(__file__).resolve().parents[2]))
 CHAPTERS=['history','visit','events','alcazar','rentals','tour','social','team','location','planning']
+def third_party_map_error(error):
+ # WebKit surfaces failures inside Google's cross-origin map frame (blocked tiles) as page errors; they are not this site's.
+ return bool(re.search(r'(google\.com/maps|maps\.googleapis\.com|maps\.gstatic\.com)/\S* due to access control checks',str(error)))
 class QuietHandler(SimpleHTTPRequestHandler):
  def log_message(self,*_):pass
 async def mock_booking(route):
@@ -48,7 +51,7 @@ async def main(base,output):
   browser=await p.chromium.launch()
   for width,height in [(320,600),(390,844),(768,1024),(884,884),(901,700),(1440,900)]:
    page=await browser.new_page(viewport={'width':width,'height':height});errors=[];media=[]
-   page.on('pageerror',lambda e:errors.append(str(e)))
+   page.on('pageerror',lambda e:errors.append(str(e)) if not third_party_map_error(e) else None)
    page.on('request',lambda r:media.append(r.url) if r.url.endswith(('.mp4','.webm')) else None)
    await page.route('https://bookings.cloud.microsoft/**',mock_booking)
    await page.goto(base);await page.evaluate('document.fonts.ready')

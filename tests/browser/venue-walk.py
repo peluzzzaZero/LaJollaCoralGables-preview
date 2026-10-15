@@ -1,7 +1,7 @@
 """Exercise the scroll-drawn venue walk: cold load, quick scrubbing, fallbacks."""
 import json
 from playwright.async_api import async_playwright
-from review import run
+from review import run, third_party_map_error
 WALK='document.querySelector("[data-venue-walk]")'
 async def scroll_to(page,progress):
  await page.evaluate(f'''p=>{{const w={WALK},f=w.querySelector(".hall-photo");const top=w.getBoundingClientRect().top+scrollY;const span=w.offsetHeight-f.offsetHeight-(parseFloat(getComputedStyle(f).top)||0);scrollTo(0,top+p*span)}}''',progress)
@@ -14,7 +14,7 @@ async def main(base,output,args):
    for width,height in [(320,640),(390,844),(884,884),(1366,768)]:
     for language in ['en','es']:
      context=await browser.new_context(viewport={'width':width,'height':height});page=await context.new_page();errors=[];walk=[]
-     page.on('pageerror',lambda e:errors.append(str(e)))
+     page.on('pageerror',lambda e:errors.append(str(e)) if not third_party_map_error(e) else None)
      async def slow(route):
       # A cold, slow link: the approved photograph must hold the frame meanwhile.
       walk.append(route.request.url);await page.wait_for_timeout(1200);await route.continue_()

@@ -1,7 +1,7 @@
 """Keep all copy readable in normal flow, including static and failure modes."""
 import json
 from playwright.async_api import async_playwright
-from review import run, CHAPTERS, position, verify_flow
+from review import run, CHAPTERS, position, verify_flow, third_party_map_error
 async def main(base,output,args):
  output.mkdir(parents=True,exist_ok=True);rows=[]
  async with async_playwright() as p:
@@ -13,7 +13,7 @@ async def main(base,output,args):
      if mode=='save-data':await context.add_init_script("Object.defineProperty(navigator,'connection',{value:{saveData:true}})")
      if mode=='no-gsap':await context.route('**/gsap.min.js',lambda route:route.abort())
      if mode=='no-media':await context.route('**/*.mp4',lambda route:route.abort());await context.route('**/*.webm',lambda route:route.abort())
-     page=await context.new_page();errors=[];media=[];page.on('pageerror',lambda e:errors.append(str(e)))
+     page=await context.new_page();errors=[];media=[];page.on('pageerror',lambda e:errors.append(str(e)) if not third_party_map_error(e) else None)
      page.on('request',lambda r:media.append(r.url) if r.url.endswith(('.mp4','.webm')) else None)
      await page.goto(base);await page.evaluate('document.fonts.ready')
      if mode=='no-media':

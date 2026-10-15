@@ -1,7 +1,7 @@
 """Verify visible, bounded decoration without moving or concealing the reading flow."""
 import json
 from playwright.async_api import async_playwright
-from review import run, verify_flow
+from review import run, verify_flow, third_party_map_error
 
 async def album_at(page,fraction):
  await page.evaluate('f=>{const a=document.querySelector(".venue-album");scrollTo(0,a.getBoundingClientRect().top+scrollY+(a.offsetHeight-innerHeight)*f)}',fraction)
@@ -72,7 +72,7 @@ async def main(base,output,args):
    browser=await engine.launch()
    for width,height in [(390,844),(884,884),(1440,900)]:
     page=await browser.new_page(viewport={'width':width,'height':height})
-    errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
+    errors=[];page.on('pageerror',lambda error:errors.append(str(error)) if not third_party_map_error(error) else None)
     # Real decoding is covered separately; decoration must also work on the poster.
     await page.route('**/*.mp4',lambda route:route.abort())
     await page.route('**/*.webm',lambda route:route.abort())
