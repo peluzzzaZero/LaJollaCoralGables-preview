@@ -44,10 +44,13 @@ async def main(base, output, webkit=False):
                     if mode=='disabled':
                         await page.wait_for_timeout(300);assert 'google' not in requests
                         assert await page.locator('.review-invite a[href*="query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"]').is_visible()
+                        assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Written guest excerpts show without a key'
+                        assert await page.locator('.review-quotes').evaluate('e=>e.scrollWidth>=e.clientWidth')
                     else:
                         if mode=='success':
                             await page.locator('.guest-review').wait_for()
                             assert await page.locator('.guest-review').count()==1
+                            assert await page.locator('.review-quotes').is_hidden(),'Google reviews replace the written excerpts'
                             assert await page.locator('.guest-review blockquote').inner_text()=='<b>Lovely celebration</b> in this test fixture.'
                             assert await page.locator('.guest-review blockquote b').count()==0
                             assert 'FAKE NEGATIVE REVIEW' not in await page.locator('.reviews-results').inner_text()

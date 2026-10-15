@@ -90,6 +90,8 @@
           place = new Place({ id: placeId });
           await place.fetchFields({ fields: ['reviews', 'attributions'] });
           const hasReviews = renderReviews(results, place);
+          // Google's own selection replaces the written excerpts once it loads.
+          if (hasReviews) section.querySelector('[data-review-quotes]')?.setAttribute('hidden', '');
           status.dataset.state = hasReviews ? 'ready' : 'empty';
           status.hidden = hasReviews; status.textContent = hasReviews ? '' : messages().empty;
         } catch (_) { status.dataset.state = 'unavailable'; status.textContent = messages().unavailable; }

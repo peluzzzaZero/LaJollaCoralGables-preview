@@ -112,6 +112,14 @@ test("the social chapter replaces the brand wall: photographs, guest reviews, th
   assert.equal(html.match(/data-guest-reviews/g).length, 1, "one reviews component");
   assert.match(section, /href="https:\/\/search\.google\.com\/local\/writereview\?placeid=ChIJWbeTzJu32YgRbGDUdwzI0W0"/);
   assert.doesNotMatch(section, /★|\b[1-5](\.\d)? ?\/ ?5\b|aggregateRating/, "no invented rating");
+  // Written excerpts of real five-star Google reviews supplied by the owner: short, attributed by first name and initial.
+  const quotes = section.match(/<li class="review-quote">[^]*?<\/li>/g) || [];
+  assert.equal(quotes.length, 5, "five guest excerpts");
+  for (const quote of quotes) {
+    assert.match(quote, /<blockquote lang="en"><p>“[^<]{20,160}”<\/p><\/blockquote>/);
+    assert.match(quote, /<span translate="no">[A-Z][a-z]+( and [A-Z][a-z]+( [A-Z][a-z]+)?)? [A-Z]\.<\/span>/);
+  }
+  assert.ok(section.indexOf("data-review-quotes") < section.indexOf('class="review-invite"'), "excerpts before the Google invitation");
 });
 
 test("the location chapter shows a lazy map pinned at the address, plus real links", () => {
