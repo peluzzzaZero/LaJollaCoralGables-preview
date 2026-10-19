@@ -77,3 +77,11 @@ test('all landing information is visible in normal sections with same-page visit
   assert.ok(html.includes('id="booking-viewer"'));
   assert.equal(html.includes('href="planning.html"'), false);
 });
+
+test('the visit page title takes focus on load without a drawn ring, and controls keep theirs', () => {
+  const css = read('styles.css');
+  assert.ok(js.includes('getElementById("quote-title")'));
+  assert.match(css, /\.planning-page #quote-title:focus \{ outline: none; \}/);
+  assert.match(css, /:where\(a, button, input, select, textarea\):focus-visible \{\s*outline: 2px solid/);
+  assert.ok(planning.includes('<body id="top" class="planning-page">'));
+});

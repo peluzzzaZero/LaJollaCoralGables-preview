@@ -230,6 +230,8 @@ p:last-child { margin-bottom: 0; }
   outline: 2px solid var(--sage);
   outline-offset: 3px;
 }
+/* The planning title takes focus on load only to orient screen readers; it is not a control. */
+.planning-page #quote-title:focus { outline: none; }
 
 /* —— Buttons —— */
 .btn {
