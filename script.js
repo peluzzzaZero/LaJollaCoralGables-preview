@@ -126,7 +126,7 @@
       "paths.beyondLink": "Explore services",
       "nav.menu": "Explore La Jolla",
       "form.planning": "Schedule a visit",
-      "cta.seal": "Book a visit · La Jolla ·",
+      "cta.seal": "Schedule a visit · La Jolla ·",
 
       "visit.altFacade": "La Jolla facade, ivy, striped awnings and brick entrance at 301 Alcazar Avenue.",
       "visit.altWide": "La Jolla facade and balcony at 301 Alcazar Avenue, Coral Gables.",
@@ -467,7 +467,7 @@
       "paths.beyondLink": "Explore los servicios",
       "nav.menu": "Explore La Jolla",
       "form.planning": "Agende una visita",
-      "cta.seal": "Reserve su visita · La Jolla ·",
+      "cta.seal": "Agende una visita · La Jolla ·",
 
       "visit.altFacade": "Fachada de La Jolla, hiedra, toldos de rayas y entrada de ladrillo en 301 Alcazar Avenue.",
       "visit.altWide": "Fachada y balcón de La Jolla en 301 Alcazar Avenue, Coral Gables.",

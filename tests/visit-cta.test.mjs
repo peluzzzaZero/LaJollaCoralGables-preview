@@ -24,6 +24,11 @@ test("it rests as a button in the arrival and Let's begin and as a small monogra
   // The seal is the site's own LJ monogram ringed by the bilingual booking line; the label stays the accessible name.
   assert.match(html, /<a [^>]*id="visit-cta"[^>]*><span class="visit-cta-label" data-i18n="form\.planning">Schedule a visit<\/span><span class="visit-cta-seal" aria-hidden="true">.*?data-i18n="cta\.seal".*?<img src="assets\/brand\/logo-lj-oval-sage\.png" alt=""/);
   assert.equal(js.split('"cta.seal":').length - 1, 2);
+  // The ring is the only visible text while floating, so it must contain the accessible name (WCAG 2.5.3).
+  const seals = [...js.matchAll(/"cta\.seal": "([^"]+)"/g)].map((m) => m[1]);
+  const names = [...js.matchAll(/"form\.planning": "([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(seals.length, 2);
+  seals.forEach((seal, i) => assert.ok(seal.startsWith(names[i]), seal));
   assert.match(css, /\.visit-cta-seal-shape \{[^}]*width: 64px; height: 64px;/);
   const hero = html.slice(html.indexOf('id="hero"'), html.indexOf('id="history"'));
   const planning = html.slice(html.indexOf('id="planning"'), html.indexOf('id="footer"'));
