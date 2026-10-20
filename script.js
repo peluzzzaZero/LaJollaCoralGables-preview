@@ -189,7 +189,7 @@
       "events.moodAlt.emerald": "A black-dressed table with orchids under emerald light.",
       "events.photoAlt.quince": "A head table dressed in white flowers and candles on a monogrammed dance floor.",
       "events.photoAlt.social": "A dessert table with a tiered cake among tropical greenery.",
-      "events.photoAlt.brand": "The empty hall with a polished white floor, ready to be transformed.",
+      "events.photoAlt.brand": "The house at night, its arched windows and ivy wall lit for an evening event.",
       "events.photoAlt.film": "The spiral staircase seen from above.",
       "events.photoAlt.corporate": "The hall dressed for a holiday party with balloon garlands and marquee letters.",
       "events.photoAlt.productions": "A grand piano in the open hall.",
@@ -529,7 +529,7 @@
       "events.moodAlt.emerald": "Una mesa vestida de negro con orquídeas bajo luz esmeralda.",
       "events.photoAlt.quince": "Una mesa principal vestida con flores blancas y velas sobre una pista con monograma.",
       "events.photoAlt.social": "Una mesa de postres con un pastel de varios pisos entre follaje tropical.",
-      "events.photoAlt.brand": "El salón vacío, con su piso blanco pulido, listo para transformarse.",
+      "events.photoAlt.brand": "La casa de noche, con sus ventanas en arco y su muro de hiedra iluminados para un evento.",
       "events.photoAlt.film": "La escalera de caracol vista desde arriba.",
       "events.photoAlt.corporate": "El salón decorado para una fiesta navideña con guirnaldas de globos y letras luminosas.",
       "events.photoAlt.productions": "Un piano de cola en el salón abierto.",
@@ -1136,9 +1136,9 @@
       });
       const row = boxes.flatMap((box, index) => Math.abs(box.top - top) < 2 ? [index] : []);
       // The stacked slides load together once the list is on screen, so a switch never fades in an empty frame.
-      if (!slidesLoading) { slidesLoading = true; slides.forEach(slide => { slide.loading = 'eager'; }); }
+      if (!slidesLoading && !saveData) { slidesLoading = true; slides.forEach(slide => { slide.loading = 'eager'; }); }
       // A card left under a resting pointer (or holding focus) stops steering once it scrolls out of the row being read.
-      if (pointedPhoto >= 0 && !row.includes(pointedPhoto)) pointedPhoto = -1;
+      if (pointedPhoto >= 0 && !row.includes(pointedPhoto)) { pointedPhoto = -1; if (row.join() === readingRow.join()) followReading(); }
       if (row.join() !== readingRow.join()) { readingRow = row; rowTurn = 0; followReading(); }
     }
     const scheduleTrack = () => { if (!trackFrame) trackFrame = requestAnimationFrame(trackOccasions); };
@@ -1152,7 +1152,8 @@
       const point = () => { clearTimeout(releaseTimer); pointedPhoto = index; stopTurning(); showOccasion(index); };
       const release = () => {
         clearTimeout(releaseTimer);
-        releaseTimer = setTimeout(() => { if (pointedPhoto === index) { pointedPhoto = -1; followReading(); } }, 160);
+        // A card that still holds keyboard focus keeps the frame when the mouse leaves it.
+        releaseTimer = setTimeout(() => { if (pointedPhoto === index && !occasion.matches(':focus-within')) { pointedPhoto = -1; followReading(); } }, 160);
       };
       occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
       occasion.addEventListener('pointerleave', release);

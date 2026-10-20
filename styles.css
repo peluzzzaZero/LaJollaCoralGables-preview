@@ -2169,7 +2169,7 @@ html { scrollbar-gutter: stable; }
 .occasion-visual .occasion-slide { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; z-index: 0; }
 .occasion-visual .occasion-slide.was-shown { z-index: 1; }
 .occasion-visual .occasion-slide.is-shown { z-index: 2; }
-.occasion-stage .occasion-counter { z-index: 4; }
+.occasion-stage .occasion-counter { display: block; z-index: 4; position: absolute; top: 18px; right: 22px; font: 400 52px/1 var(--font-display); color: var(--paper); text-shadow: 0 2px 18px #30261e66; }
 .occasion-photo { display: none; background: var(--cream-deep); }
 .landing-effects .occasion-visual .occasion-slide.is-shown { animation: occasion-arrive 1.1s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes occasion-arrive { from { opacity: .3; transform: scale(1.07); } to { opacity: 1; transform: scale(1); } }

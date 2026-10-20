@@ -88,8 +88,18 @@ test("every occasion has its own photograph in the frame and on its card", () =>
 test("occasion photographs match the hashes recorded in VENUE-MEDIA", () => {
   const media = readFileSync(new URL("./VENUE-MEDIA.md", import.meta.url), "utf8");
   const rows = [...media.matchAll(/`(assets\/venue\/web\/occasion-[a-z]+\.webp)` \(sha256 `([0-9a-f]{64})`\)/g)];
-  assert.equal(rows.length, 5);
+  assert.equal(rows.length, 4);
   for (const [, file, hash] of rows) {
     assert.equal(createHash("sha256").update(readFileSync(new URL(`../${file}`, import.meta.url))).digest("hex"), hash, file);
   }
+});
+
+test("no occasion photograph derives from retired media", async () => {
+  const { retiredMedia } = await import("../scripts/build-site.mjs");
+  const media = readFileSync(new URL("./VENUE-MEDIA.md", import.meta.url), "utf8");
+  const sources = [...media.matchAll(/\| `assets\/venue\/web\/occasion-[a-z]+\.webp`[^|]*\| `assets\/([^`]+)`/g)].map((m) => m[1]);
+  assert.equal(sources.length, 4);
+  for (const source of sources) assert.equal(retiredMedia.has(source), false, source);
+  const section = eventsSection();
+  for (const path of retiredMedia) assert.equal(section.includes(path.split("/").pop().replace(/\.[a-z0-9]+$/, "")+"."), false, path);
 });

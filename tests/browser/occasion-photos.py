@@ -38,6 +38,17 @@ async def main(base,output,args):
      await centre(page,4);await page.locator('.occasion').nth(4).hover();await page.wait_for_timeout(300)
      assert (await centre(page,4))['shown']==4
      await page.mouse.move(2,2);await page.wait_for_timeout(400)
+     # A resting pointer on a card outside the row being read releases the frame
+     # once the page scrolls a little, without the row changing.
+     await centre(page,1);box=await page.locator('.occasion').nth(3).bounding_box()
+     if box and box['y']+20<900:
+      await page.mouse.move(box['x']+box['width']/2,box['y']+10);await page.wait_for_timeout(300)
+      assert (await page.evaluate('[...document.querySelectorAll(".occasion-slide")].findIndex(e=>e.classList.contains("is-shown"))'))==3
+      await page.mouse.wheel(0,12);await page.wait_for_timeout(400)
+      shown=await page.evaluate('[...document.querySelectorAll(".occasion-slide")].findIndex(e=>e.classList.contains("is-shown"))')
+      assert shown in (1,2),shown
+     assert await page.locator('.occasion-counter').is_visible()
+     await page.mouse.move(2,2);await page.wait_for_timeout(400)
      # Reduced motion never alternates on a timer.
      # Full motion turns once to the row's second card; reduced motion never turns on a timer.
      await centre(page,1);await page.wait_for_timeout(4200);assert (await centre(page,1))['shown']==(1 if motion=='reduce' else 2)
