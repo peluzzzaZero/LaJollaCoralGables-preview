@@ -26,6 +26,8 @@ async def main(base,output,args):
      assert walk and all(('mobile' in u)==(width<=650) for u in walk),walk
      assert await page.evaluate(f'getComputedStyle({WALK}.querySelector(".venue-walk-film")).visibility')=='hidden'
      assert await page.locator('.venue-walk .photo-window > img').is_visible()
+     steps=await page.evaluate('(()=>{const s=document.querySelector(".venue-walk-steps");return {over:s.scrollWidth>s.clientWidth,lines:[...s.querySelectorAll("span:not(.venue-walk-track)")].map(e=>Math.round(e.getBoundingClientRect().height/parseFloat(getComputedStyle(e).lineHeight)))}})()')
+     assert not steps['over'] and max(steps['lines'])<=2,(width,language,steps)
      await page.wait_for_function(f'{WALK}.querySelector(".venue-walk-film").classList.contains("is-decoded")',timeout=20000)
      # Quick forward/reverse scrubbing must settle on the final scroll position.
      for target in [.95,.1,.8,.2,1,0,.62]:
