@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { OWNER_ROOM_NAME_STRINGS, withoutOwnerRoomName } from "./owner-copy-exception.mjs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
@@ -90,8 +91,9 @@ test("the walk, album and Lexington use the owners' v1.27.2 copy verbatim in bot
     "visit.noteWelcome": "Every memorable occasion deserves a beautiful beginning.",
     "visit.noteYours": "Imagine the possibilities.",
     "visit.walkDoors": "First impressions",
+    "visit.walkHall": "The Grand Ballroom",
     "visit.noteHall": "A timeless setting, thoughtfully designed for extraordinary occasions.",
-    "visit.hall": "The hall · A timeless setting for unforgettable occasions.",
+    "visit.hall": "The Grand Ballroom · A timeless setting for unforgettable occasions.",
     "landing.visitReason": "Experience La Jolla in person and discover the possibilities for your next extraordinary occasion.",
   };
   for (const [key, text] of Object.entries(en)) {
@@ -101,5 +103,7 @@ test("the walk, album and Lexington use the owners' v1.27.2 copy verbatim in bot
   for (const text of ["Elegancia en cada rincón", "Toda ocasión memorable merece un bello comienzo.", "Pregunte por The Lexington"]) assert.ok(js.includes(text), text);
   const section = alcazarSection();
   assert.ok(section.includes(">Rich in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from distinguished private clubs, classic whiskey lounges, and the elegance of Kentucky racing culture. An intimate setting for cocktails, private dinners, celebrations, and exclusive gatherings, the space offers a distinctive atmosphere of character, warmth, and understated luxury.<"));
-  assert.equal(/ballroom/i.test(html + js), false);
+  assert.equal(/ballroom/i.test(section), false, "The Lexington never says it");
+  assert.equal(/ballroom/i.test(withoutOwnerRoomName(html + js)), false, "only the owners' three walk strings say it");
+  for (const allowed of OWNER_ROOM_NAME_STRINGS) assert.equal((html + js).split(allowed).length - 1, 1, allowed);
 });
