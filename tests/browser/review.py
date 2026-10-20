@@ -67,6 +67,8 @@ async def main(base,output):
      await position(page,name);await check_header(page)
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,name,language)
      await page.screenshot(path=str(output/f'{name}-{width}-{language}.png'))
+    # The single visit button rests in Let's begin at the end of the page; open the calendar from there.
+    await position(page,'planning')
     before=await page.evaluate('scrollY');url=page.url
     opener=page.locator('#visit-cta');await opener.click()
     await page.frame_locator('.booking-frame').locator('h1').wait_for()
