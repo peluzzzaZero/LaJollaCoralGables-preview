@@ -2255,6 +2255,10 @@ html:not(.js) .landing-events .occasion-photo { display: block; }
 .visit-cta-slot { visibility: hidden; pointer-events: none; }
 html:not(.js) .visit-cta-slot:not([data-cta-slot="float"]) { display: none; }
 .visit-cta, .visit-cta-slot[data-cta-slot="float"] { position: fixed; z-index: 40; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px)); }
+/* Until the script places it the link stays unseen (no seal-to-button morph on cold loads); if the script never runs it appears after 3s. */
+html.js:not(.cta-live) .visit-cta { visibility: hidden; animation: visit-cta-fallback 0s 3s forwards; }
+@keyframes visit-cta-fallback { to { visibility: visible; } }
+html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
 .visit-cta.is-live { top: 0; left: 0; right: auto; bottom: auto; will-change: transform; }
 .landing-page .btn.visit-cta { overflow: hidden; transition: width .35s var(--ease), height .35s var(--ease), min-height .35s var(--ease), padding .35s var(--ease), background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), border-radius .35s var(--ease), box-shadow .35s var(--ease); }
 .landing-page .btn.visit-cta.is-start { background: var(--cream); color: var(--ink); border-color: #f2eee38c; }

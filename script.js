@@ -1485,8 +1485,10 @@
     }
     const request = () => { settle = 24; if (!frame) frame = requestAnimationFrame(place); };
     cta.classList.add("is-live");
-    document.documentElement.classList.add("cta-live");
     place();
+    // Shown only once placed, and transitions enabled a frame later so the first paint does not animate.
+    document.documentElement.classList.add("cta-live");
+    requestAnimationFrame(() => document.documentElement.classList.add("cta-ready"));
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request, { passive: true });
     reduced.addEventListener?.("change", request);
