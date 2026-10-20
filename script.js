@@ -187,6 +187,15 @@
       "events.moodAlt.coral": "The hall in coral light, set with round tables and chandeliers.",
       "events.mood.emerald": "Emerald",
       "events.moodAlt.emerald": "A black-dressed table with orchids under emerald light.",
+      "events.photoAlt.quince": "A dance floor covered in white flowers beside candlelit tables, set for a reception.",
+      "events.photoAlt.social": "A dessert table with a tiered cake among tropical greenery.",
+      "events.photoAlt.brand": "The empty hall with a polished white floor, ready to be transformed.",
+      "events.photoAlt.film": "The spiral staircase seen from above.",
+      "events.photoAlt.corporate": "The hall dressed for a holiday party with balloon garlands and marquee letters.",
+      "events.photoAlt.productions": "A grand piano in the open hall.",
+      "events.photoAlt.galas": "Round tables dressed with tall floral centerpieces under lilac light.",
+      "events.photoAlt.dining": "A table set with white flowers, candles and glassware.",
+      "events.photoAlt.other": "Vintage sheet music on a stand against red tufted velvet.",
       "events.alt": "A bride and groom embrace on a starlit dance floor inside La Jolla.",
       "rentals.short": "From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.",
       "rentals.more": "More about our services",
@@ -518,6 +527,15 @@
       "events.moodAlt.coral": "El salón en luz coral, con mesas redondas y lámparas de araña.",
       "events.mood.emerald": "Esmeralda",
       "events.moodAlt.emerald": "Una mesa vestida de negro con orquídeas bajo luz esmeralda.",
+      "events.photoAlt.quince": "Una pista cubierta de flores blancas junto a mesas con velas, lista para una recepción.",
+      "events.photoAlt.social": "Una mesa de postres con un pastel de varios pisos entre follaje tropical.",
+      "events.photoAlt.brand": "El salón vacío, con su piso blanco pulido, listo para transformarse.",
+      "events.photoAlt.film": "La escalera de caracol vista desde arriba.",
+      "events.photoAlt.corporate": "El salón decorado para una fiesta navideña con guirnaldas de globos y letras luminosas.",
+      "events.photoAlt.productions": "Un piano de cola en el salón abierto.",
+      "events.photoAlt.galas": "Mesas redondas con altos centros florales bajo luz lila.",
+      "events.photoAlt.dining": "Una mesa servida con flores blancas, velas y cristalería.",
+      "events.photoAlt.other": "Una partitura antigua en un atril sobre terciopelo rojo capitoneado.",
       "events.alt": "Una pareja de novios se abraza en una pista con luces de estrellas dentro de La Jolla.",
       "rentals.short": "Desde una renta puntual hasta la producción integral. En La Jolla o en el lugar que usted elija en el sur de Florida.",
       "rentals.more": "Más sobre nuestros servicios",
@@ -1067,6 +1085,42 @@
     const staging = () => !!album && roomy.matches && !!window.CSS?.supports?.('height', '1svh') && CSS.supports('overflow', 'clip');
     const occasions = [...document.querySelectorAll('.occasion')];
     const occasionCounter = document.querySelector('.occasion-counter');
+    // The sticky frame shows one occasion's photograph: the one pointed at or
+    // focused, otherwise the row being read, alternating between its two cards.
+    const slides = [...document.querySelectorAll('.occasion-slide')];
+    const ticks = [...document.querySelectorAll('.occasion-ticks i')];
+    const occasionLabel = document.querySelector('.occasion-label');
+    let shownPhoto = -1, pointedPhoto = -1, readingRow = [], rowTurn = 0, rowTimer = 0;
+    function showOccasion(index) {
+      if (!slides[index]) return;
+      if (index !== shownPhoto) {
+        slides.forEach(slide => slide.classList.remove('was-shown'));
+        slides[shownPhoto]?.classList.replace('is-shown', 'was-shown');
+        slides[index].classList.add('is-shown');
+        shownPhoto = index;
+      }
+      occasions.forEach((occasion, item) => occasion.classList.toggle('is-shown-photo', item === index));
+      ticks.forEach((tick, item) => tick.classList.toggle('is-on', item === index));
+      if (occasionCounter) occasionCounter.textContent = String(index + 1).padStart(2, '0');
+      if (occasionLabel) occasionLabel.textContent = occasions[index].querySelector('h3').textContent;
+    }
+    function followReading() {
+      clearInterval(rowTimer); rowTimer = 0;
+      if (pointedPhoto >= 0 || !readingRow.length) return;
+      showOccasion(readingRow[rowTurn % readingRow.length]);
+      if (readingRow.length > 1 && !reduced.matches && !saveData) rowTimer = setInterval(() => {
+        rowTurn += 1; showOccasion(readingRow[rowTurn % readingRow.length]);
+      }, 3600);
+    }
+    occasions.forEach((occasion, index) => {
+      const point = () => { pointedPhoto = index; clearInterval(rowTimer); rowTimer = 0; showOccasion(index); };
+      const release = () => { if (pointedPhoto === index) { pointedPhoto = -1; followReading(); } };
+      occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
+      occasion.addEventListener('pointerleave', release);
+      occasion.addEventListener('focusin', point);
+      occasion.addEventListener('focusout', release);
+    });
+    showOccasion(0);
     const services = [...document.querySelectorAll('.rentals-quiet li')];
     const cards = [...document.querySelectorAll('.house-grid > li')];
     const seal = document.querySelector('.planning-seal');
@@ -1105,7 +1159,8 @@
           occasion.classList.toggle('is-current', on);
           if (on) current.push(String(index + 1).padStart(2, '0'));
         });
-        if (occasionCounter) occasionCounter.textContent = current.join(' · ');
+        const currentRow = current.map(number => Number(number) - 1);
+        if (currentRow.join() !== readingRow.join()) { readingRow = currentRow; rowTurn = 0; followReading(); }
       } },
       services.length && { element: document.querySelector('.rentals-quiet'), update() {
         // Read every position before writing, so one frame needs one layout.
@@ -1174,6 +1229,7 @@
       inked.forEach(plainWords);
       prints.forEach(print => { print.style.removeProperty('--arrive'); print.style.removeProperty('--covered'); });
       occasions.forEach(occasion => occasion.classList.remove('is-current'));
+      readingRow = []; followReading();
       services.forEach(item => item.style.removeProperty('--enter'));
       cards.forEach(card => ['--scatter', '--scatter-x', '--scatter-r'].forEach(name => card.style.removeProperty(name)));
       seal?.style.removeProperty('--stamp');
@@ -1231,6 +1287,8 @@
       liveScenes.forEach(scene => scene.update());
       schedule();
     }
+    // The frame's label repeats the current title in the chosen language.
+    window.addEventListener('lajolla-language', () => showOccasion(Math.max(0, shownPhoto)));
     // Translation replaces the inked paragraphs with plain text.
     window.addEventListener('lajolla-language', () => {
       if (!document.body.classList.contains('landing-effects')) return;

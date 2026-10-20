@@ -144,3 +144,20 @@ a043ef8af20a9faa5c38f552b33e79e018fdb8aa14fd8d5ef3057d5076422884  1000169065.jpg
 
 Signed releases, if any, are held by the venue, not in this repository.
 
+
+## Occasion photographs — v1.29.0
+
+Each occasion in the events chapter shows its own photograph. Five delivery files are uncropped WebP re-encodings (q78, ≤804 px wide, no crop, no metadata) of approved JPEGs already in this file; the rest reuse existing delivery files.
+
+| Delivered file | Source | Occasion |
+| --- | --- | --- |
+| `assets/venue/web/occasion-quince.webp` | `assets/venue/reception-white.jpg` | Quinceañeras & Sweet Sixteens |
+| `assets/venue/web/occasion-social.webp` | `assets/venue/dessert-table.jpg` | Social celebrations |
+| `assets/venue/web/occasion-brand.webp` | `assets/venue/hall.jpg` (resized 1024 → 804 wide) | Brand activations & product launches |
+| `assets/venue/web/occasion-corporate.webp` | `assets/venue/holiday-party.jpg` | Corporate events |
+| `assets/venue/web/occasion-galas.webp` | `assets/venue/tables-lilac.jpg` | Galas & fundraisers |
+| `assets/venue/web/first-dance.webp` | existing | Weddings |
+| `assets/venue/web/staircase.webp` | existing | Film, photo & content |
+| `assets/venue/web/hall-piano.webp` | existing | Productions & entertainment |
+| `assets/venue/web/tablescape.webp` | existing | Private dining & intimate events |
+| `assets/venue/web/music-detail.webp` | existing | Something completely different? |

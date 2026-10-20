@@ -194,3 +194,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.28.1 — a quieter footer
 
 - At the owner's request, "powered by peluzzza" (10px → 9px) and the bottom legal line (© · Terms · Privacy, .8rem → .75rem) are a touch smaller; no copy changes.
+
+## v1.29.0 — a photograph for every occasion
+
+Ten occasions, ten photographs from the owner's media; a sticky frame that follows reading, hover and focus on wide screens and per-card photographs on narrow ones. Distinctive hover on the "One hall, many moods" cards. See `tests/releases/v1.29.0.md`.
