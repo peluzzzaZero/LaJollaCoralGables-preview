@@ -65,10 +65,11 @@ async def main(base, output):
                         logo=await page.locator('#header .logo').bounding_box()
                         actions=await page.locator('.header-actions').bounding_box()
                         assert logo['x']+logo['width'] <= actions['x']+1, ('Header overlaps',width,language,logo,actions)
-                        cta=page.locator('#header .inquire-link')
-                        assert (await cta.inner_text()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
-                        box=await cta.bounding_box()
-                        assert box['x']>=0 and box['x']+box['width']<=width and box['y']+box['height']<=header['y']+header['height']+1
+                        cta=page.locator('#visit-cta')
+                        assert (await cta.locator('.visit-cta-label').text_content()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
+                        assert await page.locator('[data-booking-opener] [data-i18n="form.planning"]').count()==1
+                        box=await cta.bounding_box();inner=await page.evaluate('innerHeight')
+                        assert box['height']>=44 and box['x']>=0 and box['x']+box['width']<=width and box['y']>=header['y']+header['height']-1 and box['y']+box['height']<=inner+1,(width,language,box)
                         if width<=900:
                             await page.locator('.mobile-menu > summary').click()
                             link=page.locator('.mobile-chapters a[href="#events"]')
@@ -78,10 +79,36 @@ async def main(base, output):
                         assert await page.locator('#events-title').evaluate('e=>e===document.activeElement')
                         assert await page.locator('#events-title').is_visible()
                         await page.screenshot(path=str(output/f'navigation-{width}-{language}.png'))
+                        # The single button floats mid-page, settles in Let's begin at the end, never over the footer, and floats again on the way back.
+                        async def glide(target):
+                            start=await page.evaluate('scrollY')
+                            for k in range(1,13):await page.evaluate(f'scrollTo(0,{start+(target-start)*k/12})');await page.wait_for_timeout(30)
+                            await page.wait_for_timeout(700)
+                        bottom=await page.evaluate('document.documentElement.scrollHeight-innerHeight')
+                        await glide(bottom*.5);assert 'is-float' in await cta.get_attribute('class'),(width,language,'mid')
+                        # Step slowly through the approach to Let's begin: the link must stay fully inside the viewport every frame.
+                        slot_y,float_y,vh=await page.evaluate('[document.querySelector(\'[data-cta-slot="end"]\').getBoundingClientRect().top+scrollY,document.querySelector(\'[data-cta-slot="float"]\').getBoundingClientRect().top,innerHeight]')
+                        for k in range(16,-1,-1):
+                            await page.evaluate(f'scrollTo(0,{slot_y-float_y-vh*.4*k/16})');await page.wait_for_timeout(450)
+                            near=await cta.bounding_box();assert near['y']>=0 and near['y']+near['height']<=vh+1,(width,language,'approach',k,near)
+                        await glide(bottom)
+                        assert 'is-end' in await cta.get_attribute('class'),(width,language,'end')
+                        box=await cta.bounding_box();footer=await page.locator('#footer').bounding_box()
+                        assert box['y']+box['height']<=footer['y']+1,(width,language,box,footer)
+                        await glide(bottom*.5);assert 'is-float' in await cta.get_attribute('class'),(width,language,'back')
                     if filename=='planning.html':
                         assert await page.locator('[data-booking-opener]').count()==1
                         assert 'bookings.cloud.microsoft' in await page.locator('[data-booking-opener]').get_attribute('href')
                     results.append({'page':filename,'width':width,'language':language,'metadata':'passed','layout':'passed'})
+            await page.close()
+        # If the page script never loads, the only visit link must still appear (seal at the bottom-right) and be focusable.
+        for media in [None,'reduce']:
+            page=await browser.new_page(viewport={'width':390,'height':844},reduced_motion=media or 'no-preference')
+            await page.route('**/script.js*',lambda route: route.abort())
+            await page.goto(base+'index.html',wait_until='domcontentloaded');await page.wait_for_timeout(3600)
+            fallback=page.locator('#visit-cta')
+            assert await fallback.evaluate('e=>getComputedStyle(e).visibility')=='visible',('script-failure fallback',media)
+            box=await fallback.bounding_box();assert box and box['y']+box['height']<=844 and box['width']>=44,('script-failure fallback box',media,box)
             await page.close()
         await browser.close()
     (output/'results.json').write_text(json.dumps(results,indent=2))
