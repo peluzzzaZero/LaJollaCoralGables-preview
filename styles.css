@@ -1558,8 +1558,7 @@ html { scrollbar-gutter: stable; }
 .landing-page .wrap { width: min(100% - 80px, 1240px); }
 .landing-page .site-header { background: #faf8f3f5; border-bottom: 1px solid var(--line); }
 .landing-page .site-header.over-entrance { background: linear-gradient(#34271fa6, #34271f18); color: var(--cream); border-color: #f2eee326; backdrop-filter: blur(8px); }
-.landing-page .over-entrance .logo, .landing-page .over-entrance .chapter-nav a, .landing-page .over-entrance .inquire-link, .landing-page .over-entrance .lang-btn, .landing-page .over-entrance .lang-sep { color: var(--cream); }
-.landing-page .over-entrance .inquire-link { border-color: #f2eee38c; }
+.landing-page .over-entrance .logo, .landing-page .over-entrance .chapter-nav a, .landing-page .over-entrance .lang-btn, .landing-page .over-entrance .lang-sep { color: var(--cream); }
 .landing-page .over-entrance .menu-lines { color: var(--cream); }
 .entrance { position: relative; background: #34271f; color: var(--cream); }
 .entrance-stage { position: relative; height: 100svh; min-height: 600px; overflow: hidden; }
@@ -1700,12 +1699,10 @@ html { scrollbar-gutter: stable; }
 .landing-page { --font-body: "Manrope", sans-serif; }
 .landing-page .header-inner { width: min(100% - 40px, 1320px); }
 .landing-page .header-actions { gap: 16px; }
-.landing-page .inquire-link { font: 500 12px/1.4 var(--font-body); letter-spacing: .01em; text-transform: none; border: 1px solid var(--line-soft); padding: 12px 16px; text-align: center; }
 .landing-page .lang-btn { font: 500 11px/1.4 var(--font-body); letter-spacing: .01em; padding: 8px 3px; }
 .landing-page .chapter-nav a { font: 500 12px/1.4 var(--font-body); }
 @media (max-width: 650px) {
   .landing-page .header-actions { gap: 10px; }
-  .landing-page .inquire-link { font-size: 10px; max-width: 88px; padding: 10px; }
   .landing-page .logo-text b { font-size: 17px; }
   .landing-page .logo-text i { font-size: 8px; }
 }
@@ -1765,8 +1762,6 @@ html { scrollbar-gutter: stable; }
 /* A quiet ivory navigation stays readable over daylight in the entrance film. */
 .landing-page .site-header.over-entrance { background: #fbf8f2f5; color: var(--ink); border-color: var(--line); }
 .landing-page .over-entrance .logo, .landing-page .over-entrance .logo-text i, .landing-page .over-entrance .chapter-nav a, .landing-page .over-entrance .lang-btn, .landing-page .over-entrance .lang-sep { color: var(--ink); }
-.landing-page .inquire-link, .landing-page .over-entrance .inquire-link { background: var(--forest); color: var(--paper); border-color: var(--forest); }
-.landing-page .inquire-link:hover { background: var(--ink); color: white; }
 .landing-page .over-entrance .menu-lines::before, .landing-page .over-entrance .menu-lines::after { background: var(--ink); }
 .landing-page .logo-mark-img { filter: sepia(.6) saturate(.6) brightness(.7); }
 .guest-review time, .guest-review > a, .review-rating { font-size: 12px; }
@@ -2251,28 +2246,44 @@ html:not(.js) .landing-events .occasion-photo { display: block; }
   .mood-card:hover, .mood-card:hover img { transform: none; }
 }
 
-/* One "Schedule a visit" for the whole landing. The real link (.visit-cta) is fixed; three invisible
-   slots of the same shape mark where it rests: in the arrival, floating at the bottom, and in "Let's begin".
-   script.js moves it between them with the scroll. Without script it simply floats. */
+/* One "Schedule a visit" for the whole landing. The real link (.visit-cta) is fixed; invisible slots mark
+   where it rests: a button in the arrival, a small monogram seal at the right edge while reading, and a
+   button again in "Let's begin". script.js moves it between them with the scroll. Without script it is
+   the seal. The seal keeps the visible label for assistive technology (clipped, never zero opacity). */
 .landing-page .btn.visit-cta-shape { box-sizing: border-box; min-height: 48px; padding: 14px 26px; font: 600 13px/1.2 var(--font-display); letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; border-radius: var(--radius); }
+.visit-cta-seal-shape { display: block; box-sizing: border-box; width: 64px; height: 64px; }
 .visit-cta-slot { visibility: hidden; pointer-events: none; }
 html:not(.js) .visit-cta-slot:not([data-cta-slot="float"]) { display: none; }
-.visit-cta, .visit-cta-slot[data-cta-slot="float"] { position: fixed; z-index: 40; right: max(28px, env(safe-area-inset-right)); bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px)); }
-.landing-page .btn.visit-cta { background: var(--forest); color: var(--paper); border: 1px solid var(--forest); border-radius: 999px; box-shadow: 0 14px 34px -12px #2c241e8c, 0 0 0 1px #faf8f326; transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), border-radius .35s var(--ease), box-shadow .35s var(--ease); }
-.landing-page .btn.visit-cta:hover { background: var(--ink); border-color: var(--ink); color: white; }
-.landing-page .btn.visit-cta:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 3px var(--paper); }
+.visit-cta, .visit-cta-slot[data-cta-slot="float"] { position: fixed; z-index: 40; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px)); }
 .visit-cta.is-live { top: 0; left: 0; right: auto; bottom: auto; will-change: transform; }
-.landing-page .btn.visit-cta.is-start { background: var(--cream); color: var(--ink); border-color: #f2eee38c; border-radius: var(--radius); box-shadow: none; }
+.landing-page .btn.visit-cta { overflow: hidden; transition: width .35s var(--ease), height .35s var(--ease), min-height .35s var(--ease), padding .35s var(--ease), background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), border-radius .35s var(--ease), box-shadow .35s var(--ease); }
+.landing-page .btn.visit-cta.is-start { background: var(--cream); color: var(--ink); border-color: #f2eee38c; }
 .landing-page .btn.visit-cta.is-start:hover { background: var(--paper); color: var(--ink); }
-.landing-page .btn.visit-cta.is-start:focus-visible { outline-color: var(--cream); box-shadow: 0 0 0 3px var(--ink); }
-.landing-page .btn.visit-cta.is-end { border-radius: var(--radius); box-shadow: none; }
+.landing-page .btn.visit-cta.is-start:focus-visible { outline: 2px solid var(--cream); outline-offset: 3px; }
+.landing-page .btn.visit-cta.is-end { background: var(--forest); color: var(--paper); border-color: var(--forest); }
+.landing-page .btn.visit-cta.is-end:hover { background: var(--ink); border-color: var(--ink); color: white; }
+.landing-page .btn.visit-cta.is-end:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.visit-cta-seal { display: none; }
+/* The seal: the house monogram ringed by "Book a visit · La Jolla", on a veil of paper. */
+.landing-page .btn.visit-cta:not(.is-start):not(.is-end) { width: 64px; height: 64px; min-height: 0; padding: 0; border-radius: 50%; background: #faf8f3e6; border: 1px solid #61493466; color: var(--forest); box-shadow: 0 8px 22px -10px #2c241e66; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.landing-page .btn.visit-cta:not(.is-start):not(.is-end) .visit-cta-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.visit-cta:not(.is-start):not(.is-end) .visit-cta-seal { display: block; position: absolute; inset: 0; }
+.visit-cta-seal svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: transform 1.2s var(--ease); }
+.visit-cta-seal text { font: 700 11.5px/1 var(--font-body, sans-serif); letter-spacing: .02em; text-transform: uppercase; fill: currentColor; }
+.visit-cta-seal img { position: absolute; left: 50%; top: 50%; width: 25px; height: auto; transform: translate(-50%, -50%); }
+.landing-page .btn.visit-cta:not(.is-start):not(.is-end):hover { background: var(--paper); border-color: var(--forest); }
+.visit-cta:hover .visit-cta-seal svg, .visit-cta:focus-visible .visit-cta-seal svg { transform: rotate(-40deg); }
+.landing-page .btn.visit-cta:not(.is-start):not(.is-end):focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .landing-planning .visit-cta-slot { margin-top: 4px; }
-@media (min-width: 901px) { .landing-page .btn.visit-cta-shape { min-height: 54px; padding: 17px 32px; font-size: 14.5px; } }
-@media (max-width: 700px) {
-  .visit-cta, .visit-cta-slot[data-cta-slot="float"] { left: 0; right: 0; width: max-content; margin-inline: auto; bottom: max(16px, calc(env(safe-area-inset-bottom) + 10px)); }
-  .visit-cta.is-live { right: auto; margin: 0; }
+@media (min-width: 901px) {
+  .landing-page .btn.visit-cta-shape { min-height: 54px; padding: 17px 32px; font-size: 14.5px; }
+  .visit-cta-seal-shape, .landing-page .btn.visit-cta:not(.is-start):not(.is-end) { width: 76px; height: 76px; }
+  .visit-cta-seal img { width: 30px; }
+  .visit-cta, .visit-cta-slot[data-cta-slot="float"] { right: max(28px, env(safe-area-inset-right)); bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px)); }
 }
 body.booking-open .visit-cta { visibility: hidden; }
 .cta-away .entrance-next { visibility: hidden; }
-@media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta { transition: none; } }
+/* Without script the seal floats to the very end; keep the legal row clear of it. */
+html:not(.js) .landing-footer { padding-bottom: 96px; }
+@media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta, .visit-cta-seal svg { transition: none; } .visit-cta:hover .visit-cta-seal svg, .visit-cta:focus-visible .visit-cta-seal svg { transform: none; } }
 @media print { .visit-cta { display: none; } }

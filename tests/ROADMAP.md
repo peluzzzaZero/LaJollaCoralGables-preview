@@ -202,3 +202,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.29.0 — a photograph for every occasion
 
 Ten occasions, ten photographs from the owner's media; a sticky frame that follows reading, hover and focus on wide screens and per-card photographs on narrow ones. Distinctive hover on the "One hall, many moods" cards. See `tests/releases/v1.29.0.md`.
+
+## v1.30.0 — one Schedule a visit
+
+- At the owner's request the repeated "Schedule a visit" buttons (header, arrival, ten occasions, spaces, hall moods, tour, Let's begin) become one: it starts in the arrival, floats at the bottom while reading and settles in "Let's begin" above the footer. Occasion cards lose their links, so v1.29.0's keyboard focus on a card no longer steers the frame. See `tests/releases/v1.30.0.md`. Next: measure tour bookings from the single button.

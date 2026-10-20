@@ -66,7 +66,7 @@ async def main(base, output):
                         actions=await page.locator('.header-actions').bounding_box()
                         assert logo['x']+logo['width'] <= actions['x']+1, ('Header overlaps',width,language,logo,actions)
                         cta=page.locator('#visit-cta')
-                        assert (await cta.text_content()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
+                        assert (await cta.locator('.visit-cta-label').text_content()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
                         assert await page.locator('[data-booking-opener][data-i18n="form.planning"]').count()==1
                         box=await cta.bounding_box();inner=await page.evaluate('innerHeight')
                         assert box['height']>=44 and box['x']>=0 and box['x']+box['width']<=width and box['y']>=header['y']+header['height']-1 and box['y']+box['height']<=inner+1,(width,language,box)
@@ -79,6 +79,18 @@ async def main(base, output):
                         assert await page.locator('#events-title').evaluate('e=>e===document.activeElement')
                         assert await page.locator('#events-title').is_visible()
                         await page.screenshot(path=str(output/f'navigation-{width}-{language}.png'))
+                        # The single button floats mid-page, settles in Let's begin at the end, never over the footer, and floats again on the way back.
+                        async def glide(target):
+                            start=await page.evaluate('scrollY')
+                            for k in range(1,13):await page.evaluate(f'scrollTo(0,{start+(target-start)*k/12})');await page.wait_for_timeout(30)
+                            await page.wait_for_timeout(700)
+                        bottom=await page.evaluate('document.documentElement.scrollHeight-innerHeight')
+                        await glide(bottom*.5);assert 'is-float' in await cta.get_attribute('class'),(width,language,'mid')
+                        await glide(bottom)
+                        assert 'is-end' in await cta.get_attribute('class'),(width,language,'end')
+                        box=await cta.bounding_box();footer=await page.locator('#footer').bounding_box()
+                        assert box['y']+box['height']<=footer['y']+1,(width,language,box,footer)
+                        await glide(bottom*.5);assert 'is-float' in await cta.get_attribute('class'),(width,language,'back')
                     if filename=='planning.html':
                         assert await page.locator('[data-booking-opener]').count()==1
                         assert 'bookings.cloud.microsoft' in await page.locator('[data-booking-opener]').get_attribute('href')

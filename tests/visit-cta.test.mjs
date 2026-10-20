@@ -7,7 +7,7 @@ const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
 const js = readFileSync(new URL("../script.js", import.meta.url), "utf8");
 
 test("the landing has exactly one Schedule a visit button", () => {
-  const openers = html.match(/<a [^>]*data-booking-opener[^>]*>[^<]*<\/a>/g) || [];
+  const openers = html.match(/<a [^>]*data-booking-opener[^>]*>.*?<\/a>/g) || [];
   const visits = openers.filter((a) => /data-i18n="form\.planning"/.test(a));
   assert.equal(visits.length, 1, visits.join("\n"));
   assert.match(visits[0], /id="visit-cta"/);
@@ -17,9 +17,14 @@ test("the landing has exactly one Schedule a visit button", () => {
   }
 });
 
-test("its three resting places are hidden, same-shaped slots in arrival, floating and Let's begin", () => {
+test("it rests as a button in the arrival and Let's begin and as a small monogram seal while reading", () => {
   const slots = [...html.matchAll(/<span class="btn visit-cta-shape visit-cta-slot" data-cta-slot="(\w+)" aria-hidden="true"><span data-i18n="form\.planning">Schedule a visit<\/span><\/span>/g)].map((m) => m[1]);
-  assert.deepEqual(slots, ["float", "start", "end"]);
+  assert.deepEqual(slots, ["start", "end"]);
+  assert.match(html, /<span class="visit-cta-seal-shape visit-cta-slot" data-cta-slot="float" aria-hidden="true"><\/span>/);
+  // The seal is the site's own LJ monogram ringed by the bilingual booking line; the label stays the accessible name.
+  assert.match(html, /<a [^>]*id="visit-cta"[^>]*><span class="visit-cta-label" data-i18n="form\.planning">Schedule a visit<\/span><span class="visit-cta-seal" aria-hidden="true">.*?data-i18n="cta\.seal".*?<img src="assets\/brand\/logo-lj-oval-sage\.png" alt=""/);
+  assert.equal(js.split('"cta.seal":').length - 1, 2);
+  assert.match(css, /\.visit-cta-seal-shape \{[^}]*width: 64px; height: 64px;/);
   const hero = html.slice(html.indexOf('id="hero"'), html.indexOf('id="history"'));
   const planning = html.slice(html.indexOf('id="planning"'), html.indexOf('id="footer"'));
   assert.match(hero, /data-cta-slot="start"/);
@@ -28,8 +33,9 @@ test("its three resting places are hidden, same-shaped slots in arrival, floatin
 
 test("the button is touch-sized, respects reduced motion and never sits over the booking dialog", () => {
   assert.match(css, /\.landing-page \.btn\.visit-cta-shape \{[^}]*min-height: 48px/);
+  assert.match(css, /visit-cta-label \{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect\(0 0 0 0\)/);
   assert.match(css, /\.visit-cta-slot \{ visibility: hidden; pointer-events: none; \}/);
-  assert.match(css, /prefers-reduced-motion: reduce\) \{ \.landing-page \.btn\.visit-cta \{ transition: none; \} \}/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{ \.landing-page \.btn\.visit-cta, \.visit-cta-seal svg \{ transition: none; \}/);
   assert.match(css, /body\.booking-open \.visit-cta \{ visibility: hidden; \}/);
   assert.match(js, /function initVisitCta\(\)/);
   assert.match(js, /if \(reduced\.matches\) \{ out = out < \.5 \? 0 : 1;/);

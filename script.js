@@ -126,6 +126,7 @@
       "paths.beyondLink": "Explore services",
       "nav.menu": "Explore La Jolla",
       "form.planning": "Schedule a visit",
+      "cta.seal": "Book a visit · La Jolla ·",
 
       "visit.altFacade": "La Jolla facade, ivy, striped awnings and brick entrance at 301 Alcazar Avenue.",
       "visit.altWide": "La Jolla facade and balcony at 301 Alcazar Avenue, Coral Gables.",
@@ -466,6 +467,7 @@
       "paths.beyondLink": "Explore los servicios",
       "nav.menu": "Explore La Jolla",
       "form.planning": "Agende una visita",
+      "cta.seal": "Reserve su visita · La Jolla ·",
 
       "visit.altFacade": "Fachada de La Jolla, hiedra, toldos de rayas y entrada de ladrillo en 301 Alcazar Avenue.",
       "visit.altWide": "Fachada y balcón de La Jolla en 301 Alcazar Avenue, Coral Gables.",
@@ -1154,13 +1156,10 @@
       const point = () => { clearTimeout(releaseTimer); pointedPhoto = index; stopTurning(); showOccasion(index); };
       const release = () => {
         clearTimeout(releaseTimer);
-        // A card that still holds keyboard focus keeps the frame when the mouse leaves it.
-        releaseTimer = setTimeout(() => { if (pointedPhoto === index && !occasion.querySelector(':focus-visible')) { pointedPhoto = -1; followReading(); } }, 160);
+        releaseTimer = setTimeout(() => { if (pointedPhoto === index) { pointedPhoto = -1; followReading(); } }, 160);
       };
       occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
       occasion.addEventListener('pointerleave', release);
-      occasion.addEventListener('focusin', point);
-      occasion.addEventListener('focusout', release);
     });
     showOccasion(0);
     scheduleTrack();
@@ -1431,21 +1430,39 @@
   }
 
   // The landing has a single "Schedule a visit". It starts in the arrival, travels with the scroll
-  // to a floating pill at the bottom and finally settles in "Let's begin", above the footer.
+  // into a small monogram seal at the bottom-right and finally settles in "Let's begin", above the footer.
   function initVisitCta() {
     const cta = document.getElementById("visit-cta");
     const slot = (name) => document.querySelector('[data-cta-slot="' + name + '"]');
     const start = slot("start"), float = slot("float"), end = slot("end");
+    // The seal steps aside from the map so Google's controls and attribution stay uncovered.
+    const avoid = document.querySelector("[data-location-map]");
     if (!cta || !start || !float || !end) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const clamp = (v) => Math.min(1, Math.max(0, v));
     const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     const mix = (a, b, t) => a + (b - a) * t;
     let frame = 0, settle = 0, state = "";
+    function aside(f) {
+      const m = avoid?.getBoundingClientRect();
+      if (!m) return f;
+      const gap = 12;
+      const overlap = Math.min(f.bottom, m.bottom + gap) - Math.max(f.top, m.top - gap);
+      if (overlap <= 0 || f.right <= m.left - gap || f.left >= m.right + gap) return f;
+      // Eased by how far the map has entered the seal's band, so it slides rather than jumps.
+      const t = reduced.matches ? 1 : clamp(overlap / f.height);
+      const right = innerWidth - m.right, left = m.left;
+      // Prefer the margin beside the map; otherwise sit centred just above its bottom edge, between
+      // Google's logo (left) and its zoom controls and attribution (right).
+      if (right >= f.width + 2 * 6) return { left: mix(f.left, m.right + (right - f.width) / 2, t), top: f.top };
+      if (left >= f.width + 2 * 16 && left - f.width - 16 > f.left - 240) return { left: mix(f.left, left - f.width - 16, t), top: f.top };
+      return { left: mix(f.left, m.left + (m.width - f.width) / 2, t), top: mix(f.top, Math.min(f.top, m.bottom - f.height - 28), t) };
+    }
     function place() {
       frame = 0;
       const vh = window.innerHeight;
-      const a = start.getBoundingClientRect(), f = float.getBoundingClientRect(), e = end.getBoundingClientRect();
+      const a = start.getBoundingClientRect(), e = end.getBoundingClientRect();
+      const f = aside(float.getBoundingClientRect());
       // Leave the arrival over the first ~40% of a screen, and meet "Let's begin" over its last 30%.
       let out = clamp(window.scrollY / (vh * .4));
       let home = e.top <= f.top ? 1 : clamp(1 - (e.top - f.top) / (vh * .3));
@@ -1471,7 +1488,12 @@
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request, { passive: true });
     reduced.addEventListener?.("change", request);
-    if (typeof ResizeObserver === "function") new ResizeObserver(request).observe(cta);
+    if (typeof ResizeObserver === "function") {
+      const watch = new ResizeObserver(request);
+      watch.observe(cta);
+      // Late images and fonts above "Let's begin" move its slot without a scroll.
+      watch.observe(document.body);
+    }
     window.addEventListener("lajolla-language", request);
     window.addEventListener("load", request);
   }
