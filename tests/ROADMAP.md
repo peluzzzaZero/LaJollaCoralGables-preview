@@ -182,3 +182,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.27.1 — a clean title on the visit page
 
 - The visit page title no longer shows a focus ring on load; it still takes focus for screen readers, and controls keep their keyboard focus ring.
+
+## v1.27.2 — the owners' copy for the walk, the album and The Lexington
+
+- The owners' copy for the venue walk, the album captions and The Lexington is applied word for word in English and translated faithfully to Spanish; by Dan's decision the owners' "The Grand Ballroom" stays in those three walk strings, and the banned-word checks cover everything else.

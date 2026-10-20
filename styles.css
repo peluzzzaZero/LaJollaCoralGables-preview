@@ -2123,7 +2123,9 @@ html { scrollbar-gutter: stable; }
   .venue-walk.is-walking .hall-photo { top: var(--header-h); height: calc(100svh - var(--header-h)); }
   .venue-walk.is-walking .photo-window, .venue-walk.is-walking figcaption { width: min(100%, calc(100svh - 260px)); }
   .venue-walk.is-walking .photo-window { aspect-ratio: 1; }
-  .venue-walk-track { width: 70px; }
+  .venue-walk-track { width: 48px; flex: none; }
+  .venue-walk.is-walking .venue-walk-steps { gap: 10px; letter-spacing: .12em; }
+  .venue-walk-steps > span:not(.venue-walk-track) { line-height: 1.3; }
   .venue-walk.is-walking .walk-note { left: 6%; right: 6%; max-width: none; padding: 12px 14px 14px; bottom: 5%; }
   .venue-walk.is-walking .walk-note--right { top: 5%; bottom: auto; }
   .venue-walk.is-walking .walk-note--center { left: 6%; translate: none; }
