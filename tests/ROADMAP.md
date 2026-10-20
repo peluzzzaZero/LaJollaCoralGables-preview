@@ -218,3 +218,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.30.1 — no arrows on links
 
 - The owners asked again: no arrows at all, not even drawn ones. Social cards end in a small-caps "Follow / Seguir" with a fine underline; every other link ("See more on Instagram", "Discover the house") is plain text. The review carousel keeps its previous/next chevrons. See `tests/releases/v1.30.1.md`.
+
+## v1.30.2 — the visit seal steps aside from the map
+
+- At the owner's request (Android screenshot): the floating seal slides off the right edge while the map block is under it (or waits in the margin on wide screens), and the button ↔ seal change follows the scroll frame by frame with the words fading into the monogram. See `tests/releases/v1.30.2.md`.

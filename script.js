@@ -1439,45 +1439,68 @@
     const cta = document.getElementById("visit-cta");
     const slot = (name) => document.querySelector('[data-cta-slot="' + name + '"]');
     const start = slot("start"), float = slot("float"), end = slot("end");
-    // The seal steps aside from the map so Google's controls and attribution stay uncovered.
-    const avoid = document.querySelector("[data-location-map]");
+    // The seal slips off the right edge while the map (and its "Open in Google Maps" link) is under it,
+    // so Google's controls, the pin and the link stay clear.
+    const map = document.querySelector("[data-location-map]");
+    const avoid = map?.closest(".location-place") || map;
     if (!cta || !start || !float || !end) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const clamp = (v) => Math.min(1, Math.max(0, v));
-    const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const ease = (t) => t * t * (3 - 2 * t);
     const mix = (a, b, t) => a + (b - a) * t;
+    const radius = parseFloat(getComputedStyle(start).borderTopLeftRadius) || 0;
     let frame = 0, settle = 0, state = "";
     function aside(f) {
       const m = avoid?.getBoundingClientRect();
-      if (!m) return f;
-      const gap = 12;
-      const overlap = Math.min(f.bottom, m.bottom + gap) - Math.max(f.top, m.top - gap);
-      if (overlap <= 0 || f.right <= m.left - gap || f.left >= m.right + gap) return f;
-      // Eased by how far the map has entered the seal's band, so it slides rather than jumps.
-      const t = reduced.matches ? 1 : clamp(overlap / f.height);
-      const right = innerWidth - m.right, left = m.left;
-      // Prefer the margin beside the map; otherwise sit centred just above its bottom edge, between
-      // Google's logo (left) and its zoom controls and attribution (right).
-      if (right >= f.width + 2 * 6) return { left: mix(f.left, m.right + (right - f.width) / 2, t), top: f.top };
-      if (left >= f.width + 2 * 16 && left - f.width - 16 > f.left - 240) return { left: mix(f.left, left - f.width - 16, t), top: f.top };
-      return { left: mix(f.left, m.left + (m.width - f.width) / 2, t), top: mix(f.top, Math.min(f.top, m.bottom - f.height - 28), t) };
+      const box = { left: f.left, top: f.top, width: f.width, height: f.height, tucked: 0 };
+      if (!m || f.right <= m.left || f.left >= m.right) return box;
+      const right = innerWidth - m.right;
+      // Wide screens: wait in the margin beside the map.
+      if (right >= f.width + 12) {
+        const t = clamp(Math.min(f.bottom + f.height - m.top, m.bottom + f.height - f.top) / f.height);
+        box.left = mix(f.left, m.right + (right - f.width) / 2, reduced.matches ? Math.ceil(t) : ease(t));
+        return box;
+      }
+      // Otherwise slide out to the right as the map arrives and back once it has gone; keyboard focus keeps it in view.
+      // Fully out before the map reaches the seal, and back only once it has fully passed.
+      const d = f.height * 1.6;
+      let t = clamp(Math.min(f.bottom + d - m.top, m.bottom + d - f.top) / d);
+      if (document.activeElement === cta) t = 0;
+      t = reduced.matches ? Math.ceil(t) : ease(t);
+      box.left = mix(f.left, innerWidth + 16, t);
+      box.tucked = t;
+      return box;
     }
     function place() {
       frame = 0;
       const vh = window.innerHeight;
-      const a = start.getBoundingClientRect(), e = end.getBoundingClientRect();
       const f = aside(float.getBoundingClientRect());
-      // Leave the arrival over the first ~40% of a screen, and meet "Let's begin" over its last 30%.
-      let out = clamp(window.scrollY / (vh * .4));
-      let home = e.top <= f.top ? 1 : clamp(1 - (e.top - f.top) / (vh * .3));
-      if (reduced.matches) { out = out < .5 ? 0 : 1; home = home < 1 ? 0 : 1; }
+      const e = end.getBoundingClientRect();
+      // Leave the arrival over the first ~45% of a screen, and meet "Let's begin" over its last 35%.
+      let out = clamp(window.scrollY / (vh * .45));
+      let home = e.top <= f.top ? 1 : clamp(1 - (e.top - f.top) / (vh * .35));
+      if (reduced.matches) { out = Math.round(out); home = home < 1 ? 0 : 1; }
       else { out = ease(out); home = ease(home); }
-      // Never let the wider button run past the viewport edge while it shrinks into the seal.
-      const x = Math.max(8, Math.min(mix(mix(a.left, f.left, out), e.left, home), innerWidth - cta.offsetWidth - 8));
+      // One continuous morph: the button narrows into the seal (m = 1) and widens back into "Let's begin".
+      const b = home > 0 ? e : start.getBoundingClientRect();
+      const m = home > 0 ? 1 - home : out;
+      const w = mix(b.width, f.width, m), h = mix(b.height, f.height, m);
+      let x = mix(b.left + b.width / 2, f.left + f.width / 2, m) - w / 2;
+      let y = mix(b.top + b.height / 2, f.top + f.height / 2, m) - h / 2;
+      // Never let it run past the viewport edges while it changes shape (unless it is tucked away beside the map).
+      if (!f.tucked) x = Math.max(8, Math.min(x, innerWidth - w - 8));
       // While "Let's begin" is still below the seal's line its slot is off-screen; never follow it past the viewport bottom.
-      const y = Math.min(mix(mix(a.top, f.top, out), e.top, home), e.top <= f.top ? Infinity : window.innerHeight - cta.offsetHeight - 8);
+      if (e.top > f.top) y = Math.min(y, vh - h - 8);
+      cta.style.width = w.toFixed(1) + "px";
+      cta.style.height = h.toFixed(1) + "px";
+      cta.style.borderRadius = mix(radius, h / 2, m).toFixed(1) + "px";
       cta.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
-      const next = home >= .5 ? "end" : out < .5 ? "start" : "float";
+      // The words fade out over the first 40% while the monogram fades in from 20% to 65%.
+      cta.style.setProperty("--cta-label", clamp(1 - m / .4).toFixed(3));
+      cta.style.setProperty("--cta-seal", clamp((m - .2) / .45).toFixed(3));
+      // The monogram and its ring always fit the current height, so nothing is cut off mid-morph.
+      cta.style.setProperty("--cta-size", h.toFixed(1) + "px");
+      const next = m < .5 ? (home > 0 ? "end" : "start") : "float";
       if (next !== state) {
         cta.classList.remove("is-" + state);
         cta.classList.add("is-" + next);
@@ -1505,6 +1528,8 @@
     }
     window.addEventListener("lajolla-language", request);
     window.addEventListener("load", request);
+    cta.addEventListener("focus", request);
+    cta.addEventListener("blur", request);
   }
 
   document.addEventListener("DOMContentLoaded", function () {

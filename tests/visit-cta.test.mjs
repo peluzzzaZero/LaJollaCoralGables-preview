@@ -43,7 +43,7 @@ test("the button is touch-sized, respects reduced motion and never sits over the
   assert.match(css, /prefers-reduced-motion: reduce\) \{ \.landing-page \.btn\.visit-cta, \.visit-cta-seal svg \{ transition: none; \}/);
   assert.match(css, /body\.booking-open \.visit-cta \{ visibility: hidden; \}/);
   assert.match(js, /function initVisitCta\(\)/);
-  assert.match(js, /if \(reduced\.matches\) \{ out = out < \.5 \? 0 : 1;/);
+  assert.match(js, /if \(reduced\.matches\) \{ out = Math\.round\(out\); home = home < 1 \? 0 : 1; \}/);
 });
 
 test("the floating seal beats softly 3s in every 12s while floating and never under reduced motion", () => {

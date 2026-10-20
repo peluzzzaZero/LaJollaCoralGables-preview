@@ -2255,7 +2255,12 @@ html.js:not(.cta-live) .visit-cta { visibility: hidden; animation: visit-cta-fal
 @media (prefers-reduced-motion: reduce) { html.js:not(.cta-live) .visit-cta { visibility: visible; } }
 html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
 .visit-cta.is-live { top: 0; left: 0; right: auto; bottom: auto; will-change: transform; }
-.landing-page .btn.visit-cta { overflow: hidden; transition: width .35s var(--ease), height .35s var(--ease), min-height .35s var(--ease), padding .35s var(--ease), background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), border-radius .35s var(--ease), box-shadow .35s var(--ease); }
+.landing-page .btn.visit-cta { overflow: hidden; transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease); }
+/* With the script, size, corners and position follow the scroll frame by frame (no timed morph): the words
+   fade out as the button narrows and the monogram grows in at its centre, then the reverse into "Let's begin". */
+.landing-page .btn.visit-cta.is-live { min-height: 0; padding: 0; }
+.visit-cta-label { opacity: var(--cta-label, 1); }
+.landing-page .btn.visit-cta.is-live .visit-cta-seal { --seal: var(--cta-size, 64px); display: block; position: absolute; inset: auto; left: 50%; top: 50%; width: var(--seal); height: var(--seal); margin: calc(var(--seal) / -2) 0 0 calc(var(--seal) / -2); opacity: var(--cta-seal, 1); scale: calc(.55 + .45 * var(--cta-seal, 1)); pointer-events: none; }
 .landing-page .btn.visit-cta.is-start { background: var(--cream); color: var(--ink); border-color: #f2eee38c; }
 .landing-page .btn.visit-cta.is-start:hover { background: var(--paper); color: var(--ink); }
 .landing-page .btn.visit-cta.is-start:focus-visible { outline: 2px solid var(--cream); outline-offset: 3px; }
@@ -2284,6 +2289,7 @@ html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
   .landing-page .btn.visit-cta-shape { min-height: 54px; padding: 17px 32px; font-size: 14.5px; }
   .visit-cta-seal-shape, .landing-page .btn.visit-cta:not(.is-start):not(.is-end) { width: 76px; height: 76px; }
   .visit-cta-seal img { width: 30px; }
+  .landing-page .btn.visit-cta.is-live .visit-cta-seal { --seal: var(--cta-size, 76px); }
   .visit-cta, .visit-cta-slot[data-cta-slot="float"] { right: max(28px, env(safe-area-inset-right)); bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px)); }
 }
 body.booking-open .visit-cta { visibility: hidden; }
