@@ -9,7 +9,7 @@ SDK = """window.google={maps:{importLibrary:async()=>({Place:class {
  constructor(options){if(options.id!=='ChIJWbeTzJu32YgRbGDUdwzI0W0')throw Error('Wrong venue');}
  async fetchFields(options){window.__mockFields=options.fields;this.attributions=[];
  const good={rating:5,originalText:'<b>Lovely celebration</b> in this test fixture.',originalTextLanguageCode:'en',publishTime:new Date('2024-06-01T12:00:00Z'),googleMapsURI:'https://www.google.com/maps/reviews/FAKE_REVIEW',authorAttribution:{displayName:'FAKE TEST AUTHOR',uri:'https://www.google.com/maps/contrib/FAKE_TEST_AUTHOR'}};
- this.reviews=[{...good,rating:1,originalText:'FAKE NEGATIVE REVIEW'},good,{...good,authorAttribution:{}},{...good,googleMapsURI:'javascript:alert(1)'},{...good,originalText:'FAKE FORMER TEAM thanks to Raul'},{...good,originalText:'',text:'FAKE FORMER TEAM gracias Raúl'}];
+ this.reviews=[{...good,rating:1,originalText:'FAKE NEGATIVE REVIEW'},good,{...good,authorAttribution:{}},{...good,googleMapsURI:'javascript:alert(1)'},{...good,originalText:'FAKE FORMER TEAM thanks to Raul'},{...good,originalText:'',text:'FAKE FORMER TEAM gracias Raúl'},{...good,originalText:'FAKE FORMER TEAM RAU\u0301L'},{...good,originalText:'FAKE FORMER TEAM thanks Mr. Martinez'}];
  }} })}};window.__lajollaMapsReady();"""
 
 async def main(base, output, webkit=False):

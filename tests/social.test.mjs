@@ -119,7 +119,7 @@ test("the social chapter replaces the brand wall: photographs, guest reviews, th
   for (const page of ["index.html", "planning.html", "privacy.html", "terms.html"]) {
     assert.doesNotMatch(readFileSync(new URL(`../${page}`, import.meta.url), "utf8"), /\bra[uú]l\b|martinez/i, `${page} names no former team member`);
   }
-  assert.match(readFileSync(new URL("../social.js", import.meta.url), "utf8"), /!formerTeam\.test\(/, "Google reviews naming the former planner are skipped");
+  assert.match(readFileSync(new URL("../social.js", import.meta.url), "utf8"), /!mentionsFormerTeam\(review\)/, "Google reviews naming the former planner are skipped");
   for (const quote of quotes) {
     assert.match(quote, /<blockquote lang="en"><p>“[^<]{20,160}”<\/p><\/blockquote>/);
     assert.match(quote, /<span translate="no">[A-Z][a-z]+( and [A-Z][a-z]+( [A-Z][a-z]+)?)? [A-Z]\.<\/span>/);
