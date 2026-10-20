@@ -2258,6 +2258,8 @@ html:not(.js) .visit-cta-slot:not([data-cta-slot="float"]) { display: none; }
 /* Until the script places it the link stays unseen (no seal-to-button morph on cold loads); if the script never runs it appears after 3s. */
 html.js:not(.cta-live) .visit-cta { visibility: hidden; animation: visit-cta-fallback 0s 3s forwards; }
 @keyframes visit-cta-fallback { to { visibility: visible; } }
+/* Reduced motion removes every animation (including the fallback), so there the link is simply never hidden; with transitions off it just appears in place. */
+@media (prefers-reduced-motion: reduce) { html.js:not(.cta-live) .visit-cta { visibility: visible; } }
 html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
 .visit-cta.is-live { top: 0; left: 0; right: auto; bottom: auto; will-change: transform; }
 .landing-page .btn.visit-cta { overflow: hidden; transition: width .35s var(--ease), height .35s var(--ease), min-height .35s var(--ease), padding .35s var(--ease), background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), border-radius .35s var(--ease), box-shadow .35s var(--ease); }
@@ -2273,8 +2275,8 @@ html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
 .landing-page .btn.visit-cta:not(.is-start):not(.is-end) .visit-cta-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .visit-cta:not(.is-start):not(.is-end) .visit-cta-seal { display: block; position: absolute; inset: 0; }
 /* While floating the seal beats softly for 3s (two double heartbeats), then rests 9s, and repeats, so it is noticed without nagging. */
-.visit-cta:not(.is-start):not(.is-end) .visit-cta-seal { animation: visit-cta-beat 12s ease-in-out .6s infinite; }
-.landing-page .btn.visit-cta:not(.is-start):not(.is-end) { animation: visit-cta-halo 12s ease-in-out .6s infinite; }
+.visit-cta.is-float .visit-cta-seal { animation: visit-cta-beat 12s ease-in-out .6s infinite; }
+.landing-page .btn.visit-cta.is-float { animation: visit-cta-halo 12s ease-in-out .6s infinite; }
 .visit-cta:hover .visit-cta-seal, .visit-cta:focus-visible .visit-cta-seal, .visit-cta:hover, .visit-cta:focus-visible { animation-play-state: paused; }
 @keyframes visit-cta-halo { 0%, 9%, 12.5%, 21.5%, 25%, 100% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 0 #5e706000; } 2.5%, 15% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 5px #5e706033; } 6%, 18.5% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 9px #5e706014; } }
 @keyframes visit-cta-beat { 0%, 9%, 12.5%, 21.5%, 25%, 100% { transform: scale(1); } 2%, 14.5% { transform: scale(1.07); } 4%, 16.5% { transform: scale(.99); } 6%, 18.5% { transform: scale(1.04); } }
@@ -2295,5 +2297,5 @@ body.booking-open .visit-cta { visibility: hidden; }
 .cta-away .entrance-next { visibility: hidden; }
 /* Until the script places it (or if it never does) the seal floats to the very end; keep the legal row clear. */
 html:not(.cta-live) .landing-footer { padding-bottom: 96px; }
-@media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta, .visit-cta-seal svg { transition: none; } .visit-cta .visit-cta-seal, .landing-page .btn.visit-cta { animation: none !important; } .visit-cta:hover .visit-cta-seal svg, .visit-cta:focus-visible .visit-cta-seal svg { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta, .visit-cta-seal svg { transition: none; } .visit-cta.is-float .visit-cta-seal, .landing-page .btn.visit-cta.is-float { animation: none !important; } .visit-cta:hover .visit-cta-seal svg, .visit-cta:focus-visible .visit-cta-seal svg { transform: none; } }
 @media print { .visit-cta { display: none; } }

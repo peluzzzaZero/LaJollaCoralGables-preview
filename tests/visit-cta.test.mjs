@@ -48,7 +48,7 @@ test("the button is touch-sized, respects reduced motion and never sits over the
 
 test("the floating seal beats softly 3s in every 12s while floating and never under reduced motion", () => {
   const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
-  assert.match(css, /\.visit-cta:not\(\.is-start\):not\(\.is-end\) \.visit-cta-seal \{ animation: visit-cta-beat 12s [^;]* infinite; \}/);
+  assert.match(css, /\.visit-cta\.is-float \.visit-cta-seal \{ animation: visit-cta-beat 12s [^;]* infinite; \}/);
   assert.match(css, /@keyframes visit-cta-beat \{[^\n]*scale\(1\.07\)/);
-  assert.match(css, /prefers-reduced-motion: reduce\) \{[^\n]*\.visit-cta \.visit-cta-seal, \.landing-page \.btn\.visit-cta \{ animation: none !important; \}/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{[^\n]*\.visit-cta\.is-float \.visit-cta-seal, \.landing-page \.btn\.visit-cta\.is-float \{ animation: none !important; \}/);
 });

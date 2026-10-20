@@ -101,6 +101,15 @@ async def main(base, output):
                         assert 'bookings.cloud.microsoft' in await page.locator('[data-booking-opener]').get_attribute('href')
                     results.append({'page':filename,'width':width,'language':language,'metadata':'passed','layout':'passed'})
             await page.close()
+        # If the page script never loads, the only visit link must still appear (seal at the bottom-right) and be focusable.
+        for media in [None,'reduce']:
+            page=await browser.new_page(viewport={'width':390,'height':844},reduced_motion=media or 'no-preference')
+            await page.route('**/script.js*',lambda route: route.abort())
+            await page.goto(base+'index.html',wait_until='domcontentloaded');await page.wait_for_timeout(3600)
+            fallback=page.locator('#visit-cta')
+            assert await fallback.evaluate('e=>getComputedStyle(e).visibility')=='visible',('script-failure fallback',media)
+            box=await fallback.bounding_box();assert box and box['y']+box['height']<=844 and box['width']>=44,('script-failure fallback box',media,box)
+            await page.close()
         await browser.close()
     (output/'results.json').write_text(json.dumps(results,indent=2))
     print(f'Public package: exclusions, metadata, chapter labels and {len(results)} page/language/width checks passed.')
