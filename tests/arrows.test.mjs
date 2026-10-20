@@ -2,8 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-// iOS draws many Unicode arrows and symbols (↗, ↘, ➚, ⬈…) as blue emoji tiles, and
-// U+FE0F forces emoji presentation on anything. Visitors must only ever see drawn icons.
+// The owners want no arrows on the site's links at all: not Unicode arrows (iOS draws
+// ↗, ↘, ➚, ⬈… as blue emoji tiles, and U+FE0F forces emoji on anything), and not drawn ones.
+// The review carousel's previous/next chevrons are controls, not link decorations, and stay.
 const files = ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "styles.css"];
 const read = (name) => {
   const text = readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
@@ -12,7 +13,6 @@ const read = (name) => {
   return text;
 };
 const banned = /[‼⁉™ℹⓂ■-◿〰〽㊗㊙←-⇿⌀-⏿☀-☄☆-➿⟰-⟿⤀-⥿⬀-⯿️⃣]|[\u{1F000}-\u{1FAFF}]/gu;
-const arrowIcon = /<svg class="icon-arrow[^"]*" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="[^"]+" fill="none" stroke="currentColor"\/><\/svg>/;
 
 test("no emoji-capable arrows or symbols reach visitors", () => {
   for (const name of files) {
@@ -21,12 +21,22 @@ test("no emoji-capable arrows or symbols reach visitors", () => {
   }
 });
 
-test("link arrows are drawn icons that follow the text colour", () => {
+test("links carry no drawn arrows either", () => {
+  for (const name of files) assert.doesNotMatch(read(name), /link-arrow|icon-arrow/, `${name} still has an arrow decoration`);
   const html = read("index.html");
-  const css = read("styles.css");
-  for (const span of html.match(/<span class="link-arrow"[^>]*>[^]*?<\/span>/g) ?? []) assert.equal(span, '<span class="link-arrow" aria-hidden="true"></span>');
-  const icons = html.match(/<svg class="icon-arrow[^]*?<\/svg>/g) ?? [];
-  assert.ok(icons.length >= 5, "social cards, Instagram handle and arrival hint use the drawn arrow");
-  for (const icon of icons) assert.match(icon, arrowIcon);
-  assert.match(css, /\.icon-arrow \{[^}]*fill: none;[^}]*stroke: currentColor;/);
+  const svgs = html.match(/<svg\b[^]*?<\/svg>/g) ?? [];
+  const chevrons = html.match(/<button type="button" class="review-rail-btn"[^]*?<\/button>/g) ?? [];
+  assert.equal(chevrons.length, 2, "review carousel keeps its previous/next controls");
+  for (const svg of svgs) assert.ok(chevrons.some((button) => button.includes(svg)) || svg.startsWith('<svg class="flourish"'), `unexpected icon: ${svg.slice(0, 80)}`);
+});
+
+test("social cards say Follow / Seguir and announce the new tab", () => {
+  const html = read("index.html");
+  const js = read("script.js");
+  const cards = html.slice(html.indexOf('<nav class="social-links"'), html.indexOf("</nav>", html.indexOf('<nav class="social-links"')));
+  assert.equal((cards.match(/<span class="social-follow" data-i18n="social.follow">Follow<\/span>/g) ?? []).length, 3);
+  assert.equal((cards.match(/data-i18n="a11y.newTab"/g) ?? []).length, 3);
+  assert.match(js, /"social.follow": "Follow"/);
+  assert.match(js, /"social.follow": "Seguir"/);
+  assert.equal(js.split('"a11y.newTab":').length, 3);
 });

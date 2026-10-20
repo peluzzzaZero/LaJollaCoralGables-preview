@@ -210,3 +210,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.29.2 — arrows that never turn into emoji
 
 - The owners saw blue emoji tiles instead of arrows on iPhone (social cards and other links): iOS renders "↗" with emoji presentation. Every visible arrow is now a thin drawn icon in the text colour; `tests/arrows.test.mjs` keeps emoji-capable arrows and symbols out of the public pages, scripts and styles. See `tests/releases/v1.29.2.md`.
+
+## v1.29.3 — no arrows on links
+
+- The owners asked again: no arrows at all, not even drawn ones. Social cards end in a small-caps "Follow / Seguir" with a fine underline; every other link ("See more on Instagram", "Discover the house", "Schedule a visit", the venue invitation) is plain text. The review carousel keeps its previous/next chevrons. See `tests/releases/v1.29.3.md`.
