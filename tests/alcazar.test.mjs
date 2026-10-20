@@ -80,3 +80,23 @@ test("alcazar is not ghosted at opacity 0.08", () => {
     assert.equal(/opacity:\s*0(?:\s|;|!|$)/.test(body), false);
   }
 });
+
+test("the walk, album and Lexington use the owner's v1.27.2 vocabulary in both languages", () => {
+  const en = {
+    "visit.stair": "Elegance at every turn",
+    "visit.music": "Historic details, timeless charm",
+    "visit.garden": "Architecture and garden beauty",
+    "visit.street": "A Coral Gables landmark",
+    "visit.noteWelcome": "Every memorable occasion deserves a beautiful beginning.",
+    "visit.noteYours": "Imagine the possibilities.",
+  };
+  for (const [key, text] of Object.entries(en)) {
+    assert.ok(js.includes(`"${key}": "${text}"`), key);
+    assert.ok(html.includes(`data-i18n="${key}">${text}<`), key);
+  }
+  for (const text of ["Elegancia en cada rincón", "Toda ocasión memorable merece un bello comienzo.", "Pregunte por The Lexington"]) assert.ok(js.includes(text), text);
+  const section = alcazarSection();
+  assert.ok(section.includes("distinguished private clubs, classic whiskey lounges"));
+  assert.equal((section.match(/intimate/g) || []).length, 1);
+  assert.equal(/ballroom/i.test(html + js), false);
+});

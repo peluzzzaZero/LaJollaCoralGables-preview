@@ -182,3 +182,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.27.1 — a clean title on the visit page
 
 - The visit page title no longer shows a focus ring on load; it still takes focus for screen readers, and controls keep their keyboard focus ring.
+
+## v1.27.2 — the owner's vocabulary for the walk, the album and The Lexington
+
+- The owner sent the copy they want for the venue walk, the album captions and The Lexington. It is applied in English and Spanish, with "the hall / el salón" in place of the banned word and without repeated adjectives.
