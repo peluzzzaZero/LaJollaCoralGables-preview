@@ -20,8 +20,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MEDIA = ROOT / 'media/events'
 MANIFEST = ROOT / 'assets/venue/web/event-photos.json'
 AVIF_QUALITY, WEBP_QUALITY = 62, 82
-APPROVAL = ('Delivered by Dan (site owner) on 2026-10-20 as the venue\'s own promotional material, cleared for '
-            'publication with the couple\'s consent (recorded in tests/VENUE-MEDIA.md)')
+APPROVAL = ('Delivered by Dan (site owner) on 2026-10-20 in the project chat as the venue\'s own promotional '
+            'material for the website (clearance recorded in tests/VENUE-MEDIA.md)')
 
 # Owner originals, delivered on 2026-10-20 at the best quality available to him.
 ORIGINALS = {
@@ -112,6 +112,9 @@ def original(name):
     data = path.read_bytes()
     if sha256_bytes(data) != ORIGINALS[name]:
         sys.exit(f'{path.relative_to(ROOT)} is not the recorded original')
+    from PIL import Image
+    if Image.open(io.BytesIO(data)).getexif().get(0x0112, 1) != 1:
+        sys.exit(f'{path.relative_to(ROOT)} has an EXIF rotation; stripping it would turn the picture')
     return data
 
 
