@@ -1718,7 +1718,8 @@ html { scrollbar-gutter: stable; }
 .visit-invitation { max-width: 42rem; margin: -24px auto 72px; padding: 8px 24px 0; text-align: center; }
 .visit-invitation::before { content: ''; display: block; width: 56px; height: 1px; margin: 0 auto 22px; background: var(--forest); }
 .visit-invitation p { margin: 0; font: italic 400 clamp(21px, 2.1vw, 27px)/1.5 var(--font-display); color: var(--ink-soft); text-wrap: balance; }
-@media (max-width: 650px) { .visit-invitation { margin-top: -88px; } }
+/* Only while the walk pins its photo is there empty room below the caption to draw into; the collapsed walk keeps its own margin. The hairline is ::before, so keep this line out of the pointer-light selectors. */
+@media (max-width: 650px) { .venue-walk.is-walking + .visit-invitation { margin-top: -88px; } }
 .social-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 28px; }
 .social-links a { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; padding: 24px; color: var(--ink); text-decoration: none; border: 1px solid var(--line); background: var(--paper); transition: box-shadow .3s, border-color .3s; }
 .social-links a > span:first-child { font: 500 24px/1.2 var(--font-display); }
