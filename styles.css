@@ -1986,10 +1986,7 @@ html { scrollbar-gutter: stable; }
 .landing-social .section-head { text-align: left; max-width: 46rem; margin-inline: 0; }
 .landing-social .section-intro { margin-inline: 0; }
 .landing-social .house-stream { margin-top: 36px; }
-.landing-social .guest-voices { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--line); display: grid; grid-template-columns: .8fr 1.2fr; gap: 16px 56px; align-items: start; }
-.landing-social .guest-voices > h3, .landing-social .guest-voices > p { grid-column: 1; }
-.landing-social .guest-reviews { grid-column: 2; grid-row: 1 / span 3; }
-.landing-social .reviews-results { grid-template-columns: 1fr; }
+.landing-social .guest-voices { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--line); }
 .landing-social .reviews-results:not(:empty) { margin-bottom: 24px; }
 .landing-social .review-invite { background: var(--paper); }
 .landing-social .social-links { margin-top: 48px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1998,8 +1995,7 @@ html { scrollbar-gutter: stable; }
 .location-card { border-top: 0; padding-top: 0; }
 @media (max-width: 900px) { .landing-social .social-links { grid-template-columns: 1fr; } }
 @media (max-width: 900px) {
-  .landing-social .guest-voices { grid-template-columns: 1fr; margin-top: 48px; padding-top: 32px; }
-  .landing-social .guest-reviews { grid-column: 1; grid-row: auto; }
+  .landing-social .guest-voices { margin-top: 48px; padding-top: 32px; }
   /* An explicit height: WebKit gives a stretched grid item whose children are all absolute a zero height despite aspect-ratio. */
   .location-map { min-height: 0; aspect-ratio: auto; height: clamp(240px, 62vw, 460px); }
 }
@@ -2133,18 +2129,53 @@ html { scrollbar-gutter: stable; }
 }
 @media (prefers-reduced-motion: reduce) { .venue-walk.is-walking { height: auto; } .venue-walk-film, .venue-walk-steps, .venue-walk-welcome, .walk-note { display: none; } }
 
-/* v1.27 — a few words from guests, read as a quiet row of cards (swipe on phones). */
+/* v1.28.2 — a few words from guests: whole cards on a rail with their own controls (three on a desk, two on a tablet, one on a phone). */
 .guest-reviews { min-width: 0; }
-.review-quotes { min-width: 0; max-width: 100%; list-style: none; margin: 0 0 12px; padding: 0 0 10px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 46%); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: thin; }
-.review-quote { scroll-snap-align: start; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; background: var(--paper); border: 1px solid var(--line); border-top: 2px solid var(--forest); padding: 24px 22px 20px; }
+.review-quotes { --per-view: 3; --rail-gap: 20px; min-width: 0; max-width: 100%; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--per-view) - 1) * var(--rail-gap)) / var(--per-view)); gap: var(--rail-gap); overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: thin; }
+.review-quotes.review-rail { scrollbar-width: none; }
+.review-quotes.review-rail::-webkit-scrollbar { display: none; }
+.review-quote { scroll-snap-align: start; display: flex; flex-direction: column; justify-content: space-between; gap: 22px; background: var(--paper); border: 1px solid var(--line); border-top: 2px solid var(--forest); padding: 28px 28px 24px; }
 .review-quote blockquote { margin: 0; }
-.review-quote blockquote p { margin: 0; font: 400 clamp(18px, 1.5vw, 20px)/1.45 var(--font-display); color: var(--ink); }
-.review-quote-by { margin: 0; font: 500 12px/1.4 var(--font-body); letter-spacing: .06em; color: var(--ink-muted); }
+.review-quote blockquote p { margin: 0; font: 400 clamp(18px, 1.45vw, 21px)/1.5 var(--font-display); color: var(--ink); }
+.review-quote-by { margin: 0; padding-top: 16px; border-top: 1px solid var(--line); font: 500 12px/1.4 var(--font-body); letter-spacing: .06em; color: var(--ink-muted); }
 .review-quote-by > span:first-child { color: var(--ink); }
 .review-quotes:focus-visible { outline: 2px solid var(--forest, #5e7060); outline-offset: 4px; }
-.review-quotes-source { margin: 0 0 24px; font: 400 12px/1.5 var(--font-body); color: var(--ink-muted); }
-.review-quotes[hidden] + .review-quotes-source { display: none; }
-@media (max-width: 900px) { .review-quotes { grid-auto-columns: minmax(240px, 84%); } }
+.review-quotes-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin: 18px 0 32px; }
+.review-quotes-source { margin: 0; font: 400 12px/1.5 var(--font-body); color: var(--ink-muted); }
+.review-quotes[hidden] + .review-quotes-foot { display: none; }
+.review-rail-controls { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.review-rail-controls[hidden] { display: none; }
+.review-rail-btn { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); color: var(--ink); cursor: pointer; transition: background .25s, color .25s, border-color .25s; }
+.review-rail-btn:hover, .review-rail-btn:focus-visible { background: var(--forest); border-color: var(--forest); color: var(--paper); }
+.review-rail-btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 3px; }
+.review-rail-btn[aria-disabled="true"] { background: transparent; border-color: var(--line); color: var(--ink-muted); opacity: .45; cursor: default; }
+.review-rail-progress { position: relative; display: block; width: 88px; height: 2px; background: var(--line); overflow: hidden; }
+.review-rail-progress > span { position: absolute; inset-block: 0; left: var(--start, 0%); width: var(--size, 100%); background: var(--ink-soft); transition: left .3s; }
+/* The heading sits above the full width; Google stays one compact line under the cards, not a tall empty panel. */
+.landing-social .guest-voices > h3, .landing-social .guest-voices > p { max-width: 40rem; }
+.landing-social .guest-voices > p { margin-bottom: 32px; }
+.landing-social .reviews-results { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.landing-social .review-invite { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px 32px; padding: 24px 32px; }
+.landing-social .review-invite > .review-source { margin: 0; padding-right: 32px; border-right: 1px solid var(--line); line-height: 2; }
+.landing-social .review-invite > p:not(.review-source) { margin: 0; font-size: clamp(18px, 1.4vw, 21px); }
+.landing-social .review-invite .review-actions { flex-wrap: nowrap; }
+@media (max-width: 1199px) {
+  .review-quotes { --per-view: 2; }
+  .landing-social .reviews-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .landing-social .review-invite { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .landing-social .review-invite > .review-source { padding-right: 0; border-right: 0; line-height: 1; }
+  .landing-social .review-invite > p:not(.review-source) { margin-bottom: 8px; }
+  .landing-social .review-invite .review-actions { flex-wrap: wrap; }
+}
+@media (max-width: 650px) {
+  .review-quotes { --per-view: 1; --rail-gap: 12px; }
+  .review-quote { padding: 24px 22px 20px; }
+  .landing-social .reviews-results { grid-template-columns: 1fr; }
+  .landing-social .review-invite { padding: 24px; }
+  .landing-social .review-invite .btn { width: 100%; padding-inline: 1.2rem; letter-spacing: .1em; }
+  .review-quotes-source { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .review-rail-btn, .review-rail-progress > span { transition: none; } }
 
 /* v1.28.0 — one hall, many moods: the same room under different light */
 .hall-moods { margin-top: 72px; }

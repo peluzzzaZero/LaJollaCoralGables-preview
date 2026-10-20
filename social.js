@@ -74,8 +74,48 @@
       url.searchParams.set('hl', language()); frame.src = url.href;
     });
   }
+  // The written excerpts move as whole cards with their own controls (the native scrollbar is hidden only once this script runs).
+  function rail(list) {
+    const controls = list.parentElement.querySelector('[data-review-rail-controls]');
+    if (!controls) return;
+    const prev = controls.querySelector('[data-review-rail="prev"]'), next = controls.querySelector('[data-review-rail="next"]');
+    const bar = controls.querySelector('.review-rail-progress');
+    // Steps from the card the row is heading to, so quick repeated clicks are never lost mid-animation.
+    let target = null, idle;
+    function settle(delay) { clearTimeout(idle); idle = setTimeout(function () { target = null; update(); }, delay); }
+    function update() {
+      const max = list.scrollWidth - list.clientWidth;
+      controls.hidden = max <= 1;
+      bar.style.setProperty('--start', (list.scrollLeft / list.scrollWidth * 100) + '%');
+      bar.style.setProperty('--size', (list.clientWidth / list.scrollWidth * 100) + '%');
+      if (target !== null) return;
+      prev.setAttribute('aria-disabled', String(list.scrollLeft <= 1));
+      next.setAttribute('aria-disabled', String(list.scrollLeft >= max - 1));
+    }
+    function stepWidth() {
+      const card = list.querySelector('.review-quote');
+      return card ? card.getBoundingClientRect().width + (parseFloat(getComputedStyle(list).columnGap) || 0) : list.clientWidth;
+    }
+    function move(direction) {
+      const step = stepWidth(), max = list.scrollWidth - list.clientWidth;
+      const from = target === null ? Math.round(list.scrollLeft / step) : target;
+      target = Math.max(0, Math.min(Math.round(max / step), from + direction));
+      list.scrollTo({ left: Math.min(max, target * step), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      prev.setAttribute('aria-disabled', String(target <= 0));
+      next.setAttribute('aria-disabled', String(target >= Math.round(max / step)));
+      settle(900);
+    }
+    prev.addEventListener('click', function () { if (prev.getAttribute('aria-disabled') !== 'true') move(-1); });
+    next.addEventListener('click', function () { if (next.getAttribute('aria-disabled') !== 'true') move(1); });
+    list.addEventListener('pointerdown', function () { target = null; update(); }, { passive: true });
+    list.addEventListener('scroll', function () { update(); settle(300); }, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(update).observe(list); else window.addEventListener('resize', update);
+    list.classList.add('review-rail');
+    update();
+  }
   document.addEventListener('DOMContentLoaded', function () {
     syncMap();
+    document.querySelectorAll('[data-review-quotes]').forEach(rail);
     window.addEventListener('lajolla-language', syncMap);
     const key = document.querySelector('meta[name="google-maps-browser-key"]')?.content || '';
     if (!/^[A-Za-z0-9_-]{20,120}$/.test(key)) return;
