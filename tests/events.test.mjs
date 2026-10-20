@@ -55,3 +55,14 @@ test("events items are not faded in from opacity 0.08", () => {
   }
 
 });
+
+test("events shows the hall in several moods with bilingual captions and alt text", () => {
+  const section = eventsSection();
+  const strip = section.slice(section.indexOf('class="wrap hall-moods'), section.indexOf('class="wrap section-action"'));
+  const cards = [...strip.matchAll(/<img src="assets\/venue\/web\/mood-([a-z]+)\.webp" alt="[^"]+" width="\d+" height="\d+" data-i18n="events\.moodAlt\.\1" data-i18n-attr="alt" loading="lazy"/g)].map((m) => m[1]);
+  assert.deepEqual(cards, ["ivory", "amethyst", "amber", "coral", "emerald"]);
+  for (const key of ["events.moodsTitle", "events.moodsIntro", ...cards.flatMap((k) => [`events.mood.${k}`, `events.moodAlt.${k}`])]) {
+    assert.equal(js.split(`"${key}":`).length - 1, 2, key);
+  }
+  assert.match(css, /\.moods-strip \{[^}]*overflow-x: auto/);
+});

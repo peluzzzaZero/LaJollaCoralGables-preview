@@ -6,22 +6,10 @@
     "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "name": "house-street",
-    "source": "assets/venue/facade-wide.jpg",
+    "name": "house-reception",
+    "source": "assets/venue/reception-white.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
-  },
-  {
-    "name": "house-hall",
-    "source": "assets/venue/hall-piano.jpg",
-    "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
-  },
-  {
-    "name": "house-garden",
-    "source": "assets/venue/garden.jpg",
-    "href": "https://www.instagram.com/lajollacoralgables/",
-    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+    "ownerApproval": "Owner photograph shared by Dan in the project chat on 2026-10-20 for use on the site (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "name": "house-stair",
@@ -30,8 +18,56 @@
     "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   },
   {
+    "name": "house-sweets",
+    "source": "assets/venue/dessert-table.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner photograph shared by Dan in the project chat on 2026-10-20 for use on the site (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-street",
+    "source": "assets/venue/facade-wide.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-first-dance",
+    "source": "assets/venue/first-dance-wide.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner photograph shared by Dan in the project chat on 2026-10-20 for use on the site (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-tables",
+    "source": "assets/venue/tables-lilac.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner photograph shared by Dan in the project chat on 2026-10-20 for use on the site (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
     "name": "house-music",
     "source": "assets/venue/music-detail.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-toast",
+    "source": "assets/venue/dance-floor-toast.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner photograph shared by Dan in the project chat on 2026-10-20 for use on the site (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-hall",
+    "source": "assets/venue/hall-piano.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-holiday",
+    "source": "assets/venue/holiday-party.jpg",
+    "href": "https://www.instagram.com/lajollacoralgables/",
+    "ownerApproval": "Owner photograph shared by Dan in the project chat on 2026-10-20 for use on the site (recorded in tests/VENUE-MEDIA.md)"
+  },
+  {
+    "name": "house-garden",
+    "source": "assets/venue/garden.jpg",
     "href": "https://www.instagram.com/lajollacoralgables/",
     "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
   }
