@@ -153,7 +153,6 @@
       "visit.more": "Another view of the hall",
       "visit.street": "A Coral Gables landmark",
       "visit.altStreet": "La Jolla on Alcazar Avenue at night, its hedges wrapped in warm string lights.",
-      "visit.cta": "Let's imagine your occasion here",
       "visit.filmsLabel": "Short films of the house",
       "visit.watchArrival": "The arrival · 12s",
       "visit.watchDetails": "A closer look · 13s",
@@ -296,7 +295,6 @@
       "tour.info.reserve": "A tour appointment does not reserve a space for an event.",
       "tour.info.bring": "Bring your ideas and inspiration to share with our team.",
       "tour.inviteTitle": "We look forward to welcoming you",
-      "tour.cta": "Schedule your tour",
       "tour.mailLead": "Prefer to write?",
       "testimonial.eyebrow": "Guest voice",
       "testimonial.title": "Testimonial",
@@ -495,7 +493,6 @@
       "visit.more": "Otra vista del salón",
       "visit.street": "Un emblema de Coral Gables",
       "visit.altStreet": "La Jolla en Alcazar Avenue de noche, con los setos envueltos en luces cálidas.",
-      "visit.cta": "Imaginemos su ocasión aquí",
       "visit.filmsLabel": "Breves recorridos por la casa",
       "visit.watchArrival": "La llegada · 12s",
       "visit.watchDetails": "Una mirada más cerca · 13s",
@@ -638,7 +635,6 @@
       "tour.info.reserve": "Una cita de tour no reserva un espacio para un evento.",
       "tour.info.bring": "Traiga sus ideas e inspiración para compartirlas con nuestro equipo.",
       "tour.inviteTitle": "Será un placer recibirle",
-      "tour.cta": "Agende su tour",
       "tour.mailLead": "¿Prefiere escribirnos?",
       "testimonial.eyebrow": "Voz de un invitado",
       "testimonial.title": "Testimonio",
@@ -1434,6 +1430,52 @@
     });
   }
 
+  // The landing has a single "Schedule a visit". It starts in the arrival, travels with the scroll
+  // to a floating pill at the bottom and finally settles in "Let's begin", above the footer.
+  function initVisitCta() {
+    const cta = document.getElementById("visit-cta");
+    const slot = (name) => document.querySelector('[data-cta-slot="' + name + '"]');
+    const start = slot("start"), float = slot("float"), end = slot("end");
+    if (!cta || !start || !float || !end) return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const mix = (a, b, t) => a + (b - a) * t;
+    let frame = 0, settle = 0, state = "";
+    function place() {
+      frame = 0;
+      const vh = window.innerHeight;
+      const a = start.getBoundingClientRect(), f = float.getBoundingClientRect(), e = end.getBoundingClientRect();
+      // Leave the arrival over the first ~40% of a screen, and meet "Let's begin" over its last 30%.
+      let out = clamp(window.scrollY / (vh * .4));
+      let home = e.top <= f.top ? 1 : clamp(1 - (e.top - f.top) / (vh * .3));
+      if (reduced.matches) { out = out < .5 ? 0 : 1; home = home < 1 ? 0 : 1; }
+      else { out = ease(out); home = ease(home); }
+      const x = mix(mix(a.left, f.left, out), e.left, home);
+      const y = mix(mix(a.top, f.top, out), e.top, home);
+      cta.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+      const next = home >= .5 ? "end" : out < .5 ? "start" : "float";
+      if (next !== state) {
+        cta.classList.remove("is-" + state);
+        cta.classList.add("is-" + next);
+        state = next;
+        // Once it floats, it takes the corner where the "Discover the house" hint sits.
+        document.documentElement.classList.toggle("cta-away", next !== "start");
+      }
+      // The arrival copy eases after the scroll stops, so follow it for a few more frames.
+      if (settle-- > 0) frame = requestAnimationFrame(place);
+    }
+    const request = () => { settle = 24; if (!frame) frame = requestAnimationFrame(place); };
+    cta.classList.add("is-live");
+    place();
+    window.addEventListener("scroll", request, { passive: true });
+    window.addEventListener("resize", request, { passive: true });
+    reduced.addEventListener?.("change", request);
+    if (typeof ResizeObserver === "function") new ResizeObserver(request).observe(cta);
+    window.addEventListener("lajolla-language", request);
+    window.addEventListener("load", request);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
     let preferred = "en";
@@ -1447,6 +1489,7 @@
     initLandingMotion();
     initAnchorNavigation();
     initBookingCalendar();
+    initVisitCta();
     initYear();
     if (document.body.classList.contains("planning-page")) {
       const title = document.getElementById("quote-title");

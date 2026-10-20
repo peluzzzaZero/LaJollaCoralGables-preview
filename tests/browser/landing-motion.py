@@ -92,7 +92,8 @@ async def main(base,output,args):
       assert active==1,(width,fraction,active)
       phrase=await caption.evaluate_all('items=>items.find(e=>getComputedStyle(e).display!=="none"&&Number(getComputedStyle(e).opacity)>.99).getBoundingClientRect().bottom')
       assert phrase<state['top'],(width,fraction,phrase,state)
-      assert await page.locator('.entrance-actions [data-booking-opener]').is_visible()
+      cta=page.locator('#visit-cta');assert await cta.is_visible()
+      box=await cta.bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1 and box['y']>=0 and box['y']+box['height']<=height+1,(width,fraction,box)
       await page.screenshot(path=str(output/f'arrival-{engine.name}-{width}-{language}-{fraction}.png'))
      assert len(set(poses))==3,'Entrance typography must accompany the zoom'
      # Two positions inside the same phrase must produce reversible motion.
@@ -118,10 +119,12 @@ async def main(base,output,args):
      assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='inset(0px)', 'Image reveal must finish'
      await verify_flow(page)
      occasion=page.locator('.occasion').nth(1)
-     link=occasion.locator('a').first
-     await link.focus();await page.wait_for_timeout(600)
-     assert await occasion.locator('h3').evaluate('e=>getComputedStyle(e).transform')!='none', 'Keyboard focus must receive the occasion interaction'
-     await page.locator('h1').focus()
+     # Occasions no longer carry their own visit links (one floating Schedule a visit); the pointer drives them.
+     assert await occasion.locator('a').count()==0
+     await occasion.hover();await page.wait_for_timeout(600)
+     if await page.evaluate('matchMedia("(hover: hover)").matches'):
+      assert await occasion.locator('h3').evaluate('e=>getComputedStyle(e).transform')!='none', 'The pointer must receive the occasion interaction'
+     await page.mouse.move(2,2)
      await occasion.scroll_into_view_if_needed()
      box=await occasion.bounding_box()
      await page.mouse.move(box['x']+box['width']*.25,box['y']+box['height']*.25)
@@ -153,12 +156,12 @@ async def main(base,output,args):
     assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='none'
     assert await page.evaluate('!__ljEntrance.trigger')
     assert await page.locator('.landing-reading-progress').is_hidden()
-    await page.locator('.occasion').nth(1).locator('a').focus()
+    await page.locator('.occasion').nth(1).hover()
     await page.wait_for_timeout(500)
-    assert await page.locator('.occasion h3').nth(1).evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove focused occasion travel'
-    invitation=page.locator('.visit-invitation .btn')
-    await invitation.focus();await page.wait_for_timeout(500)
-    assert await invitation.evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove focused booking lift'
+    assert await page.locator('.occasion h3').nth(1).evaluate('e=>getComputedStyle(e).transform')=='none', 'Reduced motion must remove occasion travel'
+    cta=page.locator('#visit-cta')
+    await cta.focus();await page.wait_for_timeout(300)
+    assert await cta.evaluate('e=>getComputedStyle(e).transitionDuration.split(",").every(d=>parseFloat(d)===0)'), 'Reduced motion must remove the visit button easing'
 
     assert await page.locator('.ink-word').count()==0,'Reduced motion must restore plain paragraphs'
     assert await page.locator('.album-stage').evaluate('e=>getComputedStyle(e).position')!='sticky'

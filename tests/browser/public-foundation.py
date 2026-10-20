@@ -65,10 +65,11 @@ async def main(base, output):
                         logo=await page.locator('#header .logo').bounding_box()
                         actions=await page.locator('.header-actions').bounding_box()
                         assert logo['x']+logo['width'] <= actions['x']+1, ('Header overlaps',width,language,logo,actions)
-                        cta=page.locator('#header .inquire-link')
-                        assert (await cta.inner_text()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
-                        box=await cta.bounding_box()
-                        assert box['x']>=0 and box['x']+box['width']<=width and box['y']+box['height']<=header['y']+header['height']+1
+                        cta=page.locator('#visit-cta')
+                        assert (await cta.text_content()).strip()==('Schedule a visit' if language=='en' else 'Agende una visita')
+                        assert await page.locator('[data-booking-opener][data-i18n="form.planning"]').count()==1
+                        box=await cta.bounding_box();inner=await page.evaluate('innerHeight')
+                        assert box['height']>=44 and box['x']>=0 and box['x']+box['width']<=width and box['y']>=header['y']+header['height']-1 and box['y']+box['height']<=inner+1,(width,language,box)
                         if width<=900:
                             await page.locator('.mobile-menu > summary').click()
                             link=page.locator('.mobile-chapters a[href="#events"]')

@@ -826,7 +826,6 @@ html:not(.js) .selection-builder { display: none; }
 .house-films { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin-top: .75rem; }
 .house-films a { padding-block: .65rem; font-size: .95rem; color: var(--sage-deep); text-underline-offset: .25em; }
 .house-films a span[aria-hidden] { font-family: Arial, sans-serif; margin-right: .2rem; }
-.venue-inquiry { margin: 2rem 0 0; text-align: center; }
 .film-viewer { padding: 1rem 1.25rem; border: 1px solid var(--line-soft); background: var(--cream); color: var(--forest); width: min(30rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto; overscroll-behavior: contain; }
 .film-viewer:not([open]) { display: none; }
 .film-viewer::backdrop { background: rgba(21, 35, 28, .72); }
@@ -1609,7 +1608,6 @@ html { scrollbar-gutter: stable; }
 .landing-events .occasion-body { padding: 0; font: 400 14px/1.75 var(--font-body); }
 .landing-events .occasion-body p { margin: 0; }
 .landing-events .occasion-visual { top: 110px; }
-.section-action { margin-top: 32px; }
 .landing-alcazar { color: var(--ink); background: var(--cream-deep); }
 .landing-alcazar .alcazar-grid { grid-template-columns: 1.15fr .85fr; align-items: center; }
 .landing-alcazar .alcazar-copy { max-width: 40rem; }
@@ -1731,7 +1729,6 @@ html { scrollbar-gutter: stable; }
 
 .visit-invitation { display: flex; gap: 24px; align-items: center; justify-content: space-between; margin: -24px 0 64px; padding: 24px 0; border-block: 1px solid var(--line); }
 .visit-invitation p { max-width: 34rem; font: 400 15px/1.65 var(--font-body); margin: 0; }
-.visit-invitation .btn { flex: 0 0 auto; }
 @media (max-width: 650px) { .visit-invitation { align-items: flex-start; flex-direction: column; } }
 .social-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 28px; }
 .social-links a { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; padding: 24px; color: var(--ink); text-decoration: none; border: 1px solid var(--line); background: var(--paper); transition: box-shadow .3s, border-color .3s; }
@@ -1840,16 +1837,13 @@ html { scrollbar-gutter: stable; }
 .landing-effects .brand-card:hover { transform: translateY(-6px); box-shadow: 0 28px 48px -24px #61493466; }
 .landing-page .brand-card figcaption { position: relative; z-index: 1; background: var(--paper); }
 .landing-page .visit-invitation { padding-inline: 24px; background: var(--cream); }
-.landing-page .visit-invitation .btn { box-shadow: 0 6px 20px #61493420; transition: box-shadow .3s, transform .3s; }
-.landing-effects .visit-invitation .btn:hover, .landing-effects .visit-invitation .btn:focus-visible { transform: translateY(-3px); box-shadow: 0 12px 24px #61493440; }
 @media (max-width: 650px) { .entrance-scroll .entrance-phrase { transform-origin: center; } }
 @media (hover: none) { .landing-effects .brand-card:hover, .landing-effects .brand-card:hover img, .landing-effects .occasion:hover h3 { transform: none; } }
 @media (prefers-reduced-motion: reduce) {
- .landing-page .entrance-copy, .landing-page .entrance-copy h1, .landing-page .landing-section .section-head, .landing-effects .brand-card:hover, .landing-effects .brand-card:hover img, .landing-page .occasion h3, .landing-page .occasion .link-arrow, .landing-page .visit-invitation .btn { transform: none; transition: none; }
+ .landing-page .entrance-copy, .landing-page .entrance-copy h1, .landing-page .landing-section .section-head, .landing-effects .brand-card:hover, .landing-effects .brand-card:hover img, .landing-page .occasion h3, .landing-page .occasion .link-arrow { transform: none; transition: none; }
  .landing-page .occasion::before, .landing-page .social-links a::before, .landing-page .visit-invitation::before { display: none; }
 }
 
-.landing-page .occasion-visit { display: inline-flex; gap: 8px; margin-top: 18px; font-size: 12px; }
 
 /* v1.21 — a visit told in scenes. Each scene is scrubbed by native scroll,
    settles on the complete layout and disappears for reduced motion/SaveData. */
@@ -2029,9 +2023,6 @@ html { scrollbar-gutter: stable; }
 .tour-paper li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-sage); }
 .tour-invite { max-width: 40rem; margin: clamp(52px, 6vw, 80px) auto 0; text-align: center; }
 .tour-invite h3.lockup-script { margin: 0; font-size: clamp(42px, 4.8vw, 66px); }
-.tour-cta { margin: 24px 0 0; }
-.tour-cta .btn-sage { background: var(--brand-sage); border-color: var(--brand-sage); color: #f8f6ef; }
-.tour-cta .btn-sage:hover { background: #4b5b4d; border-color: #4b5b4d; color: #f8f6ef; }
 .tour-mail { margin: 16px 0 0; font: 400 14px/1.5 var(--font-body); color: var(--ink-soft); }
 @media (max-width: 760px) {
   .tour-steps { grid-template-columns: 1fr; }
@@ -2259,3 +2250,29 @@ html:not(.js) .landing-events .occasion-photo { display: block; }
   .mood-card, .mood-card img, .mood-frame::after, .mood-card figcaption, .mood-card figcaption::after { transition: none; }
   .mood-card:hover, .mood-card:hover img { transform: none; }
 }
+
+/* One "Schedule a visit" for the whole landing. The real link (.visit-cta) is fixed; three invisible
+   slots of the same shape mark where it rests: in the arrival, floating at the bottom, and in "Let's begin".
+   script.js moves it between them with the scroll. Without script it simply floats. */
+.landing-page .btn.visit-cta-shape { box-sizing: border-box; min-height: 48px; padding: 14px 26px; font: 600 13px/1.2 var(--font-display); letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; border-radius: var(--radius); }
+.visit-cta-slot { visibility: hidden; pointer-events: none; }
+html:not(.js) .visit-cta-slot:not([data-cta-slot="float"]) { display: none; }
+.visit-cta, .visit-cta-slot[data-cta-slot="float"] { position: fixed; z-index: 40; right: max(28px, env(safe-area-inset-right)); bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px)); }
+.landing-page .btn.visit-cta { background: var(--forest); color: var(--paper); border: 1px solid var(--forest); border-radius: 999px; box-shadow: 0 14px 34px -12px #2c241e8c, 0 0 0 1px #faf8f326; transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), border-radius .35s var(--ease), box-shadow .35s var(--ease); }
+.landing-page .btn.visit-cta:hover { background: var(--ink); border-color: var(--ink); color: white; }
+.landing-page .btn.visit-cta:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 3px var(--paper); }
+.visit-cta.is-live { top: 0; left: 0; right: auto; bottom: auto; will-change: transform; }
+.landing-page .btn.visit-cta.is-start { background: var(--cream); color: var(--ink); border-color: #f2eee38c; border-radius: var(--radius); box-shadow: none; }
+.landing-page .btn.visit-cta.is-start:hover { background: var(--paper); color: var(--ink); }
+.landing-page .btn.visit-cta.is-start:focus-visible { outline-color: var(--cream); box-shadow: 0 0 0 3px var(--ink); }
+.landing-page .btn.visit-cta.is-end { border-radius: var(--radius); box-shadow: none; }
+.landing-planning .visit-cta-slot { margin-top: 4px; }
+@media (min-width: 901px) { .landing-page .btn.visit-cta-shape { min-height: 54px; padding: 17px 32px; font-size: 14.5px; } }
+@media (max-width: 700px) {
+  .visit-cta, .visit-cta-slot[data-cta-slot="float"] { left: 0; right: 0; width: max-content; margin-inline: auto; bottom: max(16px, calc(env(safe-area-inset-bottom) + 10px)); }
+  .visit-cta.is-live { right: auto; margin: 0; }
+}
+body.booking-open .visit-cta { visibility: hidden; }
+.cta-away .entrance-next { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta { transition: none; } }
+@media print { .visit-cta { display: none; } }

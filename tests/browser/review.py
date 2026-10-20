@@ -68,7 +68,7 @@ async def main(base,output):
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,name,language)
      await page.screenshot(path=str(output/f'{name}-{width}-{language}.png'))
     before=await page.evaluate('scrollY');url=page.url
-    opener=page.locator('#header .inquire-link');await opener.click()
+    opener=page.locator('#visit-cta');await opener.click()
     await page.frame_locator('.booking-frame').locator('h1').wait_for()
     assert page.url==url
     await page.keyboard.press('Escape');await page.locator('#booking-viewer').wait_for(state='hidden')

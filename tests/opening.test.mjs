@@ -34,7 +34,8 @@ test("MonteCarlo ships from the brand font file", () => {
 test("opening states the offer and opens the tour calendar from the house", () => {
   const opening = html.slice(html.indexOf('id="hero"'), html.indexOf('id="history"'));
   assert.match(opening, /<h1[^>]*>La Jolla<span class="sr-only" data-i18n="hero.context">/);
-  assert.match(opening, /href="https:\/\/bookings\.cloud\.microsoft\/book\/[^"]+" data-booking-opener/);
+  // The single "Schedule a visit" starts its journey here (its slot), then floats along the page.
+  assert.match(opening, /<span class="btn visit-cta-shape visit-cta-slot" data-cta-slot="start" aria-hidden="true">/);
   assert.match(opening, /href="#events"/);
   assert.match(opening, /href="#rentals"/);
   assert.match(opening, /data-i18n="hero.offer"/);

@@ -50,17 +50,10 @@ async def main(base,output,args):
       assert shown in (1,2),shown
      assert await page.locator('.occasion-counter').is_visible()
      await page.mouse.move(2,2);await page.wait_for_timeout(400)
-     # Keyboard focus on a card's link (pointer parked away) holds its photograph while the page scrolls.
-     await page.locator('.occasion').nth(6).locator('a').focus();await page.wait_for_timeout(300)
-     shown=lambda:page.evaluate('[...document.querySelectorAll(".occasion-slide")].findIndex(e=>e.classList.contains("is-shown"))')
-     first=await shown();assert first==6,('focus',first,await page.evaluate('document.activeElement.outerHTML.slice(0,80)'))
-     for step in [120,-240,160]:
-      await page.mouse.wheel(0,step);await page.wait_for_timeout(250)
-      now=await shown();assert now==6,('scroll',step,now)
-     await page.evaluate('document.activeElement.blur()');await page.wait_for_timeout(400)
-     # A mouse click on a card's link focuses it but must not pin the frame.
-     await page.evaluate('addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation()},{capture:true,once:true})')
-     await centre(page,1);await page.locator('.occasion').nth(2).locator('a').click();await page.mouse.move(2,2)
+     # Cards carry no visit links any more: the landing's single Schedule a visit floats instead.
+     assert await page.locator('.occasion a').count()==0
+     # A mouse click on a card must not pin the frame.
+     await centre(page,1);await page.locator('.occasion').nth(2).click();await page.mouse.move(2,2)
      await page.wait_for_timeout(400)
      await centre(page,5);assert (await centre(page,5))['shown'] in (5,6)
      await page.evaluate('document.activeElement.blur()');await page.wait_for_timeout(300)
