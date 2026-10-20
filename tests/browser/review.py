@@ -7,7 +7,9 @@ ROOT=Path(os.environ.get('LAJOLLA_WEB_ROOT',Path(__file__).resolve().parents[2])
 CHAPTERS=['history','visit','events','alcazar','rentals','tour','social','team','location','planning']
 def third_party_map_error(error):
  # WebKit surfaces failures inside Google's cross-origin map frame (blocked tiles) as page errors; they are not this site's.
- return bool(re.search(r'(google\.com/maps|maps\.googleapis\.com|maps\.gstatic\.com)/\S* due to access control checks',str(error)))
+ # Google's embedded map also reports its own lazy module loader failing ('Could not load "util"', "search_impl", "onion"); no site code throws that message.
+ text=str(error)
+ return bool(re.search(r'(google\.com/maps|maps\.googleapis\.com|maps\.gstatic\.com)/\S* due to access control checks',text) or re.fullmatch(r'Error: Could not load "[a-z_]+"\.',text))
 class QuietHandler(SimpleHTTPRequestHandler):
  def log_message(self,*_):pass
 async def mock_booking(route):
