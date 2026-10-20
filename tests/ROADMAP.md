@@ -194,3 +194,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.28.1 — a quieter footer
 
 - At the owner's request, "powered by peluzzza" (10px → 9px) and the bottom legal line (© · Terms · Privacy, .8rem → .75rem) are a touch smaller; no copy changes.
+
+## v1.28.2 — guest reviews across the full width
+
+- The owner found the guest-review block poorly designed on desktop: an empty left column, excerpt cards cut at the right edge, a native scrollbar and a tall, mostly empty Google panel. The heading now sits above a full-width rail of whole cards (three on desktop, two on tablet, one on phones) with the site's own previous/next controls and a slim progress line; Google is one compact strip. Review text unchanged. Next: real-iPhone check of the swipe.

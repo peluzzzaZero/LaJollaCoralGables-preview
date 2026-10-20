@@ -74,8 +74,35 @@
       url.searchParams.set('hl', language()); frame.src = url.href;
     });
   }
+  // The written excerpts move as whole cards with their own controls; the native scrollbar stays only without script.
+  function rail(list) {
+    const controls = list.parentElement.querySelector('[data-review-rail-controls]');
+    if (!controls) return;
+    const prev = controls.querySelector('[data-review-rail="prev"]'), next = controls.querySelector('[data-review-rail="next"]');
+    const bar = controls.querySelector('.review-rail-progress');
+    function update() {
+      const max = list.scrollWidth - list.clientWidth;
+      controls.hidden = max <= 1;
+      prev.setAttribute('aria-disabled', String(list.scrollLeft <= 1));
+      next.setAttribute('aria-disabled', String(list.scrollLeft >= max - 1));
+      bar.style.setProperty('--start', (list.scrollLeft / list.scrollWidth * 100) + '%');
+      bar.style.setProperty('--size', (list.clientWidth / list.scrollWidth * 100) + '%');
+    }
+    function move(direction) {
+      const card = list.querySelector('.review-quote');
+      const step = card ? card.getBoundingClientRect().width + (parseFloat(getComputedStyle(list).columnGap) || 0) : list.clientWidth;
+      list.scrollBy({ left: direction * step, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+    prev.addEventListener('click', function () { if (prev.getAttribute('aria-disabled') !== 'true') move(-1); });
+    next.addEventListener('click', function () { if (next.getAttribute('aria-disabled') !== 'true') move(1); });
+    list.addEventListener('scroll', update, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(update).observe(list); else window.addEventListener('resize', update);
+    list.classList.add('review-rail');
+    update();
+  }
   document.addEventListener('DOMContentLoaded', function () {
     syncMap();
+    document.querySelectorAll('[data-review-quotes]').forEach(rail);
     window.addEventListener('lajolla-language', syncMap);
     const key = document.querySelector('meta[name="google-maps-browser-key"]')?.content || '';
     if (!/^[A-Za-z0-9_-]{20,120}$/.test(key)) return;

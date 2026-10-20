@@ -50,11 +50,20 @@ async def main(base, output, webkit=False):
                         if await quotes.evaluate('e=>e.scrollWidth>e.clientWidth+1'):
                             await page.keyboard.press('ArrowRight');await page.wait_for_timeout(700)
                             assert await quotes.evaluate('e=>e.scrollLeft>0'),'Keyboard reaches the last excerpts'
+                        # Whole cards with the rail's own controls; no native scrollbar once the script runs.
+                        assert await quotes.evaluate('e=>e.offsetHeight-e.clientHeight<1'),'No native scrollbar under the excerpts'
+                        assert await quotes.evaluate("e=>[...e.children].every(c=>{const a=c.getBoundingClientRect(),b=e.getBoundingClientRect();return a.right<=b.right+1||a.left>=b.right-1})"),'No excerpt card is cut at the edge'
+                        nxt=page.locator('[data-review-rail=next]')
+                        await quotes.evaluate('e=>e.scrollTo({left:0})');await page.wait_for_timeout(300)
+                        assert await nxt.is_visible() and await page.locator('[data-review-rail=prev]').get_attribute('aria-disabled')=='true'
+                        await nxt.click();await page.wait_for_timeout(900)
+                        assert await quotes.evaluate('e=>e.scrollLeft>0'),'The next control moves the excerpts'
                     else:
                         if mode=='success':
                             await page.locator('.guest-review').wait_for()
                             assert await page.locator('.guest-review').count()==1
                             assert await page.locator('.review-quotes').is_hidden(),'Google reviews replace the written excerpts'
+                            assert await page.locator('.review-quotes-foot').is_hidden(),'The excerpt note and controls leave with them'
                             assert await page.locator('.guest-review blockquote').inner_text()=='<b>Lovely celebration</b> in this test fixture.'
                             assert await page.locator('.guest-review blockquote b').count()==0
                             assert 'FAKE NEGATIVE REVIEW' not in await page.locator('.reviews-results').inner_text()
