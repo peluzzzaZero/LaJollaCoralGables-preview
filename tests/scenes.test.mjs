@@ -8,7 +8,7 @@ const js = readFileSync(new URL('../script.js', import.meta.url), 'utf8');
 const visit = html.slice(html.indexOf('id="visit"'), html.indexOf('id="events"'));
 
 test('the spaces album keeps the four approved detail photographs and their captions in order', () => {
-  const album = visit.slice(visit.indexOf('class="venue-album"'), visit.indexOf('class="venue-inquiry"'));
+  const album = visit.slice(visit.indexOf('class="venue-album"'), visit.indexOf('</article>', visit.indexOf('class="venue-album"')));
   let cursor = -1;
   for (const [image, caption] of [['staircase.webp', 'visit.stair'], ['music-detail.webp', 'visit.music'], ['bougainvillea.webp', 'visit.garden'], ['facade-night.webp', 'visit.street']]) {
     const at = album.indexOf(image);

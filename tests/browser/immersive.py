@@ -16,7 +16,7 @@ async def main(base,output,args):
     await page.goto(base);assert not requests
     for language in ['en','es']:
      await page.locator(f'[data-lang="{language}"]').click();await position(page,'planning')
-     opener=page.locator('#planning [data-booking-opener]');await opener.scroll_into_view_if_needed()
+     opener=page.locator('#visit-cta');await opener.scroll_into_view_if_needed()
      before=await page.evaluate('scrollY');url=page.url
      await opener.click()
      await page.frame_locator('.booking-frame').locator('h1').wait_for();assert page.url==url and len(requests)==1
@@ -31,7 +31,7 @@ async def main(base,output,args):
      await page.keyboard.press('Escape');await page.wait_for_function('!document.body.classList.contains("booking-open")')
      after=await page.evaluate('scrollY');focused=await opener.evaluate('e=>e===document.activeElement')
      assert abs(after-before)<2 and focused,(engine.name,width,language,before,after,focused)
-     await page.locator('#header .inquire-link').click();await page.frame_locator('.booking-frame').locator('h1').wait_for();assert len(requests)==1
+     await page.locator('#visit-cta').click();await page.frame_locator('.booking-frame').locator('h1').wait_for();assert len(requests)==1
      await page.locator('.booking-close').click();await position(page,'footer')
      assert await page.locator('#footer a[href^="mailto:"]').is_visible()
      assert await page.locator('#footer a[href^="tel:"]').is_visible()
@@ -41,7 +41,7 @@ async def main(base,output,args):
     assert not errors,errors
     await context.close()
    context=await browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844});page=await context.new_page();await page.goto(base)
-   assert 'bookings.cloud.microsoft' in await page.locator('.inquire-link').get_attribute('href')
+   assert 'bookings.cloud.microsoft' in await page.locator('#visit-cta').get_attribute('href');assert await page.locator('#visit-cta').is_visible()
    await position(page,'footer');assert await page.locator('#footer a[href^="mailto:"]').is_visible()
    assert await page.locator('.social-links a').count()==3
    await context.close();await browser.close()

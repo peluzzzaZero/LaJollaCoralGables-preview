@@ -210,3 +210,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.29.2 — arrows that never turn into emoji
 
 - The owners saw blue emoji tiles instead of arrows on iPhone (social cards and other links): iOS renders "↗" with emoji presentation. Every visible arrow is now a thin drawn icon in the text colour; `tests/arrows.test.mjs` keeps emoji-capable arrows and symbols out of the public pages, scripts and styles. See `tests/releases/v1.29.2.md`.
+
+## v1.30.0 — one Schedule a visit
+
+- At the owner's request the repeated "Schedule a visit" buttons (header, arrival, ten occasions, spaces, hall moods, tour, Let's begin) become one: it starts in the arrival, floats at the bottom while reading and settles in "Let's begin" above the footer. Occasion cards lose their links, so v1.29.0's keyboard focus on a card no longer steers the frame. See `tests/releases/v1.30.0.md`. Next: measure tour bookings from the single button.
