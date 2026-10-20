@@ -24,6 +24,7 @@ test('npm start serves the web on the assigned port with native mail disabled an
     const base=`http://127.0.0.1:${port}`;
     const health=await fetch(base+'/healthz'); assert.equal(health.status,200);assert.deepEqual(await health.json(),{status:'ok',mailEnabled:false});
     for(const path of ['/','/planning.html','/privacy.html','/terms.html','/styles.css?v=1.12.0','/script.js?v=1.12.0','/assets/vendor/gsap.min.js'])assert.equal((await fetch(base+path)).status,200,path);
+    const avif=await fetch(base+'/assets/venue/web/first-dance.avif');assert.equal(avif.status,200);assert.equal(avif.headers.get('Content-Type'),'image/avif');
     const planning = await fetch(base+'/planning.html');
     assert.equal(await planning.text(), readFileSync(new URL('../../planning.html',import.meta.url),'utf8'));
     assert.equal(planning.headers.get('cache-control'), 'no-cache');

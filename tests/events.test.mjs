@@ -60,7 +60,7 @@ test("events items are not faded in from opacity 0.08", () => {
 test("events shows the hall in several moods with bilingual captions and alt text", () => {
   const section = eventsSection();
   const strip = section.slice(section.indexOf('class="wrap hall-moods'), section.indexOf('</section>', section.indexOf('class="wrap hall-moods')));
-  const cards = [...strip.matchAll(/<img src="assets\/venue\/web\/mood-([a-z]+)\.webp" alt="[^"]+" width="\d+" height="\d+" data-i18n="events\.moodAlt\.\1" data-i18n-attr="alt" loading="lazy"/g)].map((m) => m[1]);
+  const cards = [...strip.matchAll(/<picture><source type="image\/avif" srcset="assets\/venue\/web\/mood-([a-z]+)\.avif"><img src="assets\/venue\/web\/mood-\1\.webp" alt="[^"]+" width="\d+" height="\d+" data-i18n="events\.moodAlt\.\1" data-i18n-attr="alt" loading="lazy"/g)].map((m) => m[1]);
   assert.deepEqual(cards, ["ivory", "amethyst", "amber", "coral", "emerald"]);
   for (const key of ["events.moodsTitle", "events.moodsIntro", ...cards.flatMap((k) => [`events.mood.${k}`, `events.moodAlt.${k}`])]) {
     assert.equal(js.split(`"${key}":`).length - 1, 2, key);
@@ -77,7 +77,7 @@ test("every occasion has its own photograph in the frame and on its card", () =>
   assert.equal(new Set(slides.map((m) => m[1])).size, 10, "ten different photographs");
   assert.deepEqual(slides.map((m) => Number(m[3])), [...Array(10).keys()]);
   assert.equal([...section.matchAll(/<img class="occasion-slide[^"]*" aria-hidden="true"/g)].length, 9, "only the shown slide is exposed");
-  const cards = [...section.matchAll(/<li><article class="occasion">\n<img class="occasion-photo" src="([^"]+)"[^>]*data-i18n="([^"]+)"/g)];
+  const cards = [...section.matchAll(/<li><article class="occasion">\n(?:<picture><source type="image\/avif" srcset="[^"]+">)?<img class="occasion-photo" src="([^"]+)"[^>]*data-i18n="([^"]+)"/g)];
   assert.deepEqual(cards.map((m) => m[1]), slides.map((m) => m[1]), "each card carries the frame's photograph");
   for (const [, , key] of slides) assert.equal(js.split(`"${key}":`).length - 1, 2, key);
   assert.equal(/ballroom/i.test(slides.concat(cards).map((m) => m[0]).join(" ")), false);
@@ -87,8 +87,8 @@ test("every occasion has its own photograph in the frame and on its card", () =>
 
 test("occasion photographs match the hashes recorded in VENUE-MEDIA", () => {
   const media = readFileSync(new URL("./VENUE-MEDIA.md", import.meta.url), "utf8");
-  const rows = [...media.matchAll(/`(assets\/venue\/web\/occasion-[a-z]+\.webp)` \(sha256 `([0-9a-f]{64})`\)/g)];
-  assert.equal(rows.length, 4);
+  const rows = [...media.matchAll(/`(assets\/venue\/web\/occasion-[a-z]+\.(?:avif|webp))` \(sha256 `([0-9a-f]{64})`\)/g)];
+  assert.equal(rows.length, 10);
   for (const [, file, hash] of rows) {
     assert.equal(createHash("sha256").update(readFileSync(new URL(`../${file}`, import.meta.url))).digest("hex"), hash, file);
   }
@@ -97,10 +97,26 @@ test("occasion photographs match the hashes recorded in VENUE-MEDIA", () => {
 test("no occasion photograph derives from retired media", async () => {
   const { retiredMedia } = await import("../scripts/build-site.mjs");
   const media = readFileSync(new URL("./VENUE-MEDIA.md", import.meta.url), "utf8");
-  const sources = [...media.matchAll(/\| `assets\/venue\/web\/occasion-[a-z]+\.webp`[^|]*\| `assets\/([^`]+)`/g)].map((m) => m[1]);
-  assert.equal(sources.length, 4);
+  const sources = [...media.matchAll(/\| `assets\/venue\/web\/occasion-[a-z]+\.avif`[^|]*\| `assets\/([^`]+)`/g)].map((m) => m[1]);
+  assert.equal(sources.length, 5);
   for (const source of sources) assert.equal(retiredMedia.has(source), false, source);
   const section = eventsSection();
   const retiredStems = new Set([...retiredMedia].map((path) => path.split("/").pop().replace(/\.[a-z0-9]+$/, "")));
   for (const [, stem] of section.matchAll(/src="assets\/venue\/(?:web\/)?([a-z0-9-]+)\./g)) assert.equal(retiredStems.has(stem), false, stem);
+});
+
+test("event photographs are served as AVIF first with a WebP fallback that match their record", () => {
+  const records = JSON.parse(readFileSync(new URL("../assets/venue/web/event-photos.json", import.meta.url), "utf8"));
+  for (const { asset, sha256 } of records) {
+    assert.equal(createHash("sha256").update(readFileSync(new URL(`../${asset}`, import.meta.url))).digest("hex"), sha256, asset);
+  }
+  const web = records.filter((r) => r.asset.endsWith(".webp")).map((r) => r.asset);
+  for (const file of web) {
+    assert.ok(records.some((r) => r.asset === file.replace(/\.webp$/, ".avif")), `${file} has an AVIF twin`);
+    const uses = html.split(`src="${file}"`).length - 1;
+    assert.ok(uses >= 1, `${file} is shown`);
+    assert.equal(html.split(`<picture><source type="image/avif" srcset="${file.replace(/\.webp$/, ".avif")}"><img `).length - 1, uses, `${file} always has its AVIF source`);
+  }
+  assert.match(css, /\.occasion-visual picture, \.occasion picture, \.mood-frame picture, \.services-photo picture \{ display: contents; \}/);
+  assert.equal(records.some((r) => /(^|\/)hall\./.test(r.asset) || /(^|\/)hall\./.test(r.source ?? "")), false, "never the retired bar photograph");
 });
