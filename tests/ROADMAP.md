@@ -202,3 +202,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.29.0 — a photograph for every occasion
 
 Ten occasions, ten photographs from the owner's media; a sticky frame that follows reading, hover and focus on wide screens and per-card photographs on narrow ones. Distinctive hover on the "One hall, many moods" cards. See `tests/releases/v1.29.0.md`.
+
+## v1.29.2 — arrows that never turn into emoji
+
+- The owners saw blue emoji tiles instead of arrows on iPhone (social cards and other links): iOS renders "↗" with emoji presentation. Every visible arrow is now a thin drawn icon in the text colour; `tests/arrows.test.mjs` keeps emoji-capable arrows and symbols out of the public pages, scripts and styles. See `tests/releases/v1.29.2.md`.
