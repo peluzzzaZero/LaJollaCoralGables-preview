@@ -1462,10 +1462,11 @@
         return box;
       }
       // Otherwise slide out to the right as the map arrives and back once it has gone; keyboard focus keeps it in view.
-      // Fully out before the map reaches the seal, and back only once it has fully passed.
-      const d = f.height * 1.6;
+      // Fully out before the map reaches the seal, and back only once it has fully passed (with room for a fast fling).
+      const d = Math.max(f.height * 1.6, window.innerHeight * .2);
       let t = clamp(Math.min(f.bottom + d - m.top, m.bottom + d - f.top) / d);
-      if (document.activeElement === cta) t = 0;
+      // Only keyboard focus brings it back: a tap (or focus returned after the booking dialog) must not park it on the map.
+      if (cta.matches(":focus-visible")) t = 0;
       t = reduced.matches ? Math.ceil(t) : ease(t);
       box.left = mix(f.left, innerWidth + 16, t);
       box.tucked = t;
@@ -1521,9 +1522,9 @@
     window.addEventListener("resize", request, { passive: true });
     reduced.addEventListener?.("change", request);
     if (typeof ResizeObserver === "function") {
+      // Late images and fonts above "Let's begin" move its slot without a scroll. (The link itself is not observed:
+      // place() resizes it every frame.)
       const watch = new ResizeObserver(request);
-      watch.observe(cta);
-      // Late images and fonts above "Let's begin" move its slot without a scroll.
       watch.observe(document.body);
     }
     window.addEventListener("lajolla-language", request);
