@@ -65,4 +65,6 @@ test("events shows the hall in several moods with bilingual captions and alt tex
     assert.equal(js.split(`"${key}":`).length - 1, 2, key);
   }
   assert.match(css, /\.moods-strip \{[^}]*overflow-x: auto/);
+  assert.match(strip, /<ul class="moods-strip" role="list" tabindex="0" aria-label="[^"]+" data-i18n="events\.moodsLabel" data-i18n-attr="aria-label">/, "keyboard users can scroll the strip");
+  assert.equal(js.split('"events.moodsLabel":').length - 1, 2);
 });
