@@ -190,3 +190,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.28.0 — the house dressed for events
 
 - New event photographs from the site owner replace older images in the events, services, album and mosaic chapters (first dance, set table, bougainvillea, the house at night, reception, desserts, dressed tables, balcony couple); a new "One hall, many moods" strip; the mosaic grows to 12 tiles. Next: full-resolution originals.
+
+## v1.28.1 — a quieter footer
+
+- At the owner's request, "powered by peluzzza" (10px → 9px) and the bottom legal line (© · Terms · Privacy, .8rem → .75rem) are a touch smaller; no copy changes.
