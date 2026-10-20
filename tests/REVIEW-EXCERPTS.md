@@ -1,6 +1,6 @@
 # Guest review excerpts on the landing page
 
-Provenance and approval for the five written excerpts in "Guest experiences" (`index.html`, `.review-quotes`).
+Provenance and approval for the four written excerpts in "Guest experiences" (`index.html`, `.review-quotes`).
 
 - Source: five-star reviews on La Jolla's own Google Maps listing (Place ID ChIJWbeTzJu32YgRbGDUdwzI0W0). The owner, Dan, supplied them himself as screenshots of the listing in the project thread on 15 October 2026.
 - Approval: the owner asked for them to be shown on the page directly ("no se pueden mostrar tipo algunas reseñas positivas? directamente?"), then asked for them to be written out as text, short and well organized, rather than pasted as images ("no pegues las fotos... sino escríbelas y organízalas bien que tampoco se vea cargado"), and asked for the release to be published (15 October 2026).
@@ -9,12 +9,11 @@ Provenance and approval for the five written excerpts in "Guest experiences" (`i
 
 | Reviewer (as on Google) | Occasion | Age on Google, 15 Oct 2026 | Excerpt |
 | --- | --- | --- | --- |
-| Gloria P. | Wedding | 11 months | “Everything was perfect. The venue is beautiful… Planning this event with the help of Mr. Raul Martinez from La Jolla was priceless.” |
 | Gabriela C. | Fifteenth birthday | 1 year | “Everything was spectacular… We received many compliments on the venue, the food, and especially the attention of the entire team.” |
 | Gali and Jean Pierre P. | Wedding | 1 year | “The food and decor was incredible… Overall, we are so happy! It was exactly what we wanted.” |
 | Edline F. | Wedding | 4 years | “The wedding service was amazing… They accommodated all the changes without a sweat.” |
-| Ana G. | Celebration | 1 year (edited) | “Beyond perfect!! … Will recommend everything…” |
+| Ana G. | Celebration | 1 year (edited) | “Beyond perfect!! From the owner Dilia to the bartender… was Amazing!! Will recommend everything…” |
 
-Raul Martinez is the planner the reviewers name; his name is quoted as written in the reviews.
+Former team (owner, 20 October 2026): the planner several reviews name, Raul, belongs to the previous team. Gloria P.'s excerpt, which named him, was removed at the owner's request, and no excerpt may name him. Google's own reviews are also skipped when they mention him (`social.js`, `formerTeam`). Ana G.'s excerpt now keeps her own words about the owner, Dilia; the colleague she also names is cut, because the owner has not confirmed she is on the current team. Julie Arias and Patricia Mir already appear in the team section, so the excerpts name neither.
 
 To change the excerpts, update this table and `index.html` together; `tests/social.test.mjs` checks that they match.

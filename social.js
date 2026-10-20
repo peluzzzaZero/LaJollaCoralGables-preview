@@ -34,10 +34,13 @@
     }).then(() => window.google.maps.importLibrary('places'));
     return library;
   }
+  // The planner several reviews name belongs to the previous team (owner, 20 October 2026); those reviews are not shown.
+  const formerTeam = /\bra[uú]l\b/i;
   function renderReviews(container, place) {
     container.replaceChildren();
     const reviews = (place.reviews || []).filter(review => review.rating === 5 &&
       (review.originalText || review.text)?.trim() && review.authorAttribution?.displayName &&
+      !formerTeam.test(`${review.originalText || ''} ${review.text || ''}`) &&
       safeURL(review.googleMapsURI) && safeURL(review.authorAttribution.uri) &&
       review.publishTime instanceof Date && !Number.isNaN(review.publishTime.getTime()));
     if (!reviews.length) return false;
