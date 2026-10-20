@@ -86,6 +86,34 @@ async def main(base, output):
                             await page.wait_for_timeout(700)
                         bottom=await page.evaluate('document.documentElement.scrollHeight-innerHeight')
                         await glide(bottom*.5);assert 'is-float' in await cta.get_attribute('class'),(width,language,'mid')
+                        # Wherever the map block (map and its Google link) crosses the seal's band, the seal never sits on it;
+                        # on narrow screens it slips off the right edge and keyboard focus brings it back into view.
+                        place_y=await page.evaluate('document.querySelector(".location-place").getBoundingClientRect().top+scrollY')
+                        vh0=await page.evaluate('innerHeight')
+                        place_h=await page.evaluate('document.querySelector(".location-place").getBoundingClientRect().height')
+                        async def cross(label):
+                            steps=int((vh0+place_h)/(vh0*.1))+2
+                            for k in range(0,steps):
+                                await page.evaluate(f'scrollTo(0,{place_y-vh0+vh0*.1*k})');await page.wait_for_timeout(450)
+                                overlap=await page.evaluate('''()=>{const c=document.getElementById("visit-cta").getBoundingClientRect(),m=document.querySelector(".location-place").getBoundingClientRect();
+                                  const x=Math.min(c.right,m.right,innerWidth)-Math.max(c.left,m.left,0),y=Math.min(c.bottom,m.bottom,innerHeight)-Math.max(c.top,m.top,0);return x>1&&y>1}''')
+                                assert not overlap,(width,language,'seal over the map',label,k)
+                        await cross('scroll')
+                        # Focus that was not from the keyboard (a tap, or focus returned by the booking dialog) must not park it on the map.
+                        await page.mouse.click(5,height//2)
+                        await page.evaluate('document.getElementById("visit-cta").focus({preventScroll:true})')
+                        await cross('pointer focus')
+                        await page.evaluate('document.activeElement.blur()')
+                        # Keyboard focus brings a tucked seal back into view.
+                        await page.evaluate(f'scrollTo(0,{place_y-vh0*.55})');await page.wait_for_timeout(500)
+                        if await page.evaluate('document.getElementById("visit-cta").getBoundingClientRect().left>=innerWidth'):
+                            # A key press makes the next focus keyboard-initiated (:focus-visible), as Tab would.
+                            await page.keyboard.press('Shift')
+                            await page.evaluate('document.getElementById("visit-cta").focus({preventScroll:true})')
+                            assert await page.evaluate('document.getElementById("visit-cta").matches(":focus-visible")')
+                            await page.evaluate(f'scrollTo(0,{place_y-vh0*.55})');await page.wait_for_timeout(500)
+                            focused=await cta.bounding_box();assert focused['x']+focused['width']<=width+1,(width,language,'keyboard focus brings the seal back',focused)
+                            await page.evaluate('document.activeElement.blur()')
                         # Step slowly through the approach to Let's begin: the link must stay fully inside the viewport every frame.
                         slot_y,float_y,vh=await page.evaluate('[document.querySelector(\'[data-cta-slot="end"]\').getBoundingClientRect().top+scrollY,document.querySelector(\'[data-cta-slot="float"]\').getBoundingClientRect().top,innerHeight]')
                         for k in range(16,-1,-1):
