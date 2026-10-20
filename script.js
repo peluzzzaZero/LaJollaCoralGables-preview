@@ -189,6 +189,15 @@
       "events.moodAlt.coral": "The hall in coral light, set with round tables and chandeliers.",
       "events.mood.emerald": "Emerald",
       "events.moodAlt.emerald": "A black-dressed table with orchids under emerald light.",
+      "events.photoAlt.quince": "A head table dressed in white flowers and candles on a monogrammed dance floor.",
+      "events.photoAlt.social": "A dessert table with a tiered cake among tropical greenery.",
+      "events.photoAlt.brand": "The house at night, its arched windows and ivy wall lit for an evening event.",
+      "events.photoAlt.film": "The spiral staircase seen from above.",
+      "events.photoAlt.corporate": "The hall dressed for a holiday party with balloon garlands and marquee letters.",
+      "events.photoAlt.productions": "A grand piano in the open hall.",
+      "events.photoAlt.galas": "Round tables dressed with tall floral centerpieces under lilac light.",
+      "events.photoAlt.dining": "A table set with white flowers, candles and glassware.",
+      "events.photoAlt.other": "Vintage sheet music on a stand against red tufted velvet.",
       "events.alt": "A bride and groom embrace on a starlit dance floor inside La Jolla.",
       "rentals.short": "From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.",
       "rentals.more": "More about our services",
@@ -522,6 +531,15 @@
       "events.moodAlt.coral": "El salón en luz coral, con mesas redondas y lámparas de araña.",
       "events.mood.emerald": "Esmeralda",
       "events.moodAlt.emerald": "Una mesa vestida de negro con orquídeas bajo luz esmeralda.",
+      "events.photoAlt.quince": "Una mesa principal vestida con flores blancas y velas sobre una pista con monograma.",
+      "events.photoAlt.social": "Una mesa de postres con un pastel de varios pisos entre follaje tropical.",
+      "events.photoAlt.brand": "La casa de noche, con sus ventanas en arco y su muro de hiedra iluminados para un evento.",
+      "events.photoAlt.film": "La escalera de caracol vista desde arriba.",
+      "events.photoAlt.corporate": "El salón decorado para una fiesta navideña con guirnaldas de globos y letras luminosas.",
+      "events.photoAlt.productions": "Un piano de cola en el salón abierto.",
+      "events.photoAlt.galas": "Mesas redondas con altos centros florales bajo luz lila.",
+      "events.photoAlt.dining": "Una mesa servida con flores blancas, velas y cristalería.",
+      "events.photoAlt.other": "Una partitura antigua en un atril sobre terciopelo rojo capitoneado.",
       "events.alt": "Una pareja de novios se abraza en una pista con luces de estrellas dentro de La Jolla.",
       "rentals.short": "Desde una renta puntual hasta la producción integral. En La Jolla o en el lugar que usted elija en el sur de Florida.",
       "rentals.more": "Más sobre nuestros servicios",
@@ -1071,6 +1089,85 @@
     const staging = () => !!album && roomy.matches && !!window.CSS?.supports?.('height', '1svh') && CSS.supports('overflow', 'clip');
     const occasions = [...document.querySelectorAll('.occasion')];
     const occasionCounter = document.querySelector('.occasion-counter');
+    // On wide screens the sticky frame shows one occasion's photograph: the one
+    // pointed at or focused, otherwise the row being read, alternating between
+    // its two cards. Reading is followed in every motion mode; only the timer
+    // and the fade belong to full motion.
+    const slides = [...document.querySelectorAll('.occasion-slide')];
+    const ticks = [...document.querySelectorAll('.occasion-ticks i')];
+    const occasionLabel = document.querySelector('.occasion-label');
+    const occasionList = document.querySelector('.events-list');
+    const wideOccasions = matchMedia('(min-width: 1051px)');
+    let shownPhoto = -1, pointedPhoto = -1, readingRow = [], rowTurn = 0, rowTimer = 0, releaseTimer = 0, trackFrame = 0, slidesLoading = false;
+    function showOccasion(index) {
+      if (!slides[index]) return;
+      if (index !== shownPhoto) {
+        slides.forEach(slide => slide.classList.remove('was-shown'));
+        slides[shownPhoto]?.classList.replace('is-shown', 'was-shown');
+        slides[index].classList.add('is-shown');
+        shownPhoto = index;
+      }
+      slides.forEach((slide, item) => item === index ? slide.removeAttribute('aria-hidden') : slide.setAttribute('aria-hidden', 'true'));
+      occasions.forEach((occasion, item) => occasion.classList.toggle('is-shown-photo', item === index));
+      ticks.forEach((tick, item) => tick.classList.toggle('is-on', item === index));
+      if (occasionCounter) occasionCounter.textContent = String(index + 1).padStart(2, '0');
+      if (occasionLabel) occasionLabel.textContent = occasions[index].querySelector('h3').textContent;
+    }
+    function stopTurning() { clearTimeout(rowTimer); rowTimer = 0; }
+    function followReading() {
+      stopTurning();
+      if (pointedPhoto >= 0 || !readingRow.length) return;
+      showOccasion(readingRow[rowTurn % readingRow.length]);
+      // Turn to the row's second card once, so the frame settles within five seconds.
+      if (readingRow.length > 1 && rowTurn === 0 && !reduced.matches && !saveData && !document.hidden) rowTimer = setTimeout(() => {
+        rowTurn = 1; rowTimer = 0; showOccasion(readingRow[1]);
+      }, 3600);
+    }
+    function trackOccasions() {
+      trackFrame = 0;
+      const list = occasionList?.getBoundingClientRect();
+      // Off screen, or where each card shows its own photograph, nothing turns.
+      if (!slides.length || !list || !wideOccasions.matches || list.bottom < 0 || list.top > innerHeight) {
+        if (readingRow.length) { readingRow = []; stopTurning(); }
+        return;
+      }
+      // The row nearest the middle of the screen; two-column rows share one top.
+      const boxes = occasions.map(occasion => occasion.parentElement.getBoundingClientRect());
+      let top = 0, distance = Infinity;
+      boxes.forEach(box => {
+        const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
+        if (gap < distance) { distance = gap; top = box.top; }
+      });
+      const row = boxes.flatMap((box, index) => Math.abs(box.top - top) < 2 ? [index] : []);
+      // The stacked slides load together once the list is on screen, so a switch never fades in an empty frame.
+      if (!slidesLoading && !saveData) { slidesLoading = true; slides.forEach(slide => { slide.loading = 'eager'; }); }
+      // A card left under a resting pointer (or holding focus) stops steering once it scrolls out of the row being read.
+      // A card holding keyboard focus keeps the frame until focus leaves it; focus
+      // left by a mouse click (or returned after the booking dialog) does not.
+      if (pointedPhoto >= 0 && !row.includes(pointedPhoto) && !occasions[pointedPhoto].querySelector(':focus-visible')) { pointedPhoto = -1; if (row.join() === readingRow.join()) followReading(); }
+      if (row.join() !== readingRow.join()) { readingRow = row; rowTurn = 0; followReading(); }
+    }
+    const scheduleTrack = () => { if (!trackFrame) trackFrame = requestAnimationFrame(trackOccasions); };
+    window.addEventListener('scroll', scheduleTrack, { passive: true });
+    window.addEventListener('resize', scheduleTrack, { passive: true });
+    wideOccasions.addEventListener('change', () => { readingRow = []; stopTurning(); scheduleTrack(); });
+    reduced.addEventListener('change', followReading);
+    document.addEventListener('visibilitychange', () => document.hidden ? stopTurning() : followReading());
+    occasions.forEach((occasion, index) => {
+      // Leaving one card for the next must not flash the reading row in between.
+      const point = () => { clearTimeout(releaseTimer); pointedPhoto = index; stopTurning(); showOccasion(index); };
+      const release = () => {
+        clearTimeout(releaseTimer);
+        // A card that still holds keyboard focus keeps the frame when the mouse leaves it.
+        releaseTimer = setTimeout(() => { if (pointedPhoto === index && !occasion.querySelector(':focus-visible')) { pointedPhoto = -1; followReading(); } }, 160);
+      };
+      occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
+      occasion.addEventListener('pointerleave', release);
+      occasion.addEventListener('focusin', point);
+      occasion.addEventListener('focusout', release);
+    });
+    showOccasion(0);
+    scheduleTrack();
     const services = [...document.querySelectorAll('.rentals-quiet li')];
     const cards = [...document.querySelectorAll('.house-grid > li')];
     const seal = document.querySelector('.planning-seal');
@@ -1103,13 +1200,7 @@
           const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
           if (gap < distance) { distance = gap; row = rows[index]; }
         });
-        const current = [];
-        occasions.forEach((occasion, index) => {
-          const on = Math.abs(rows[index] - row) < 2;
-          occasion.classList.toggle('is-current', on);
-          if (on) current.push(String(index + 1).padStart(2, '0'));
-        });
-        if (occasionCounter) occasionCounter.textContent = current.join(' · ');
+        occasions.forEach((occasion, index) => occasion.classList.toggle('is-current', Math.abs(rows[index] - row) < 2));
       } },
       services.length && { element: document.querySelector('.rentals-quiet'), update() {
         // Read every position before writing, so one frame needs one layout.
@@ -1235,6 +1326,9 @@
       liveScenes.forEach(scene => scene.update());
       schedule();
     }
+    // The frame's label repeats the current title in the chosen language.
+    // Translated cards change height, so the row being read is measured again.
+    window.addEventListener('lajolla-language', () => { showOccasion(Math.max(0, shownPhoto)); scheduleTrack(); });
     // Translation replaces the inked paragraphs with plain text.
     window.addEventListener('lajolla-language', () => {
       if (!document.body.classList.contains('landing-effects')) return;
