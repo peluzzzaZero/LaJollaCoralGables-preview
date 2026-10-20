@@ -764,7 +764,6 @@ html:not(.js) .selection-builder { display: none; }
 .form-row input, .form-row select, .form-row textarea { width: 100%; min-width: 0; }
 @media (max-width: 650px) { .inquiry-layout { grid-template-columns: minmax(0, 1fr); } }
 
-/* Draw the decorative arrow instead of depending on a font's symbol coverage. */
 @media (max-width: 360px) {
   .header-inner { gap: .5rem; }
   .header-actions { gap: .35rem; }
@@ -1348,7 +1347,6 @@ html { scrollbar-gutter: stable; }
 @media (max-width: 650px) and (max-height: 740px) { .motion-page .cinema-scroll .cinema-story[data-scene-copy="8"] { top: 48%; } }
 .motion-page .cinema-scroll .cinema-directory > summary:focus-visible { outline: 2px solid #f5f1e6; outline-offset: 4px; }
 .motion-page .cinema-scroll .cinema-controls button:focus-visible { outline-color: var(--sage-deep); }
-/* Decorative arrows remain monochrome with the self-hosted typeface. */
 .motion-page:has(.cinema-scroll) .mobile-menu[open] .menu-lines { border-color: transparent; position: relative; }
 .motion-page:has(.cinema-scroll) .mobile-menu[open] .menu-lines::before,
 .motion-page:has(.cinema-scroll) .mobile-menu[open] .menu-lines::after { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #f5f1e6; }
