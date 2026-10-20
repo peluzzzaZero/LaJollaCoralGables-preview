@@ -11,8 +11,8 @@ const read = (name) => {
   if (name.endsWith(".html")) return text.replace(/<!--[^]*?-->/g, "");
   return text;
 };
-const banned = /[←-⇿⌀-⏿☀-☄☆-➿⟰-⟿⤀-⥿⬀-⯿️⃣]|[\u{1F000}-\u{1FAFF}]/gu;
-const arrowIcon = /<svg class="icon-arrow[^"]*" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="[^"]+"\/><\/svg>/;
+const banned = /[‼⁉™ℹⓂ■-◿〰〽㊗㊙←-⇿⌀-⏿☀-☄☆-➿⟰-⟿⤀-⥿⬀-⯿️⃣]|[\u{1F000}-\u{1FAFF}]/gu;
+const arrowIcon = /<svg class="icon-arrow[^"]*" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path d="[^"]+" fill="none" stroke="currentColor"\/><\/svg>/;
 
 test("no emoji-capable arrows or symbols reach visitors", () => {
   for (const name of files) {
