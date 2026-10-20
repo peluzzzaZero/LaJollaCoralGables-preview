@@ -32,6 +32,7 @@ async def main(base,output,args):
       assert state['exposed']==1,state
       assert state['label']==await page.locator('.occasion h3').nth(index).text_content(),state
       assert state['counter']==f'{index+1:02d}',state
+     assert await page.locator('.occasion-slide').evaluate_all('e=>e.every(i=>i.complete&&i.naturalWidth>0)'),'wide slides load'
      # Back up the list: the row being read still decides, and only one slide is exposed.
      for index in [7,3,0]:assert (await centre(page,index))['shown']==index
      # Pointing at the right-hand card of a row shows its photograph.
@@ -49,6 +50,19 @@ async def main(base,output,args):
       assert shown in (1,2),shown
      assert await page.locator('.occasion-counter').is_visible()
      await page.mouse.move(2,2);await page.wait_for_timeout(400)
+     # Keyboard focus on a card's link (pointer parked away) holds its photograph while the page scrolls.
+     await page.locator('.occasion').nth(6).locator('a').focus();await page.wait_for_timeout(300)
+     shown=lambda:page.evaluate('[...document.querySelectorAll(".occasion-slide")].findIndex(e=>e.classList.contains("is-shown"))')
+     first=await shown();assert first==6,('focus',first,await page.evaluate('document.activeElement.outerHTML.slice(0,80)'))
+     for step in [120,-240,160]:
+      await page.mouse.wheel(0,step);await page.wait_for_timeout(250)
+      now=await shown();assert now==6,('scroll',step,now)
+     await page.evaluate('document.activeElement.blur()');await page.wait_for_timeout(400)
+     # The Spanish label follows the language switch.
+     await page.locator('[data-lang="es"]').click();await page.wait_for_timeout(300)
+     label=await page.locator('.occasion-label').text_content()
+     assert label in await page.locator('.occasion h3').all_text_contents(),label
+     await page.locator('[data-lang="en"]').click();await page.wait_for_timeout(300)
      # Reduced motion never alternates on a timer.
      # Full motion turns once to the row's second card; reduced motion never turns on a timer.
      await centre(page,1);await page.wait_for_timeout(4200);assert (await centre(page,1))['shown']==(1 if motion=='reduce' else 2)

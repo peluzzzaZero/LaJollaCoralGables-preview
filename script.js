@@ -1142,7 +1142,8 @@
       // The stacked slides load together once the list is on screen, so a switch never fades in an empty frame.
       if (!slidesLoading && !saveData) { slidesLoading = true; slides.forEach(slide => { slide.loading = 'eager'; }); }
       // A card left under a resting pointer (or holding focus) stops steering once it scrolls out of the row being read.
-      if (pointedPhoto >= 0 && !row.includes(pointedPhoto)) { pointedPhoto = -1; if (row.join() === readingRow.join()) followReading(); }
+      // A card holding keyboard focus keeps the frame until focus leaves it.
+      if (pointedPhoto >= 0 && !row.includes(pointedPhoto) && !occasions[pointedPhoto].matches(':focus-within')) { pointedPhoto = -1; if (row.join() === readingRow.join()) followReading(); }
       if (row.join() !== readingRow.join()) { readingRow = row; rowTurn = 0; followReading(); }
     }
     const scheduleTrack = () => { if (!trackFrame) trackFrame = requestAnimationFrame(trackOccasions); };
@@ -1325,7 +1326,8 @@
       schedule();
     }
     // The frame's label repeats the current title in the chosen language.
-    window.addEventListener('lajolla-language', () => showOccasion(Math.max(0, shownPhoto)));
+    // Translated cards change height, so the row being read is measured again.
+    window.addEventListener('lajolla-language', () => { showOccasion(Math.max(0, shownPhoto)); scheduleTrack(); });
     // Translation replaces the inked paragraphs with plain text.
     window.addEventListener('lajolla-language', () => {
       if (!document.body.classList.contains('landing-effects')) return;
