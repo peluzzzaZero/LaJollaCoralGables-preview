@@ -112,7 +112,7 @@
       "cinema.arrival": "The arrival",
       "cinema.balcony": "The balcony",
       "cinema.room": "The hall",
-      "cinema.continue": "Explore the spaces ↓",
+      "cinema.continue": "Explore the spaces",
 
       "paths.eyebrow": "Consider the possibilities",
       "paths.title": "Your occasion. Your setting.",
@@ -453,7 +453,7 @@
       "cinema.arrival": "La llegada",
       "cinema.balcony": "El balcón",
       "cinema.room": "El salón",
-      "cinema.continue": "Explora los espacios ↓",
+      "cinema.continue": "Explora los espacios",
 
       "paths.eyebrow": "Explore las posibilidades",
       "paths.title": "Su ocasión. Su escenario.",

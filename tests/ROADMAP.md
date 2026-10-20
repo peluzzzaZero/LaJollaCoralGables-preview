@@ -203,10 +203,14 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 
 Ten occasions, ten photographs from the owner's media; a sticky frame that follows reading, hover and focus on wide screens and per-card photographs on narrow ones. Distinctive hover on the "One hall, many moods" cards. See `tests/releases/v1.29.0.md`.
 
-## v1.30.0 — one Schedule a visit
-
-- At the owner's request the repeated "Schedule a visit" buttons (header, arrival, ten occasions, spaces, hall moods, tour, Let's begin) become one: it starts in the arrival, floats at the bottom while reading and settles in "Let's begin" above the footer. Occasion cards lose their links, so v1.29.0's keyboard focus on a card no longer steers the frame. See `tests/releases/v1.30.0.md`. Next: measure tour bookings from the single button.
-
 ## v1.29.1 — no review names the former planner
 
 - At the owner's request, the excerpt naming the previous team's planner is removed; Ana G.'s excerpt now names the owner, Dilia, in her own words; Google reviews naming him are skipped. See `tests/releases/v1.29.1.md`.
+
+## v1.29.2 — arrows that never turn into emoji
+
+- The owners saw blue emoji tiles instead of arrows on iPhone (social cards and other links): iOS renders "↗" with emoji presentation. Every visible arrow is now a thin drawn icon in the text colour; `tests/arrows.test.mjs` keeps emoji-capable arrows and symbols out of the public pages, scripts and styles. See `tests/releases/v1.29.2.md`.
+
+## v1.30.0 — one Schedule a visit
+
+- At the owner's request the repeated "Schedule a visit" buttons (header, arrival, ten occasions, spaces, hall moods, tour, Let's begin) become one: it starts in the arrival, floats at the bottom while reading and settles in "Let's begin" above the footer. Occasion cards lose their links, so v1.29.0's keyboard focus on a card no longer steers the frame. See `tests/releases/v1.30.0.md`. Next: measure tour bookings from the single button.
