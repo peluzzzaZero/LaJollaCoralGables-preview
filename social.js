@@ -99,16 +99,16 @@
     function move(direction) {
       const step = stepWidth(), max = list.scrollWidth - list.clientWidth;
       const from = target === null ? Math.round(list.scrollLeft / step) : target;
-      target = Math.max(0, Math.min(Math.ceil(max / step), from + direction));
+      target = Math.max(0, Math.min(Math.round(max / step), from + direction));
       list.scrollTo({ left: Math.min(max, target * step), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       prev.setAttribute('aria-disabled', String(target <= 0));
-      next.setAttribute('aria-disabled', String(target * step >= max - 1));
+      next.setAttribute('aria-disabled', String(target >= Math.round(max / step)));
       settle(900);
     }
     prev.addEventListener('click', function () { if (prev.getAttribute('aria-disabled') !== 'true') move(-1); });
     next.addEventListener('click', function () { if (next.getAttribute('aria-disabled') !== 'true') move(1); });
-    list.addEventListener('pointerdown', function () { target = null; }, { passive: true });
-    list.addEventListener('scroll', function () { update(); settle(160); }, { passive: true });
+    list.addEventListener('pointerdown', function () { target = null; update(); }, { passive: true });
+    list.addEventListener('scroll', function () { update(); settle(300); }, { passive: true });
     if ('ResizeObserver' in window) new ResizeObserver(update).observe(list); else window.addEventListener('resize', update);
     update();
   }
