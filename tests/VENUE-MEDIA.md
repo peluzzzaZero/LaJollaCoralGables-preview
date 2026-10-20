@@ -151,11 +151,11 @@ Each occasion in the events chapter shows its own photograph. Five delivery file
 
 | Delivered file | Source | Occasion |
 | --- | --- | --- |
-| `assets/venue/web/occasion-quince.webp` | `assets/venue/reception-white.jpg` | Quinceañeras & Sweet Sixteens |
-| `assets/venue/web/occasion-social.webp` | `assets/venue/dessert-table.jpg` | Social celebrations |
-| `assets/venue/web/occasion-brand.webp` | `assets/venue/hall.jpg` (resized 1024 → 804 wide) | Brand activations & product launches |
-| `assets/venue/web/occasion-corporate.webp` | `assets/venue/holiday-party.jpg` | Corporate events |
-| `assets/venue/web/occasion-galas.webp` | `assets/venue/tables-lilac.jpg` | Galas & fundraisers |
+| `assets/venue/web/occasion-quince.webp` (sha256 `bf97ce39940c3ad2c9e718e8f34107491595d36f9078ee5f066add84df685004`) | `assets/venue/reception-white.jpg` | Quinceañeras & Sweet Sixteens |
+| `assets/venue/web/occasion-social.webp` (sha256 `da01661765f79b6500c6e83b06d66944a35387c7701481be360b5df4ab7038a9`) | `assets/venue/dessert-table.jpg` | Social celebrations |
+| `assets/venue/web/occasion-brand.webp` (sha256 `5937349b04d5a3fff4600494ecb8c53ed4faff3d868288d6ba5a20e021dde3cd`) | `assets/venue/hall.jpg` (resized 1024 → 804 wide) | Brand activations & product launches |
+| `assets/venue/web/occasion-corporate.webp` (sha256 `88575f3ad68e9d55d3c123428951073e879fe06156dd78aff78b7d96211a7434`) | `assets/venue/holiday-party.jpg` | Corporate events |
+| `assets/venue/web/occasion-galas.webp` (sha256 `772f3fb2d0a4bb42199630cafc73343c83b61782c3fa3e0acdc3ea36b446a033`) | `assets/venue/tables-lilac.jpg` | Galas & fundraisers |
 | `assets/venue/web/first-dance.webp` | existing | Weddings |
 | `assets/venue/web/staircase.webp` | existing | Film, photo & content |
 | `assets/venue/web/hall-piano.webp` | existing | Productions & entertainment |

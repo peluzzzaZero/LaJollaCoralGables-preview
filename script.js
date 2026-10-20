@@ -187,7 +187,7 @@
       "events.moodAlt.coral": "The hall in coral light, set with round tables and chandeliers.",
       "events.mood.emerald": "Emerald",
       "events.moodAlt.emerald": "A black-dressed table with orchids under emerald light.",
-      "events.photoAlt.quince": "A dance floor covered in white flowers beside candlelit tables, set for a reception.",
+      "events.photoAlt.quince": "A head table dressed in white flowers and candles on a monogrammed dance floor.",
       "events.photoAlt.social": "A dessert table with a tiered cake among tropical greenery.",
       "events.photoAlt.brand": "The empty hall with a polished white floor, ready to be transformed.",
       "events.photoAlt.film": "The spiral staircase seen from above.",
@@ -527,7 +527,7 @@
       "events.moodAlt.coral": "El salón en luz coral, con mesas redondas y lámparas de araña.",
       "events.mood.emerald": "Esmeralda",
       "events.moodAlt.emerald": "Una mesa vestida de negro con orquídeas bajo luz esmeralda.",
-      "events.photoAlt.quince": "Una pista cubierta de flores blancas junto a mesas con velas, lista para una recepción.",
+      "events.photoAlt.quince": "Una mesa principal vestida con flores blancas y velas sobre una pista con monograma.",
       "events.photoAlt.social": "Una mesa de postres con un pastel de varios pisos entre follaje tropical.",
       "events.photoAlt.brand": "El salón vacío, con su piso blanco pulido, listo para transformarse.",
       "events.photoAlt.film": "La escalera de caracol vista desde arriba.",
@@ -1085,12 +1085,16 @@
     const staging = () => !!album && roomy.matches && !!window.CSS?.supports?.('height', '1svh') && CSS.supports('overflow', 'clip');
     const occasions = [...document.querySelectorAll('.occasion')];
     const occasionCounter = document.querySelector('.occasion-counter');
-    // The sticky frame shows one occasion's photograph: the one pointed at or
-    // focused, otherwise the row being read, alternating between its two cards.
+    // On wide screens the sticky frame shows one occasion's photograph: the one
+    // pointed at or focused, otherwise the row being read, alternating between
+    // its two cards. Reading is followed in every motion mode; only the timer
+    // and the fade belong to full motion.
     const slides = [...document.querySelectorAll('.occasion-slide')];
     const ticks = [...document.querySelectorAll('.occasion-ticks i')];
     const occasionLabel = document.querySelector('.occasion-label');
-    let shownPhoto = -1, pointedPhoto = -1, readingRow = [], rowTurn = 0, rowTimer = 0;
+    const occasionList = document.querySelector('.events-list');
+    const wideOccasions = matchMedia('(min-width: 1051px)');
+    let shownPhoto = -1, pointedPhoto = -1, readingRow = [], rowTurn = 0, rowTimer = 0, releaseTimer = 0, trackFrame = 0;
     function showOccasion(index) {
       if (!slides[index]) return;
       if (index !== shownPhoto) {
@@ -1099,28 +1103,59 @@
         slides[index].classList.add('is-shown');
         shownPhoto = index;
       }
+      slides.forEach((slide, item) => slide.toggleAttribute('aria-hidden', item !== index));
       occasions.forEach((occasion, item) => occasion.classList.toggle('is-shown-photo', item === index));
       ticks.forEach((tick, item) => tick.classList.toggle('is-on', item === index));
       if (occasionCounter) occasionCounter.textContent = String(index + 1).padStart(2, '0');
       if (occasionLabel) occasionLabel.textContent = occasions[index].querySelector('h3').textContent;
     }
+    function stopTurning() { clearInterval(rowTimer); rowTimer = 0; }
     function followReading() {
-      clearInterval(rowTimer); rowTimer = 0;
+      stopTurning();
       if (pointedPhoto >= 0 || !readingRow.length) return;
       showOccasion(readingRow[rowTurn % readingRow.length]);
-      if (readingRow.length > 1 && !reduced.matches && !saveData) rowTimer = setInterval(() => {
+      if (readingRow.length > 1 && !reduced.matches && !saveData && !document.hidden) rowTimer = setInterval(() => {
         rowTurn += 1; showOccasion(readingRow[rowTurn % readingRow.length]);
       }, 3600);
     }
+    function trackOccasions() {
+      trackFrame = 0;
+      const list = occasionList?.getBoundingClientRect();
+      // Off screen, or where each card shows its own photograph, nothing turns.
+      if (!slides.length || !list || !wideOccasions.matches || list.bottom < 0 || list.top > innerHeight) {
+        if (readingRow.length) { readingRow = []; stopTurning(); }
+        return;
+      }
+      // The row nearest the middle of the screen; two-column rows share one top.
+      const boxes = occasions.map(occasion => occasion.parentElement.getBoundingClientRect());
+      let top = 0, distance = Infinity;
+      boxes.forEach(box => {
+        const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
+        if (gap < distance) { distance = gap; top = box.top; }
+      });
+      const row = boxes.flatMap((box, index) => Math.abs(box.top - top) < 2 ? [index] : []);
+      if (row.join() !== readingRow.join()) { readingRow = row; rowTurn = 0; followReading(); }
+    }
+    const scheduleTrack = () => { if (!trackFrame) trackFrame = requestAnimationFrame(trackOccasions); };
+    window.addEventListener('scroll', scheduleTrack, { passive: true });
+    window.addEventListener('resize', scheduleTrack, { passive: true });
+    wideOccasions.addEventListener('change', () => { readingRow = []; stopTurning(); scheduleTrack(); });
+    reduced.addEventListener('change', followReading);
+    document.addEventListener('visibilitychange', () => document.hidden ? stopTurning() : followReading());
     occasions.forEach((occasion, index) => {
-      const point = () => { pointedPhoto = index; clearInterval(rowTimer); rowTimer = 0; showOccasion(index); };
-      const release = () => { if (pointedPhoto === index) { pointedPhoto = -1; followReading(); } };
+      // Leaving one card for the next must not flash the reading row in between.
+      const point = () => { clearTimeout(releaseTimer); pointedPhoto = index; stopTurning(); showOccasion(index); };
+      const release = () => {
+        clearTimeout(releaseTimer);
+        releaseTimer = setTimeout(() => { if (pointedPhoto === index) { pointedPhoto = -1; followReading(); } }, 160);
+      };
       occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
       occasion.addEventListener('pointerleave', release);
       occasion.addEventListener('focusin', point);
       occasion.addEventListener('focusout', release);
     });
     showOccasion(0);
+    scheduleTrack();
     const services = [...document.querySelectorAll('.rentals-quiet li')];
     const cards = [...document.querySelectorAll('.house-grid > li')];
     const seal = document.querySelector('.planning-seal');
@@ -1153,14 +1188,7 @@
           const gap = Math.abs(box.top + box.height / 2 - innerHeight * .5);
           if (gap < distance) { distance = gap; row = rows[index]; }
         });
-        const current = [];
-        occasions.forEach((occasion, index) => {
-          const on = Math.abs(rows[index] - row) < 2;
-          occasion.classList.toggle('is-current', on);
-          if (on) current.push(String(index + 1).padStart(2, '0'));
-        });
-        const currentRow = current.map(number => Number(number) - 1);
-        if (currentRow.join() !== readingRow.join()) { readingRow = currentRow; rowTurn = 0; followReading(); }
+        occasions.forEach((occasion, index) => occasion.classList.toggle('is-current', Math.abs(rows[index] - row) < 2));
       } },
       services.length && { element: document.querySelector('.rentals-quiet'), update() {
         // Read every position before writing, so one frame needs one layout.
@@ -1229,7 +1257,6 @@
       inked.forEach(plainWords);
       prints.forEach(print => { print.style.removeProperty('--arrive'); print.style.removeProperty('--covered'); });
       occasions.forEach(occasion => occasion.classList.remove('is-current'));
-      readingRow = []; followReading();
       services.forEach(item => item.style.removeProperty('--enter'));
       cards.forEach(card => ['--scatter', '--scatter-x', '--scatter-r'].forEach(name => card.style.removeProperty(name)));
       seal?.style.removeProperty('--stamp');

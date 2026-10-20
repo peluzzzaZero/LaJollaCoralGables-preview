@@ -1,0 +1,73 @@
+"""Every occasion shows its own photograph: the sticky frame follows reading on wide
+screens in every motion mode, and each card carries its photograph on narrow ones."""
+import json
+from playwright.async_api import async_playwright
+from review import run
+
+async def centre(page,index):
+ await page.locator('.occasion').nth(index).evaluate('e=>{const b=e.parentElement.getBoundingClientRect();scrollTo(0,scrollY+b.top+b.height/2-innerHeight/2)}')
+ await page.wait_for_timeout(300)
+ return await page.evaluate('''()=>({shown:[...document.querySelectorAll('.occasion-slide')].findIndex(e=>e.classList.contains('is-shown')),
+  exposed:[...document.querySelectorAll('.occasion-slide:not([aria-hidden])')].length,
+  label:document.querySelector('.occasion-label').textContent,
+  counter:document.querySelector('.occasion-counter').textContent})''')
+
+async def main(base,output,args):
+ output.mkdir(parents=True,exist_ok=True);results=[]
+ async with async_playwright() as p:
+  engines=([] if args.webkit_only else [p.chromium])+([p.webkit] if args.webkit or args.webkit_only else [])
+  for engine in engines:
+   browser=await engine.launch()
+   for motion in ['no-preference','reduce']:
+    for width in [1280,1440]:
+     page=await browser.new_page(viewport={'width':width,'height':900},reduced_motion=motion)
+     await page.route('**/*',lambda r:r.abort() if any(h in r.request.url for h in ('google','gstatic')) else r.continue_())
+     await page.goto(base+'index.html');await page.evaluate('document.fonts.ready')
+     sources=await page.locator('.occasion-slide').evaluate_all('e=>e.map(i=>i.getAttribute("src"))')
+     assert len(sources)==10 and len(set(sources))==10,sources
+     seen=set()
+     for index in [0,1,3,5,7,9]:
+      state=await centre(page,index)
+      # A two-card row starts on its first card; the row is the one being read.
+      assert state['shown']==index,(motion,width,index,state)
+      assert state['exposed']==1,state
+      assert state['label']==await page.locator('.occasion h3').nth(index).text_content(),state
+      assert state['counter']==f'{index+1:02d}',state
+      seen.add(state['shown'])
+     # Pointing at the right-hand card of a row shows its photograph.
+     await centre(page,4);await page.locator('.occasion').nth(4).hover();await page.wait_for_timeout(300)
+     assert (await centre(page,4))['shown']==4
+     await page.mouse.move(2,2);await page.wait_for_timeout(400)
+     # Reduced motion never alternates on a timer.
+     if motion=='reduce':
+      await centre(page,1);await page.wait_for_timeout(4200);assert (await centre(page,1))['shown']==1
+     await page.screenshot(path=str(output/f'{engine.name}-{motion}-{width}.png'))
+     results.append({'engine':engine.name,'motion':motion,'width':width,'seen':sorted(seen)})
+     await page.close()
+   for width in [320,390,768,884,1024]:
+    page=await browser.new_page(viewport={'width':width,'height':844})
+    await page.route('**/*',lambda r:r.abort() if any(h in r.request.url for h in ('google','gstatic')) else r.continue_())
+    await page.goto(base+'index.html')
+    photos=page.locator('.occasion .occasion-photo')
+    assert await photos.count()==10
+    assert await page.locator('.occasion-stage').evaluate('e=>getComputedStyle(e).display')=='none'
+    for index in range(10):
+     await photos.nth(index).scroll_into_view_if_needed()
+     box=await photos.nth(index).bounding_box()
+     assert box and box['width']>200 and box['height']>100,(width,index,box)
+    assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
+    results.append({'engine':engine.name,'width':width,'cards':10})
+    await page.close()
+   # Without the page script every card shows its own photograph at any width.
+   context=await browser.new_context(viewport={'width':1440,'height':900},java_script_enabled=False)
+   page=await context.new_page()
+   await page.goto(base+'index.html')
+   assert await page.locator('.occasion-stage').evaluate('e=>getComputedStyle(e).display')=='none'
+   assert await page.locator('.occasion .occasion-photo').evaluate_all('e=>e.filter(i=>getComputedStyle(i).display!=="none").length')==10
+   results.append({'engine':engine.name,'width':1440,'script':False})
+   await context.close()
+   await browser.close()
+ (output/'results.json').write_text(json.dumps(results,indent=2))
+ print(f'Occasion photographs: {len(results)} engine/width/motion cases passed.')
+
+if __name__=='__main__':run(main)

@@ -2162,30 +2162,34 @@ html { scrollbar-gutter: stable; }
 }
 
 /* v1.29.0 — every occasion has its own photograph.
-   Wide screens: one sticky frame changes to the occasion being read, hovered or focused.
-   Narrow screens: each card carries its own photograph. */
-.occasion-stage { position: relative; overflow: hidden; aspect-ratio: 4 / 5; background: var(--cream-deep); }
+   Wide screens with the page script: one sticky frame changes to the occasion
+   being read, pointed at or focused. Narrow screens, and any screen without the
+   script: each card carries its own photograph. */
+.occasion-stage { position: relative; overflow: hidden; aspect-ratio: 1 / 1; background: var(--cream-deep); }
 .occasion-visual .occasion-slide { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; z-index: 0; }
 .occasion-visual .occasion-slide.was-shown { z-index: 1; }
 .occasion-visual .occasion-slide.is-shown { z-index: 2; }
-.occasion-label, .occasion-ticks { display: none; }
 .occasion-stage .occasion-counter { z-index: 4; }
-.occasion-photo { display: none; }
+.occasion-photo { display: none; background: var(--cream-deep); }
 .landing-effects .occasion-visual .occasion-slide.is-shown { animation: occasion-arrive 1.1s cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes occasion-arrive { from { opacity: .3; transform: scale(1.07); } to { opacity: 1; transform: scale(1); } }
 .occasion-stage::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(to top, #2a201acc, #2a201a00 34%); }
-.occasion-label { display: block; position: absolute; z-index: 4; left: 24px; right: 24px; bottom: 34px; font: italic 400 clamp(22px, 2vw, 30px)/1.15 var(--font-display); color: var(--paper); }
+.occasion-label { position: absolute; z-index: 4; left: 24px; right: 24px; bottom: 34px; font: italic 400 clamp(22px, 2vw, 30px)/1.15 var(--font-display); color: var(--paper); }
 .occasion-ticks { display: flex; position: absolute; z-index: 4; left: 24px; right: 24px; bottom: 18px; gap: 5px; }
 .occasion-ticks i { flex: 1; height: 2px; background: #f7f1e74d; transition: background .4s; }
 .occasion-ticks i.is-on { background: var(--paper); }
-.landing-events .occasion.is-shown-photo .occasion-number { color: var(--forest); }
-.landing-events .occasion.is-shown-photo h3 { color: var(--sage-deep); }
+@media (min-width: 1051px) {
+  .landing-events .occasion.is-shown-photo .occasion-number { color: var(--forest); }
+}
 @media (max-width: 1050px) {
   .landing-events .occasion-visual .occasion-stage { display: none; }
   .landing-events .occasion-visual, .landing-events .occasion-visual.has-arrived { box-shadow: none; margin-bottom: 4px; }
-  .landing-events .occasion-photo { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; margin: 0 0 20px; }
-  .landing-events .events-list > li:first-child .occasion-photo { aspect-ratio: 16 / 10; }
 }
+@media (max-width: 1050px) { .landing-events .occasion-photo { display: block; } }
+html:not(.js) .landing-events .occasion-visual .occasion-stage { display: none; }
+html:not(.js) .landing-events .occasion-photo { display: block; }
+.landing-events .occasion-photo { width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; margin: 0 0 20px; }
+.landing-events .events-list > li:first-child .occasion-photo { aspect-ratio: 16 / 10; }
 @media (prefers-reduced-motion: reduce) {
   .landing-effects .occasion-visual .occasion-slide.is-shown { animation: none; }
   .occasion-ticks i { transition: none; }
@@ -2201,7 +2205,8 @@ html { scrollbar-gutter: stable; }
 .moods-strip > li:nth-child(5) .mood-card { --mood: #3fa65a; }
 .mood-card { position: relative; }
 .mood-frame { display: block; position: relative; overflow: hidden; }
-.mood-frame::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 0 var(--mood); background: radial-gradient(120% 90% at 50% 110%, color-mix(in srgb, var(--mood) 0%, transparent), transparent 70%); transition: box-shadow .7s cubic-bezier(.22, 1, .36, 1), background .7s; }
+@property --glow { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+.mood-frame::after { content: ''; position: absolute; inset: 0; pointer-events: none; --glow: 0%; box-shadow: inset 0 0 46px -6px color-mix(in srgb, var(--mood) var(--glow), transparent); background: radial-gradient(120% 90% at 50% 110%, color-mix(in srgb, var(--mood) calc(var(--glow) * .38), transparent), transparent 70%); transition: --glow .7s cubic-bezier(.22, 1, .36, 1); }
 .mood-card figcaption { position: relative; transition: letter-spacing .7s cubic-bezier(.22, 1, .36, 1), color .4s; }
 .mood-card figcaption::after { content: ''; display: block; width: 28px; height: 1px; margin: 8px auto 0; background: var(--mood); }
 @media (hover: hover) {
@@ -2211,9 +2216,13 @@ html { scrollbar-gutter: stable; }
   .moods-strip:has(.mood-card:hover) .mood-card:not(:hover) { filter: saturate(.45) brightness(.97); }
   .mood-card:hover { transform: translateY(-8px); box-shadow: 0 26px 44px -26px var(--mood), 0 0 0 1px color-mix(in srgb, var(--mood) 55%, transparent); }
   .mood-card:hover img { transform: scale(1.09) translateY(-1.5%); }
-  .mood-card:hover .mood-frame::after { box-shadow: inset 0 0 46px -6px var(--mood); background: radial-gradient(120% 90% at 50% 110%, color-mix(in srgb, var(--mood) 38%, transparent), transparent 70%); }
+  .mood-card:hover .mood-frame::after { --glow: 100%; }
   .mood-card:hover figcaption { letter-spacing: .34em; color: var(--ink); }
   .mood-card:hover figcaption::after { width: 64px; }
+}
+@media (hover: hover) and (max-width: 900px) {
+  /* The strip scrolls sideways here; leave room for the lift and its shadow. */
+  .moods-strip { padding-top: 12px; padding-bottom: 30px; }
 }
 @media (hover: hover) and (prefers-reduced-motion: reduce) {
   .mood-card, .mood-card img, .mood-frame::after, .mood-card figcaption, .mood-card figcaption::after { transition: none; }
