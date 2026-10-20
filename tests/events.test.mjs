@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
@@ -81,5 +82,14 @@ test("every occasion has its own photograph in the frame and on its card", () =>
   for (const [, , key] of slides) assert.equal(js.split(`"${key}":`).length - 1, 2, key);
   assert.equal(/ballroom/i.test(slides.concat(cards).map((m) => m[0]).join(" ")), false);
   assert.match(css, /html:not\(\.js\) \.landing-events \.occasion-photo \{ display: block; \}/);
-  assert.match(js, /if \(readingRow\.length > 1 && !reduced\.matches && !saveData && !document\.hidden\)/);
+  assert.match(js, /if \(readingRow\.length > 1 && rowTurn === 0 && !reduced\.matches && !saveData && !document\.hidden\)/);
+});
+
+test("occasion photographs match the hashes recorded in VENUE-MEDIA", () => {
+  const media = readFileSync(new URL("./VENUE-MEDIA.md", import.meta.url), "utf8");
+  const rows = [...media.matchAll(/`(assets\/venue\/web\/occasion-[a-z]+\.webp)` \(sha256 `([0-9a-f]{64})`\)/g)];
+  assert.equal(rows.length, 5);
+  for (const [, file, hash] of rows) {
+    assert.equal(createHash("sha256").update(readFileSync(new URL(`../${file}`, import.meta.url))).digest("hex"), hash, file);
+  }
 });

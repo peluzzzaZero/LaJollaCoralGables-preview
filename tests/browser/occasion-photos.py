@@ -8,7 +8,7 @@ async def centre(page,index):
  await page.locator('.occasion').nth(index).evaluate('e=>{const b=e.parentElement.getBoundingClientRect();scrollTo(0,scrollY+b.top+b.height/2-innerHeight/2)}')
  await page.wait_for_timeout(300)
  return await page.evaluate('''()=>({shown:[...document.querySelectorAll('.occasion-slide')].findIndex(e=>e.classList.contains('is-shown')),
-  exposed:[...document.querySelectorAll('.occasion-slide:not([aria-hidden])')].length,
+  exposed:[...document.querySelectorAll('.occasion-slide')].filter(e=>e.getAttribute('aria-hidden')!=='true').length,
   label:document.querySelector('.occasion-label').textContent,
   counter:document.querySelector('.occasion-counter').textContent})''')
 
@@ -25,7 +25,6 @@ async def main(base,output,args):
      await page.goto(base+'index.html');await page.evaluate('document.fonts.ready')
      sources=await page.locator('.occasion-slide').evaluate_all('e=>e.map(i=>i.getAttribute("src"))')
      assert len(sources)==10 and len(set(sources))==10,sources
-     seen=set()
      for index in [0,1,3,5,7,9]:
       state=await centre(page,index)
       # A two-card row starts on its first card; the row is the one being read.
@@ -33,16 +32,18 @@ async def main(base,output,args):
       assert state['exposed']==1,state
       assert state['label']==await page.locator('.occasion h3').nth(index).text_content(),state
       assert state['counter']==f'{index+1:02d}',state
-      seen.add(state['shown'])
+     # Back up the list: the row being read still decides, and only one slide is exposed.
+     for index in [7,3,0]:assert (await centre(page,index))['shown']==index
      # Pointing at the right-hand card of a row shows its photograph.
      await centre(page,4);await page.locator('.occasion').nth(4).hover();await page.wait_for_timeout(300)
      assert (await centre(page,4))['shown']==4
      await page.mouse.move(2,2);await page.wait_for_timeout(400)
      # Reduced motion never alternates on a timer.
-     if motion=='reduce':
-      await centre(page,1);await page.wait_for_timeout(4200);assert (await centre(page,1))['shown']==1
+     # Full motion turns once to the row's second card; reduced motion never turns on a timer.
+     await centre(page,1);await page.wait_for_timeout(4200);assert (await centre(page,1))['shown']==(1 if motion=='reduce' else 2)
+     await page.wait_for_timeout(4000);assert (await centre(page,1))['shown']==(1 if motion=='reduce' else 2)
      await page.screenshot(path=str(output/f'{engine.name}-{motion}-{width}.png'))
-     results.append({'engine':engine.name,'motion':motion,'width':width,'seen':sorted(seen)})
+     results.append({'engine':engine.name,'motion':motion,'width':width})
      await page.close()
    for width in [320,390,768,884,1024]:
     page=await browser.new_page(viewport={'width':width,'height':844})
@@ -55,6 +56,8 @@ async def main(base,output,args):
      await photos.nth(index).scroll_into_view_if_needed()
      box=await photos.nth(index).bounding_box()
      assert box and box['width']>200 and box['height']>100,(width,index,box)
+     await photos.nth(index).evaluate('i=>i.complete||new Promise(r=>i.addEventListener("load",r,{once:true}))')
+     assert await photos.nth(index).evaluate('i=>i.naturalWidth')>0,(width,index)
     assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
     results.append({'engine':engine.name,'width':width,'cards':10})
     await page.close()

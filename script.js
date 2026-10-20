@@ -1094,7 +1094,7 @@
     const occasionLabel = document.querySelector('.occasion-label');
     const occasionList = document.querySelector('.events-list');
     const wideOccasions = matchMedia('(min-width: 1051px)');
-    let shownPhoto = -1, pointedPhoto = -1, readingRow = [], rowTurn = 0, rowTimer = 0, releaseTimer = 0, trackFrame = 0;
+    let shownPhoto = -1, pointedPhoto = -1, readingRow = [], rowTurn = 0, rowTimer = 0, releaseTimer = 0, trackFrame = 0, slidesLoading = false;
     function showOccasion(index) {
       if (!slides[index]) return;
       if (index !== shownPhoto) {
@@ -1103,19 +1103,20 @@
         slides[index].classList.add('is-shown');
         shownPhoto = index;
       }
-      slides.forEach((slide, item) => slide.toggleAttribute('aria-hidden', item !== index));
+      slides.forEach((slide, item) => item === index ? slide.removeAttribute('aria-hidden') : slide.setAttribute('aria-hidden', 'true'));
       occasions.forEach((occasion, item) => occasion.classList.toggle('is-shown-photo', item === index));
       ticks.forEach((tick, item) => tick.classList.toggle('is-on', item === index));
       if (occasionCounter) occasionCounter.textContent = String(index + 1).padStart(2, '0');
       if (occasionLabel) occasionLabel.textContent = occasions[index].querySelector('h3').textContent;
     }
-    function stopTurning() { clearInterval(rowTimer); rowTimer = 0; }
+    function stopTurning() { clearTimeout(rowTimer); rowTimer = 0; }
     function followReading() {
       stopTurning();
       if (pointedPhoto >= 0 || !readingRow.length) return;
       showOccasion(readingRow[rowTurn % readingRow.length]);
-      if (readingRow.length > 1 && !reduced.matches && !saveData && !document.hidden) rowTimer = setInterval(() => {
-        rowTurn += 1; showOccasion(readingRow[rowTurn % readingRow.length]);
+      // Turn to the row's second card once, so the frame settles within five seconds.
+      if (readingRow.length > 1 && rowTurn === 0 && !reduced.matches && !saveData && !document.hidden) rowTimer = setTimeout(() => {
+        rowTurn = 1; rowTimer = 0; showOccasion(readingRow[1]);
       }, 3600);
     }
     function trackOccasions() {
@@ -1134,6 +1135,10 @@
         if (gap < distance) { distance = gap; top = box.top; }
       });
       const row = boxes.flatMap((box, index) => Math.abs(box.top - top) < 2 ? [index] : []);
+      // The stacked slides load together once the list is on screen, so a switch never fades in an empty frame.
+      if (!slidesLoading) { slidesLoading = true; slides.forEach(slide => { slide.loading = 'eager'; }); }
+      // A card left under a resting pointer (or holding focus) stops steering once it scrolls out of the row being read.
+      if (pointedPhoto >= 0 && !row.includes(pointedPhoto)) pointedPhoto = -1;
       if (row.join() !== readingRow.join()) { readingRow = row; rowTurn = 0; followReading(); }
     }
     const scheduleTrack = () => { if (!trackFrame) trackFrame = requestAnimationFrame(trackOccasions); };
