@@ -2132,8 +2132,8 @@ html { scrollbar-gutter: stable; }
 /* v1.28.2 — a few words from guests: whole cards on a rail with their own controls (three on a desk, two on a tablet, one on a phone). */
 .guest-reviews { min-width: 0; }
 .review-quotes { --per-view: 3; --rail-gap: 20px; min-width: 0; max-width: 100%; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--per-view) - 1) * var(--rail-gap)) / var(--per-view)); gap: var(--rail-gap); overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: thin; }
-.js .review-quotes { scrollbar-width: none; }
-.js .review-quotes::-webkit-scrollbar { display: none; }
+.review-quotes.review-rail { scrollbar-width: none; }
+.review-quotes.review-rail::-webkit-scrollbar { display: none; }
 .review-quote { scroll-snap-align: start; display: flex; flex-direction: column; justify-content: space-between; gap: 22px; background: var(--paper); border: 1px solid var(--line); border-top: 2px solid var(--forest); padding: 28px 28px 24px; }
 .review-quote blockquote { margin: 0; }
 .review-quote blockquote p { margin: 0; font: 400 clamp(18px, 1.45vw, 21px)/1.5 var(--font-display); color: var(--ink); }
@@ -2141,11 +2141,12 @@ html { scrollbar-gutter: stable; }
 .review-quote-by > span:first-child { color: var(--ink); }
 .review-quotes:focus-visible { outline: 2px solid var(--forest, #5e7060); outline-offset: 4px; }
 .review-quotes-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin: 18px 0 32px; }
-.js .review-quotes-foot { min-height: 44px; }
 .review-quotes-source { margin: 0; font: 400 12px/1.5 var(--font-body); color: var(--ink-muted); }
 .review-quotes[hidden] + .review-quotes-foot { display: none; }
 .review-rail-controls { display: flex; align-items: center; gap: 14px; margin-left: auto; }
 .review-rail-controls[hidden] { display: none; }
+/* The control row keeps its place while the script starts, so nothing below moves. */
+.js .review-rail-controls[hidden] { display: flex; visibility: hidden; }
 .review-rail-btn { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); color: var(--ink); cursor: pointer; transition: background .25s, color .25s, border-color .25s; }
 .review-rail-btn:hover, .review-rail-btn:focus-visible { background: var(--forest); border-color: var(--forest); color: var(--paper); }
 .review-rail-btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 3px; }

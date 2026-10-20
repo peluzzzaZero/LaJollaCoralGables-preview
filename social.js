@@ -74,7 +74,7 @@
       url.searchParams.set('hl', language()); frame.src = url.href;
     });
   }
-  // The written excerpts move as whole cards with their own controls (the native scrollbar is hidden only when script runs).
+  // The written excerpts move as whole cards with their own controls (the native scrollbar is hidden only once this script runs).
   function rail(list) {
     const controls = list.parentElement.querySelector('[data-review-rail-controls]');
     if (!controls) return;
@@ -110,6 +110,7 @@
     list.addEventListener('pointerdown', function () { target = null; update(); }, { passive: true });
     list.addEventListener('scroll', function () { update(); settle(300); }, { passive: true });
     if ('ResizeObserver' in window) new ResizeObserver(update).observe(list); else window.addEventListener('resize', update);
+    list.classList.add('review-rail');
     update();
   }
   document.addEventListener('DOMContentLoaded', function () {
