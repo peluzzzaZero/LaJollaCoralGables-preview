@@ -20,6 +20,8 @@ ROOT = Path(__file__).resolve().parents[1]
 MEDIA = ROOT / 'media/events'
 MANIFEST = ROOT / 'assets/venue/web/event-photos.json'
 AVIF_QUALITY, WEBP_QUALITY = 62, 82
+APPROVAL = ('Delivered by Dan (site owner) on 2026-10-20 as the venue\'s own promotional material, cleared for '
+            'publication with the couple\'s consent (recorded in tests/VENUE-MEDIA.md)')
 
 # Owner originals, delivered on 2026-10-20 at the best quality available to him.
 ORIGINALS = {
@@ -83,7 +85,7 @@ def sha256_bytes(data):
 
 
 def strip_jpeg(data):
-    """Drop EXIF, XMP and Photoshop segments without re-encoding; keep JFIF and the ICC profile."""
+    """Keep only the JFIF header, the ICC profile and the image data, without re-encoding."""
     if data[:2] != b'\xff\xd8':
         sys.exit('not a JPEG')
     out, i = bytearray(data[:2]), 2
@@ -95,8 +97,10 @@ def strip_jpeg(data):
             out += data[i:]
             break
         length = int.from_bytes(data[i + 2:i + 4], 'big')
-        if marker not in (0xE1, 0xED):
-            out += data[i:i + 2 + length]
+        segment = data[i:i + 2 + length]
+        metadata = 0xE0 <= marker <= 0xEF or marker == 0xFE
+        if not metadata or (marker == 0xE0 and segment[4:9] == b'JFIF\0') or (marker == 0xE2 and segment[4:16] == b'ICC_PROFILE\0'):
+            out += segment
         i += 2 + length
     return bytes(out)
 
@@ -118,6 +122,8 @@ def to_srgb(image):
     if icc:
         image = ImageCms.profileToProfile(image, ImageCms.ImageCmsProfile(io.BytesIO(icc)),
                                           ImageCms.createProfile('sRGB'), renderingIntent=0, outputMode='RGB')
+    # Untagged sRGB: the generated profile carries a creation time and would make builds differ.
+    image.info.clear()
     return image
 
 
@@ -137,7 +143,7 @@ def build():
         path = f'assets/venue/{name}.jpg'
         files[path] = data
         records.append({'asset': path, 'sha256': sha256_bytes(data), 'original': f'{source}.jpg',
-                        'originalSha256': ORIGINALS[source], 'treatment': treatment})
+                        'originalSha256': ORIGINALS[source], 'treatment': treatment, 'ownerApproval': APPROVAL})
     for name, (source, box, treatment) in WEB.items():
         if source.startswith('media:'):
             key = source[6:]
@@ -148,7 +154,7 @@ def build():
         image = to_srgb(Image.open(io.BytesIO(data)))
         if box:
             image = image.crop(box)
-        for ext, options in (('avif', {'quality': AVIF_QUALITY, 'speed': 4}),
+        for ext, options in (('avif', {'quality': AVIF_QUALITY, 'speed': 4, 'max_threads': 1}),
                              ('webp', {'quality': WEBP_QUALITY, 'method': 6})):
             buffer = io.BytesIO()
             image.save(buffer, ext.upper(), **options)
@@ -156,7 +162,8 @@ def build():
             files[path] = buffer.getvalue()
             records.append({'asset': path, 'sha256': sha256_bytes(files[path]), 'bytes': len(files[path]),
                             'size': f'{image.width}x{image.height}', **origin,
-                            'treatment': f'{treatment}, sRGB, {ext.upper()} q{options["quality"]}, no metadata'})
+                            'treatment': f'{treatment}, sRGB, {ext.upper()} q{options["quality"]}, no metadata',
+                            'ownerApproval': APPROVAL})
     return files, records
 
 
@@ -169,6 +176,7 @@ def main():
         stale = [r['asset'] for r in records
                  if not (ROOT / r['asset']).is_file() or sha256_bytes((ROOT / r['asset']).read_bytes()) != r['sha256']]
         expected = {f'assets/venue/{n}.jpg' for n in SOURCES} | {f'assets/venue/web/{n}.{e}' for n in WEB for e in ('avif', 'webp')}
+        stale += [r['asset'] for r in records if not r.get('ownerApproval', '').strip()]
         if stale or {r['asset'] for r in records} != expected:
             sys.exit('Event photographs are out of date: ' + ', '.join(stale or sorted(expected ^ {r['asset'] for r in records})))
         print(f'{len(records)} event photograph files match {MANIFEST.relative_to(ROOT)}')

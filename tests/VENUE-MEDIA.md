@@ -99,6 +99,8 @@ In "An invitation inside" the scroll draws the film inside a natively sticky fra
 
 ## Event photographs — owner delivery, 20 October 2026 (v1.28.0)
 
+> **Superseded in v1.31.0.** The files in the table below are now rebuilt from the owner's less-compressed copies of the same photographs (AVIF + WebP for `assets/venue/web/`, originals without metadata for the JPEG sources). Their current hashes, sources and treatments are in "Higher-quality originals" below and in `assets/venue/web/event-photos.json`; the treatments and hashes in this table describe v1.28.0 only. The consent and clearance record of this section still applies.
+
 Dan, the site owner who delivers the venue's media and approvals (as for the earlier deliveries in this file), shared recent photographs of the house dressed for events in the project chat on 20 October 2026, to replace older images. He confirmed on 20 October 2026 that the couple shown has given permission for their photographs to be published, and asked that every photograph of the delivery be used. On 20 October 2026 he also confirmed that all of these photographs are the venue's own promotional material, cleared for publication, including the guests and staff in the background of the toast and the amethyst table, the client monogram and date painted on the ivory dance floor, and the decorated tables from other events. The strongly coloured lighting photographs are shown together as "One hall, many moods"; the dance floor's painted monogram is presented as custom floor branding. Sources arrived at about 800 px wide; pixels are not retouched. Mosaic tiles from these sources are 4:5 crops about 430 px wide that `scripts/social-tiles.py` enlarges to 640×800. Delivery files are crops and re-encodings only, written without metadata.
 
 | Delivered file | Source (sha256 of the shared JPEG) | Treatment |
@@ -159,15 +161,15 @@ Each occasion in the events chapter shows its own photograph. Since v1.31.0 the 
 
 | Delivered file | Source | Occasion |
 | --- | --- | --- |
-| `assets/venue/web/occasion-quince.avif` (sha256 `126ad373c67aae626a3459bc7c161e8ea79d04f8fd00f739a2f2f7ebe0632322`) | `assets/venue/reception-white.jpg` | Quinceañeras & Sweet Sixteens |
+| `assets/venue/web/occasion-quince.avif` (sha256 `50613863e0ed4606e1982b3a6f46c1e454e5f00d03cb2c898a7d1525a15d5967`) | `assets/venue/reception-white.jpg` | Quinceañeras & Sweet Sixteens |
 | `assets/venue/web/occasion-quince.webp` (sha256 `8a08ef3771cf1d65d115817c0663af77d1841c0551bd5e19379e42132ed171e0`) | `assets/venue/reception-white.jpg` | Quinceañeras & Sweet Sixteens |
-| `assets/venue/web/occasion-social.avif` (sha256 `418fcbdad002d12b272cb071628ce7e7f744970865712c25f858006d807a4cc7`) | `assets/venue/dessert-table.jpg` | Social celebrations |
+| `assets/venue/web/occasion-social.avif` (sha256 `7c05abd2b267e3b71776c1b98400d56e0c5bc0d2895b3ee64be88961df861e9c`) | `assets/venue/dessert-table.jpg` | Social celebrations |
 | `assets/venue/web/occasion-social.webp` (sha256 `d4a4f55a9838d1c3fbcc5c9af4829d2e14240c54a58f571c2435fede7021ce3c`) | `assets/venue/dessert-table.jpg` | Social celebrations |
-| `assets/venue/web/occasion-corporate.avif` (sha256 `42cc66c7c84dec1e1270f3d42fee757fee4a17418afa1bc8728c724bb3821c57`) | `assets/venue/holiday-party.jpg` | Corporate events |
+| `assets/venue/web/occasion-corporate.avif` (sha256 `d2aee3e2caac6c7a234ae5b35cedf6927bf36e25577f496b976fd6aec5a59c73`) | `assets/venue/holiday-party.jpg` | Corporate events |
 | `assets/venue/web/occasion-corporate.webp` (sha256 `feafdc404cf189e1a25ff42dc02f55c4630554997d46989b5ef49c20a4959175`) | `assets/venue/holiday-party.jpg` | Corporate events |
-| `assets/venue/web/occasion-galas.avif` (sha256 `4015e9806ca4c9cf0f31fa191b43a0bd70ca2ea2478d990b46db4fd75189e889`) | `assets/venue/reception-floral.jpg` | Galas & fundraisers |
+| `assets/venue/web/occasion-galas.avif` (sha256 `1732a097d67383485a8f19fcf8118e5abf977c1714e6a09296532038db46f6e7`) | `assets/venue/reception-floral.jpg` | Galas & fundraisers |
 | `assets/venue/web/occasion-galas.webp` (sha256 `53560a51e84a0b6d8b35eb08a8c00d25a21ccaf0cc6690e1bcc61f3c98e66f66`) | `assets/venue/reception-floral.jpg` | Galas & fundraisers |
-| `assets/venue/web/occasion-other.avif` (sha256 `127dc0d1b9bf9917035912c84c289b8a1d8bd69840b25c1c02ea337c6729a621`) | `assets/venue/orchids-emerald.jpg` | Something completely different? |
+| `assets/venue/web/occasion-other.avif` (sha256 `11beea4e7005e82d2c89d5a952e8e3fd145bd4cf85be1bfa28d68474efb4165c`) | `assets/venue/orchids-emerald.jpg` | Something completely different? |
 | `assets/venue/web/occasion-other.webp` (sha256 `c10e554312ab883b9651358f0cc4fbc27d93ee4efd210821317fdc314db75767`) | `assets/venue/orchids-emerald.jpg` | Something completely different? |
 | `assets/venue/web/first-dance.webp` | existing | Weddings |
 | `assets/venue/web/facade-night.webp` | existing | Brand activations & product launches |
