@@ -67,13 +67,17 @@ async def main(base,output):
      await position(page,name);await check_header(page)
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(width,name,language)
      await page.screenshot(path=str(output/f'{name}-{width}-{language}.png'))
+    # The single visit button rests in Let's begin at the end of the page; open the calendar from there.
+    await position(page,'planning')
     before=await page.evaluate('scrollY');url=page.url
-    opener=page.locator('#header .inquire-link');await opener.click()
+    opener=page.locator('#visit-cta');await opener.click()
     await page.frame_locator('.booking-frame').locator('h1').wait_for()
     assert page.url==url
     await page.keyboard.press('Escape');await page.locator('#booking-viewer').wait_for(state='hidden')
     assert abs(await page.evaluate('scrollY')-before)<2
-    assert await opener.evaluate('e=>e===document.activeElement')
+    # The dialog's close event (which returns focus) may be dispatched in a later task.
+    try:await page.wait_for_function('document.activeElement===document.getElementById("visit-cta")',timeout=2000)
+    except Exception:raise AssertionError(('focus not returned',width,language,await page.evaluate('[document.activeElement.outerHTML.slice(0,120),document.getElementById("visit-cta").className,getComputedStyle(document.getElementById("visit-cta")).visibility]')))
     rows.append({'width':width,'language':language,'complete_visible_flow':True,'calendar':True})
    assert not errors,errors
    assert all(any(f'/cinematic/{n}.' in u for n in ('journey','journey-hd','venue-walk','venue-walk-mobile')) for u in media),media

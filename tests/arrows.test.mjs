@@ -4,7 +4,8 @@ import { readFileSync } from "node:fs";
 
 // The owners want no arrows on the site's links at all: not Unicode arrows (iOS draws
 // ↗, ↘, ➚, ⬈… as blue emoji tiles, and U+FE0F forces emoji on anything), and not drawn ones.
-// The review carousel's previous/next chevrons are controls, not link decorations, and stay.
+// The review carousel's previous/next chevrons are controls, not link decorations, and stay,
+// as do the flourish and the visit seal's ring text.
 const files = ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "styles.css"];
 const read = (name) => {
   const text = readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
@@ -27,7 +28,7 @@ test("links carry no drawn arrows either", () => {
   const svgs = html.match(/<svg\b[^]*?<\/svg>/g) ?? [];
   const chevrons = html.match(/<button type="button" class="review-rail-btn"[^]*?<\/button>/g) ?? [];
   assert.equal(chevrons.length, 2, "review carousel keeps its previous/next controls");
-  for (const svg of svgs) assert.ok(chevrons.some((button) => button.includes(svg)) || svg.startsWith('<svg class="flourish"'), `unexpected icon: ${svg.slice(0, 80)}`);
+  for (const svg of svgs) assert.ok(chevrons.some((button) => button.includes(svg)) || svg.startsWith('<svg class="flourish"') || svg.includes('id="visit-cta-ring"'), `unexpected icon: ${svg.slice(0, 80)}`);
 });
 
 test("social cards say Follow / Seguir and announce the new tab", () => {

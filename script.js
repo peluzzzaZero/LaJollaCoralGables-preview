@@ -128,6 +128,7 @@
       "paths.beyondLink": "Explore services",
       "nav.menu": "Explore La Jolla",
       "form.planning": "Schedule a visit",
+      "cta.seal": "Schedule a visit · La Jolla ·",
 
       "visit.altFacade": "La Jolla facade, ivy, striped awnings and brick entrance at 301 Alcazar Avenue.",
       "visit.altWide": "La Jolla facade and balcony at 301 Alcazar Avenue, Coral Gables.",
@@ -155,7 +156,6 @@
       "visit.more": "Another view of the hall",
       "visit.street": "A Coral Gables landmark",
       "visit.altStreet": "La Jolla on Alcazar Avenue at night, its hedges wrapped in warm string lights.",
-      "visit.cta": "Let's imagine your occasion here",
       "visit.filmsLabel": "Short films of the house",
       "visit.watchArrival": "The arrival · 12s",
       "visit.watchDetails": "A closer look · 13s",
@@ -298,7 +298,6 @@
       "tour.info.reserve": "A tour appointment does not reserve a space for an event.",
       "tour.info.bring": "Bring your ideas and inspiration to share with our team.",
       "tour.inviteTitle": "We look forward to welcoming you",
-      "tour.cta": "Schedule your tour",
       "tour.mailLead": "Prefer to write?",
       "testimonial.eyebrow": "Guest voice",
       "testimonial.title": "Testimonial",
@@ -472,6 +471,7 @@
       "paths.beyondLink": "Explore los servicios",
       "nav.menu": "Explore La Jolla",
       "form.planning": "Agende una visita",
+      "cta.seal": "Agende una visita · La Jolla ·",
 
       "visit.altFacade": "Fachada de La Jolla, hiedra, toldos de rayas y entrada de ladrillo en 301 Alcazar Avenue.",
       "visit.altWide": "Fachada y balcón de La Jolla en 301 Alcazar Avenue, Coral Gables.",
@@ -499,7 +499,6 @@
       "visit.more": "Otra vista del salón",
       "visit.street": "Un emblema de Coral Gables",
       "visit.altStreet": "La Jolla en Alcazar Avenue de noche, con los setos envueltos en luces cálidas.",
-      "visit.cta": "Imaginemos su ocasión aquí",
       "visit.filmsLabel": "Breves recorridos por la casa",
       "visit.watchArrival": "La llegada · 12s",
       "visit.watchDetails": "Una mirada más cerca · 13s",
@@ -642,7 +641,6 @@
       "tour.info.reserve": "Una cita de tour no reserva un espacio para un evento.",
       "tour.info.bring": "Traiga sus ideas e inspiración para compartirlas con nuestro equipo.",
       "tour.inviteTitle": "Será un placer recibirle",
-      "tour.cta": "Agende su tour",
       "tour.mailLead": "¿Prefiere escribirnos?",
       "testimonial.eyebrow": "Voz de un invitado",
       "testimonial.title": "Testimonio",
@@ -1162,13 +1160,10 @@
       const point = () => { clearTimeout(releaseTimer); pointedPhoto = index; stopTurning(); showOccasion(index); };
       const release = () => {
         clearTimeout(releaseTimer);
-        // A card that still holds keyboard focus keeps the frame when the mouse leaves it.
-        releaseTimer = setTimeout(() => { if (pointedPhoto === index && !occasion.querySelector(':focus-visible')) { pointedPhoto = -1; followReading(); } }, 160);
+        releaseTimer = setTimeout(() => { if (pointedPhoto === index) { pointedPhoto = -1; followReading(); } }, 160);
       };
       occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
       occasion.addEventListener('pointerleave', release);
-      occasion.addEventListener('focusin', point);
-      occasion.addEventListener('focusout', release);
     });
     showOccasion(0);
     scheduleTrack();
@@ -1438,12 +1433,88 @@
     });
   }
 
+  // The landing has a single "Schedule a visit". It starts in the arrival, travels with the scroll
+  // into a small monogram seal at the bottom-right and finally settles in "Let's begin", above the footer.
+  function initVisitCta() {
+    const cta = document.getElementById("visit-cta");
+    const slot = (name) => document.querySelector('[data-cta-slot="' + name + '"]');
+    const start = slot("start"), float = slot("float"), end = slot("end");
+    // The seal steps aside from the map so Google's controls and attribution stay uncovered.
+    const avoid = document.querySelector("[data-location-map]");
+    if (!cta || !start || !float || !end) return;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const clamp = (v) => Math.min(1, Math.max(0, v));
+    const ease = (t) => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const mix = (a, b, t) => a + (b - a) * t;
+    let frame = 0, settle = 0, state = "";
+    function aside(f) {
+      const m = avoid?.getBoundingClientRect();
+      if (!m) return f;
+      const gap = 12;
+      const overlap = Math.min(f.bottom, m.bottom + gap) - Math.max(f.top, m.top - gap);
+      if (overlap <= 0 || f.right <= m.left - gap || f.left >= m.right + gap) return f;
+      // Eased by how far the map has entered the seal's band, so it slides rather than jumps.
+      const t = reduced.matches ? 1 : clamp(overlap / f.height);
+      const right = innerWidth - m.right, left = m.left;
+      // Prefer the margin beside the map; otherwise sit centred just above its bottom edge, between
+      // Google's logo (left) and its zoom controls and attribution (right).
+      if (right >= f.width + 2 * 6) return { left: mix(f.left, m.right + (right - f.width) / 2, t), top: f.top };
+      if (left >= f.width + 2 * 16 && left - f.width - 16 > f.left - 240) return { left: mix(f.left, left - f.width - 16, t), top: f.top };
+      return { left: mix(f.left, m.left + (m.width - f.width) / 2, t), top: mix(f.top, Math.min(f.top, m.bottom - f.height - 28), t) };
+    }
+    function place() {
+      frame = 0;
+      const vh = window.innerHeight;
+      const a = start.getBoundingClientRect(), e = end.getBoundingClientRect();
+      const f = aside(float.getBoundingClientRect());
+      // Leave the arrival over the first ~40% of a screen, and meet "Let's begin" over its last 30%.
+      let out = clamp(window.scrollY / (vh * .4));
+      let home = e.top <= f.top ? 1 : clamp(1 - (e.top - f.top) / (vh * .3));
+      if (reduced.matches) { out = out < .5 ? 0 : 1; home = home < 1 ? 0 : 1; }
+      else { out = ease(out); home = ease(home); }
+      // Never let the wider button run past the viewport edge while it shrinks into the seal.
+      const x = Math.max(8, Math.min(mix(mix(a.left, f.left, out), e.left, home), innerWidth - cta.offsetWidth - 8));
+      // While "Let's begin" is still below the seal's line its slot is off-screen; never follow it past the viewport bottom.
+      const y = Math.min(mix(mix(a.top, f.top, out), e.top, home), e.top <= f.top ? Infinity : window.innerHeight - cta.offsetHeight - 8);
+      cta.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+      const next = home >= .5 ? "end" : out < .5 ? "start" : "float";
+      if (next !== state) {
+        cta.classList.remove("is-" + state);
+        cta.classList.add("is-" + next);
+        state = next;
+        // Once it floats, it takes the corner where the "Discover the house" hint sits.
+        document.documentElement.classList.toggle("cta-away", next !== "start");
+      }
+      // The arrival copy eases after the scroll stops, so follow it for a few more frames.
+      if (settle-- > 0) frame = requestAnimationFrame(place);
+    }
+    const request = () => { settle = 24; if (!frame) frame = requestAnimationFrame(place); };
+    cta.classList.add("is-live");
+    place();
+    // Shown only once placed, and transitions enabled a frame later so the first paint does not animate.
+    document.documentElement.classList.add("cta-live");
+    requestAnimationFrame(() => document.documentElement.classList.add("cta-ready"));
+    window.addEventListener("scroll", request, { passive: true });
+    window.addEventListener("resize", request, { passive: true });
+    reduced.addEventListener?.("change", request);
+    if (typeof ResizeObserver === "function") {
+      const watch = new ResizeObserver(request);
+      watch.observe(cta);
+      // Late images and fonts above "Let's begin" move its slot without a scroll.
+      watch.observe(document.body);
+    }
+    window.addEventListener("lajolla-language", request);
+    window.addEventListener("load", request);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initLang();
     let preferred = "en";
     try { if (localStorage.getItem("lajolla-language") === "es") preferred = "es"; } catch (_) { /* Storage is optional. */ }
     applyI18n(preferred);
     initHeader();
+    // Before the heavier scroll scenes, so a failure there cannot leave the button unplaced.
+    initVisitCta();
     initChapterMenu();
     // Resolve the menu layout before positioning or focusing an anchor.
     initEntranceZoom();

@@ -21,11 +21,10 @@ test("the tour invitation sits between services and Instagram and is in the head
   assert.equal((html.match(/<a href="#tour" data-i18n="nav.tour">/g) || []).length, 2);
 });
 
-test("the tour leads to the visit calendar, with email as the secondary path", () => {
+test("the tour relies on the single floating visit button, with email as the secondary path", () => {
   const section = chapter();
-  const tour = section.indexOf("data-booking-opener");
-  assert.ok(tour > 0 && section.indexOf('href="mailto:') > tour);
-  assert.match(section, /href="https:\/\/bookings\.cloud\.microsoft\/book\/[^"]+" data-booking-opener/);
+  assert.equal(section.includes("data-booking-opener"), false);
+  assert.match(section, /href="mailto:info@lajollacoralgables\.com"/);
 });
 
 test("no commercial terms from the brochure: prices, packages, capacity, partners or inclusions", () => {
