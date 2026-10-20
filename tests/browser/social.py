@@ -9,7 +9,7 @@ SDK = """window.google={maps:{importLibrary:async()=>({Place:class {
  constructor(options){if(options.id!=='ChIJWbeTzJu32YgRbGDUdwzI0W0')throw Error('Wrong venue');}
  async fetchFields(options){window.__mockFields=options.fields;this.attributions=[];
  const good={rating:5,originalText:'<b>Lovely celebration</b> in this test fixture.',originalTextLanguageCode:'en',publishTime:new Date('2024-06-01T12:00:00Z'),googleMapsURI:'https://www.google.com/maps/reviews/FAKE_REVIEW',authorAttribution:{displayName:'FAKE TEST AUTHOR',uri:'https://www.google.com/maps/contrib/FAKE_TEST_AUTHOR'}};
- this.reviews=[{...good,rating:1,originalText:'FAKE NEGATIVE REVIEW'},good,{...good,authorAttribution:{}},{...good,googleMapsURI:'javascript:alert(1)'}];
+ this.reviews=[{...good,rating:1,originalText:'FAKE NEGATIVE REVIEW'},good,{...good,authorAttribution:{}},{...good,googleMapsURI:'javascript:alert(1)'},{...good,originalText:'FAKE FORMER TEAM thanks to Raul'},{...good,originalText:'',text:'FAKE FORMER TEAM gracias Raúl'},{...good,originalText:'FAKE FORMER TEAM RAU\u0301L'},{...good,originalText:'FAKE FORMER TEAM thanks Mr. Martinez'}];
  }} })}};window.__lajollaMapsReady();"""
 
 async def main(base, output, webkit=False):
@@ -44,7 +44,7 @@ async def main(base, output, webkit=False):
                     if mode=='disabled':
                         await page.wait_for_timeout(300);assert 'google' not in requests
                         assert await page.locator('.review-invite a[href*="query_place_id=ChIJWbeTzJu32YgRbGDUdwzI0W0"]').is_visible()
-                        assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Written guest excerpts show without a key'
+                        assert await page.locator('.review-quote').count()==4 and await page.locator('.review-quote').first.is_visible(),'Written guest excerpts show without a key'
                         quotes=page.locator('.review-quotes')
                         await quotes.focus();assert await quotes.evaluate('e=>document.activeElement===e'),'The excerpt row takes keyboard focus'
                         if await quotes.evaluate('e=>e.scrollWidth>e.clientWidth+1'):
@@ -76,6 +76,7 @@ async def main(base, output, webkit=False):
                             assert await page.locator('.guest-review blockquote').inner_text()=='<b>Lovely celebration</b> in this test fixture.'
                             assert await page.locator('.guest-review blockquote b').count()==0
                             assert 'FAKE NEGATIVE REVIEW' not in await page.locator('.reviews-results').inner_text()
+                            assert 'FAKE FORMER TEAM' not in await page.locator('.reviews-results').inner_text(),'Reviews naming the former planner are skipped'
                             assert await page.locator('.review-author a').inner_text()=='FAKE TEST AUTHOR'
                             assert await page.locator('.guest-review time').get_attribute('datetime')=='2024-06-01T12:00:00.000Z'
                             assert await page.locator('.guest-review > a').get_attribute('href')=='https://www.google.com/maps/reviews/FAKE_REVIEW'
@@ -92,7 +93,7 @@ async def main(base, output, webkit=False):
                             assert await page.locator('.reviews-status').is_hidden(),'No failure notice over the written excerpts'
                             await page.locator('[data-lang=es]').click()
                         if mode in ('empty','failure'):
-                            assert await page.locator('.review-quote').count()==5 and await page.locator('.review-quote').first.is_visible(),'Excerpts stay when Google has nothing to show'
+                            assert await page.locator('.review-quote').count()==4 and await page.locator('.review-quote').first.is_visible(),'Excerpts stay when Google has nothing to show'
                         assert requests.count('google')==1,requests
                     lang='es' if mode in ('success','failure') else 'en'
                     mapbox=page.locator('.location-map')

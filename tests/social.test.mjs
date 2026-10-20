@@ -114,7 +114,12 @@ test("the social chapter replaces the brand wall: photographs, guest reviews, th
   assert.doesNotMatch(section, /★|\b[1-5](\.\d)? ?\/ ?5\b|aggregateRating/, "no invented rating");
   // Written excerpts of real five-star Google reviews supplied by the owner: short, attributed by first name and initial.
   const quotes = section.match(/<li class="review-quote">[^]*?<\/li>/g) || [];
-  assert.equal(quotes.length, 5, "five guest excerpts");
+  assert.equal(quotes.length, 4, "four guest excerpts");
+  // The planner the older reviews name is from the previous team (owner, 20 October 2026).
+  for (const page of ["index.html", "planning.html", "privacy.html", "terms.html"]) {
+    assert.doesNotMatch(readFileSync(new URL(`../${page}`, import.meta.url), "utf8"), /\bra[uú]l\b|martinez/i, `${page} names no former team member`);
+  }
+  assert.match(readFileSync(new URL("../social.js", import.meta.url), "utf8"), /!mentionsFormerTeam\(review\)/, "Google reviews naming the former planner are skipped");
   for (const quote of quotes) {
     assert.match(quote, /<blockquote lang="en"><p>“[^<]{20,160}”<\/p><\/blockquote>/);
     assert.match(quote, /<span translate="no">[A-Z][a-z]+( and [A-Z][a-z]+( [A-Z][a-z]+)?)? [A-Z]\.<\/span>/);
