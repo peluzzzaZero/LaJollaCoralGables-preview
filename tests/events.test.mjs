@@ -101,5 +101,6 @@ test("no occasion photograph derives from retired media", async () => {
   assert.equal(sources.length, 4);
   for (const source of sources) assert.equal(retiredMedia.has(source), false, source);
   const section = eventsSection();
-  for (const path of retiredMedia) assert.equal(section.includes(path.split("/").pop().replace(/\.[a-z0-9]+$/, "")+"."), false, path);
+  const retiredStems = new Set([...retiredMedia].map((path) => path.split("/").pop().replace(/\.[a-z0-9]+$/, "")));
+  for (const [, stem] of section.matchAll(/src="assets\/venue\/(?:web\/)?([a-z0-9-]+)\./g)) assert.equal(retiredStems.has(stem), false, stem);
 });
