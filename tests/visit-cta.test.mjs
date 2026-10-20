@@ -45,3 +45,10 @@ test("the button is touch-sized, respects reduced motion and never sits over the
   assert.match(js, /function initVisitCta\(\)/);
   assert.match(js, /if \(reduced\.matches\) \{ out = out < \.5 \? 0 : 1;/);
 });
+
+test("the floating seal beats softly a few times and never under reduced motion", () => {
+  const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+  assert.match(css, /\.visit-cta:not\(\.is-start\):not\(\.is-end\) \.visit-cta-seal \{ animation: visit-cta-beat [^;]* 3; \}/);
+  assert.match(css, /@keyframes visit-cta-beat \{[^\n]*scale\(1\.07\)/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{[^\n]*\.visit-cta \.visit-cta-seal, \.landing-page \.btn\.visit-cta \{ animation: none !important; \}/);
+});
