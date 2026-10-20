@@ -2283,7 +2283,7 @@ html:not(.js) .visit-cta-slot:not([data-cta-slot="float"]) { display: none; }
 }
 body.booking-open .visit-cta { visibility: hidden; }
 .cta-away .entrance-next { visibility: hidden; }
-/* Without script the seal floats to the very end; keep the legal row clear of it. */
-html:not(.js) .landing-footer { padding-bottom: 96px; }
+/* Until the script places it (or if it never does) the seal floats to the very end; keep the legal row clear. */
+html:not(.cta-live) .landing-footer { padding-bottom: 96px; }
 @media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta, .visit-cta-seal svg { transition: none; } .visit-cta:hover .visit-cta-seal svg, .visit-cta:focus-visible .visit-cta-seal svg { transform: none; } }
 @media print { .visit-cta { display: none; } }

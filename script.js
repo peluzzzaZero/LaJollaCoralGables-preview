@@ -1485,6 +1485,7 @@
     }
     const request = () => { settle = 24; if (!frame) frame = requestAnimationFrame(place); };
     cta.classList.add("is-live");
+    document.documentElement.classList.add("cta-live");
     place();
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request, { passive: true });
@@ -1505,6 +1506,8 @@
     try { if (localStorage.getItem("lajolla-language") === "es") preferred = "es"; } catch (_) { /* Storage is optional. */ }
     applyI18n(preferred);
     initHeader();
+    // Before the heavier scroll scenes, so a failure there cannot leave the button unplaced.
+    initVisitCta();
     initChapterMenu();
     // Resolve the menu layout before positioning or focusing an anchor.
     initEntranceZoom();
@@ -1512,7 +1515,6 @@
     initLandingMotion();
     initAnchorNavigation();
     initBookingCalendar();
-    initVisitCta();
     initYear();
     if (document.body.classList.contains("planning-page")) {
       const title = document.getElementById("quote-title");

@@ -116,6 +116,9 @@ async def main(base,output,args):
      await page.evaluate('scrollBy(0,100)');await page.wait_for_timeout(200)
      after=await image.evaluate('e=>getComputedStyle(e).transform')
      assert before!=after and after!='none','Selected photography must have measured scroll depth'
+     # Slow CI runners can take longer than the scroll pause to finish the reveal; wait for it rather than sampling once.
+     try: await page.wait_for_function('e=>getComputedStyle(e).clipPath=="inset(0px)"',arg=await image.element_handle(),timeout=4000)
+     except Exception: pass
      assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='inset(0px)', 'Image reveal must finish'
      await verify_flow(page)
      occasion=page.locator('.occasion').nth(1)
