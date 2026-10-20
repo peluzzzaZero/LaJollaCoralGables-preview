@@ -217,4 +217,4 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 ## v1.30.1 — no arrows on links
 
-- The owners asked again: no arrows at all, not even drawn ones. Social cards end in a small-caps "Follow / Seguir" with a fine underline; every other link ("See more on Instagram", "Discover the house", "Schedule a visit", the venue invitation) is plain text. The review carousel keeps its previous/next chevrons. See `tests/releases/v1.30.1.md`.
+- The owners asked again: no arrows at all, not even drawn ones. Social cards end in a small-caps "Follow / Seguir" with a fine underline; every other link ("See more on Instagram", "Discover the house") is plain text. The review carousel keeps its previous/next chevrons. See `tests/releases/v1.30.1.md`.
