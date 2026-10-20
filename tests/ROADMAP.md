@@ -202,3 +202,7 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 ## v1.29.0 — a photograph for every occasion
 
 Ten occasions, ten photographs from the owner's media; a sticky frame that follows reading, hover and focus on wide screens and per-card photographs on narrow ones. Distinctive hover on the "One hall, many moods" cards. See `tests/releases/v1.29.0.md`.
+
+## v1.29.1 — no review names the former planner
+
+- At the owner's request, the excerpt naming the previous team's planner is removed; Ana G.'s excerpt now names the owner, Dilia, in her own words; Google reviews naming him are skipped. See `tests/releases/v1.29.1.md`.
