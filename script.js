@@ -1468,7 +1468,8 @@
       let home = e.top <= f.top ? 1 : clamp(1 - (e.top - f.top) / (vh * .3));
       if (reduced.matches) { out = out < .5 ? 0 : 1; home = home < 1 ? 0 : 1; }
       else { out = ease(out); home = ease(home); }
-      const x = mix(mix(a.left, f.left, out), e.left, home);
+      // Never let the wider button run past the viewport edge while it shrinks into the seal.
+      const x = Math.max(8, Math.min(mix(mix(a.left, f.left, out), e.left, home), innerWidth - cta.offsetWidth - 8));
       const y = mix(mix(a.top, f.top, out), e.top, home);
       cta.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
       const next = home >= .5 ? "end" : out < .5 ? "start" : "float";
