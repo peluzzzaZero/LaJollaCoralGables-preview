@@ -112,20 +112,20 @@
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-music.webp",
-    "sha256": "c9633cff020887fbef64a23fb40bdd19fecf1656998de86a1ab5f50d4fdf820a",
-    "source": "assets/venue/music-detail.jpg",
-    "sourceSha256": "88e5769a192c868a6454dd0653d06cf628c057dfa68c70204dc86530a6390d39",
+    "asset": "assets/social/house-balcony.webp",
+    "sha256": "0a95a154871920d89d285e2115242fd87a006380c82c061fab67dafd79968bf4",
+    "source": "assets/venue/balcony-couple.jpg",
+    "sourceSha256": "bd98ba446f43f9a62f1463d232c39c912533bbd27f581fbdd6bc927533e4e7d5",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
-    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+    "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
-    "asset": "assets/social/house-music-320.webp",
-    "sha256": "afc88c296db3591f90ecefbbbf3ee87fe930593795ace93fe205c9bc12e39fc8",
-    "source": "assets/social/house-music.webp",
-    "sourceSha256": "c9633cff020887fbef64a23fb40bdd19fecf1656998de86a1ab5f50d4fdf820a",
+    "asset": "assets/social/house-balcony-320.webp",
+    "sha256": "4a82fbb0ee029d60b4777a109acc7773a9af7376ae0d374a993dd33902c14425",
+    "source": "assets/social/house-balcony.webp",
+    "sourceSha256": "0a95a154871920d89d285e2115242fd87a006380c82c061fab67dafd79968bf4",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
-    "ownerApproval": "Owner venue photograph delivered on 2026-10-05 (recorded in tests/VENUE-MEDIA.md)"
+    "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-toast.webp",

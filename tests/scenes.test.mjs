@@ -10,7 +10,7 @@ const visit = html.slice(html.indexOf('id="visit"'), html.indexOf('id="events"')
 test('the spaces album keeps the four approved detail photographs and their captions in order', () => {
   const album = visit.slice(visit.indexOf('class="venue-album"'), visit.indexOf('class="venue-inquiry"'));
   let cursor = -1;
-  for (const [image, caption] of [['staircase.webp', 'visit.stair'], ['balcony-couple.webp', 'visit.balcony'], ['bougainvillea.webp', 'visit.garden'], ['facade-night.webp', 'visit.street']]) {
+  for (const [image, caption] of [['staircase.webp', 'visit.stair'], ['music-detail.webp', 'visit.music'], ['bougainvillea.webp', 'visit.garden'], ['facade-night.webp', 'visit.street']]) {
     const at = album.indexOf(image);
     assert.ok(at > cursor, image);
     assert.ok(album.indexOf(`data-i18n="${caption}"`) > at, caption);

@@ -183,6 +183,10 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 
 - The visit page title no longer shows a focus ring on load; it still takes focus for screen readers, and controls keep their keyboard focus ring.
 
+## v1.27.2 — the owners' copy for the walk, the album and The Lexington
+
+- The owners' copy for the venue walk, the album captions and The Lexington is applied word for word in English and translated faithfully to Spanish; by Dan's decision the owners' "The Grand Ballroom" stays in those three walk strings, and the banned-word checks cover everything else.
+
 ## v1.28.0 — the house dressed for events
 
-- New event photographs from the site owner replace older images in the events, services, album and mosaic chapters (first dance, set table, balcony couple, bougainvillea, the house at night, reception, desserts, dressed tables); a new "One hall, many moods" strip; the mosaic grows to 12 tiles. Next: full-resolution originals.
+- New event photographs from the site owner replace older images in the events, services, album and mosaic chapters (first dance, set table, bougainvillea, the house at night, reception, desserts, dressed tables, balcony couple); a new "One hall, many moods" strip; the mosaic grows to 12 tiles. Next: full-resolution originals.
