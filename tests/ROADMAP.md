@@ -214,3 +214,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.30.0 — one Schedule a visit
 
 - At the owner's request the repeated "Schedule a visit" buttons (header, arrival, ten occasions, spaces, hall moods, tour, Let's begin) become one: it starts in the arrival, floats at the bottom while reading and settles in "Let's begin" above the footer. Occasion cards lose their links, so v1.29.0's keyboard focus on a card no longer steers the frame. See `tests/releases/v1.30.0.md`. Next: measure tour bookings from the single button.
+
+## v1.30.1 — no arrows on links
+
+- The owners asked again: no arrows at all, not even drawn ones. Social cards end in a small-caps "Follow / Seguir" with a fine underline; every other link ("See more on Instagram", "Discover the house") is plain text. The review carousel keeps its previous/next chevrons. See `tests/releases/v1.30.1.md`.

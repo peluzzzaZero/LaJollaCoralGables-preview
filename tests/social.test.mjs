@@ -97,7 +97,7 @@ test("the mosaic strings exist in both languages and no profile description is i
     assert.ok(html.includes(`data-i18n="${key}"`), key);
   }
   const cards = html.slice(html.indexOf('<nav class="social-links"'), html.indexOf("</nav>", html.indexOf('<nav class="social-links"')));
-  for (const card of cards.match(/<a [^]*?<\/a>/g)) assert.match(card, /^<a [^>]*><span>[A-Za-z]+<\/span><small>[^<]+<\/small><span aria-hidden="true"><svg class="icon-arrow"[^>]*><path d="[^"]+" fill="none" stroke="currentColor"\/><\/svg><\/span><\/a>$/);
+  for (const card of cards.match(/<a [^]*?<\/a>/g)) assert.match(card, /^<a [^>]*><span>[A-Za-z]+<\/span><small>[^<]+<\/small><span class="social-follow" data-i18n="social.follow">Follow<\/span><span class="sr-only" data-i18n="a11y.newTab"> \(opens in a new tab\)<\/span><\/a>$/);
 });
 
 test("the social chapter replaces the brand wall: photographs, guest reviews, then profiles", () => {
