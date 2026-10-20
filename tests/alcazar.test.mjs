@@ -81,14 +81,18 @@ test("alcazar is not ghosted at opacity 0.08", () => {
   }
 });
 
-test("the walk, album and Lexington use the owner's v1.27.2 vocabulary in both languages", () => {
+test("the walk, album and Lexington use the owners' v1.27.2 copy verbatim in both languages", () => {
   const en = {
-    "visit.stair": "Elegance at every turn",
+    "visit.stair": "Elegance at Every Turn",
     "visit.music": "Historic details, timeless charm",
     "visit.garden": "Architecture and garden beauty",
     "visit.street": "A Coral Gables landmark",
     "visit.noteWelcome": "Every memorable occasion deserves a beautiful beginning.",
     "visit.noteYours": "Imagine the possibilities.",
+    "visit.walkDoors": "First impressions",
+    "visit.noteHall": "A timeless setting, thoughtfully designed for extraordinary occasions.",
+    "visit.hall": "The hall · A timeless setting for unforgettable occasions.",
+    "landing.visitReason": "Experience La Jolla in person and discover the possibilities for your next extraordinary occasion.",
   };
   for (const [key, text] of Object.entries(en)) {
     assert.ok(js.includes(`"${key}": "${text}"`), key);
@@ -96,7 +100,6 @@ test("the walk, album and Lexington use the owner's v1.27.2 vocabulary in both l
   }
   for (const text of ["Elegancia en cada rincón", "Toda ocasión memorable merece un bello comienzo.", "Pregunte por The Lexington"]) assert.ok(js.includes(text), text);
   const section = alcazarSection();
-  assert.ok(section.includes("distinguished private clubs, classic whiskey lounges"));
-  assert.equal((section.match(/intimate/g) || []).length, 1);
+  assert.ok(section.includes(">Rich in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from distinguished private clubs, classic whiskey lounges, and the elegance of Kentucky racing culture. An intimate setting for cocktails, private dinners, celebrations, and exclusive gatherings, the space offers a distinctive atmosphere of character, warmth, and understated luxury.<"));
   assert.equal(/ballroom/i.test(html + js), false);
 });
