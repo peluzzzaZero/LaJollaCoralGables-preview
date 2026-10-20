@@ -222,3 +222,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.30.2 — the visit seal steps aside from the map
 
 - At the owner's request (Android screenshot): the floating seal slides off the right edge while the map block is under it (or waits in the margin on wide screens), and the button ↔ seal change follows the scroll frame by frame with the words fading into the monogram. See `tests/releases/v1.30.2.md`.
+
+## v1.30.3 — the visit invitation becomes a closing line
+
+- At the owner's request (desktop screenshot): the orphaned cream band under the venue walk is replaced by a centred italic closing line with a short hairline; owner copy unchanged, no new button. See `tests/releases/v1.30.3.md`.

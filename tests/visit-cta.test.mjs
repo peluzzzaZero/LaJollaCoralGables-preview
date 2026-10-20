@@ -52,3 +52,13 @@ test("the floating seal beats softly 3s in every 12s while floating and never un
   assert.match(css, /@keyframes visit-cta-beat \{[^\n]*scale\(1\.07\)/);
   assert.match(css, /prefers-reduced-motion: reduce\) \{[^\n]*\.visit-cta\.is-float \.visit-cta-seal, \.landing-page \.btn\.visit-cta\.is-float \{ animation: none !important; \}/);
 });
+
+test("the visit invitation is a centred closing line, not an empty band with a light", () => {
+  assert.match(html, /<div class="visit-invitation"><p data-i18n="landing\.visitReason">Experience La Jolla in person and discover the possibilities for your next extraordinary occasion\.<\/p><\/div>/);
+  assert.match(css, /\.visit-invitation \{[^}]*text-align: center;/);
+  assert.doesNotMatch(css, /\.visit-invitation \{[^}]*background/);
+  assert.doesNotMatch(css, /\.landing-effects \.visit-invitation/);
+  assert.doesNotMatch(js, /querySelectorAll\('[^']*\.visit-invitation/);
+  // The pull-up into the pinned walk's empty room must not apply when the walk is collapsed over its caption.
+  assert.match(css, /@media \(max-width: 650px\) \{ \.venue-walk\.is-walking \+ \.visit-invitation \{ margin-top: -88px; \} \}/);
+});

@@ -1046,7 +1046,7 @@
     const photos = [...document.querySelectorAll('[data-landing-parallax]')];
     const visible = new Set();
     const sections = [...document.querySelectorAll('.landing-section')];
-    const interactive = [...document.querySelectorAll('.occasion, .social-links a, .visit-invitation')];
+    const interactive = [...document.querySelectorAll('.occasion, .social-links a')];
     // Decorative light follows the pointer; links and complete copy stay native.
     interactive.forEach(element => {
       element.addEventListener('pointermove', event => {
