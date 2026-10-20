@@ -52,12 +52,21 @@ async def main(base, output, webkit=False):
                             assert await quotes.evaluate('e=>e.scrollLeft>0'),'Keyboard reaches the last excerpts'
                         # Whole cards with the rail's own controls; no native scrollbar once the script runs.
                         assert await quotes.evaluate('e=>e.offsetHeight-e.clientHeight<1'),'No native scrollbar under the excerpts'
-                        assert await quotes.evaluate("e=>[...e.children].every(c=>{const a=c.getBoundingClientRect(),b=e.getBoundingClientRect();return a.right<=b.right+1||a.left>=b.right-1})"),'No excerpt card is cut at the edge'
-                        nxt=page.locator('[data-review-rail=next]')
-                        await quotes.evaluate('e=>e.scrollTo({left:0})');await page.wait_for_timeout(300)
-                        assert await nxt.is_visible() and await page.locator('[data-review-rail=prev]').get_attribute('aria-disabled')=='true'
-                        await nxt.click();await page.wait_for_timeout(900)
-                        assert await quotes.evaluate('e=>e.scrollLeft>0'),'The next control moves the excerpts'
+                        whole="e=>[...e.children].every(c=>{const a=c.getBoundingClientRect(),b=e.getBoundingClientRect();return (a.left>=b.left-1&&a.right<=b.right+1)||a.right<=b.left+1||a.left>=b.right-1})"
+                        nxt=page.locator('[data-review-rail=next]');prv=page.locator('[data-review-rail=prev]')
+                        await quotes.evaluate('e=>e.scrollTo({left:0})');await page.wait_for_timeout(1200)
+                        assert await quotes.evaluate(whole),'No excerpt card is cut at either edge'
+                        assert await nxt.is_visible() and await prv.get_attribute('aria-disabled')=='true'
+                        # Quick repeated clicks are never lost; the row ends on whole cards with Next disabled.
+                        for _ in range(6):
+                            if await nxt.get_attribute('aria-disabled')=='true':break
+                            await nxt.click(force=True);await page.wait_for_timeout(60)
+                        await page.wait_for_timeout(1500)
+                        assert await quotes.evaluate('e=>e.scrollLeft>=e.scrollWidth-e.clientWidth-1'),'Next reaches the last excerpts'
+                        assert await nxt.get_attribute('aria-disabled')=='true' and await prv.get_attribute('aria-disabled')=='false'
+                        assert await quotes.evaluate(whole),'No excerpt card is cut at the end'
+                        await prv.click();await page.wait_for_timeout(1500)
+                        assert await quotes.evaluate('e=>e.scrollLeft<e.scrollWidth-e.clientWidth-1') and await quotes.evaluate(whole),'Previous moves back by whole cards'
                     else:
                         if mode=='success':
                             await page.locator('.guest-review').wait_for()

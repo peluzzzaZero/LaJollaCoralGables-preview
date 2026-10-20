@@ -74,30 +74,42 @@
       url.searchParams.set('hl', language()); frame.src = url.href;
     });
   }
-  // The written excerpts move as whole cards with their own controls; the native scrollbar stays only without script.
+  // The written excerpts move as whole cards with their own controls (the native scrollbar is hidden only when script runs).
   function rail(list) {
     const controls = list.parentElement.querySelector('[data-review-rail-controls]');
     if (!controls) return;
     const prev = controls.querySelector('[data-review-rail="prev"]'), next = controls.querySelector('[data-review-rail="next"]');
     const bar = controls.querySelector('.review-rail-progress');
+    // Steps from the card the row is heading to, so quick repeated clicks are never lost mid-animation.
+    let target = null, idle;
+    function settle(delay) { clearTimeout(idle); idle = setTimeout(function () { target = null; update(); }, delay); }
     function update() {
       const max = list.scrollWidth - list.clientWidth;
       controls.hidden = max <= 1;
-      prev.setAttribute('aria-disabled', String(list.scrollLeft <= 1));
-      next.setAttribute('aria-disabled', String(list.scrollLeft >= max - 1));
       bar.style.setProperty('--start', (list.scrollLeft / list.scrollWidth * 100) + '%');
       bar.style.setProperty('--size', (list.clientWidth / list.scrollWidth * 100) + '%');
+      if (target !== null) return;
+      prev.setAttribute('aria-disabled', String(list.scrollLeft <= 1));
+      next.setAttribute('aria-disabled', String(list.scrollLeft >= max - 1));
+    }
+    function stepWidth() {
+      const card = list.querySelector('.review-quote');
+      return card ? card.getBoundingClientRect().width + (parseFloat(getComputedStyle(list).columnGap) || 0) : list.clientWidth;
     }
     function move(direction) {
-      const card = list.querySelector('.review-quote');
-      const step = card ? card.getBoundingClientRect().width + (parseFloat(getComputedStyle(list).columnGap) || 0) : list.clientWidth;
-      list.scrollBy({ left: direction * step, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      const step = stepWidth(), max = list.scrollWidth - list.clientWidth;
+      const from = target === null ? Math.round(list.scrollLeft / step) : target;
+      target = Math.max(0, Math.min(Math.ceil(max / step), from + direction));
+      list.scrollTo({ left: Math.min(max, target * step), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      prev.setAttribute('aria-disabled', String(target <= 0));
+      next.setAttribute('aria-disabled', String(target * step >= max - 1));
+      settle(900);
     }
     prev.addEventListener('click', function () { if (prev.getAttribute('aria-disabled') !== 'true') move(-1); });
     next.addEventListener('click', function () { if (next.getAttribute('aria-disabled') !== 'true') move(1); });
-    list.addEventListener('scroll', update, { passive: true });
+    list.addEventListener('pointerdown', function () { target = null; }, { passive: true });
+    list.addEventListener('scroll', function () { update(); settle(160); }, { passive: true });
     if ('ResizeObserver' in window) new ResizeObserver(update).observe(list); else window.addEventListener('resize', update);
-    list.classList.add('review-rail');
     update();
   }
   document.addEventListener('DOMContentLoaded', function () {
