@@ -2272,12 +2272,12 @@ html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
 .landing-page .btn.visit-cta:not(.is-start):not(.is-end) { width: 64px; height: 64px; min-height: 0; padding: 0; border-radius: 50%; background: #faf8f3e6; border: 1px solid #61493466; color: var(--forest); box-shadow: 0 8px 22px -10px #2c241e66; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .landing-page .btn.visit-cta:not(.is-start):not(.is-end) .visit-cta-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .visit-cta:not(.is-start):not(.is-end) .visit-cta-seal { display: block; position: absolute; inset: 0; }
-/* A soft double heartbeat each time the seal starts floating (three beats over ~9s), so it is noticed without nagging. */
-.visit-cta:not(.is-start):not(.is-end) .visit-cta-seal { animation: visit-cta-beat 3s var(--ease) .6s 3; }
-.landing-page .btn.visit-cta:not(.is-start):not(.is-end) { animation: visit-cta-halo 3s var(--ease) .6s 3; }
+/* While floating the seal beats softly for 3s (two double heartbeats), then rests 9s, and repeats, so it is noticed without nagging. */
+.visit-cta:not(.is-start):not(.is-end) .visit-cta-seal { animation: visit-cta-beat 12s ease-in-out .6s infinite; }
+.landing-page .btn.visit-cta:not(.is-start):not(.is-end) { animation: visit-cta-halo 12s ease-in-out .6s infinite; }
 .visit-cta:hover .visit-cta-seal, .visit-cta:focus-visible .visit-cta-seal, .visit-cta:hover, .visit-cta:focus-visible { animation-play-state: paused; }
-@keyframes visit-cta-halo { 0%, 40%, 100% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 0 #5e706000; } 10% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 5px #5e706033; } 24% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 9px #5e706014; } }
-@keyframes visit-cta-beat { 0%, 30%, 100% { transform: scale(1); } 8% { transform: scale(1.07); } 16% { transform: scale(.99); } 22% { transform: scale(1.04); } }
+@keyframes visit-cta-halo { 0%, 9%, 12.5%, 21.5%, 25%, 100% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 0 #5e706000; } 2.5%, 15% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 5px #5e706033; } 6%, 18.5% { box-shadow: 0 8px 22px -10px #2c241e66, 0 0 0 9px #5e706014; } }
+@keyframes visit-cta-beat { 0%, 9%, 12.5%, 21.5%, 25%, 100% { transform: scale(1); } 2%, 14.5% { transform: scale(1.07); } 4%, 16.5% { transform: scale(.99); } 6%, 18.5% { transform: scale(1.04); } }
 .visit-cta-seal svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: transform 1.2s var(--ease); }
 .visit-cta-seal text { font: 700 11.5px/1 var(--font-body, sans-serif); letter-spacing: .02em; text-transform: uppercase; fill: currentColor; }
 .visit-cta-seal img { position: absolute; left: 50%; top: 50%; width: 25px; height: auto; transform: translate(-50%, -50%); }

@@ -1470,7 +1470,8 @@
       else { out = ease(out); home = ease(home); }
       // Never let the wider button run past the viewport edge while it shrinks into the seal.
       const x = Math.max(8, Math.min(mix(mix(a.left, f.left, out), e.left, home), innerWidth - cta.offsetWidth - 8));
-      const y = mix(mix(a.top, f.top, out), e.top, home);
+      // While "Let's begin" is still below the seal's line its slot is off-screen; never follow it past the viewport bottom.
+      const y = Math.min(mix(mix(a.top, f.top, out), e.top, home), e.top <= f.top ? Infinity : window.innerHeight - cta.offsetHeight - 8);
       cta.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
       const next = home >= .5 ? "end" : out < .5 ? "start" : "float";
       if (next !== state) {

@@ -86,6 +86,11 @@ async def main(base, output):
                             await page.wait_for_timeout(700)
                         bottom=await page.evaluate('document.documentElement.scrollHeight-innerHeight')
                         await glide(bottom*.5);assert 'is-float' in await cta.get_attribute('class'),(width,language,'mid')
+                        # Step slowly through the approach to Let's begin: the link must stay fully inside the viewport every frame.
+                        slot_y,float_y,vh=await page.evaluate('[document.querySelector(\'[data-cta-slot="end"]\').getBoundingClientRect().top+scrollY,document.querySelector(\'[data-cta-slot="float"]\').getBoundingClientRect().top,innerHeight]')
+                        for k in range(16,-1,-1):
+                            await page.evaluate(f'scrollTo(0,{slot_y-float_y-vh*.4*k/16})');await page.wait_for_timeout(450)
+                            near=await cta.bounding_box();assert near['y']>=0 and near['y']+near['height']<=vh+1,(width,language,'approach',k,near)
                         await glide(bottom)
                         assert 'is-end' in await cta.get_attribute('class'),(width,language,'end')
                         box=await cta.bounding_box();footer=await page.locator('#footer').bounding_box()
