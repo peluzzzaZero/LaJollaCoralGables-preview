@@ -540,7 +540,7 @@
       "alcazar.eyebrow": "Curado · Vintage 1928",
       "alcazar.title": "The Lexington",
       "alcazar.body":
-        "Suba y entre en otra época. En verdes profundos, granates y oros cálidos, este espacio íntimo se inspira en distinguidos clubes privados, los clásicos bares de whiskey y la elegancia de la cultura hípica de Kentucky. Un lugar para cócteles, cenas privadas, celebraciones y reuniones exclusivas, con una atmósfera singular de carácter, calidez y lujo discreto.",
+        "Suba y entre en otra época. En verdes profundos, granates y oros cálidos, este espacio íntimo se inspira en distinguidos clubes privados, los clásicos salones de whiskey y la elegancia de la cultura hípica de Kentucky. Un lugar para cócteles, cenas privadas, celebraciones y reuniones exclusivas, con una atmósfera singular de carácter, calidez y lujo discreto.",
       "alcazar.cta": "Pregunte por The Lexington",
       "rentals.eyebrow": "Renta y servicios para eventos",
       "rentals.title": "En La Jolla y más allá",
