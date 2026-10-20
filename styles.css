@@ -1700,6 +1700,9 @@ html { scrollbar-gutter: stable; }
 .landing-footer .footer-mark { filter: brightness(.4) sepia(.6); }
 .services-photo { margin: 36px 0 0; }
 .services-photo img { width: 100%; height: auto; max-height: 480px; object-fit: cover; }
+.services-photo img { object-position: 50% 30%; }
+/* AVIF-first event photographs: the <picture> wrapper adds no box of its own. */
+.album-print picture, .occasion-visual picture, .occasion picture, .mood-frame picture, .services-photo picture { display: contents; }
 .services-photo figcaption { margin-top: 12px; font: italic 400 18px/1.4 var(--font-display); }
 .landing-rentals .rentals-quiet-link { padding: 0; }
 .gallery-intro-photo { margin: 0 0 56px; max-width: 580px; }

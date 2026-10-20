@@ -226,3 +226,8 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.30.3 — the visit invitation becomes a closing line
 
 - At the owner's request (desktop screenshot): the orphaned cream band under the venue walk is replaced by a centred italic closing line with a short hairline; owner copy unchanged, no new button. See `tests/releases/v1.30.3.md`.
+
+## v1.31.0 — sharper event photographs in AVIF, three new ones placed
+
+- The owner sent less-compressed copies of the event photographs plus three new ones. Every event photograph is rebuilt from them by `scripts/event-photos.py` and served as AVIF with a WebP fallback (same crops, sRGB, no metadata); the mosaic tiles are rebuilt from the new sources. The rose centerpiece now illustrates Rentals, the white orchid reception Galas & fundraisers and the green orchids "Something completely different?", replacing three photographs that appeared twice. See `tests/releases/v1.31.0.md`.
+- Next: ask the owner for the camera originals (the delivered files are still about 804 px wide), then add 1.5× / 2× widths to the largest frames.

@@ -17,17 +17,17 @@
   },
   {
     "asset": "assets/social/house-reception.webp",
-    "sha256": "eff44d4907f2bd0ff4bd1dfa6273fd40e6c76fb7261c8664968604d8380da602",
+    "sha256": "bd3ceec0ad01e007df67d615f9eee19b8563cf521fcb18e710b886961d12115f",
     "source": "assets/venue/reception-white.jpg",
-    "sourceSha256": "d8c3b2095979ffc49cc5b789e86c18144c454bd0ace57b9871b791689d149fdc",
+    "sourceSha256": "b59573bbf915487e8e4b762535beb940baac887cecf2cf23ed27287db9453e3a",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-reception-320.webp",
-    "sha256": "1991669c74a3fc1a98c2f024ce5b52a8eae872a3d988acadacaa7d865b244a7a",
+    "sha256": "85ffbb77526761b8bc95946d862c710cf5939f477c1a7388177f0afde932220d",
     "source": "assets/social/house-reception.webp",
-    "sourceSha256": "eff44d4907f2bd0ff4bd1dfa6273fd40e6c76fb7261c8664968604d8380da602",
+    "sourceSha256": "bd3ceec0ad01e007df67d615f9eee19b8563cf521fcb18e710b886961d12115f",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
@@ -49,17 +49,17 @@
   },
   {
     "asset": "assets/social/house-sweets.webp",
-    "sha256": "312006e8a1f44028554b0c5f6b914bc713729f2d9f09d9578aa86abd77b46de0",
+    "sha256": "327858dae7c67092f4d033e16be22768f11c5184236c4c2917d6110a98dff102",
     "source": "assets/venue/dessert-table.jpg",
-    "sourceSha256": "327e4fba85b2e822bb067452275728fa39e0ea0dda0e1c3128db50db9ef3c609",
+    "sourceSha256": "37009093c18e86b4cc50f45204ba47dccb67dc72143bbf8463bf2d81c15bb1ae",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-sweets-320.webp",
-    "sha256": "6fe66af0bd6c6166369770c912d9385a61c1e74be27b7e0d1dd9dd9bbc2b5986",
+    "sha256": "a18d10e503196bf1f91f3f0ca8f4860be831f11e7dadc66e4360ce2edd9d6147",
     "source": "assets/social/house-sweets.webp",
-    "sourceSha256": "312006e8a1f44028554b0c5f6b914bc713729f2d9f09d9578aa86abd77b46de0",
+    "sourceSha256": "327858dae7c67092f4d033e16be22768f11c5184236c4c2917d6110a98dff102",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
@@ -81,65 +81,65 @@
   },
   {
     "asset": "assets/social/house-first-dance.webp",
-    "sha256": "a239ae6d3d4bea878271f98917a9b3a3ee8ec201ee1bd82146d866c063a78c38",
+    "sha256": "15b353ec2bc7b26c81e215037103983f7ce8243cf2ba3b3f017b697c2c234ae9",
     "source": "assets/venue/first-dance-wide.jpg",
-    "sourceSha256": "70261121d51a34302fe3c590a583d4aa2c4fc63dab91f848dd033c76ea4dc1b6",
+    "sourceSha256": "0c19e3c01479e276125e3175f8e4b321dde3d42c1cf4e08801d8746f489d7661",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-first-dance-320.webp",
-    "sha256": "a7ec7ec532f99c6ecf2e75cb61d416f49e6a80896abb8988684b75adce0774df",
+    "sha256": "96fee3e65a3b6c0a4a1c09949641f1a3fa1d3929ba34cc44241168b38ffcdef9",
     "source": "assets/social/house-first-dance.webp",
-    "sourceSha256": "a239ae6d3d4bea878271f98917a9b3a3ee8ec201ee1bd82146d866c063a78c38",
+    "sourceSha256": "15b353ec2bc7b26c81e215037103983f7ce8243cf2ba3b3f017b697c2c234ae9",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-tables.webp",
-    "sha256": "640411329343a501bd1905d514ba1811add30e511ba14fb49015ee65a3a36213",
+    "sha256": "5f520cb024a8498f4ece3160d121d0dc5fc9ce37fcac6d1f26365de0f597e4bb",
     "source": "assets/venue/tables-lilac.jpg",
-    "sourceSha256": "f299d6e4e7efd954f814b7b2448e4b31be539b98cea2ea0d0796914e2b1dd986",
+    "sourceSha256": "ac56fca55cfafacaaa0f8e640070378ba7938b1de7a834ef9393b7d695d0ece1",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-tables-320.webp",
-    "sha256": "c95dd842d1d7a2b57951534f2a84495ed840961b8fbf12f9473fb8cc5bd20ac0",
+    "sha256": "3931763b8d913f95d6bd0a5f4dbc47f71032547622732dc2f48720f5436d9cd4",
     "source": "assets/social/house-tables.webp",
-    "sourceSha256": "640411329343a501bd1905d514ba1811add30e511ba14fb49015ee65a3a36213",
+    "sourceSha256": "5f520cb024a8498f4ece3160d121d0dc5fc9ce37fcac6d1f26365de0f597e4bb",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-balcony.webp",
-    "sha256": "0a95a154871920d89d285e2115242fd87a006380c82c061fab67dafd79968bf4",
+    "sha256": "0ba3e1618dad6b7ad6f5db00249413cd1e29ddcbc03f95f9db5c45a264595db0",
     "source": "assets/venue/balcony-couple.jpg",
-    "sourceSha256": "bd98ba446f43f9a62f1463d232c39c912533bbd27f581fbdd6bc927533e4e7d5",
+    "sourceSha256": "bf6d86e2b6364d686b6e7fea2a59b77ba19b29705ecb5bb7f5b48ac6f8e4d525",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-balcony-320.webp",
-    "sha256": "4a82fbb0ee029d60b4777a109acc7773a9af7376ae0d374a993dd33902c14425",
+    "sha256": "09cc7437937a109207b9489ae9ad8a4c370ac007edbc45128dbed2a48df8c5c4",
     "source": "assets/social/house-balcony.webp",
-    "sourceSha256": "0a95a154871920d89d285e2115242fd87a006380c82c061fab67dafd79968bf4",
+    "sourceSha256": "0ba3e1618dad6b7ad6f5db00249413cd1e29ddcbc03f95f9db5c45a264595db0",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-toast.webp",
-    "sha256": "bf253ad2440f42683499531e4bde4727d629c8135b08b88538ddc27baf77ebda",
+    "sha256": "d1b3d4a4fa3424046dd07ddff276a187d9a96e7bc050a74341e5f01e848f6b23",
     "source": "assets/venue/dance-floor-toast.jpg",
-    "sourceSha256": "5becf815cd5e31fa691fc6d251f604ec4102e4afd2db8e0d21965fae34022c43",
+    "sourceSha256": "87d848f753335f22ec8867b78f360ee953319ec4a3bd0e60e426df7416eccad4",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-toast-320.webp",
-    "sha256": "b8fed8710e605335d1e1889af0aa33df708a057e1071501675a34e586a2cbbca",
+    "sha256": "f56635635c8e733ed98f1a64542e3fe4c087a5c882d8d4a912fefe8685ab4fa0",
     "source": "assets/social/house-toast.webp",
-    "sourceSha256": "bf253ad2440f42683499531e4bde4727d629c8135b08b88538ddc27baf77ebda",
+    "sourceSha256": "d1b3d4a4fa3424046dd07ddff276a187d9a96e7bc050a74341e5f01e848f6b23",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
@@ -161,17 +161,17 @@
   },
   {
     "asset": "assets/social/house-holiday.webp",
-    "sha256": "4d69501a595a79b3e04cd91f7c1feabc0a40b2c13d8cf07a7f989c5c318740b3",
+    "sha256": "431c2fe5a0dc97ddbbcac7f9955b0dfa7ca717cde43da8bf9769db8c677840fd",
     "source": "assets/venue/holiday-party.jpg",
-    "sourceSha256": "d2d45c8013deebb26b51c127f4b97b7ea97d59b62a328df394636f4043e375fd",
+    "sourceSha256": "40fe5d9889c9a9655a4fb579d069a8be68ea985557cec581b49dfd8f286b18aa",
     "treatment": "Centered 4:5 crop of the approved image, resized to 640x800, WebP quality 78; no other edits",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
   {
     "asset": "assets/social/house-holiday-320.webp",
-    "sha256": "d39637976d50ea370ae20f8cd8d6c94fc6b5b8ac9bca58122aa8ecc3eee926f7",
+    "sha256": "4474e4ce0c6454b64e1dbcfe115d04884da609c67c3ef716443d95599526a1f7",
     "source": "assets/social/house-holiday.webp",
-    "sourceSha256": "4d69501a595a79b3e04cd91f7c1feabc0a40b2c13d8cf07a7f989c5c318740b3",
+    "sourceSha256": "431c2fe5a0dc97ddbbcac7f9955b0dfa7ca717cde43da8bf9769db8c677840fd",
     "treatment": "640x800 tile resized to 320x400, WebP quality 78",
     "ownerApproval": "Owner photograph delivered by Dan (site owner) on 2026-10-20, cleared for publication (recorded in tests/VENUE-MEDIA.md)"
   },
