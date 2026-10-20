@@ -1142,8 +1142,9 @@
       // The stacked slides load together once the list is on screen, so a switch never fades in an empty frame.
       if (!slidesLoading && !saveData) { slidesLoading = true; slides.forEach(slide => { slide.loading = 'eager'; }); }
       // A card left under a resting pointer (or holding focus) stops steering once it scrolls out of the row being read.
-      // A card holding keyboard focus keeps the frame until focus leaves it.
-      if (pointedPhoto >= 0 && !row.includes(pointedPhoto) && !occasions[pointedPhoto].matches(':focus-within')) { pointedPhoto = -1; if (row.join() === readingRow.join()) followReading(); }
+      // A card holding keyboard focus keeps the frame until focus leaves it; focus
+      // left by a mouse click (or returned after the booking dialog) does not.
+      if (pointedPhoto >= 0 && !row.includes(pointedPhoto) && !occasions[pointedPhoto].querySelector(':focus-visible')) { pointedPhoto = -1; if (row.join() === readingRow.join()) followReading(); }
       if (row.join() !== readingRow.join()) { readingRow = row; rowTurn = 0; followReading(); }
     }
     const scheduleTrack = () => { if (!trackFrame) trackFrame = requestAnimationFrame(trackOccasions); };
@@ -1158,7 +1159,7 @@
       const release = () => {
         clearTimeout(releaseTimer);
         // A card that still holds keyboard focus keeps the frame when the mouse leaves it.
-        releaseTimer = setTimeout(() => { if (pointedPhoto === index && !occasion.matches(':focus-within')) { pointedPhoto = -1; followReading(); } }, 160);
+        releaseTimer = setTimeout(() => { if (pointedPhoto === index && !occasion.querySelector(':focus-visible')) { pointedPhoto = -1; followReading(); } }, 160);
       };
       occasion.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') point(); });
       occasion.addEventListener('pointerleave', release);

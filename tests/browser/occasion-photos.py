@@ -58,6 +58,12 @@ async def main(base,output,args):
       await page.mouse.wheel(0,step);await page.wait_for_timeout(250)
       now=await shown();assert now==6,('scroll',step,now)
      await page.evaluate('document.activeElement.blur()');await page.wait_for_timeout(400)
+     # A mouse click on a card's link focuses it but must not pin the frame.
+     await page.evaluate('addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation()},{capture:true,once:true})')
+     await centre(page,1);await page.locator('.occasion').nth(2).locator('a').click();await page.mouse.move(2,2)
+     await page.wait_for_timeout(400)
+     await centre(page,5);assert (await centre(page,5))['shown'] in (5,6)
+     await page.evaluate('document.activeElement.blur()');await page.wait_for_timeout(300)
      # The Spanish label follows the language switch.
      await page.locator('[data-lang="es"]').click();await page.wait_for_timeout(300)
      label=await page.locator('.occasion-label').text_content()
