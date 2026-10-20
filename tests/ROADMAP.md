@@ -185,4 +185,4 @@ The owner asked to see Google Maps in the Location chapter, pinned at the house,
 
 ## v1.28.0 — the house dressed for events
 
-- New owner event photographs replace older images in the events, services, album and mosaic chapters (first dance, set table, balcony couple, bougainvillea, the house at night, reception, desserts, dressed tables); a new "One hall, many moods" strip; the mosaic grows to 12 tiles. Next: full-resolution originals.
+- New event photographs from the site owner replace older images in the events, services, album and mosaic chapters (first dance, set table, balcony couple, bougainvillea, the house at night, reception, desserts, dressed tables); a new "One hall, many moods" strip; the mosaic grows to 12 tiles. Next: full-resolution originals.

@@ -2148,8 +2148,9 @@ html { scrollbar-gutter: stable; }
 .hall-moods { margin-top: 72px; }
 .hall-moods h3 { font-family: var(--font-script); font-weight: 400; font-size: clamp(2rem, 3.4vw, 2.8rem); color: var(--sage-deep); margin: 0 0 6px; }
 .hall-moods > p { color: var(--ink-muted); margin: 0 0 24px; max-width: 46ch; }
-.moods-strip { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+.moods-strip { min-width: 0; max-width: 100%; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .mood-card { margin: 0; padding: 6px 6px 10px; background: var(--paper); border: 1px solid var(--line); }
+.moods-strip:focus-visible { outline: 2px solid var(--sage-deep); outline-offset: 4px; }
 .mood-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
 .mood-card figcaption { margin-top: 10px; text-align: center; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); }
 @media (max-width: 900px) {

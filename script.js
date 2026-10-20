@@ -187,7 +187,7 @@
       "events.moodAlt.coral": "The hall in coral light, set with round tables and chandeliers.",
       "events.mood.emerald": "Emerald",
       "events.moodAlt.emerald": "A black-dressed table with orchids under emerald light.",
-      "events.alt": "A bride and groom share their first dance on a starlit dance floor inside La Jolla.",
+      "events.alt": "A bride and groom embrace on a starlit dance floor inside La Jolla.",
       "rentals.short": "From a single rental to complete event production. At La Jolla or at your chosen location in South Florida.",
       "rentals.more": "More about our services",
 
@@ -518,7 +518,7 @@
       "events.moodAlt.coral": "El salón en luz coral, con mesas redondas y lámparas de araña.",
       "events.mood.emerald": "Esmeralda",
       "events.moodAlt.emerald": "Una mesa vestida de negro con orquídeas bajo luz esmeralda.",
-      "events.alt": "Una pareja de novios comparte su primer baile en una pista con luces de estrellas dentro de La Jolla.",
+      "events.alt": "Una pareja de novios se abraza en una pista con luces de estrellas dentro de La Jolla.",
       "rentals.short": "Desde una renta puntual hasta la producción integral. En La Jolla o en el lugar que usted elija en el sur de Florida.",
       "rentals.more": "Más sobre nuestros servicios",
 

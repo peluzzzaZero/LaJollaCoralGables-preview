@@ -99,7 +99,7 @@ In "An invitation inside" the scroll draws the film inside a natively sticky fra
 
 ## Event photographs — owner delivery, 20 October 2026 (v1.28.0)
 
-Dan (who maintains this site for the venue and delivers its media) shared recent photographs of the house dressed for events in the project chat on 20 October 2026, to replace older images. He confirmed on 20 October 2026 that the couple shown has given permission for their photographs to be published, and asked that every photograph of the delivery be used. On 20 October 2026 he also confirmed that all of these photographs are the venue's own promotional material, cleared for publication, including the guests and staff in the background of the toast and the amethyst table, the client monogram and date painted on the ivory dance floor, and the decorated tables from other events. The strongly coloured lighting photographs are shown together as "One hall, many moods"; the dance floor's painted monogram is presented as custom floor branding. Sources arrived at about 800 px wide; pixels are not retouched. Mosaic tiles from these sources are 4:5 crops about 430 px wide that `scripts/social-tiles.py` enlarges to 640×800. Delivery files are crops and re-encodings only, written without metadata.
+Dan, the site owner who delivers the venue's media and approvals (as for the earlier deliveries in this file), shared recent photographs of the house dressed for events in the project chat on 20 October 2026, to replace older images. He confirmed on 20 October 2026 that the couple shown has given permission for their photographs to be published, and asked that every photograph of the delivery be used. On 20 October 2026 he also confirmed that all of these photographs are the venue's own promotional material, cleared for publication, including the guests and staff in the background of the toast and the amethyst table, the client monogram and date painted on the ivory dance floor, and the decorated tables from other events. The strongly coloured lighting photographs are shown together as "One hall, many moods"; the dance floor's painted monogram is presented as custom floor branding. Sources arrived at about 800 px wide; pixels are not retouched. Mosaic tiles from these sources are 4:5 crops about 430 px wide that `scripts/social-tiles.py` enlarges to 640×800. Delivery files are crops and re-encodings only, written without metadata.
 
 | Delivered file | Source (sha256 of the shared JPEG) | Treatment |
 | --- | --- | --- |
@@ -134,3 +134,13 @@ f3ad527a04347c76028b28c79b716588dd969aeabc3ac297bfba11275040ff60  1000169079.jpg
 a043ef8af20a9faa5c38f552b33e79e018fdb8aa14fd8d5ef3057d5076422884  1000169065.jpg
 0af631e1547dba12ebc07b8dc554ded5ecdc5d151e42b0bdd1fb6daedf63a960  1000169068.jpg
 ```
+
+### Consent and clearance record — v1.28.0
+
+| Item | Who confirmed | When | How |
+| --- | --- | --- | --- |
+| The couple in the balcony, first-dance and toast photographs consents to publication | Dan (site owner) | 2026-10-20 | Answer to a decision card in the project thread |
+| Every photograph of the delivery is the venue's own promotional material: guests and staff in the background (toast, amethyst table), the client monogram and date on the ivory dance floor, decorated tables from other events, the holiday party | Dan (site owner) | 2026-10-20 | Answer to a decision card in the project thread |
+
+Signed releases, if any, are held by the venue, not in this repository.
+
