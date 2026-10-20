@@ -155,11 +155,11 @@ test("the location chapter shows a lazy map pinned at the address, plus real lin
 });
 
 test("no public page, script or published file name says ballroom, except the owners' own walk copy", async () => {
-  const { withoutOwnerRoomName } = await import("./owner-copy-exception.mjs");
+  const { withoutOwnerRoomName, BANNED_ROOM_WORD } = await import("./owner-copy-exception.mjs");
   const { readdirSync, statSync } = await import("node:fs");
   for (const file of ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "styles.css", "sitemap.xml"]) {
     const text = readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
-    assert.doesNotMatch(withoutOwnerRoomName(text), /ballroom/i, file);
+    assert.doesNotMatch(withoutOwnerRoomName(text), BANNED_ROOM_WORD, file);
     assert.doesNotMatch(text, /facebook\.com\/(?!privacy)/i, `${file}: no Facebook account is linked until the owner confirms it`);
   }
   const walk = (dir) => readdirSync(new URL(`../${dir}`, import.meta.url)).flatMap((name) =>

@@ -541,7 +541,7 @@
       "alcazar.title": "The Lexington",
       "alcazar.body":
         "En verdes profundos, granates y oros cálidos, este salón íntimo se inspira en distinguidos clubes privados, clásicos salones de whiskey y la elegancia de la cultura hípica de Kentucky. Un entorno íntimo para cócteles, cenas privadas, celebraciones y reuniones exclusivas, el espacio ofrece una atmósfera singular de carácter, calidez y lujo discreto.",
-      "alcazar.cta": "Pregunte por The Lexington",
+      "alcazar.cta": "Consultar por The Lexington",
       "rentals.eyebrow": "Renta y servicios para eventos",
       "rentals.title": "En La Jolla y más allá",
       "rentals.intro":
