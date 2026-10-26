@@ -23,7 +23,7 @@ Work follows `feature/*` → pull request to `develop` → Claude CLI Sonnet hig
 
 GitHub Pages publishes `main` for https://lajollacoralgables.com. The owner selected GitHub hosting and retired the temporary jolla.peluzzza.com alias. Domain registration, DNS and Microsoft 365 email remain in GoDaddy. Verify the live version, assets, navigation and legal pages after each deployment. The release workflow does not claim that inbox delivery or the Pages deployment has been verified.
 
-See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.31.0 notes](tests/releases/v1.31.0.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
+See [the current roadmap](tests/ROADMAP.md), [release policy](tests/RELEASES.md), [v1.31.1 notes](tests/releases/v1.31.1.md) and [the latest review](tests/reviews/v1.16.2.md) and [the historical review](tests/REVIEW-2026-10-04.md).
 
 ## Optional live guest reviews
 
