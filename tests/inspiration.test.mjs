@@ -56,7 +56,7 @@ test("the owners' pictures carry no styling-concept label (Dan, 2026-10-27)", ()
   }
 });
 
-test("the floor plan opens full size and has no measurements in its copy", () => {
+test("the floor plan opens full size in a new tab", () => {
   assert.match(html, /<a href="assets\/tour\/floor-plan\.webp" target="_blank" rel="noopener"><img src="assets\/tour\/floor-plan\.webp"[^>]*><span class="sr-only" data-i18n="tour\.planOpen">/);
 });
 
