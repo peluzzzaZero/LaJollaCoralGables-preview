@@ -45,7 +45,7 @@ PLAN_BOX, LOGO = (200, 50, 2300, 1510), (2200, 1300, 2550, 1650)
 FIRST_FLOOR, SECOND_FLOOR, FLOOR_GAP = (0, 0, 1322, 1460), (1589, 481, 2072, 999), 140
 PLAN_TREATMENT = ('Page 2 rendered at 150 dpi after redacting every text span (measurements, areas, ceiling heights, '
                   'room and build notes); red and pink dimension lines whitened; logo removed; both floors cropped at the same scale and set side by side '
-                  '(second floor 140 px after the first, centred on it) in a 1945x1460 image, WebP q80')
+                  '(second floor 140 px after the first, both on the same baseline) in a 1945x1460 image, WebP q80')
 
 
 def sha256_bytes(data):
@@ -116,7 +116,8 @@ def build():
             sys.exit('floor plan: a floor touches its crop edge')
     plan = Image.new('RGB', (first.width + FLOOR_GAP + second.width, first.height), 'white')
     plan.paste(first, (0, 0))
-    plan.paste(second, (first.width + FLOOR_GAP, (first.height - second.height) // 2))
+    # Both floors stand on the same line, so the caption row sits just under each of them.
+    plan.paste(second, (first.width + FLOOR_GAP, first.height - second.height))
     out = io.BytesIO()
     plan.save(out, 'WEBP', quality=80, method=6)
     files[PLAN] = out.getvalue()

@@ -14,12 +14,12 @@
     "floor-plan.webp": {
       "source": "Owners' PDF 'LA JOLLA pictures extra' (2026-10-27), page 2 (floor plan); built by scripts/extra-photos.py",
       "treatment": "Vector page rendered at 150 dpi after removing every text span (measurements, areas, ceiling heights, notes), the red and pink dimension lines and the logo; both floors at the same scale set side by side in a 1945x1460 image, WebP q80",
-      "sha256": "5ea69697ffb39cc9af6cf53cb6e9e065e7aea57c529b8cf7a9293197921f7ae1",
+      "sha256": "76791806ab74196b24b17f86fac8cee9a88ca45603615e76bb0a51e25cefeabd",
       "approvedBy": "Dan, site owner, in the project thread",
       "approvedOn": "2026-10-27",
       "approvalQuote": "me gusta la parte de la ventana y del good to know (reply to the mock-up that put this plan in the Good to know card), then 'me encanta.. adelante'",
       "rights": "The venue's own floor plan, supplied by the owners for the website",
-      "approvalNote": "The owners supplied the plan in their PDF for the website; Dan (site owner) chose to publish it, without measurements, in the tour card. It shows the public floor layout only, with no sizes or capacity. On 2026-10-27 Dan reported the live card as having a problem (\"estas 3 estan con problema\", relayed with a screenshot of this card); in v1.33.0 the two floors were set side by side at the same scale with a smaller gap so each label sits under its floor. The drawing itself is unchanged."
+      "approvalNote": "The owners supplied the plan in their PDF for the website; Dan (site owner) chose to publish it, without measurements, in the tour card. It shows the public floor layout only, with no sizes or capacity. On 2026-10-27 Dan reported the live card as having a problem (\"estas 3 estan con problema\", relayed with a screenshot of this card); in v1.33.0 the two floors were set side by side at the same scale with a smaller gap on the same baseline so each label sits just under its floor. The linework is unchanged; only the position of the second floor relative to the first changed."
     }
   },
   "excluded": "Other brochure photographs carry speckles from the cut-out lace overlay, or show identifiable people; they are not used.",

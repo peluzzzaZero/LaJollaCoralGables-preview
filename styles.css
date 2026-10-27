@@ -2380,6 +2380,7 @@ html:not(.cta-live) .landing-footer { padding-bottom: 96px; }
 /* A label wider than its narrow column stays centred under its floor, overflowing both sides evenly. */
 .tour-plan figcaption span { justify-self: center; }
 .tour-plan figcaption span:last-child { grid-column: 3; }
+@media (max-width: 420px) { .tour-plan figcaption { font-size: .7rem; letter-spacing: 0; } }
 /* The florals photograph is a framed print: the caption no longer touches the frame edge and the bouquet is not cut at the top. */
 .services-photo { padding: 12px 12px 2px; background: #fffdf8; }
 .services-photo img { max-height: 560px; object-position: 50% 12%; }
