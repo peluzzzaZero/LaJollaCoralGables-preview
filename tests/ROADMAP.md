@@ -241,3 +241,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 - The owners sent a PDF of extra pictures. The Lexington shows their photograph of the lounge instead of the awning monogram; a new "Imagine it your way" board (sage stripes, split facade/salon with the LJ seal on wide screens, polaroids on phones) shows the facade dressed as a tea house, a tea salon and the welcome plaque (no "styling concept" label, Dan's decision); the tour's "Good to know" card shows the floor plan without measurements, areas or notes. See `tests/releases/v1.32.0.md`.
 - The owners confirmed to Dan on 2026-10-27 that the lounge picture is The Lexington and that the saxophonist may appear. Next: ask whether they want their own copy for the board.
+
+## v1.32.1 — the "Imagine it your way" board comes alive
+
+- Dan found the board static. It now arrives with the scroll (the split closes, the LJ seal stamps the seam, the plaque polaroid drops onto the corner; polaroids dealt in on phones), the two large pictures drift in their frames, and on desktop the picture under the pointer zooms while the seal turns once. Reduced motion and Save-Data keep it still. See `tests/releases/v1.32.1.md`.

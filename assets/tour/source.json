@@ -13,8 +13,8 @@
     },
     "floor-plan.webp": {
       "source": "Owners' PDF 'LA JOLLA pictures extra' (2026-10-27), page 2 (floor plan); built by scripts/extra-photos.py",
-      "treatment": "Vector page rendered at 150 dpi after removing every text span (measurements, areas, ceiling heights, notes), the red and pink dimension lines and the logo; both floors in a 2100x1460 crop, WebP q80",
-      "sha256": "c386e8451b163207280457258ca9e62bbf5c8f0e66d53f28cddc41aa6754c01a",
+      "treatment": "Vector page rendered at 150 dpi after removing every text span (measurements, areas, ceiling heights, notes), the red and pink dimension lines and the logo; both floors at the same scale set side by side in a 1945x1460 image, WebP q80",
+      "sha256": "5ea69697ffb39cc9af6cf53cb6e9e065e7aea57c529b8cf7a9293197921f7ae1",
       "approvedBy": "Dan, site owner, in the project thread",
       "approvedOn": "2026-10-27",
       "approvalQuote": "me gusta la parte de la ventana y del good to know (reply to the mock-up that put this plan in the Good to know card), then 'me encanta.. adelante'",

@@ -2342,3 +2342,45 @@ html:not(.cta-live) .landing-footer { padding-bottom: 96px; }
 .tour-plan a { display: block; }
 .tour-plan img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
 .tour-plan figcaption { display: flex; justify-content: space-between; margin-top: 8px; font-size: .8rem; letter-spacing: .06em; color: var(--brand-sage); }
+
+/* —— v1.32.1 The inspiration board arrives ——
+   Driven by the board's own --board-arrival (0 as it enters the view, 1 once its
+   middle reaches the middle of the view), so it follows the scroll both ways; nothing moves without .landing-effects
+   (reduced motion, Save-Data). The two large pictures also drift inside their frames. */
+.inspiration-print picture { overflow: hidden; }
+.landing-effects .inspiration-board { --board-rest: calc(1 - var(--board-arrival, 1)); }
+@media (min-width: 901px) {
+  /* The split closes: each half slides in from its side, the seal stamps the seam, the polaroid drops onto the corner. */
+  .landing-effects .inspiration-print--facade { transform: translateX(calc(var(--board-rest) * -80px)) rotate(calc(var(--board-rest) * -3deg)); }
+  .landing-effects .inspiration-print--salon { transform: translateX(calc(var(--board-rest) * 80px)) rotate(calc(var(--board-rest) * 3deg)); }
+  .landing-effects .inspiration-seal { transform: scale(calc(.5 + var(--section-arrival, 1) * .5)) rotate(calc(var(--board-rest) * -140deg)); }
+  .landing-effects .inspiration-print--plaque { transform: translate(calc(var(--board-rest) * 40px), calc(var(--board-rest) * -150px)) rotate(calc(var(--board-rest) * 16deg)); }
+}
+@media (max-width: 900.98px) {
+  /* Polaroids are dealt onto the card from three directions. */
+  .landing-effects .inspiration-print--salon { transform: translateY(calc(var(--board-rest) * 70px)) rotate(calc(var(--board-rest) * 5deg)); }
+  .landing-effects .inspiration-print--facade { transform: translateX(calc(var(--board-rest) * -60px)) rotate(calc(var(--board-rest) * -8deg)); }
+  .landing-effects .inspiration-print--plaque { transform: translateX(calc(var(--board-rest) * 60px)) rotate(calc(var(--board-rest) * 8deg)); }
+}
+@media (hover: hover) and (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .inspiration-print--facade img, .inspiration-print--salon img { transition: scale 1.1s cubic-bezier(.2, .7, .2, 1), filter .8s; }
+  .inspiration-print--facade:hover img, .inspiration-print--salon:hover img { scale: 1.045; }
+  .inspiration-board:has(.inspiration-print:hover) .inspiration-print:not(:hover) img { filter: saturate(.7) brightness(.96); }
+  .inspiration-print--facade figcaption, .inspiration-print--salon figcaption { transition: translate .6s cubic-bezier(.2, .7, .2, 1); }
+  .inspiration-print--facade:hover figcaption, .inspiration-print--salon:hover figcaption { translate: -50% -5px; }
+  .inspiration-seal img { transition: rotate 1.6s cubic-bezier(.3, .1, .2, 1); }
+  .inspiration-board:hover .inspiration-seal img { rotate: 360deg; }
+  .inspiration-print--plaque { transition: rotate .7s cubic-bezier(.2, .7, .2, 1), scale .7s cubic-bezier(.2, .7, .2, 1); }
+  .inspiration-print--plaque:hover { rotate: 0deg; scale: 1.06; }
+}
+
+/* —— v1.32.1 Fixes from the owner's review of v1.32.0 —— */
+/* Each floor's label sits under its own drawing (columns follow the plan image: 1322 px floor, 140 px gap, 483 px floor). */
+.tour-plan figcaption { display: grid; grid-template-columns: 1322fr 140fr 483fr; text-align: center; white-space: nowrap; }
+.tour-plan figcaption span:last-child { grid-column: 3; }
+/* The florals photograph is a framed print: the caption no longer touches the frame edge and the bouquet is not cut at the top. */
+.services-photo { padding: 12px 12px 2px; background: #fffdf8; }
+.services-photo img { max-height: 560px; object-position: 50% 12%; }
+.services-photo figcaption { margin: 10px 2px 10px; }
+/* The Lexington picture fills its window: one gold hairline and a soft halo instead of a dark gap and a second line; a lower arch keeps more of the room. */
+.landing-alcazar .alcazar-visual img { border-radius: 50% 50% 0 0 / 26% 26% 0 0; box-shadow: 0 0 0 1px #c9a96b99, 0 0 0 8px #c9a96b14, 0 36px 70px -36px #000000b3; }
