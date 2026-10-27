@@ -98,11 +98,11 @@
       "asset": "assets/tour/floor-plan.webp",
       "pdfPage": 2,
       "size": [
-        2100,
+        1945,
         1460
       ],
-      "treatment": "Page 2 rendered at 150 dpi after redacting every text span (measurements, areas, ceiling heights, room and build notes); red and pink dimension lines whitened; logo removed; both floors in a 2100x1460 crop, WebP q80",
-      "sha256": "c386e8451b163207280457258ca9e62bbf5c8f0e66d53f28cddc41aa6754c01a"
+      "treatment": "Page 2 rendered at 150 dpi after redacting every text span (measurements, areas, ceiling heights, room and build notes); red and pink dimension lines whitened; logo removed; both floors cropped at the same scale and set side by side (second floor 140 px after the first, both on the same baseline) in a 1945x1460 image, WebP q80",
+      "sha256": "76791806ab74196b24b17f86fac8cee9a88ca45603615e76bb0a51e25cefeabd"
     }
   ]
 }

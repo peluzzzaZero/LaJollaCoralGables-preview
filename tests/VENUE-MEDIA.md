@@ -187,7 +187,7 @@ On 27 October 2026 the venue owners gave Dan (site owner) the PDF "LA JOLLA pict
 | `assets/venue/web/inspiration-facade.{avif,webp}` | page 3: the house's facade dressed as its "Maison de Thé" tea salon (the priced menu board is cropped out) | "Imagine it your way" |
 | `assets/venue/web/inspiration-salon.{avif,webp}` | page 4, left: blush-pink tea salon | "Imagine it your way" |
 | `assets/venue/web/inspiration-plaque.{avif,webp}` | page 1: the oval 1928 welcome plaque with flowers (same picture as `assets/brand/flower-plaque.jpg`) | "Imagine it your way" |
-| `assets/tour/floor-plan.webp` | page 2: floor plan, every word, measurement, area and red dimension line removed | Tour, "Good to know" |
+| `assets/tour/floor-plan.webp` | page 2: floor plan, every word, measurement, area and red dimension line removed; since v1.33.0 the two floors sit side by side at the same scale with a smaller gap (drawing unchanged), after Dan reported the card as having a problem on 2026-10-27 | Tour, "Good to know" |
 
 Pages 3 and 4 may be renderings or retouched pictures rather than photographs: the PDF has no camera data and the signage differs from the street today. Dan was told this on 27 October 2026 and decided that the page shows them as the owners delivered them, without any "styling concept" label, whether they are photographs or not ("sean reales o no NO QUIERO QUE LLEVEN ESO"). The alt texts describe what each picture shows and do not state that it documents a room as it is today.
 
