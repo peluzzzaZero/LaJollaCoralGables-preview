@@ -1,0 +1,108 @@
+{
+  "source": {
+    "file": "LA JOLLA pictures extra.pdf",
+    "pages": 4,
+    "sha256": "3847cc8a9a5820ac8e807fb1f4a44e64a61434e237d1d67ebbef48155395c4be"
+  },
+  "approval": "PDF \"LA JOLLA pictures extra\" supplied by the venue owners to Dan (site owner) on 2026-10-27 to be published on the website; the pictures show La Jolla's own brand (the LJ 1928 mark and the house's \"Maison de Th\u00e9\" tea salon), no third-party brand; the facade, salon and lounge pictures are labelled as styling concepts on the page until the owners confirm whether they are photographs; placement approved by Dan in the project thread on 2026-10-27 (\"me encanta.. adelante\")",
+  "assets": [
+    {
+      "asset": "assets/venue/web/lexington-lounge.avif",
+      "pdfPage": 4,
+      "pdfImage": 134,
+      "size": [
+        960,
+        1200
+      ],
+      "treatment": "Dark lounge, centred 4:5 crop of the 3299x3299 image, resized to 960x1200",
+      "sha256": "6925b40ba18e0e9289e4e4a09b754547630a1234f3b9a4859cbcdf7f97307daa"
+    },
+    {
+      "asset": "assets/venue/web/lexington-lounge.webp",
+      "pdfPage": 4,
+      "pdfImage": 134,
+      "size": [
+        960,
+        1200
+      ],
+      "treatment": "Dark lounge, centred 4:5 crop of the 3299x3299 image, resized to 960x1200",
+      "sha256": "14313156dc0ce1bb16cca14aa2d35c139aa0c6361991d8c30f16cb564f917083"
+    },
+    {
+      "asset": "assets/venue/web/inspiration-facade.avif",
+      "pdfPage": 3,
+      "pdfImage": 130,
+      "size": [
+        660,
+        825
+      ],
+      "treatment": "Facade dressed as the house's tea salon, 4:5 crop 660x825 at x 100-760; the priced menu board (x>760) is excluded",
+      "sha256": "1fc9f2ab2e19422c4fff85d8fe06289bb0aff3e08c513482da9893293c0094e1"
+    },
+    {
+      "asset": "assets/venue/web/inspiration-facade.webp",
+      "pdfPage": 3,
+      "pdfImage": 130,
+      "size": [
+        660,
+        825
+      ],
+      "treatment": "Facade dressed as the house's tea salon, 4:5 crop 660x825 at x 100-760; the priced menu board (x>760) is excluded",
+      "sha256": "3ef43c2f11b7f9360101ace93c7a374f99daa6d9c863806ebc89230e24d842dc"
+    },
+    {
+      "asset": "assets/venue/web/inspiration-salon.avif",
+      "pdfPage": 4,
+      "pdfImage": 135,
+      "size": [
+        960,
+        1200
+      ],
+      "treatment": "Tea salon, centred 4:5 crop of the 2490x3299 image, resized to 960x1200",
+      "sha256": "b62f23d09ad38130d35be6d4974a9729d4df2eed9ce736fe503c88c2021f2800"
+    },
+    {
+      "asset": "assets/venue/web/inspiration-salon.webp",
+      "pdfPage": 4,
+      "pdfImage": 135,
+      "size": [
+        960,
+        1200
+      ],
+      "treatment": "Tea salon, centred 4:5 crop of the 2490x3299 image, resized to 960x1200",
+      "sha256": "6cb4263e140318ef7a071d06f4dba51baa6395e959025f34c7425831f14a0d5d"
+    },
+    {
+      "asset": "assets/venue/web/inspiration-plaque.avif",
+      "pdfPage": 1,
+      "pdfImage": 109,
+      "size": [
+        800,
+        1000
+      ],
+      "treatment": "Welcome plaque with flowers (same picture as assets/brand/flower-plaque.jpg), resized to 800x1000",
+      "sha256": "8977bc37359093c3adb61623f54c81fe4149497be937c23ac53799fd81f6d9d4"
+    },
+    {
+      "asset": "assets/venue/web/inspiration-plaque.webp",
+      "pdfPage": 1,
+      "pdfImage": 109,
+      "size": [
+        800,
+        1000
+      ],
+      "treatment": "Welcome plaque with flowers (same picture as assets/brand/flower-plaque.jpg), resized to 800x1000",
+      "sha256": "ef8c2f3933464c9ef0c2c010524dd4e7363aec8fa064bdd9669cf8b52b4daf2c"
+    },
+    {
+      "asset": "assets/tour/floor-plan.webp",
+      "pdfPage": 2,
+      "size": [
+        2100,
+        1460
+      ],
+      "treatment": "Page 2 rendered at 150 dpi after redacting every text span (measurements, areas, ceiling heights, room and build notes); red and pink dimension lines whitened; logo removed; both floors in a 2100x1460 crop, WebP q80",
+      "sha256": "c386e8451b163207280457258ca9e62bbf5c8f0e66d53f28cddc41aa6754c01a"
+    }
+  ]
+}
