@@ -4,7 +4,7 @@ from pathlib import Path
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.async_api import async_playwright
 ROOT=Path(os.environ.get('LAJOLLA_WEB_ROOT',Path(__file__).resolve().parents[2]))
-CHAPTERS=['history','visit','events','alcazar','rentals','tour','social','team','location','planning']
+CHAPTERS=['history','visit','events','inspiration','alcazar','rentals','tour','social','team','location','planning']
 def third_party_map_error(error):
  # WebKit surfaces failures inside Google's cross-origin map frame (blocked tiles) as page errors; they are not this site's.
  # Google's embedded map also reports its own lazy module loader failing ('Could not load "util"', "search_impl", "onion"); no site code throws that message.

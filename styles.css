@@ -2307,3 +2307,38 @@ body.booking-open .visit-cta { visibility: hidden; }
 html:not(.cta-live) .landing-footer { padding-bottom: 96px; }
 @media (prefers-reduced-motion: reduce) { .landing-page .btn.visit-cta, .visit-cta-seal svg { transition: none; } .visit-cta.is-float .visit-cta-seal, .landing-page .btn.visit-cta.is-float { animation: none !important; } .visit-cta:hover .visit-cta-seal svg, .visit-cta:focus-visible .visit-cta-seal svg { transform: none; } }
 @media print { .visit-cta { display: none; } }
+/* —— v1.32 Owners' extra pictures: The Lexington photograph, "Imagine it your way" board, tour floor plan —— */
+.landing-alcazar .alcazar-visual { aspect-ratio: auto; padding: 0; border: 0; background: none; overflow: visible; }
+.landing-alcazar .alcazar-visual picture { display: block; }
+.landing-alcazar .alcazar-visual img { width: 100%; height: auto; aspect-ratio: 4 / 5; max-height: 620px; object-fit: cover; }
+.landing-inspiration { overflow-x: clip; padding: clamp(64px, 9vw, 130px) 16px; background: repeating-linear-gradient(90deg, #f0e9dc 0 26px, #cbd2bc 26px 52px); }
+.inspiration-card { max-width: 1100px; margin: 0 auto; padding: clamp(40px, 5vw, 70px) clamp(20px, 4vw, 60px) clamp(36px, 4vw, 54px); background: #f8f5ee; box-shadow: 0 30px 60px -30px #2c241e55; text-align: center; }
+.inspiration-card .eyebrow { color: var(--brand-sage); }
+.inspiration-card .lockup-script { margin: 0 0 clamp(28px, 4vw, 44px); font-size: clamp(46px, 6.4vw, 88px); }
+.inspiration-print { margin: 0; }
+.inspiration-print picture { display: block; }
+.inspiration-print img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; }
+.inspiration-print figcaption { font: 400 clamp(22px, 2.2vw, 30px)/1.2 var(--font-script); color: var(--ink); }
+.inspiration-seal { display: none; }
+@media (min-width: 901px) {
+  .inspiration-board { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-bottom: 40px; }
+  .inspiration-print--facade, .inspiration-print--salon { position: relative; }
+  .inspiration-print--facade figcaption, .inspiration-print--salon figcaption { position: absolute; top: 18px; left: 50%; translate: -50% 0; padding: 4px 20px 6px; white-space: nowrap; color: var(--ink); background: #f8f5eef0; box-shadow: 0 6px 18px -8px #2c241e66; }
+  .inspiration-seal { display: grid; place-items: center; position: absolute; left: 50%; top: calc(50% - 20px); z-index: 3; width: 110px; aspect-ratio: 1; border-radius: 50%; background: var(--brand-sage); box-shadow: 0 0 0 6px #f8f5ee; translate: -50% -50%; }
+  .inspiration-seal img { width: 44%; height: auto; }
+  .inspiration-print--plaque { position: absolute; right: clamp(-34px, calc(28px - 4vw), -6px); bottom: -6px; z-index: 4; width: min(230px, 22%); padding: 10px 10px 12px; background: #fff; box-shadow: 0 18px 40px -14px #2c241e80; rotate: 4deg; }
+  .inspiration-print--plaque figcaption { margin-top: 6px; font-size: 20px; }
+}
+@media (max-width: 900.98px) {
+  .inspiration-board { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .inspiration-print { padding: 10px 10px 14px; background: #fff; box-shadow: 0 14px 34px -16px #2c241e66; }
+  .inspiration-print figcaption { margin-top: 8px; }
+  .inspiration-print--salon { grid-column: span 2; order: -1; width: min(80%, 460px); margin: 0 auto; rotate: 1.5deg; }
+  .inspiration-print--facade { rotate: -2.5deg; }
+  .inspiration-print--plaque { rotate: 2deg; }
+}
+@media (max-width: 420px) { .inspiration-print figcaption { font-size: 19px; } }
+.tour-plan { margin: 28px 0 0; padding-top: 22px; border-top: 1px solid rgba(94, 112, 96, .35); }
+.tour-plan a { display: block; }
+.tour-plan img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+.tour-plan figcaption { display: flex; justify-content: space-between; margin-top: 8px; font-size: .8rem; letter-spacing: .06em; color: var(--brand-sage); }

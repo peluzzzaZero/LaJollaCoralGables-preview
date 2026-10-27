@@ -36,10 +36,12 @@ test("alcazar title is The Lexington", () => {
   );
 });
 
-test("alcazar drawing is the awning-mark bitmap", () => {
+test("The Lexington shows the owners' photograph of the lounge", () => {
   const section = alcazarSection();
   assert.match(section, /<figure class="alcazar-visual"[^>]*>/);
-  assert.match(section, /src="assets\/brand\/awning-mark\.jpg"/);
+  assert.match(section, /srcset="assets\/venue\/web\/lexington-lounge\.avif"/);
+  assert.match(section, /src="assets\/venue\/web\/lexington-lounge\.webp"[^>]*data-i18n="alcazar\.photoAlt"/);
+  assert.equal(section.includes("awning-mark"), false);
   assert.equal(/<svg[\s>]/.test(section), false);
   assert.equal(section.includes("cafe-garden"), false);
   assert.equal(section.includes("cafe-table"), false);
