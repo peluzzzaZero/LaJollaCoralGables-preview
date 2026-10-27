@@ -47,8 +47,11 @@ test("brochure styling uses the official sage, existing fonts and light photogra
   assert.match(css, /\.lockup-script\s*\{[^}]*var\(--font-script\)/);
   assert.doesNotMatch(css, /fonts\.googleapis/);
   assert.match(chapter(), /class="flourish"[^>]*aria-hidden="true"/);
-  // Brochure photographs stay off the page until their rights and location are confirmed.
-  assert.doesNotMatch(chapter(), /<img\b/);
+  // Brochure photographs stay off the page until their rights and location are confirmed;
+  // the only picture is the floor plan the owners supplied for the website, without measurements, areas or notes.
+  const images = Array.from(chapter().matchAll(/<img\b[^>]*>/g), (m) => m[0]);
+  assert.equal(images.length, 1);
+  assert.match(images[0], /src="assets\/tour\/floor-plan\.webp"/);
 });
 
 test("retired bar media is not published and not referenced", async () => {

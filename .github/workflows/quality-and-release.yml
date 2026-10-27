@@ -67,6 +67,7 @@ jobs:
           MAIL_MYSQL_TEST=true npm test
           python scripts/social-tiles.py --check
           python scripts/event-photos.py --check
+          python scripts/extra-photos.py --check
           git diff --check
       - name: Install browser review dependencies
         run: |

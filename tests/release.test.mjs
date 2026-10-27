@@ -62,7 +62,7 @@ test('the internal planning page has the same version and unique real IDs', () =
 });
 
 test('all landing information is visible in normal sections with same-page visits', () => {
-  for (const id of ['hero', 'history', 'visit', 'events', 'alcazar', 'rentals', 'tour', 'social', 'team', 'location', 'planning']) {
+  for (const id of ['hero', 'history', 'visit', 'events', 'inspiration', 'alcazar', 'rentals', 'tour', 'social', 'team', 'location', 'planning']) {
     assert.match(html, new RegExp(`<(?:article|section) id="${id}"`));
   }
   assert.equal((html.match(/class="chapter-more"/g) || []).length, 0);

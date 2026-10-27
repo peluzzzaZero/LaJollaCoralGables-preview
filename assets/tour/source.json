@@ -10,6 +10,16 @@
       "approvedOn": "2026-10-14",
       "approvalQuote": "Las fotos están bien eh... podemos poner algunas buenas del propio pdf",
       "rights": "Photograph from La Jolla's own client brochure, supplied by the owner for use on the venue's site"
+    },
+    "floor-plan.webp": {
+      "source": "Owners' PDF 'LA JOLLA pictures extra' (2026-10-27), page 2 (floor plan); built by scripts/extra-photos.py",
+      "treatment": "Vector page rendered at 150 dpi after removing every text span (measurements, areas, ceiling heights, notes), the red and pink dimension lines and the logo; both floors in a 2100x1460 crop, WebP q80",
+      "sha256": "c386e8451b163207280457258ca9e62bbf5c8f0e66d53f28cddc41aa6754c01a",
+      "approvedBy": "Dan, site owner, in the project thread",
+      "approvedOn": "2026-10-27",
+      "approvalQuote": "me gusta la parte de la ventana y del good to know (reply to the mock-up that put this plan in the Good to know card), then 'me encanta.. adelante'",
+      "rights": "The venue's own floor plan, supplied by the owners for the website",
+      "approvalNote": "The owners supplied the plan in their PDF for the website; Dan (site owner) chose to publish it, without measurements, in the tour card. It shows the public floor layout only, with no sizes or capacity."
     }
   },
   "excluded": "Other brochure photographs carry speckles from the cut-out lace overlay, or show identifiable people; they are not used.",
