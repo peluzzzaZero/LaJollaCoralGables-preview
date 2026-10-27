@@ -176,3 +176,28 @@ Each occasion in the events chapter shows its own photograph. Since v1.31.0 the 
 | `assets/venue/web/staircase.webp` | existing | Film, photo & content |
 | `assets/venue/web/hall-piano.webp` | existing | Productions & entertainment |
 | `assets/venue/web/tablescape.webp` | existing | Private dining & intimate events |
+
+## Owners' extra pictures — owner delivery, 27 October 2026 (v1.32.0)
+
+On 27 October 2026 the venue owners gave Dan (site owner) the PDF "LA JOLLA pictures extra" (4 pages, SHA-256 `3847cc8a9a5820ac8e807fb1f4a44e64a61434e237d1d67ebbef48155395c4be`) to be published on the website. `scripts/extra-photos.py` rebuilds every file from it and `assets/venue/web/extra-photos.json` records each hash, crop and treatment; the PDF stays in git-ignored `media/extra/`.
+
+| Delivered file | PDF | Shown in |
+| --- | --- | --- |
+| `assets/venue/web/lexington-lounge.{avif,webp}` | page 4, right: dark panelled lounge, wine-red velvet, a saxophonist on a low stage | The Lexington |
+| `assets/venue/web/inspiration-facade.{avif,webp}` | page 3: the house's facade dressed as its "Maison de Thé" tea salon (the priced menu board is cropped out) | "Imagine it your way" |
+| `assets/venue/web/inspiration-salon.{avif,webp}` | page 4, left: blush-pink tea salon | "Imagine it your way" |
+| `assets/venue/web/inspiration-plaque.{avif,webp}` | page 1: the oval 1928 welcome plaque with flowers (same picture as `assets/brand/flower-plaque.jpg`) | "Imagine it your way" |
+| `assets/tour/floor-plan.webp` | page 2: floor plan, every word, measurement, area and red dimension line removed | Tour, "Good to know" |
+
+Pages 3 and 4 may be renderings or retouched pictures rather than photographs: the PDF has no camera data and the signage differs from the street today. Dan was told this on 27 October 2026 and decided that the page shows them as the owners delivered them, without any "styling concept" label, whether they are photographs or not ("sean reales o no NO QUIERO QUE LLEVEN ESO"). The alt texts describe what each picture shows and do not state that it documents a room as it is today.
+
+### Consent and clearance record — v1.32.0
+
+| Item | Who confirmed | When | How |
+| --- | --- | --- | --- |
+| The owners want the PDF's pictures and floor plan on the website | Dan (site owner), relaying the owners | 2026-10-27 | Project thread ("me lo acaban de dar las propietarias y lo quieren en la pagina") |
+| Placement: Lexington picture, "Imagine it your way" board, floor plan without measurements in "Good to know" | Dan | 2026-10-27 | Project thread ("me encanta.. adelante") |
+| No "styling concept" label on any of the pictures | Dan | 2026-10-27 | Project thread, relayed by the project coordinator |
+| The saxophonist on the stage (small, unnamed figure in the owners' own promotional picture) | Dan, relaying the owners' delivery for publication | 2026-10-27 | Same delivery; the venue holds any release |
+
+The floor plan shows the layout of both floors only (no dimensions, areas, capacities or labels); the owners included it in the PDF they gave for the website.

@@ -254,7 +254,7 @@
       "alcazar.body":
         "Rich in deep greens, wine reds, and warm golds, this intimate lounge draws inspiration from distinguished private clubs, classic whiskey lounges, and the elegance of Kentucky racing culture. An intimate setting for cocktails, private dinners, celebrations, and exclusive gatherings, the space offers a distinctive atmosphere of character, warmth, and understated luxury.",
       "alcazar.cta": "Inquire about The Lexington",
-      "alcazar.photoAlt": "The Lexington: dark panelled walls, wine-red velvet armchairs and small lamps on bistro tables, with a saxophonist on a low stage.",
+      "alcazar.photoAlt": "A dark panelled lounge with wine-red velvet armchairs and small lamps on bistro tables, and a saxophonist on a low stage.",
       "inspiration.eyebrow": "Inspiration",
       "inspiration.title": "Imagine it your way",
       "inspiration.caption.facade": "Dressed for a brand",
@@ -610,7 +610,7 @@
       "alcazar.body":
         "En verdes profundos, granates y oros cálidos, este salón íntimo se inspira en distinguidos clubes privados, clásicos salones de whiskey y la elegancia de la cultura hípica de Kentucky. Un entorno íntimo para cócteles, cenas privadas, celebraciones y reuniones exclusivas, el espacio ofrece una atmósfera singular de carácter, calidez y lujo discreto.",
       "alcazar.cta": "Consultar por The Lexington",
-      "alcazar.photoAlt": "The Lexington: paredes oscuras con molduras, butacas de terciopelo burdeos y lamparitas en mesas de bistró, con un saxofonista en un escenario bajo.",
+      "alcazar.photoAlt": "Un salón oscuro con paredes de molduras, butacas de terciopelo burdeos y lamparitas en mesas de bistró, y un saxofonista en un escenario bajo.",
       "inspiration.eyebrow": "Inspiración",
       "inspiration.title": "Imagínelo a su manera",
       "inspiration.caption.facade": "Vestida para una marca",
