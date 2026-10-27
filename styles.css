@@ -467,6 +467,12 @@ html.js #team .reveal { opacity: 1; transform: none; }
   .booking-header { padding-inline: 1rem; }
   .booking-viewer > p, .booking-viewer .booking-fallback { padding-inline: 1rem; }
 }
+/* Short landscape phones: keep the calendar the largest part of the dialog. */
+@media (max-height: 520px) {
+  .booking-header { padding-block: .25rem; }
+  .booking-viewer > p { font-size: .75rem; line-height: 1.35; padding-bottom: .4rem; }
+  .booking-viewer .booking-fallback { padding-block: .4rem; }
+}
 .quote-panel { padding: clamp(1.25rem, 3vw, 3rem); border: 1px solid var(--line-soft); background: var(--cream); }
 .vendors { padding-block: 4rem; background: var(--cream); }
 .vendors .section-title { font-size: 2.5rem; }

@@ -231,3 +231,8 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 - The owner sent less-compressed copies of the event photographs plus three new ones. Every event photograph is rebuilt from them by `scripts/event-photos.py` and served as AVIF with a WebP fallback (same crops, sRGB, no metadata); the mosaic tiles are rebuilt from the new sources. The rose centerpiece now illustrates Rentals, the white orchid reception Galas & fundraisers and the green orchids "Something completely different?", replacing three photographs that appeared twice. See `tests/releases/v1.31.0.md`.
 - Next: ask the owner for the camera originals (the delivered files are still about 804 px wide), then add 1.5× / 2× widths to the largest frames.
+
+## v1.31.1 — visit times in Florida time, one address everywhere
+
+- The owner reported a Bookings notification showing 17:30 for a tour; that notification comes from a Power Automate flow that prints Bookings' UTC time (17:30 UTC = 1:30 PM in Florida). The booking dialog now says tours are at 301 Alcazar Avenue, Coral Gables, FL 33134 and that times are Florida time (Eastern Time); the footer map links and JSON-LD carry the full address. See `tests/releases/v1.31.1.md`.
+- Next (owner-side, in Microsoft 365): convert the flow times with `convertFromUtc(..., 'Eastern Standard Time', ...)`, set the Bookings business time zone and address, and turn on "Always show time slots in business time zone".
