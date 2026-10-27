@@ -24,7 +24,7 @@ MANIFEST = ROOT / 'assets/venue/web/extra-photos.json'
 AVIF_QUALITY, WEBP_QUALITY = 62, 82
 APPROVAL = ('PDF "LA JOLLA pictures extra" supplied by the venue owners to Dan (site owner) on 2026-10-27 to be published on the website; '
             'the pictures show La Jolla\'s own brand (the LJ 1928 mark and the house\'s "Maison de Thé" tea salon), no third-party brand; '
-            'the facade, salon and lounge pictures are labelled as styling concepts on the page until the owners confirm whether they are photographs; '
+            'the facade, salon and lounge pictures may be renderings; Dan decided on 2026-10-27 to show them without a styling-concept label; '
             'placement approved by Dan in the project thread on 2026-10-27 ("me encanta.. adelante")')
 
 # assets/venue/web/<name>.{avif,webp}: (PDF page, image object, crop box, output size, treatment)

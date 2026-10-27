@@ -239,5 +239,5 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 ## v1.32.0 — the owners' extra pictures: The Lexington, "Imagine it your way" and the floor plan
 
-- The owners sent a PDF of extra pictures. The Lexington shows their photograph of the lounge instead of the awning monogram; a new "Imagine it your way" board (sage stripes, split facade/salon with the LJ seal on wide screens, polaroids on phones) shows the facade dressed as a tea house, a tea salon and the welcome plaque, labelled "Styling concepts"; the tour's "Good to know" card shows the floor plan without measurements, areas or notes. See `tests/releases/v1.32.0.md`.
+- The owners sent a PDF of extra pictures. The Lexington shows their photograph of the lounge instead of the awning monogram; a new "Imagine it your way" board (sage stripes, split facade/salon with the LJ seal on wide screens, polaroids on phones) shows the facade dressed as a tea house, a tea salon and the welcome plaque (no "styling concept" label, Dan's decision); the tour's "Good to know" card shows the floor plan without measurements, areas or notes. See `tests/releases/v1.32.0.md`.
 - Next: confirm with the owners whether the tea-house facade, the salon and the lounge are photographs or renderings, and whether they want their own copy for the board.

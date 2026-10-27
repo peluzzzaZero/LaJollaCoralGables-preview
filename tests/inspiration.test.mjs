@@ -21,24 +21,22 @@ test("the board sits between the occasions and The Lexington", () => {
   assert.deepEqual([...order].sort((a, b) => a - b), order);
 });
 
-test("the board shows the three owner pictures, AVIF first, and says they are styling concepts", () => {
+test("the board shows the three owner pictures, AVIF first", () => {
   const board = section();
   for (const name of ["inspiration-facade", "inspiration-salon", "inspiration-plaque"]) {
     assert.match(board, new RegExp(`srcset="assets/venue/web/${name}\\.avif"`), name);
     assert.match(board, new RegExp(`src="assets/venue/web/${name}\\.webp"`), name);
   }
   assert.equal((board.match(/class="inspiration-print /g) || []).length, 3);
-  assert.match(board, /data-i18n="inspiration\.note">Styling concepts</);
   assert.match(board, /class="inspiration-seal" aria-hidden="true"/);
 });
 
 test("every board text and alt has an English and Spanish translation", () => {
   const keys = new Set(Array.from(section().matchAll(/data-i18n="([^"]+)"/g), (m) => m[1]));
   keys.add("alcazar.photoAlt");
-  keys.add("alcazar.photoNote");
   keys.add("tour.planOpen");
   keys.add("tour.planAlt");
-  assert.ok(keys.size >= 13);
+  assert.ok(keys.size >= 11);
   for (const key of keys) {
     assert.equal((js.match(new RegExp(`"${key.replace(/\./g, "\\.")}":`, "g")) || []).length, 2, key);
   }
@@ -52,10 +50,10 @@ test("no prices, capacity or banned room word in the new copy", () => {
   }
 });
 
-test("pictures not yet confirmed as photographs are labelled as styling concepts", () => {
-  const start = html.indexOf('<article id="alcazar"');
-  const lexington = html.slice(start, html.indexOf("</article>", start));
-  assert.match(lexington, /lexington-lounge\.webp[^>]*>(?:<\/picture>)?<figcaption class="alcazar-note" data-i18n="alcazar\.photoNote">Styling concept</);
+test("the owners' pictures carry no styling-concept label (Dan, 2026-10-27)", () => {
+  for (const text of [html, js, read("styles.css").toString()]) {
+    assert.doesNotMatch(text, /styling concept|propuestas? de ambientaci|photoNote|inspiration\.note|alcazar-note|inspiration-note/i);
+  }
 });
 
 test("the floor plan opens full size and has no measurements in its copy", () => {
