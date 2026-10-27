@@ -1196,6 +1196,7 @@
     const services = [...document.querySelectorAll('.rentals-quiet li')];
     const cards = [...document.querySelectorAll('.house-grid > li')];
     const seal = document.querySelector('.planning-seal');
+    const inspirationBoard = document.querySelector('.inspiration-board');
     const scenes = [
       ...inked.map(element => ({ element, update() {
         const box = element.getBoundingClientRect();
@@ -1236,6 +1237,11 @@
         // Measure the untransformed grid, never the moving plate itself.
         const grid = document.querySelector('.house-grid').getBoundingClientRect().top;
         cardTops.forEach((top, index) => cards[index].style.setProperty('--scatter', (1 - ease(clamp((innerHeight * 1.05 - grid - top) / (innerHeight * .6)))).toFixed(4)));
+      } },
+      inspirationBoard && { element: inspirationBoard, update() {
+        // Settled once the middle of the board reaches the middle of the view.
+        const box = inspirationBoard.getBoundingClientRect();
+        inspirationBoard.style.setProperty('--board-arrival', ease(clamp((innerHeight - box.top) / ((innerHeight + box.height) * .5))).toFixed(4));
       } },
       seal && { element: seal, update() {
         const box = { top: seal.offsetParent.getBoundingClientRect().top + seal.offsetTop };
@@ -1297,6 +1303,7 @@
       services.forEach(item => item.style.removeProperty('--enter'));
       cards.forEach(card => ['--scatter', '--scatter-x', '--scatter-r'].forEach(name => card.style.removeProperty(name)));
       seal?.style.removeProperty('--stamp');
+      inspirationBoard?.style.removeProperty('--board-arrival');
       if (albumIndex) albumIndex.textContent = '01';
       album?.classList.remove('is-staged');
       preload?.disconnect();
@@ -1314,7 +1321,7 @@
         if (box.bottom > 0 && box.top < innerHeight) photo.classList.add('has-arrived');
       });
       document.body.classList.add('landing-effects');
-      // Only three photographs drift. Complete text never fades or follows scroll.
+      // Only the photographs marked data-landing-parallax drift. Complete text never fades or follows scroll.
       observer = new IntersectionObserver(entries => {
         entries.forEach(entry => entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target));
         schedule();

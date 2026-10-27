@@ -41,8 +41,11 @@ WEB = {
 PLAN = 'assets/tour/floor-plan.webp'
 # At 150 dpi the drawing (both floors) spans x 222-2270, y 77-1500; the LJ logo sits at x 2211-2474, y 1313-1584.
 PLAN_BOX, LOGO = (200, 50, 2300, 1510), (2200, 1300, 2550, 1650)
+# Inside that crop the first floor spans x 22-1300 and the second x 1609-2052, y 501-979.
+FIRST_FLOOR, SECOND_FLOOR, FLOOR_GAP = (0, 0, 1322, 1460), (1589, 481, 2072, 999), 140
 PLAN_TREATMENT = ('Page 2 rendered at 150 dpi after redacting every text span (measurements, areas, ceiling heights, '
-                  'room and build notes); red and pink dimension lines whitened; logo removed; both floors in a 2100x1460 crop, WebP q80')
+                  'room and build notes); red and pink dimension lines whitened; logo removed; both floors cropped at the same scale and set side by side '
+                  '(second floor 140 px after the first, both on the same baseline) in a 1945x1460 image, WebP q80')
 
 
 def sha256_bytes(data):
@@ -105,6 +108,16 @@ def build():
     grey = np.asarray(plan.convert('L'))
     if min(grey[:, :8].min(), grey[:, -8:].min(), grey[:8].min(), grey[-8:].min()) < 200:
         sys.exit('floor plan: the drawing touches the crop edge')
+    # Bring the second floor next to the first, at the same scale, so each label can sit under its own floor.
+    first, second = plan.crop(FIRST_FLOOR), plan.crop(SECOND_FLOOR)
+    for floor in (first, second):
+        grey = np.asarray(floor.convert('L'))
+        if min(grey[:, :4].min(), grey[:, -4:].min(), grey[:4].min(), grey[-4:].min()) < 200:
+            sys.exit('floor plan: a floor touches its crop edge')
+    plan = Image.new('RGB', (first.width + FLOOR_GAP + second.width, first.height), 'white')
+    plan.paste(first, (0, 0))
+    # Both floors stand on the same line, so the caption row sits just under each of them.
+    plan.paste(second, (first.width + FLOOR_GAP, first.height - second.height))
     out = io.BytesIO()
     plan.save(out, 'WEBP', quality=80, method=6)
     files[PLAN] = out.getvalue()
