@@ -198,6 +198,6 @@ Pages 3 and 4 may be renderings or retouched pictures rather than photographs: t
 | The owners want the PDF's pictures and floor plan on the website | Dan (site owner), relaying the owners | 2026-10-27 | Project thread ("me lo acaban de dar las propietarias y lo quieren en la pagina") |
 | Placement: Lexington picture, "Imagine it your way" board, floor plan without measurements in "Good to know" | Dan | 2026-10-27 | Project thread ("me encanta.. adelante") |
 | No "styling concept" label on any of the pictures | Dan | 2026-10-27 | Project thread, relayed by the project coordinator |
-| The saxophonist on the stage (small, unnamed figure in the owners' own promotional picture) | Dan, relaying the owners' delivery for publication | 2026-10-27 | Same delivery; the venue holds any release |
+| The lounge picture shows The Lexington, and the saxophonist on the stage (small, unnamed figure) may appear on the website | The owners, relayed by Dan | 2026-10-27 | Dan in the project thread, answering a decision card that asked exactly this: "Las dueñas me confirmaron todo... asi que adelante" |
 
-The floor plan shows the layout of both floors only (no dimensions, areas, capacities or labels); the owners included it in the PDF they gave for the website.
+Signed releases, if any, are held by the venue, not in this repository. The floor plan shows the layout of both floors only (no dimensions, areas, capacities or labels); the owners included it in the PDF they gave for the website.
