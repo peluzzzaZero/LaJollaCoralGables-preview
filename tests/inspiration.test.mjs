@@ -73,3 +73,26 @@ test("every extra picture matches its record from the owners' PDF", () => {
   const facade = record.assets.find((entry) => entry.asset.endsWith("inspiration-facade.webp"));
   assert.match(facade.treatment, /menu board .* excluded/);
 });
+
+test("the board arrives with its own scroll scene and stays still without landing effects", () => {
+  const css = read("styles.css").toString();
+  const script = read("script.js").toString();
+  for (const name of ["inspiration-print--facade", "inspiration-print--salon"]) {
+    assert.match(html, new RegExp(`<figure class="inspiration-print ${name}" data-landing-parallax="">`), name);
+  }
+  assert.match(script, /inspirationBoard\.style\.setProperty\('--board-arrival'/);
+  assert.match(script, /inspirationBoard\?\.style\.removeProperty\('--board-arrival'\)/);
+  assert.match(css, /\.landing-effects \.inspiration-board \{ --board-rest: calc\(1 - var\(--board-arrival, 1\)\); \}/);
+  // Every arrival transform is scoped to .landing-effects, which reduced motion and Save-Data never set.
+  const moving = [...css.matchAll(/^\s*([^{}\n]*\.inspiration-(?:print|seal)[^{}\n]*)\{[^}]*transform:/gm)].map((m) => m[1]);
+  assert.ok(moving.length >= 7, moving.join(" | "));
+  for (const selector of moving) assert.match(selector, /^\.landing-effects /, selector);
+});
+
+test("each floor label sits in the column of its own floor", () => {
+  const css = read("styles.css").toString();
+  const script = read("scripts/extra-photos.py").toString();
+  assert.match(script, /FIRST_FLOOR, SECOND_FLOOR, FLOOR_GAP = \(0, 0, 1322, 1460\), \(1589, 481, 2072, 999\), 140/);
+  assert.match(css, /grid-template-columns: minmax\(0, 1322fr\) minmax\(0, 140fr\) minmax\(0, 483fr\)/);
+  assert.match(html, /<img src="assets\/tour\/floor-plan\.webp"[^>]*width="1945" height="1460"/);
+});

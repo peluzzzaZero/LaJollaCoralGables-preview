@@ -19,7 +19,7 @@
       "approvedOn": "2026-10-27",
       "approvalQuote": "me gusta la parte de la ventana y del good to know (reply to the mock-up that put this plan in the Good to know card), then 'me encanta.. adelante'",
       "rights": "The venue's own floor plan, supplied by the owners for the website",
-      "approvalNote": "The owners supplied the plan in their PDF for the website; Dan (site owner) chose to publish it, without measurements, in the tour card. It shows the public floor layout only, with no sizes or capacity."
+      "approvalNote": "The owners supplied the plan in their PDF for the website; Dan (site owner) chose to publish it, without measurements, in the tour card. It shows the public floor layout only, with no sizes or capacity. On 2026-10-27 Dan reported the live card as having a problem (\"estas 3 estan con problema\", relayed with a screenshot of this card); in v1.33.0 the two floors were set side by side at the same scale with a smaller gap so each label sits under its floor. The drawing itself is unchanged."
     }
   },
   "excluded": "Other brochure photographs carry speckles from the cut-out lace overlay, or show identifiable people; they are not used.",
