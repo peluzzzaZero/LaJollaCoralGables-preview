@@ -38,11 +38,20 @@ async def main(base,output):
     assert await page.locator('.ljc-link-text').inner_text()=='Unsafe'
     assert await page.locator('.ljc-tel').get_attribute('href')=='tel:+17862908813'
     # Phones: no keyboard over the welcome; the sheet fills the screen.
-    focused=await page.evaluate('document.activeElement.classList.contains("ljc-in")')
-    assert focused==(width>=600),(width,focused)
+    focused=await page.evaluate('document.activeElement.className')
+    assert focused==('ljc-in' if width>=600 else 'ljc-panel'),(width,focused)
     await page.wait_for_timeout(400);await page.screenshot(path=str(output/f'chat-{width}-{language}.png'))
     assert not errors,errors
     rows.append({'language':language,'width':width,'ai_notice':True,'safe_links':True});await page.close()
+  # A saved chat older than 30 days is removed from the browser, not just ignored.
+  page,errors=await page_for(browser,base,'ok','en',1440)
+  await page.evaluate('localStorage.setItem("lj-chat",JSON.stringify({id:"old",items:[{who:"me",text:"old question"}],at:Date.now()-31*86400000}))')
+  await page.reload(wait_until='domcontentloaded')
+  assert await page.evaluate('localStorage.getItem("lj-chat")') is None,'expired chat kept'
+  await page.evaluate('window.LaJollaChat.open()');await page.locator('.ljc-bot').first.wait_for()
+  assert await page.locator('.ljc-me').count()==0
+  assert not errors,errors
+  rows.append({'expired_chat_removed':True});await page.close()
   # A failed request offers the calendar; a request that never ends stops after 20 s with the same help.
   for mode in ('error','hang'):
    page,errors=await page_for(browser,base,mode,'en',1440)
@@ -63,5 +72,5 @@ async def main(base,output):
    assert not errors,errors
    rows.append({'mode':mode,'fallback':True});await page.close()
   await browser.close()
- (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Chat: {len(rows)} AI-notice, link, error and timeout cases passed with the assistant stubbed.')
+ (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Chat: {len(rows)} AI-notice, link, expiry, error and timeout cases passed with the assistant stubbed.')
 if __name__=='__main__':run(lambda base,out,args:main(base,out))

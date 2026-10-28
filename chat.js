@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 138b4fa).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 4e50395).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -53,6 +53,7 @@
     try {
       var s = JSON.parse(localStorage.getItem(STORE) || "null");
       if (s && s.id && Date.now() - s.at < KEEP_MS) return s;
+      localStorage.removeItem(STORE);
     } catch (e) {}
     return fresh();
   }
@@ -109,7 +110,7 @@
     ".ljc-privacy{margin:7px 4px 0;font:12.5px/1.35 Manrope,Arial,sans-serif;color:#7a6550}" +
     ".ljc .ljc-privacy a{color:#7a6550;text-decoration:underline;text-underline-offset:2px}" +
     ".ljc-launch[hidden]{display:none}.ljc-launch{width:56px;height:56px;border-radius:50%;background:var(--sage);color:#fff;border:0;cursor:pointer;box-shadow:0 6px 20px rgba(77,37,9,.22);font-size:24px}" +
-    ".ljc :focus-visible{outline:2px solid var(--brown);outline-offset:2px}" +
+    ".ljc :focus-visible{outline:2px solid var(--brown);outline-offset:2px}.ljc .ljc-panel:focus{outline:none}" +
     // Phones: a full-screen sheet, so the keyboard never hides the conversation.
     "@media (max-width:600px){.ljc{right:0;bottom:0;left:0}.ljc-panel{width:100%;height:100vh;height:100dvh;border-radius:0;border:0}.ljc-head{padding-top:max(14px,env(safe-area-inset-top))}.ljc-foot{padding-bottom:max(8px,env(safe-area-inset-bottom))}.ljc-bar>*{font-size:14px}}";
 
@@ -141,6 +142,7 @@
     panel = el("div", "ljc-panel");
     panel.hidden = true;
     panel.setAttribute("role", "dialog");
+    panel.tabIndex = -1;
     panel.setAttribute("aria-label", t.open);
 
     var head = el("div", "ljc-head");
@@ -351,8 +353,7 @@
     // The visitor's first view is the assistant's welcome, not a message they did not write.
     if (!state.items.length && !busy) say(lang() === "es" ? "Hola" : "Hello", null, true);
     scrollDown();
-    // On phones the keyboard would cover the welcome: focus the field only with a mouse or keyboard.
-    if (!(window.matchMedia && matchMedia("(pointer: coarse)").matches)) input.focus({ preventScroll: true });
+    focusInput();
   }
 
   function close(keepFocus) {
@@ -370,7 +371,13 @@
     save();
     log.textContent = "";
     say(lang() === "es" ? "Hola" : "Hello", null, true);
-    input.focus({ preventScroll: true });
+    focusInput();
+  }
+
+  // On phones the keyboard would cover the welcome: there focus goes to the dialog itself, not the field.
+  function focusInput() {
+    if (window.matchMedia && matchMedia("(pointer: coarse)").matches) panel.focus({ preventScroll: true });
+    else input.focus({ preventScroll: true });
   }
 
   function configure(o) {

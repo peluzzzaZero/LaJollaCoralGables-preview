@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
@@ -70,7 +71,10 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
-  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js/);
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 4e50395\)/);
+  // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
+  const body = chat.split("\n").slice(2).join("\n");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "ea94f27e6f09f64a23619660b6d666e0af96e0d5da08edee8ec4ce3da0025399");
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);
