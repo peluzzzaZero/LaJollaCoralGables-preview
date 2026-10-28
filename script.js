@@ -1447,18 +1447,29 @@
         // Retain native new-tab gestures and the ordinary link without JS.
         if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button) return;
         event.preventDefault();
-        opener = link.closest(".chapter-more")?.querySelector("summary") || link;
-        document.querySelectorAll(".cinema-directory[open], .contact-directory[open], .mobile-menu[open]")
-          .forEach(function (menu) { menu.open = false; });
-        viewer.showModal();
-        document.dispatchEvent(new Event("lajolla-dialog-open"));
-        document.body.classList.add("booking-open");
-        // Load Microsoft only after an explicit request. Keep the same frame
-        // across closes so an unfinished reservation is not reset.
-        if (!frame.hasAttribute("src")) frame.src = link.href;
-        viewer.querySelector("button").focus();
+        // The visit seal opens the assistant once it has loaded (owners' guide, section 3A); its
+        // calendar links reuse this window. Without the assistant (blocked, offline) the seal opens
+        // the calendar as before.
+        if (link.id === "visit-cta" && window.LaJollaChat) {
+          window.LaJollaChat.configure({ privacyUrl: "privacy.html", openBooking: function (url) { openCalendar(link, url); } });
+          window.LaJollaChat.open();
+          return;
+        }
+        openCalendar(link, link.href);
       });
     });
+    function openCalendar(link, url) {
+      opener = link.closest(".chapter-more")?.querySelector("summary") || link;
+      document.querySelectorAll(".cinema-directory[open], .contact-directory[open], .mobile-menu[open]")
+        .forEach(function (menu) { menu.open = false; });
+      viewer.showModal();
+      document.dispatchEvent(new Event("lajolla-dialog-open"));
+      document.body.classList.add("booking-open");
+      // Load Microsoft only after an explicit request. Keep the same frame
+      // across closes so an unfinished reservation is not reset.
+      if (!frame.hasAttribute("src")) frame.src = url;
+      viewer.querySelector("button").focus();
+    }
     viewer.querySelector(".booking-close").addEventListener("click", function () { viewer.close(); });
     viewer.addEventListener("close", function () {
       document.body.classList.remove("booking-open");

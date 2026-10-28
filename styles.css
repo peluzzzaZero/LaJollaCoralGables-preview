@@ -2302,6 +2302,8 @@ html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
   .visit-cta, .visit-cta-slot[data-cta-slot="float"] { right: max(28px, env(safe-area-inset-right)); bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px)); }
 }
 body.booking-open .visit-cta { visibility: hidden; }
+/* v1.34: the chat opens where the seal floats; the seal steps aside while the chat is open. */
+body:has(.ljc-panel:not([hidden])) .visit-cta { visibility: hidden; }
 .cta-away .entrance-next { visibility: hidden; }
 /* Until the script places it (or if it never does) the seal floats to the very end; keep the legal row clear. */
 html:not(.cta-live) .landing-footer { padding-bottom: 96px; }

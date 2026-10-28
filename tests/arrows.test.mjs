@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 // ↗, ↘, ➚, ⬈… as blue emoji tiles, and U+FE0F forces emoji on anything), and not drawn ones.
 // The review carousel's previous/next chevrons are controls, not link decorations, and stay,
 // as do the flourish and the visit seal's ring text.
-const files = ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "styles.css"];
+const files = ["index.html", "planning.html", "privacy.html", "terms.html", "script.js", "social.js", "chat.js", "styles.css"];
 const read = (name) => {
   const text = readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
   if (name.endsWith(".css")) return text.replace(/\/\*[^]*?\*\//g, "");

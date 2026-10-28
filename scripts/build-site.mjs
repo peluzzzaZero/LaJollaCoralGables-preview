@@ -2,7 +2,7 @@ import { copyFile, lstat, mkdir, readdir, readFile, rm, writeFile } from 'node:f
 import { dirname, extname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const publicFiles = Object.freeze(['index.html', 'planning.html', 'privacy.html', 'terms.html', 'social.js',
+export const publicFiles = Object.freeze(['index.html', 'planning.html', 'privacy.html', 'terms.html', 'social.js', 'chat.js',
   'styles.css', 'script.js', 'robots.txt', 'sitemap.xml', 'CNAME']);
 const mediaTypes = new Set(['.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.ico', '.mp4', '.webm']);
 // Retired originals stay in the repository as evidence but are never published:

@@ -14,6 +14,18 @@ class QuietHandler(SimpleHTTPRequestHandler):
  def log_message(self,*_):pass
 async def mock_booking(route):
  await route.fulfill(content_type='text/html',body='<html><body><h1>Mock calendar</h1><button>Calendar control</button></body></html>')
+ASSISTANT='https://lajolla-assistant.lajolla-assistant.workers.dev'
+async def mock_assistant(route):
+ # The chat assistant runs on Cloudflare; tests answer for it so no real conversation is stored.
+ cors={'access-control-allow-origin':'*','access-control-allow-headers':'content-type','access-control-allow-methods':'POST, OPTIONS'}
+ if route.request.method=='OPTIONS':await route.fulfill(status=204,headers=cors);return
+ body=json.dumps({'replies':[{'text':'Welcome to La Jolla Coral Gables.','quickReplies':[{'label':'Schedule a tour','value':'schedule a tour'}]}]})
+ await route.fulfill(status=200,headers=cors,content_type='application/json',body=body)
+async def open_calendar_from_chat(page):
+ # The visit seal opens the assistant; its fixed calendar button opens the same-page booking window.
+ await page.locator('#visit-cta').click()
+ await page.locator('.ljc-panel').wait_for(state='visible');await page.locator('.ljc-bot').first.wait_for()
+ await page.locator('.ljc-bar a').click()
 async def scroll(page,y):
  await page.evaluate('y=>window.scrollTo(0,y)',y)
  await page.wait_for_timeout(150)
@@ -56,6 +68,7 @@ async def main(base,output):
    page.on('pageerror',lambda e:errors.append(str(e)) if not third_party_map_error(e) else None)
    page.on('request',lambda r:media.append(r.url) if r.url.endswith(('.mp4','.webm')) else None)
    await page.route('https://bookings.cloud.microsoft/**',mock_booking)
+   await page.route(ASSISTANT+'/**',mock_assistant)
    await page.goto(base);await page.evaluate('document.fonts.ready')
    assert await page.locator('.booking-frame').get_attribute('src') is None
    for language in ['en','es']:
@@ -70,7 +83,8 @@ async def main(base,output):
     # The single visit button rests in Let's begin at the end of the page; open the calendar from there.
     await position(page,'planning')
     before=await page.evaluate('scrollY');url=page.url
-    opener=page.locator('#visit-cta');await opener.click()
+    await open_calendar_from_chat(page)
+    await page.locator('.ljc-panel').wait_for(state='hidden')
     await page.frame_locator('.booking-frame').locator('h1').wait_for()
     assert page.url==url
     await page.keyboard.press('Escape');await page.locator('#booking-viewer').wait_for(state='hidden')
@@ -78,10 +92,11 @@ async def main(base,output):
     # The dialog's close event (which returns focus) may be dispatched in a later task.
     try:await page.wait_for_function('document.activeElement===document.getElementById("visit-cta")',timeout=2000)
     except Exception:raise AssertionError(('focus not returned',width,language,await page.evaluate('[document.activeElement.outerHTML.slice(0,120),document.getElementById("visit-cta").className,getComputedStyle(document.getElementById("visit-cta")).visibility]')))
-    rows.append({'width':width,'language':language,'complete_visible_flow':True,'calendar':True})
+    rows.append({'width':width,'language':language,'complete_visible_flow':True,'chat':True,'calendar':True})
    assert not errors,errors
    assert all(any(f'/cinematic/{n}.' in u for n in ('journey','journey-hd','venue-walk','venue-walk-mobile')) for u in media),media
-   assert await page.locator('form').count()==0
+   # No inquiry forms; the only one is the chat assistant's message box.
+   assert await page.locator('form:not(.ljc form)').count()==0
    await page.close()
   await browser.close()
  (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Landing review: {len(rows)} responsive/language cases, complete content and same-page calendar passed.')

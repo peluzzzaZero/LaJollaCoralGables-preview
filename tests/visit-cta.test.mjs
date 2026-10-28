@@ -62,3 +62,22 @@ test("the visit invitation is a centred closing line, not an empty band with a l
   // The pull-up into the pinned walk's empty room must not apply when the walk is collapsed over its caption.
   assert.match(css, /@media \(max-width: 650px\) \{ \.venue-walk\.is-walking \+ \.visit-invitation \{ margin-top: -88px; \} \}/);
 });
+
+test("the seal opens the chat assistant, whose calendar button reuses the same-page booking window", () => {
+  // Owners' assistant guide, section 3A: the seal opens the chat; "Schedule directly" stays one tap away.
+  assert.match(html, /<script src="chat\.js\?v=[\d.]+" data-api="https:\/\/lajolla-assistant\.lajolla-assistant\.workers\.dev" defer><\/script>/);
+  assert.match(js, /if \(link\.id === "visit-cta" && window\.LaJollaChat\) \{\s*window\.LaJollaChat\.configure\(\{ privacyUrl: "privacy\.html", openBooking: function \(url\) \{ openCalendar\(link, url\); \} \}\);\s*window\.LaJollaChat\.open\(\);\s*return;\s*\}\s*openCalendar\(link, link\.href\);/);
+  // Without the assistant, the seal is still the calendar link (fallback and no-JS).
+  assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
+  const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js/);
+  assert.match(chat, /direct: "Schedule directly"/);
+  assert.match(chat, /direct: "Agendar directo"/);
+  assert.doesNotMatch(chat, /ballroom|facebook/i);
+});
+
+test("the privacy page explains the chat assistant in both languages", () => {
+  const privacy = readFileSync(new URL("../privacy.html", import.meta.url), "utf8");
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*hosted by Cloudflare[^<]*30 days without activity[^<]*Estimates shown in the chat are informational/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*alojado en Cloudflare[^<]*30 días sin actividad[^<]*estimados que muestra el chat son informativos/);
+});

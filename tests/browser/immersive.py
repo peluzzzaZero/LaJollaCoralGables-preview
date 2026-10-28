@@ -13,6 +13,8 @@ async def main(base,output,args):
     async def provider(route):
      requests.append(route.request.url);await route.fulfill(content_type='text/html',body='<html><body><h1>Mock calendar</h1><button>Calendar</button></body></html>')
     await context.route('https://bookings.cloud.microsoft/**',provider)
+    # Without the assistant (blocked or offline) the seal still opens the calendar directly; review.py covers the chat path.
+    await context.route('**/chat.js*',lambda route:route.abort())
     await page.goto(base);assert not requests
     for language in ['en','es']:
      await page.locator(f'[data-lang="{language}"]').click();await position(page,'planning')
