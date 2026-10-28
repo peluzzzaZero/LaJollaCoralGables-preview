@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
@@ -61,4 +62,35 @@ test("the visit invitation is a centred closing line, not an empty band with a l
   assert.doesNotMatch(js, /querySelectorAll\('[^']*\.visit-invitation/);
   // The pull-up into the pinned walk's empty room must not apply when the walk is collapsed over its caption.
   assert.match(css, /@media \(max-width: 650px\) \{ \.venue-walk\.is-walking \+ \.visit-invitation \{ margin-top: -88px; \} \}/);
+});
+
+test("the seal opens the chat assistant, whose calendar button reuses the same-page booking window", () => {
+  // Owners' assistant guide, section 3A: the seal opens the chat; "Schedule directly" stays one tap away.
+  assert.match(html, /<script src="chat\.js\?v=[\d.]+" data-api="https:\/\/lajolla-assistant\.lajolla-assistant\.workers\.dev" defer><\/script>/);
+  assert.match(js, /if \(link\.id === "visit-cta" && window\.LaJollaChat\) \{\s*window\.LaJollaChat\.configure\(\{ privacyUrl: "privacy\.html", openBooking: function \(url\) \{ openCalendar\(link, url\); \} \}\);\s*window\.LaJollaChat\.open\(\);\s*return;\s*\}\s*openCalendar\(link, link\.href\);/);
+  // Without the assistant, the seal is still the calendar link (fallback and no-JS).
+  assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
+  const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 4e50395\)/);
+  // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
+  const body = chat.split("\n").slice(2).join("\n");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "ea94f27e6f09f64a23619660b6d666e0af96e0d5da08edee8ec4ce3da0025399");
+  assert.match(chat, /direct: "Schedule directly"/);
+  assert.match(chat, /direct: "Agendar directo"/);
+  assert.doesNotMatch(chat, /ballroom|facebook/i);
+  // Visitors are told, inside the chat, that an AI writes the replies (EN and ES).
+  assert.match(chat, /subtitle: "AI assistant of the La Jolla team"/);
+  assert.match(chat, /subtitle: "Asistente con IA del equipo de La Jolla"/);
+  assert.match(chat, /privacy: "Replies are written by AI\./);
+  assert.match(chat, /privacy: "Las respuestas las escribe una IA\./);
+  // The public copy carries no internal notes.
+  assert.doesNotMatch(chat, /Epic Lux|\/\/ Dan:/);
+});
+
+test("the privacy page explains the chat assistant in both languages", () => {
+  const privacy = readFileSync(new URL("../privacy.html", import.meta.url), "utf8");
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>On the home page, Schedule a visit opens[^<]*replies are written by AI/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>En la página de inicio, Agende una visita abre[^<]*respuestas las escribe una IA/);
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*hosted by Cloudflare[^<]*30 days without activity[^<]*Estimates shown in the chat are informational/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*alojado en Cloudflare[^<]*30 días sin actividad[^<]*estimados que muestra el chat son informativos/);
 });
