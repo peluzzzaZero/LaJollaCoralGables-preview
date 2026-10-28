@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (branch feature/cloudflare-web-chat, a2a0f02).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (branch feature/cloudflare-web-chat, 87f6810).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
