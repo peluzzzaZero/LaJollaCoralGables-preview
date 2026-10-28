@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (branch feature/cloudflare-web-chat, 87f6810).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (branch feature/cloudflare-web-chat, a88d7c8).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -90,6 +90,7 @@
     ".ljc-bot{background:#fffdf8;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:5px}" +
     ".ljc-me{background:var(--sage);color:#fff;align-self:flex-end;border-bottom-right-radius:5px}" +
     ".ljc-chips{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start;max-width:100%}" +
+    ".ljc-tel{color:inherit;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}" +
     ".ljc-chip,.ljc-link{font:600 15px/1.25 'Cormorant Garamond',Georgia,serif;border:1px solid var(--sage);background:#fffdf8;color:var(--sage-dark);border-radius:999px;padding:6px 14px;cursor:pointer;text-decoration:none;text-align:left}" +
     ".ljc .ljc-chip:hover{background:var(--sage);color:#fff}" +
     // Beat the host page's own link colours (e.g. a:hover).
@@ -224,7 +225,16 @@
   function scrollDown() { log.scrollTop = log.scrollHeight; }
 
   function addMsg(text, who) {
-    log.appendChild(el("div", "ljc-msg " + (who === "me" ? "ljc-me" : "ljc-bot"), text));
+    var msg = el("div", "ljc-msg " + (who === "me" ? "ljc-me" : "ljc-bot"));
+    // The venue's phone number is a tap-to-call link that never breaks across lines.
+    String(text).split(/(\b\d{3}-\d{3}-\d{4}\b)/).forEach(function (part, i) {
+      if (i % 2 && who !== "me") {
+        var a = el("a", "ljc-tel", part);
+        a.href = "tel:+1" + part.replace(/-/g, "");
+        msg.appendChild(a);
+      } else msg.appendChild(document.createTextNode(part));
+    });
+    log.appendChild(msg);
     scrollDown();
   }
 
