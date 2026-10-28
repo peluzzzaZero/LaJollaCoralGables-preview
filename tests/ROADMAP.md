@@ -251,4 +251,5 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.34.0 — the visit seal opens La Jolla's chat assistant
 
 - Dan put the website chat first. The seal now opens the assistant from the owners' guide (welcome, five buttons, "Schedule directly" and "Talk to a person" always visible). Without the assistant, the seal still opens the calendar. The privacy page explains the chat. See `tests/releases/v1.34.0.md`.
-- Next: the guide's hand-off form and team alert, and an out-of-hours message; then Telegram, Instagram and WhatsApp.
+- Live with it: the guide's hand-off (a visitor leaves a name, a phone or email and the question in the conversation) and the team alert by email to info@, delivered to the info@ inbox in a test on 28 Oct. The chat says that its replies are written by AI.
+- Next: an out-of-hours message; then Telegram, Instagram and WhatsApp.

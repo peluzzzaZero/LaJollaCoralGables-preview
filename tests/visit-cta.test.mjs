@@ -74,10 +74,19 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);
+  // Visitors are told, inside the chat, that an AI writes the replies (EN and ES).
+  assert.match(chat, /subtitle: "AI assistant of the La Jolla team"/);
+  assert.match(chat, /subtitle: "Asistente con IA del equipo de La Jolla"/);
+  assert.match(chat, /privacy: "Replies are written by AI\./);
+  assert.match(chat, /privacy: "Las respuestas las escribe una IA\./);
+  // The public copy carries no internal notes.
+  assert.doesNotMatch(chat, /Epic Lux|\/\/ Dan:/);
 });
 
 test("the privacy page explains the chat assistant in both languages", () => {
   const privacy = readFileSync(new URL("../privacy.html", import.meta.url), "utf8");
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>On the home page, Schedule a visit opens[^<]*replies are written by AI/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>En la página de inicio, Agende una visita abre[^<]*respuestas las escribe una IA/);
   assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*hosted by Cloudflare[^<]*30 days without activity[^<]*Estimates shown in the chat are informational/);
   assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*alojado en Cloudflare[^<]*30 días sin actividad[^<]*estimados que muestra el chat son informativos/);
 });

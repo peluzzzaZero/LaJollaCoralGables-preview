@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (branch feature/cloudflare-web-chat, a88d7c8).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 138b4fa).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -12,9 +12,10 @@
  *   data-launcher  "true" to show a small round launcher (default: none, the site opens it)
  *   data-lang      "en" | "es" (default: <html lang> or the site's language switch)
  *
- * Look and behaviour follow the owners' assistant guide (Epic Lux, 20 Oct 2026):
+ * Look and behaviour follow the owners' assistant guide (20 Oct 2026):
  * brand colours and Garamond, "Talk to a person" always visible, a short privacy
- * note, and the conversation continues if the visitor closes the chat and returns.
+ * note that says replies come from AI, and the conversation continues if the visitor
+ * closes the chat and returns.
  */
 (function () {
   "use strict";
@@ -28,16 +29,16 @@
   };
   var T = {
     en: {
-      subtitle: "The La Jolla team assistant", placeholder: "Write a message", send: "Send", close: "Close chat", open: "Chat with La Jolla",
+      subtitle: "AI assistant of the La Jolla team", placeholder: "Write a message", send: "Send", close: "Close chat", open: "Chat with La Jolla",
       error: "Sorry, something went wrong. You can book on our calendar, call 786-290-8813 or write to info@lajollacoralgables.com.",
       calendar: "Open the booking calendar", direct: "Schedule directly", person: "Talk to a person", personMsg: "Talk to a person",
-      restart: "Start over", typing: "La Jolla is writing", privacy: "We keep this conversation to help you.", privacyLink: "Privacy policy",
+      restart: "Start over", typing: "La Jolla is writing", privacy: "Replies are written by AI. What you type is processed by AI services and kept to help you.", privacyLink: "Privacy policy",
     },
     es: {
-      subtitle: "Asistente del equipo de La Jolla", placeholder: "Escriba un mensaje", send: "Enviar", close: "Cerrar chat", open: "Chatear con La Jolla",
+      subtitle: "Asistente con IA del equipo de La Jolla", placeholder: "Escriba un mensaje", send: "Enviar", close: "Cerrar chat", open: "Chatear con La Jolla",
       error: "Perdone, algo falló. Puede reservar en nuestro calendario, llamar al 786-290-8813 o escribir a info@lajollacoralgables.com.",
       calendar: "Abrir el calendario de reservas", direct: "Agendar directo", person: "Hablar con una persona", personMsg: "Hablar con una persona",
-      restart: "Empezar de nuevo", typing: "La Jolla está escribiendo", privacy: "Guardamos esta conversación para ayudarle.", privacyLink: "Política de privacidad",
+      restart: "Empezar de nuevo", typing: "La Jolla está escribiendo", privacy: "Las respuestas las escribe una IA. Lo que escribe lo procesan servicios de IA y lo guardamos para ayudarle.", privacyLink: "Política de privacidad",
     },
   };
   var BOOKING_URL = "https://bookings.cloud.microsoft/book/LajollaCoralGables@NETORGFT21116605.onmicrosoft.com/?ismsaljsauthenabled=true";
@@ -110,12 +111,12 @@
     ".ljc-launch[hidden]{display:none}.ljc-launch{width:56px;height:56px;border-radius:50%;background:var(--sage);color:#fff;border:0;cursor:pointer;box-shadow:0 6px 20px rgba(77,37,9,.22);font-size:24px}" +
     ".ljc :focus-visible{outline:2px solid var(--brown);outline-offset:2px}" +
     // Phones: a full-screen sheet, so the keyboard never hides the conversation.
-    "@media (max-width:600px){.ljc{right:0;bottom:0;left:0}.ljc-panel{width:100%;height:100dvh;border-radius:0;border:0}.ljc-bar>*{font-size:14px}}";
+    "@media (max-width:600px){.ljc{right:0;bottom:0;left:0}.ljc-panel{width:100%;height:100vh;height:100dvh;border-radius:0;border:0}.ljc-head{padding-top:max(14px,env(safe-area-inset-top))}.ljc-foot{padding-bottom:max(8px,env(safe-area-inset-bottom))}.ljc-bar>*{font-size:14px}}";
 
   var ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
   var ICON_PERSON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.3-3.6 4.1-5.4 7.5-5.4s6.2 1.8 7.5 5.4"/></svg>';
 
-  var root, panel, log, input, launchBtn, typing, returnFocus, labels = {}, busy = false;
+  var root, panel, log, input, launchBtn, typing, returnFocus, labels = {}, busy = false, pending = null;
   var options = { openBooking: null, privacyUrl: "/privacy.html" };
 
   function el(tag, cls, text) {
@@ -150,7 +151,7 @@
     x.type = "button";
     x.setAttribute("aria-label", t.close);
     x.onclick = close;
-    // Dan: a visible way to start the conversation again from the welcome.
+    // A visible way to start the conversation again from the welcome.
     var again = (labels.restart = el("button", "ljc-restart", t.restart));
     again.type = "button";
     again.onclick = restart;
@@ -218,7 +219,7 @@
     state.items.forEach(function (it, i) { if (it.who === "bot") lastBot = i; });
     state.items.forEach(function (it, i) {
       if (it.who === "me") addMsg(it.text, "me");
-      else render(it.reply, i === lastBot);
+      else if (it.who === "bot") render(it.reply, i === lastBot);
     });
   }
 
@@ -238,7 +239,11 @@
     scrollDown();
   }
 
+  // Only web, phone and email links become buttons; anything else stays plain text.
+  var safeUrl = function (url) { return typeof url === "string" && /^(https:\/\/|tel:|mailto:)/i.test(url); };
+
   function linkChip(label, url) {
+    if (!safeUrl(url)) return el("span", "ljc-link-text", label);
     var a = el("a", "ljc-link", label);
     a.href = url;
     a.target = "_blank";
@@ -254,6 +259,7 @@
   }
 
   function render(reply, withButtons) {
+    if (!reply || typeof reply.text !== "string") return;
     addMsg(reply.text, "bot");
     var quick = withButtons === false ? [] : reply.quickReplies || [];
     if (quick.length || reply.link) {
@@ -264,7 +270,7 @@
         c.onclick = function () { say(q.value, q.label); };
         chips.appendChild(c);
       });
-      if (reply.link) chips.appendChild(linkChip(reply.link.label, reply.link.url));
+      if (reply.link && reply.link.label) chips.appendChild(linkChip(reply.link.label, reply.link.url));
       log.appendChild(chips);
       scrollDown();
     }
@@ -273,6 +279,7 @@
   function setTyping(on) {
     if (on) {
       typing = el("div", "ljc-typing");
+      typing.setAttribute("role", "status");
       typing.setAttribute("aria-label", T[lang()].typing);
       typing.appendChild(el("i")); typing.appendChild(el("i")); typing.appendChild(el("i"));
       log.appendChild(typing);
@@ -292,13 +299,19 @@
       save();
     }
     setTyping(true);
+    // A request that hangs ends after 20 s with the same help as an error; starting over cancels it.
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 20000);
+    var mine = (pending = { ctrl: ctrl });
     fetch(api + "/api/chat", {
       method: "POST",
+      signal: ctrl ? ctrl.signal : undefined,
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ sessionId: state.id, message: value, lang: lang() }),
     })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
+        if (mine !== pending) return;
         setTyping(false);
         (data.replies || []).forEach(function (reply) {
           render(reply);
@@ -307,11 +320,15 @@
         save();
       })
       .catch(function () {
+        if (mine !== pending) return;
         setTyping(false);
         var t = T[lang()];
         render({ text: t.error, link: { label: t.calendar, url: BOOKING_URL } });
       })
-      .then(function () { busy = false; });
+      .then(function () {
+        clearTimeout(timer);
+        if (mine === pending) { pending = null; busy = false; }
+      });
   }
 
   /** The site can switch language after load: refresh the fixed labels on every open. */
@@ -334,7 +351,8 @@
     // The visitor's first view is the assistant's welcome, not a message they did not write.
     if (!state.items.length && !busy) say(lang() === "es" ? "Hola" : "Hello", null, true);
     scrollDown();
-    input.focus({ preventScroll: true });
+    // On phones the keyboard would cover the welcome: focus the field only with a mouse or keyboard.
+    if (!(window.matchMedia && matchMedia("(pointer: coarse)").matches)) input.focus({ preventScroll: true });
   }
 
   function close(keepFocus) {
@@ -345,7 +363,9 @@
 
   /** A new conversation: new id (the old one is deleted after 30 idle days), empty log, the welcome again. */
   function restart() {
-    if (busy) return;
+    if (pending) { if (pending.ctrl) pending.ctrl.abort(); pending = null; }
+    busy = false;
+    setTyping(false);
     state = fresh();
     save();
     log.textContent = "";
