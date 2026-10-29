@@ -15,6 +15,7 @@ def assistant(mode):
  async def handler(route):
   if route.request.method=='OPTIONS':await route.fulfill(status=204,headers=CORS);return
   if mode=='hang':return  # never answers
+  if mode=='slow' and json.loads(route.request.post_data)['message'] in ('Hello','Hola'):await asyncio.sleep(1.5)
   if mode=='error':await route.fulfill(status=500,headers=CORS,body='');return
   if mode=='verify' and 'turnstile' not in json.loads(route.request.post_data):
    await route.fulfill(status=403,headers=CORS,content_type='application/json',body=json.dumps({'error':'verification_required','siteKey':'test-site-key'}));return
@@ -65,6 +66,23 @@ async def main(base,output):
    assert sent and sent[0].get('section')==section,(section,sent)
    assert not errors,errors
    rows.append({'section_sent':section});await page.close()
+  # v1.36.1: a message typed while the welcome is still on its way is sent right after it, never dropped.
+  page,errors=await page_for(browser,base,'slow','en',390)
+  sent=[];page.on('request',lambda r:sent.append(json.loads(r.post_data)['message']) if r.method=='POST' and r.url.startswith(ASSISTANT) else None)
+  await page.evaluate('window.LaJollaChat.open()');await page.wait_for_timeout(150)
+  await page.locator('.ljc-in').fill('early question');await page.locator('.ljc-send').click()
+  await page.locator('.ljc-in').fill('second question');await page.locator('.ljc-send').click()
+  # Both show at once, before the welcome has answered, and both are sent after it, in order.
+  assert await page.locator('.ljc-me').all_inner_texts()==['early question','second question']
+  await page.wait_for_function('document.querySelectorAll(".ljc-bot").length>=3',timeout=8000)
+  assert sent==['Hello','early question','second question'],sent
+  # Start over drops anything still waiting.
+  await page.locator('.ljc-restart').click();await page.wait_for_timeout(100)
+  await page.locator('.ljc-in').fill('after restart');await page.locator('.ljc-send').click()
+  await page.wait_for_function('document.querySelectorAll(".ljc-bot").length>=2',timeout=8000)
+  assert sent[-2:]==['Hello','after restart'],sent
+  assert not errors,errors
+  rows.append({'queued_first_message':True});await page.close()
   # A saved chat older than 30 days is removed from the browser, not just ignored.
   page,errors=await page_for(browser,base,'ok','en',1440)
   await page.evaluate('localStorage.setItem("lj-chat",JSON.stringify({id:"old",items:[{who:"me",text:"old question"}],at:Date.now()-31*86400000}))')

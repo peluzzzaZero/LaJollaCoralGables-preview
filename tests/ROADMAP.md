@@ -277,3 +277,6 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 - Privacy names no AI, hosting, security-check or email provider for the chat; terms gain a short chat disclaimer (replies may be wrong; not an offer, quote or contract). See `tests/releases/v1.36.0.md`.
 
+## v1.36.1 — the first message in the chat is never lost
+
+- A tap or message sent while the chat's welcome was still loading was ignored; now it is sent right after. See `tests/releases/v1.36.1.md`.
