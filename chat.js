@@ -1,9 +1,10 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit e7fc857).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit e46263c).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
  *   <script src="https://<assistant-host>/widget.js" defer></script>
  *   window.LaJollaChat.open()   // the "Schedule a visit" seal opens it (owners' guide, section 3A)
+ *   window.LaJollaChat.open({ section: "lexington" })   // a first question that fits that part of the page
  *   window.LaJollaChat.configure({ openBooking: function (url) {...}, privacyUrl: "/privacy.html" })
  *     // the site's own Bookings dialog for calendar links (otherwise they open in a new tab)
  *
@@ -295,7 +296,7 @@
     } else if (typing) { typing.remove(); typing = null; }
   }
 
-  function say(value, label, silent) {
+  function say(value, label, silent, section) {
     if (busy) return;
     busy = true;
     // Old quick replies belong to earlier questions: only the latest ones stay tappable.
@@ -318,7 +319,7 @@
         method: "POST",
         signal: ctrl ? ctrl.signal : undefined,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ sessionId: state.id, message: value, lang: lang(), turnstile: token || undefined }),
+        body: JSON.stringify({ sessionId: state.id, message: value, lang: lang(), turnstile: token || undefined, section: section || undefined }),
       }).then(function (r) {
         if (r.status === 403 && !token)
           return r.json().then(function (d) {
@@ -416,14 +417,15 @@
     panel.setAttribute("aria-label", t.open);
   }
 
-  function open() {
+  /** opts.section ("lexington", "events"): the part of the page the visitor is on, for a fitting first question (guide 3A). */
+  function open(opts) {
     if (!root) build();
     returnFocus = document.activeElement;
     relabel();
     panel.hidden = false;
     if (launchBtn) launchBtn.hidden = true;
     // The visitor's first view is the assistant's welcome, not a message they did not write.
-    if (!state.items.length && !busy) say(lang() === "es" ? "Hola" : "Hello", null, true);
+    if (!state.items.length && !busy) say(lang() === "es" ? "Hola" : "Hello", null, true, opts && opts.section);
     scrollDown();
     focusInput();
   }

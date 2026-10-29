@@ -67,14 +67,18 @@ test("the visit invitation is a centred closing line, not an empty band with a l
 test("the seal opens the chat assistant, whose calendar button reuses the same-page booking window", () => {
   // Owners' assistant guide, section 3A: the seal opens the chat; "Schedule directly" stays one tap away.
   assert.match(html, /<script src="chat\.js\?v=[\d.]+" data-api="https:\/\/lajolla-assistant\.lajolla-assistant\.workers\.dev" defer><\/script>/);
-  assert.match(js, /if \(link\.id === "visit-cta" && window\.LaJollaChat\) \{\s*window\.LaJollaChat\.configure\(\{ privacyUrl: "privacy\.html", openBooking: function \(url\) \{ openCalendar\(link, url\); \} \}\);\s*window\.LaJollaChat\.open\(\);\s*return;\s*\}\s*openCalendar\(link, link\.href\);/);
+  assert.match(js, /if \(link\.id === "visit-cta" && window\.LaJollaChat\) \{\s*window\.LaJollaChat\.configure\(\{ privacyUrl: "privacy\.html", openBooking: function \(url\) \{ openCalendar\(link, url\); \} \}\);\s*(?:\/\/[^\n]*\s*)?window\.LaJollaChat\.open\(section\(\) \? \{ section: section\(\) \} : undefined\);\s*return;\s*\}\s*openCalendar\(link, link\.href\);/);
+  // v1.35 (guide 3A): the part of the page in view chooses the chat's first question.
+  assert.match(js, /return inView\("alcazar"\) \? "lexington" : inView\("events"\) \? "events" : "";/);
+  // On phones the floating seal shrinks while scrolling down, never hidden: 48px stays a full tap target.
+  assert.match(css, /\.landing-page \.btn\.visit-cta\.is-float\.is-compact \{ scale: \.75; \}/);
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
-  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit e7fc857\)/);
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit e46263c\)/);
   // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
   const body = chat.split("\n").slice(2).join("\n");
-  assert.equal(createHash("sha256").update(body).digest("hex"), "fc102f8cada3bab7a39be10077ef0c615e5960de14607c1b2a354edf8f0a1c4e");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "6c3aca98b721c2a86759dbf2ec584d4a33b7c80d5bec8ef8e39682d73d4c4bf2");
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);

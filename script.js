@@ -1455,12 +1455,20 @@
         // the calendar as before.
         if (link.id === "visit-cta" && window.LaJollaChat) {
           window.LaJollaChat.configure({ privacyUrl: "privacy.html", openBooking: function (url) { openCalendar(link, url); } });
-          window.LaJollaChat.open();
+          // Opened from The Lexington or the occasions, the chat's first question fits that part of the page (guide 3A).
+          window.LaJollaChat.open(section() ? { section: section() } : undefined);
           return;
         }
         openCalendar(link, link.href);
       });
     });
+    function section() {
+      const inView = (id) => {
+        const r = document.getElementById(id)?.getBoundingClientRect();
+        return !!r && r.top < innerHeight * .6 && r.bottom > innerHeight * .4;
+      };
+      return inView("alcazar") ? "lexington" : inView("events") ? "events" : "";
+    }
     function openCalendar(link, url) {
       opener = link.closest(".chapter-more")?.querySelector("summary") || link;
       document.querySelectorAll(".cinema-directory[open], .contact-directory[open], .mobile-menu[open]")
@@ -1568,6 +1576,19 @@
     window.addEventListener("scroll", request, { passive: true });
     window.addEventListener("resize", request, { passive: true });
     reduced.addEventListener?.("change", request);
+    // Owners' guide 3A: on phones the floating seal must not sit on the text while reading. Scrolling down it
+    // shrinks into the corner (still a 48px target, never hidden); scrolling up or pausing brings it back.
+    const narrow = matchMedia("(max-width: 900px)");
+    let lastY = window.scrollY, rest = 0;
+    window.addEventListener("scroll", () => {
+      const y = window.scrollY, down = y > lastY + 4, up = y < lastY - 4;
+      if (down || up) lastY = y;
+      clearTimeout(rest);
+      if (!narrow.matches || state !== "float") { cta.classList.remove("is-compact"); return; }
+      if (down) cta.classList.add("is-compact");
+      if (up) cta.classList.remove("is-compact");
+      rest = setTimeout(() => cta.classList.remove("is-compact"), 900);
+    }, { passive: true });
     if (typeof ResizeObserver === "function") {
       // Late images and fonts above "Let's begin" move its slot without a scroll. (The link itself is not observed:
       // place() resizes it every frame.)
