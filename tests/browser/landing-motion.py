@@ -145,6 +145,23 @@ async def main(base,output,args):
      assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
      await page.screenshot(path=str(output/f'depth-{engine.name}-{width}-{language}.png'))
      rows.append({'engine':engine.name,'width':width,'language':language,'arrival_layers':True,'photo_depth':True,'reading_flow':True})
+    if width<=900:
+     # v1.35 (guide 3A): scrolling down, the floating seal shrinks in its own corner (never drifts, never under 48px)
+     # and comes back after a pause.
+     cta=page.locator('#visit-cta')
+     await page.locator('#events').evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY)');await page.wait_for_timeout(1200)
+     assert await cta.evaluate('e=>e.classList.contains("is-float")&&!e.classList.contains("is-compact")')
+     full=await cta.bounding_box()
+     for _ in range(6):
+      await page.evaluate('scrollBy(0,60)');await page.wait_for_timeout(60)
+     await page.wait_for_timeout(400)
+     assert await cta.evaluate('e=>e.classList.contains("is-compact")'),'Scrolling down must shrink the floating seal on phones'
+     small=await cta.bounding_box()
+     assert 47.5<=small['width']<full['width'] and 47.5<=small['height'],(full,small)
+     assert abs(small['x']+small['width']-full['x']-full['width'])<=1.5 and abs(small['y']+small['height']-full['y']-full['height'])<=1.5,('The compact seal must stay in its corner',full,small)
+     await page.screenshot(path=str(output/f'seal-compact-{engine.name}-{width}.png'))
+     await page.wait_for_timeout(1300)
+     assert not await cta.evaluate('e=>e.classList.contains("is-compact")'),'A pause must bring the full seal back'
     # Short or landscape screens keep the photographs as an ordinary readable grid.
     # The album restages on resize; WebKit can take longer than a fixed pause, so wait for the class itself.
     await page.set_viewport_size({'width':844,'height':390})
@@ -164,6 +181,14 @@ async def main(base,output,args):
     cta=page.locator('#visit-cta')
     await cta.focus();await page.wait_for_timeout(300)
     assert await cta.evaluate('e=>getComputedStyle(e).transitionDuration.split(",").every(d=>parseFloat(d)===0)'), 'Reduced motion must remove the visit button easing'
+    if width<=900:
+     await page.locator('#events').evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY)');await page.wait_for_timeout(600)
+     assert await cta.evaluate('e=>e.classList.contains("is-float")')
+     start=await page.evaluate('scrollY')
+     for _ in range(6):
+      await page.evaluate('scrollBy(0,60)');await page.wait_for_timeout(60)
+     assert await page.evaluate('scrollY')>start+300
+     assert not await cta.evaluate('e=>e.classList.contains("is-compact")'),'Reduced motion keeps the seal its size'
 
     assert await page.locator('.ink-word').count()==0,'Reduced motion must restore plain paragraphs'
     assert await page.locator('.album-stage').evaluate('e=>getComputedStyle(e).position')!='sticky'
