@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit ae86a74).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 2d3364f).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -234,6 +234,8 @@
 
   function scrollDown() { log.scrollTop = log.scrollHeight; }
 
+  var OWN_HOST = /^https:\/\/(www\.)?((instagram\.com\/lajollacoralgables|tiktok\.com\/@lajollacoralgables|pinterest\.com\/LaJollaCoralGables)(\/|$)|google\.com\/maps\/|lajollacoralgables\.com\/|bookings\.cloud\.microsoft\/)/;
+
   // A short, readable name for an address the assistant wrote out in full.
   function urlLabel(url) {
     var t = T[lang()];
@@ -253,7 +255,8 @@
       var named = /^(\S+) \((https:\/\/[^\s)]+)\)$/.exec(part);
       if (named || /^https:/.test(part)) {
         var url = named ? named[2] : part;
-        var u = el("a", "ljc-url", named ? named[1] : urlLabel(url));
+        // A word of the text names the link only for the venue's own pages; any other address shows its real host.
+        var u = el("a", "ljc-url", named && OWN_HOST.test(url) ? named[1] : urlLabel(url));
         u.href = url;
         if (isBookingUrl(url) && options.openBooking) u.onclick = function (e) { e.preventDefault(); options.openBooking(url); };
         else { u.target = "_blank"; u.rel = "noopener"; }

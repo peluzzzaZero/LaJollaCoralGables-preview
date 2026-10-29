@@ -182,8 +182,12 @@ async def main(base,output,args):
     await cta.focus();await page.wait_for_timeout(300)
     assert await cta.evaluate('e=>getComputedStyle(e).transitionDuration.split(",").every(d=>parseFloat(d)===0)'), 'Reduced motion must remove the visit button easing'
     if width<=900:
+     await page.locator('#events').evaluate('e=>scrollTo(0,e.getBoundingClientRect().top+scrollY)');await page.wait_for_timeout(600)
+     assert await cta.evaluate('e=>e.classList.contains("is-float")')
+     start=await page.evaluate('scrollY')
      for _ in range(6):
       await page.evaluate('scrollBy(0,60)');await page.wait_for_timeout(60)
+     assert await page.evaluate('scrollY')>start+300
      assert not await cta.evaluate('e=>e.classList.contains("is-compact")'),'Reduced motion keeps the seal its size'
 
     assert await page.locator('.ink-word').count()==0,'Reduced motion must restore plain paragraphs'

@@ -18,7 +18,7 @@ def assistant(mode):
   if mode=='error':await route.fulfill(status=500,headers=CORS,body='');return
   if mode=='verify' and 'turnstile' not in json.loads(route.request.post_data):
    await route.fulfill(status=403,headers=CORS,content_type='application/json',body=json.dumps({'error':'verification_required','siteKey':'test-site-key'}));return
-  reply={'text':'Welcome. Call 786-290-8813 or write to info@lajollacoralgables.com. Follow us on Instagram (https://www.instagram.com/lajollacoralgables/) and see our reviews: https://www.google.com/maps/search/?api=1&query=La%20Jolla%20Coral%20Gables.','quickReplies':[{'label':'Schedule a tour','value':'schedule a tour'}],'link':{'label':'Unsafe','url':'javascript:alert(1)'}}
+  reply={'text':'Welcome. Call 786-290-8813 or write to info@lajollacoralgables.com. Follow us on Instagram (https://www.instagram.com/lajollacoralgables/) and see our reviews: https://www.google.com/maps/search/?api=1&query=La%20Jolla%20Coral%20Gables. Pay here (https://evil.example/pay).','quickReplies':[{'label':'Schedule a tour','value':'schedule a tour'}],'link':{'label':'Unsafe','url':'javascript:alert(1)'}}
   await route.fulfill(status=200,headers=CORS,content_type='application/json',body=json.dumps({'replies':[reply]}))
  return handler
 async def page_for(browser,base,mode,language,width):
@@ -49,13 +49,22 @@ async def main(base,output):
     assert 'https://' not in await page.locator('.ljc-bot').first.inner_text()
     links=await page.locator('.ljc-bot a.ljc-url').evaluate_all('els=>els.map(e=>[e.textContent,e.getAttribute("href"),e.target])')
     reviews='Read our Google reviews' if language=='en' else 'Leer reseñas en Google'
-    assert links==[['info@lajollacoralgables.com','mailto:info@lajollacoralgables.com',''],['Instagram','https://www.instagram.com/lajollacoralgables/','_blank'],[reviews,'https://www.google.com/maps/search/?api=1&query=La%20Jolla%20Coral%20Gables','_blank']],links
+    assert links==[['info@lajollacoralgables.com','mailto:info@lajollacoralgables.com',''],['Instagram','https://www.instagram.com/lajollacoralgables/','_blank'],[reviews,'https://www.google.com/maps/search/?api=1&query=La%20Jolla%20Coral%20Gables','_blank'],['evil.example','https://evil.example/pay','_blank']],links
     # Phones: no keyboard over the welcome; the sheet fills the screen.
     focused=await page.evaluate('document.activeElement.className')
     assert focused==('ljc-in' if width>=600 else 'ljc-panel'),(width,focused)
     await page.wait_for_timeout(400);await page.screenshot(path=str(output/f'chat-{width}-{language}.png'))
     assert not errors,errors
     rows.append({'language':language,'width':width,'ai_notice':True,'safe_links':True});await page.close()
+  # v1.35.0: opened from a section, the first message carries it; a plain open sends none.
+  for section in ('lexington',None):
+   page,errors=await page_for(browser,base,'ok','en',390)
+   sent=[];page.on('request',lambda r:sent.append(json.loads(r.post_data)) if r.method=='POST' and r.url.startswith(ASSISTANT) else None)
+   await page.evaluate('s=>window.LaJollaChat.open(s?{section:s}:undefined)',section)
+   await page.locator('.ljc-bot').first.wait_for()
+   assert sent and sent[0].get('section')==section,(section,sent)
+   assert not errors,errors
+   rows.append({'section_sent':section});await page.close()
   # A saved chat older than 30 days is removed from the browser, not just ignored.
   page,errors=await page_for(browser,base,'ok','en',1440)
   await page.evaluate('localStorage.setItem("lj-chat",JSON.stringify({id:"old",items:[{who:"me",text:"old question"}],at:Date.now()-31*86400000}))')
