@@ -2018,6 +2018,8 @@ html { scrollbar-gutter: stable; }
 .tour-paper ul { margin: 0; padding: 0; list-style: none; }
 .tour-paper li { position: relative; margin: 0 0 10px; padding-left: 20px; font: 400 clamp(16px, 1.3vw, 18px)/1.55 var(--font-display); color: var(--ink-soft); }
 .tour-paper li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-sage); }
+.tour-paper .tour-calendar-link { font: inherit; letter-spacing: inherit; color: var(--brand-sage); text-decoration-color: currentColor; text-decoration-thickness: 1px; }
+.tour-paper .tour-calendar-link:hover { color: var(--ink); text-decoration-thickness: 2px; }
 .tour-invite { max-width: 40rem; margin: clamp(52px, 6vw, 80px) auto 0; text-align: center; }
 .tour-invite h3.lockup-script { margin: 0; font-size: clamp(42px, 4.8vw, 66px); }
 .tour-mail { margin: 16px 0 0; font: 400 14px/1.5 var(--font-body); color: var(--ink-soft); }
