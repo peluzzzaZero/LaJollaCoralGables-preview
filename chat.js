@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 2d3364f).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 9f56e01).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -123,7 +123,7 @@
   var ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
   var ICON_PERSON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.3-3.6 4.1-5.4 7.5-5.4s6.2 1.8 7.5 5.4"/></svg>';
 
-  var root, panel, log, human, input, launchBtn, typing, returnFocus, labels = {}, busy = false, pending = null;
+  var root, panel, log, human, input, launchBtn, typing, returnFocus, labels = {}, busy = false, pending = null, queued = null;
   var options = { openBooking: null, privacyUrl: "/privacy.html" };
 
   function el(tag, cls, text) {
@@ -193,7 +193,7 @@
     form.onsubmit = function (e) {
       e.preventDefault();
       var v = input.value.trim();
-      if (v && !busy) { input.value = ""; say(v); }
+      if (v) { input.value = ""; say(v); }
     };
     var privacy = el("p", "ljc-privacy");
     privacy.appendChild((labels.privacy = el("span", null, t.privacy + " ")));
@@ -320,7 +320,8 @@
   }
 
   function say(value, label, silent, section) {
-    if (busy) return;
+    // A tap or message while the welcome (or the person check) is still on its way is sent right after it, never lost.
+    if (busy) { queued = [value, label, silent, section]; return; }
     busy = true;
     // Old quick replies belong to earlier questions: only the latest ones stay tappable.
     Array.prototype.forEach.call(log.querySelectorAll(".ljc-chip"), function (c) { c.remove(); });
@@ -385,7 +386,13 @@
       })
       .then(function () {
         clearTimeout(timer);
-        if (mine === pending) { pending = null; busy = false; }
+        if (mine === pending) {
+          pending = null;
+          busy = false;
+          var next = queued;
+          queued = null;
+          if (next) say(next[0], next[1], next[2], next[3]);
+        }
       });
   }
 
@@ -464,6 +471,7 @@
     if (pending) { if (pending.ctrl) pending.ctrl.abort(); pending = null; }
     endCheck();
     busy = false;
+    queued = null;
     setTyping(false);
     state = fresh();
     save();
