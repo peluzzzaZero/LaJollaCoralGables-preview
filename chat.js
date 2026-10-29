@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 5976f4a).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit e7fc857).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -326,7 +326,10 @@
             // The 20 s limit covers loading and the invisible check; it pauses only while the check waits for a tap.
             return new Promise(function (ok, fail) {
               giveUp = fail;
-              verify(d.siteKey, function () { clearTimeout(timer); }).then(ok, fail);
+              // When the check cannot run in this browser, the message goes again as "unavailable" and is answered
+              // from the assistant's fixed rules only (no model), instead of ending in an error.
+              // Later messages on this page skip the check that already failed.
+              verify(d.siteKey, function () { clearTimeout(timer); }).then(ok, function () { noCheck = true; ok("unavailable"); });
             }).then(function (t) {
               giveUp = null;
               if (mine !== pending) throw new Error("cancelled");
@@ -339,7 +342,7 @@
         return r.json();
       });
     }
-    post()
+    post(noCheck ? "unavailable" : undefined)
       .then(function (data) {
         if (mine !== pending) return;
         setTyping(false);
@@ -364,7 +367,7 @@
 
   /** Cloudflare Turnstile, loaded only when the assistant asks for it; resolves with a one-time token.
    *  `onTap` runs when the check needs the visitor to tap it (the widget is shown then). */
-  var turnstileReady, check = null;
+  var turnstileReady, check = null, noCheck = false;
   function verify(siteKey, onTap) {
     turnstileReady = turnstileReady || new Promise(function (ok, fail) {
       var sc = document.createElement("script");

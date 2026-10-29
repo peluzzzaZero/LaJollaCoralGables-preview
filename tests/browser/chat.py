@@ -76,10 +76,17 @@ async def main(base,output):
     assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
     assert [m.get('turnstile') for m in sent]==[None,'test-token'],sent
    else:
-    assert 'algo falló' in await page.locator('.ljc-bot').first.inner_text()
-    assert await page.locator('.ljc-log a.ljc-link[href^="https://bookings.cloud.microsoft/"]').count()==1
+    # A check that cannot run (Cloudflare client error) is not an error for the visitor: the message goes again as
+    # "unavailable" and the assistant answers from its fixed rules only. Later messages skip the failed check.
+    assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
+    assert [m.get('turnstile') for m in sent]==[None,'unavailable'],sent
+    await page.locator('.ljc-in').fill('Is there parking?');await page.locator('.ljc-in').press('Enter')
+    await page.locator('.ljc-bot').nth(1).wait_for(timeout=5000)
+    assert [m.get('turnstile') for m in sent]==[None,'unavailable','unavailable'],sent
+    assert await page.evaluate('tsCalls.length')==1
+    assert await page.locator('.ljc-bot').filter(has_text='algo falló').count()==0
    assert not errors,errors
-   rows.append({'person_check':'passed' if passes else 'failed','fallback':not passes});await page.close()
+   rows.append({'person_check':'passed' if passes else 'failed','answered_without_check':not passes});await page.close()
   # A check that never answers (or a script that never loads) ends after 20 s with the calendar.
   for stall in ('silent','no-script'):
    page,errors=await page_for(browser,base,'verify','en',1440)
