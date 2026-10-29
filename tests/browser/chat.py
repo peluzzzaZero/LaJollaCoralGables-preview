@@ -71,9 +71,16 @@ async def main(base,output):
   sent=[];page.on('request',lambda r:sent.append(json.loads(r.post_data)['message']) if r.method=='POST' and r.url.startswith(ASSISTANT) else None)
   await page.evaluate('window.LaJollaChat.open()');await page.wait_for_timeout(150)
   await page.locator('.ljc-in').fill('early question');await page.locator('.ljc-send').click()
-  await page.wait_for_function('document.querySelectorAll(".ljc-bot").length>=2',timeout=6000)
-  assert sent==['Hello','early question'],sent
-  assert await page.locator('.ljc-me').inner_text()=='early question'
+  await page.locator('.ljc-in').fill('second question');await page.locator('.ljc-send').click()
+  # Both show at once, before the welcome has answered, and both are sent after it, in order.
+  assert await page.locator('.ljc-me').all_inner_texts()==['early question','second question']
+  await page.wait_for_function('document.querySelectorAll(".ljc-bot").length>=3',timeout=8000)
+  assert sent==['Hello','early question','second question'],sent
+  # Start over drops anything still waiting.
+  await page.locator('.ljc-restart').click();await page.wait_for_timeout(100)
+  await page.locator('.ljc-in').fill('after restart');await page.locator('.ljc-send').click()
+  await page.wait_for_function('document.querySelectorAll(".ljc-bot").length>=2',timeout=8000)
+  assert sent[-2:]==['Hello','after restart'],sent
   assert not errors,errors
   rows.append({'queued_first_message':True});await page.close()
   # A saved chat older than 30 days is removed from the browser, not just ignored.

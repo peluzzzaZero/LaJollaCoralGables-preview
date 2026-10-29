@@ -17,7 +17,7 @@ The browser runner starts its own local server. It reviews 320×600, 390×667, 3
 
 ## Versions and publication
 
-`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.36.0. PRs to main must increase the version numerically before their checks can pass.
+`VERSION`, the HTML application-version metadata, CSS/JavaScript cache keys and `tests/releases/vVERSION.md` must agree. Use semantic versions: new capabilities increment the minor version; fixes increment the patch version; incompatible changes increment the major version. The first numbered redesign is 1.0.0; the current version is 1.36.1. PRs to main must increase the version numerically before their checks can pass.
 
 Work follows `feature/*` → pull request to `develop` → Claude CLI Sonnet high review (Sol medium only after a recorded failure) and tests → pull request to `main`. The **Quality and versioned release** workflow runs static and browser checks on both branches and their pull requests. On `main`, successful review creates an annotated immutable `vVERSION` tag and a GitHub release. An existing tag must point to the same commit; it is never moved or replaced.
 
