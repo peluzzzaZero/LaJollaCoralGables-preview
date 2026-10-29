@@ -71,10 +71,10 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
-  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 5976f4a\)/);
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit e7fc857\)/);
   // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
   const body = chat.split("\n").slice(2).join("\n");
-  assert.equal(createHash("sha256").update(body).digest("hex"), "a8a72e67a4d5c27b1f82c9d45a383e57a2b83cd8a905b7fb766357a3617bc544");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "fc102f8cada3bab7a39be10077ef0c615e5960de14607c1b2a354edf8f0a1c4e");
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);
@@ -86,7 +86,9 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Turnstile is loaded only when the assistant answers "verification_required", from Cloudflare's own address.
   assert.match(chat, /d\.error !== "verification_required"/);
   assert.match(chat, /"https:\/\/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js\?render=explicit"/);
-  // Invisible unless a tap is needed; a check that times out or cannot run ends with the calendar help.
+  // A check that cannot run sends the message again as "unavailable" (answered without AI); one that stalls ends with the calendar help.
+  assert.match(chat, /ok\("unavailable"\)/);
+  // Invisible unless a tap is needed.
   assert.match(chat, /appearance: "interaction-only"/);
   for (const callback of ["before-interactive-callback", "timeout-callback", "unsupported-callback", "error-callback", "expired-callback"]) assert.ok(chat.includes(`"${callback}"`), callback);
   // The public copy carries no internal notes.

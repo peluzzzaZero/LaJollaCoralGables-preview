@@ -146,12 +146,13 @@ async def main(base,output,args):
      await page.screenshot(path=str(output/f'depth-{engine.name}-{width}-{language}.png'))
      rows.append({'engine':engine.name,'width':width,'language':language,'arrival_layers':True,'photo_depth':True,'reading_flow':True})
     # Short or landscape screens keep the photographs as an ordinary readable grid.
-    await page.set_viewport_size({'width':844,'height':390});await page.wait_for_timeout(300)
-    assert not await page.locator('.venue-album').evaluate('e=>e.classList.contains("is-staged")')
+    # The album restages on resize; WebKit can take longer than a fixed pause, so wait for the class itself.
+    await page.set_viewport_size({'width':844,'height':390})
+    await page.wait_for_function('!document.querySelector(".venue-album").classList.contains("is-staged")',timeout=5000);await page.wait_for_timeout(300)
     assert await page.locator('.album-print').evaluate_all('items=>items.every(e=>getComputedStyle(e).position==="static"&&e.getBoundingClientRect().width>150)')
     assert await page.evaluate('document.documentElement.scrollWidth<=innerWidth')
-    await page.set_viewport_size({'width':width,'height':height});await page.wait_for_timeout(300)
-    assert await page.locator('.venue-album').evaluate('e=>e.classList.contains("is-staged")')
+    await page.set_viewport_size({'width':width,'height':height})
+    await page.wait_for_function('document.querySelector(".venue-album").classList.contains("is-staged")',timeout=5000)
     await page.emulate_media(reduced_motion='reduce');await page.wait_for_timeout(150)
     assert await image.evaluate('e=>getComputedStyle(e).transform')=='none'
     assert await image.evaluate('e=>getComputedStyle(e).clipPath')=='none'

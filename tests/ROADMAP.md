@@ -263,3 +263,8 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 - Dan asked for a link in the tour's "Good to know" card. Its sentence "choose an available time in the calendar" is now a text link that opens the Bookings calendar in the site's dialog; the seal stays the only "Schedule a visit". See `tests/releases/v1.34.2.md`.
 - Next: a short real-phone check of the link and the calendar on iPhone and Android.
+
+## v1.34.3 — the chat keeps answering when the person check cannot run
+
+- With Turnstile on, the public site's check failed in the browser (client error 600010) and the chat showed an error. Now a check that cannot run sends the message again as "unavailable" and the assistant answers from its fixed rules only, without AI. See `tests/releases/v1.34.3.md`.
+- Next: switch Turnstile on and test on the public site from a normal browser and a phone.
