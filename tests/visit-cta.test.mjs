@@ -71,10 +71,10 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
-  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit db182e5\)/);
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 5976f4a\)/);
   // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
   const body = chat.split("\n").slice(2).join("\n");
-  assert.equal(createHash("sha256").update(body).digest("hex"), "abb7b55e209c52d0702b221642e1e6c9e9aee1bb079f503cab1185c7b1f02e0e");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "a8a72e67a4d5c27b1f82c9d45a383e57a2b83cd8a905b7fb766357a3617bc544");
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);
@@ -86,6 +86,9 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Turnstile is loaded only when the assistant answers "verification_required", from Cloudflare's own address.
   assert.match(chat, /d\.error !== "verification_required"/);
   assert.match(chat, /"https:\/\/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js\?render=explicit"/);
+  // Invisible unless a tap is needed; a check that times out or cannot run ends with the calendar help.
+  assert.match(chat, /appearance: "interaction-only"/);
+  for (const callback of ["before-interactive-callback", "timeout-callback", "unsupported-callback", "error-callback", "expired-callback"]) assert.ok(chat.includes(`"${callback}"`), callback);
   // The public copy carries no internal notes.
   assert.doesNotMatch(chat, /Epic Lux|\/\/ Dan:/);
 });
