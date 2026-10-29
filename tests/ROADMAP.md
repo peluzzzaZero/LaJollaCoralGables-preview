@@ -253,3 +253,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 - Dan put the website chat first. The seal now opens the assistant from the owners' guide (welcome, five buttons, "Schedule directly" and "Talk to a person" always visible). Without the assistant, the seal still opens the calendar. The privacy page explains the chat. See `tests/releases/v1.34.0.md`.
 - Live with it: the guide's hand-off (a visitor leaves a name, a phone or email and the question in the conversation) and the team alert by email to info@, delivered to the info@ inbox in a test on 28 Oct. The chat says that its replies are written by AI.
 - Next: an out-of-hours message; then Telegram, Instagram and WhatsApp.
+
+## v1.34.1 — "Good to know" links to the tour calendar
+
+- Dan asked for a link in the tour's "Good to know" card. Its sentence "choose an available time in the calendar" is now a text link that opens the Bookings calendar in the site's dialog; the seal stays the only "Schedule a visit". See `tests/releases/v1.34.1.md`.

@@ -303,7 +303,8 @@
       "tour.step3.title": "Talk with our team",
       "tour.step3.body": "Share your date, your guests and your ideas, and ask everything you need.",
       "tour.infoTitle": "Good to know",
-      "tour.info.appointment": "Tours are by appointment; choose an available time in the calendar.",
+      "tour.info.appointmentLead": "Tours are by appointment;",
+      "tour.info.appointmentLink": "choose an available time in the calendar",
       "tour.info.reserve": "A tour appointment does not reserve a space for an event.",
       "tour.info.bring": "Bring your ideas and inspiration to share with our team.",
       "tour.planAlt": "Floor plan of La Jolla, first and second floor.",
@@ -659,7 +660,8 @@
       "tour.step3.title": "Hable con nuestro equipo",
       "tour.step3.body": "Cuéntenos su fecha, sus invitados y sus ideas, y pregunte todo lo que necesite.",
       "tour.infoTitle": "Conviene saber",
-      "tour.info.appointment": "Los tours son con cita previa; elija un horario disponible en el calendario.",
+      "tour.info.appointmentLead": "Los tours son con cita previa;",
+      "tour.info.appointmentLink": "elija un horario disponible en el calendario",
       "tour.info.reserve": "Una cita de tour no reserva un espacio para un evento.",
       "tour.info.bring": "Traiga sus ideas e inspiración para compartirlas con nuestro equipo.",
       "tour.planAlt": "Plano de La Jolla, planta baja y planta alta.",
@@ -1440,7 +1442,8 @@
     if (!viewer || typeof viewer.showModal !== "function") return;
     const frame = viewer.querySelector("iframe");
     let opener;
-    document.querySelectorAll("[data-booking-opener]").forEach(function (link) {
+    // "Good to know" in the tour also opens the calendar from its own sentence: a text link, not a second button.
+    document.querySelectorAll("[data-booking-opener], [data-calendar-link]").forEach(function (link) {
       link.setAttribute("aria-haspopup", "dialog");
       link.setAttribute("aria-controls", "booking-viewer");
       link.addEventListener("click", function (event) {
