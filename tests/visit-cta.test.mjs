@@ -108,9 +108,19 @@ test("the privacy page explains the chat assistant in both languages", () => {
   const privacy = readFileSync(new URL("../privacy.html", import.meta.url), "utf8");
   assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>On the home page, Schedule a visit opens[^<]*replies are written by AI/);
   assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>En la página de inicio, Agende una visita abre[^<]*respuestas las escribe una IA/);
-  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*hosted by Cloudflare[^<]*30 days without activity[^<]*Estimates shown in the chat are informational/);
-  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*alojado en Cloudflare[^<]*30 días sin actividad[^<]*estimados que muestra el chat son informativos/);
-  // The person check (Cloudflare Turnstile) that chat.js loads when the assistant asks for it.
-  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*Cloudflare Turnstile, to check once per conversation that the chat is used by a person/);
-  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*Cloudflare Turnstile, para comprobar una vez por conversación que el chat lo usa una persona/);
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*third-party technology and cloud service providers[^<]*30 days without activity[^<]*does not sell chat information or use it for advertising[^<]*answers and estimates are informational/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*proveedores externos de tecnología y servicios en la nube[^<]*30 días sin actividad[^<]*no vende la información del chat ni la usa para publicidad[^<]*respuestas y estimados son informativos/);
+  // The person check that chat.js loads when the assistant asks for it, described without naming the service.
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*automated security check may run once per conversation to confirm that the chat is used by a person/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*comprobación de seguridad automática una vez por conversación para confirmar que el chat lo usa una persona/);
+});
+
+test("the legal pages do not name the chat's technology providers", () => {
+  for (const name of ["privacy.html", "terms.html"]) {
+    const page = readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
+    assert.doesNotMatch(page, /nvidia|cloudflare|workers ai|turnstile|microsoft 365|gemma|minimax|openai|anthropic|groq/i, name);
+  }
+  const terms = readFileSync(new URL("../terms.html", import.meta.url), "utf8");
+  assert.match(terms, /<h2>Chat assistant<\/h2>\s*<p>[^<]*may be incomplete or wrong[^<]*not reserve a date for an event/);
+  assert.match(terms, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*pueden ser incompletas o incorrectas[^<]*no reserva una fecha para un evento/);
 });
