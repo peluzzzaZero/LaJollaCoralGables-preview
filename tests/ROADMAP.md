@@ -258,3 +258,8 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 - Dan asked for protection against bots spending the free AI quota. `chat.js` now runs Cloudflare Turnstile (usually invisible) when the assistant asks for it, once per conversation, and the privacy page says so. The assistant also answers courtesy and injection attempts without AI, limits each address and keeps a daily AI budget. See `tests/releases/v1.34.1.md`.
 - Next: turn the check on in the assistant once this release is live; a real-iPhone check of the chat.
+
+## v1.34.2 — "Good to know" links to the tour calendar
+
+- Dan asked for a link in the tour's "Good to know" card. Its sentence "choose an available time in the calendar" is now a text link that opens the Bookings calendar in the site's dialog; the seal stays the only "Schedule a visit". See `tests/releases/v1.34.2.md`.
+- Next: a short real-phone check of the link and the calendar on iPhone and Android.

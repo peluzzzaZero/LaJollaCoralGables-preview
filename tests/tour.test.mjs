@@ -27,6 +27,18 @@ test("the tour relies on the single floating visit button, with email as the sec
   assert.match(section, /href="mailto:info@lajollacoralgables\.com"/);
 });
 
+test("Good to know links its calendar sentence to the booking calendar as text, not as a second button (Dan, 29 Oct)", () => {
+  const links = chapter().match(/<a [^>]*data-calendar-link[^>]*>[^<]*<\/a>/g) || [];
+  assert.equal(links.length, 1, links.join("\n"));
+  assert.match(links[0], /class="text-link tour-calendar-link" href="https:\/\/bookings\.cloud\.microsoft\/book\/[^"]+"/);
+  assert.match(links[0], /data-i18n="tour\.info\.appointmentLink">choose an available time in the calendar<\/a>/);
+  assert.doesNotMatch(links[0], /\bbtn\b/);
+  assert.match(js, /"tour\.info\.appointmentLink": "elija un horario disponible en el calendario"/);
+  // The site's own Bookings dialog opens it; without JavaScript it is an ordinary link to the calendar.
+  assert.match(js, /querySelectorAll\("\[data-booking-opener\], \[data-calendar-link\]"\)/);
+  assert.match(css, /\.tour-paper \.tour-calendar-link \{[^}]*color: var\(--brand-sage\)/);
+});
+
 test("no commercial terms from the brochure: prices, packages, capacity, partners or inclusions", () => {
   assert.ok(copy().length >= 32, "EN and ES copy");
   for (const text of [chapter(), ...copy()]) {

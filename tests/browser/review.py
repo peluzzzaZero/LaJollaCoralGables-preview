@@ -92,7 +92,14 @@ async def main(base,output):
     # The dialog's close event (which returns focus) may be dispatched in a later task.
     try:await page.wait_for_function('document.activeElement===document.getElementById("visit-cta")',timeout=2000)
     except Exception:raise AssertionError(('focus not returned',width,language,await page.evaluate('[document.activeElement.outerHTML.slice(0,120),document.getElementById("visit-cta").className,getComputedStyle(document.getElementById("visit-cta")).visibility]')))
-    rows.append({'width':width,'language':language,'complete_visible_flow':True,'chat':True,'calendar':True})
+    # "Good to know" in the tour links its calendar sentence straight to the same calendar window, not to the chat.
+    link=page.locator('#tour .tour-calendar-link');assert await link.count()==1
+    await link.scroll_into_view_if_needed();await link.click()
+    await page.frame_locator('.booking-frame').locator('h1').wait_for()
+    assert page.url==url and not await page.evaluate('!!(window.LaJollaChat&&LaJollaChat.isOpen())')
+    await page.keyboard.press('Escape');await page.locator('#booking-viewer').wait_for(state='hidden')
+    await page.wait_for_function('document.activeElement===document.querySelector("#tour .tour-calendar-link")',timeout=2000)
+    rows.append({'width':width,'language':language,'complete_visible_flow':True,'chat':True,'calendar':True,'tour_link':True})
    assert not errors,errors
    assert all(any(f'/cinematic/{n}.' in u for n in ('journey','journey-hd','venue-walk','venue-walk-mobile')) for u in media),media
    # No inquiry forms; the only one is the chat assistant's message box.
