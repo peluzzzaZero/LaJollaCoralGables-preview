@@ -95,6 +95,7 @@ jobs:
           python tests/browser/social.py --webkit --output review-artifacts/social
           python tests/browser/venue-walk.py --webkit --output review-artifacts/venue-walk
           python tests/browser/occasion-photos.py --webkit --output review-artifacts/occasion-photos
+          python tests/browser/chat.py --output review-artifacts/chat
       - name: Live Google map check (informational)
         continue-on-error: true
         run: python tests/browser/map-live.py

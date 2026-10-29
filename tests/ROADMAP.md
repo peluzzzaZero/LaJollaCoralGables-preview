@@ -247,3 +247,9 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 - Dan found the board static. It now arrives with the scroll (the split closes, the LJ seal stamps the seam, the plaque polaroid drops onto the corner; polaroids dealt in on phones), the two large pictures drift in their frames, and on desktop the picture under the pointer zooms while the seal turns once. Reduced motion and Save-Data keep it still.
 - Dan flagged three places. The floor plan's floors now sit side by side with each label under its own floor; the florals photograph in Services is a framed print showing the whole bouquet; The Lexington picture fills its arched window. See `tests/releases/v1.33.0.md`.
 - Next: a lighter default plan image with the full drawing on tap.
+
+## v1.34.0 — the visit seal opens La Jolla's chat assistant
+
+- Dan put the website chat first. The seal now opens the assistant from the owners' guide (welcome, five buttons, "Schedule directly" and "Talk to a person" always visible). Without the assistant, the seal still opens the calendar. The privacy page explains the chat. See `tests/releases/v1.34.0.md`.
+- Live with it: the guide's hand-off (a visitor leaves a name, a phone or email and the question in the conversation) and the team alert by email to info@, delivered to the info@ inbox in a test on 28 Oct. The chat says that its replies are written by AI.
+- Next: an out-of-hours message; then Telegram, Instagram and WhatsApp.
