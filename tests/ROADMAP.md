@@ -253,3 +253,8 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 - Dan put the website chat first. The seal now opens the assistant from the owners' guide (welcome, five buttons, "Schedule directly" and "Talk to a person" always visible). Without the assistant, the seal still opens the calendar. The privacy page explains the chat. See `tests/releases/v1.34.0.md`.
 - Live with it: the guide's hand-off (a visitor leaves a name, a phone or email and the question in the conversation) and the team alert by email to info@, delivered to the info@ inbox in a test on 28 Oct. The chat says that its replies are written by AI.
 - Next: an out-of-hours message; then Telegram, Instagram and WhatsApp.
+
+## v1.34.1 — the chat checks once that a person is writing
+
+- Dan asked for protection against bots spending the free AI quota. `chat.js` now runs Cloudflare Turnstile (usually invisible) when the assistant asks for it, once per conversation, and the privacy page says so. The assistant also answers courtesy and injection attempts without AI, limits each address and keeps a daily AI budget. See `tests/releases/v1.34.1.md`.
+- Next: turn the check on in the assistant once this release is live; a real-iPhone check of the chat.
