@@ -1456,18 +1456,20 @@
         if (link.id === "visit-cta" && window.LaJollaChat) {
           window.LaJollaChat.configure({ privacyUrl: "privacy.html", openBooking: function (url) { openCalendar(link, url); } });
           // Opened from The Lexington or the occasions, the chat's first question fits that part of the page (guide 3A).
-          window.LaJollaChat.open(section() ? { section: section() } : undefined);
+          const from = section();
+          window.LaJollaChat.open(from ? { section: from } : undefined);
           return;
         }
         openCalendar(link, link.href);
       });
     });
+    // The part of the page that holds the middle line of the screen.
     function section() {
-      const inView = (id) => {
+      const holds = (id) => {
         const r = document.getElementById(id)?.getBoundingClientRect();
-        return !!r && r.top < innerHeight * .6 && r.bottom > innerHeight * .4;
+        return !!r && r.top <= innerHeight / 2 && r.bottom > innerHeight / 2;
       };
-      return inView("alcazar") ? "lexington" : inView("events") ? "events" : "";
+      return holds("alcazar") ? "lexington" : holds("events") ? "events" : "";
     }
     function openCalendar(link, url) {
       opener = link.closest(".chapter-more")?.querySelector("summary") || link;
@@ -1504,7 +1506,7 @@
     const ease = (t) => t * t * (3 - 2 * t);
     const mix = (a, b, t) => a + (b - a) * t;
     const radius = parseFloat(getComputedStyle(start).borderTopLeftRadius) || 0;
-    let frame = 0, settle = 0, state = "";
+    let frame = 0, settle = 0, state = "", formed = false;
     function aside(f) {
       const m = avoid?.getBoundingClientRect();
       const box = { left: f.left, top: f.top, width: f.width, height: f.height, tucked: 0 };
@@ -1556,6 +1558,9 @@
       cta.style.setProperty("--cta-seal", clamp((m - .2) / .45).toFixed(3));
       // The monogram and its ring always fit the current height, so nothing is cut off mid-morph.
       cta.style.setProperty("--cta-size", h.toFixed(1) + "px");
+      // Only the fully formed seal may shrink; while it is still changing shape it keeps its size.
+      formed = m > .98;
+      if (!formed) cta.classList.remove("is-compact");
       const next = m < .5 ? (home > 0 ? "end" : "start") : "float";
       if (next !== state) {
         cta.classList.remove("is-" + state);
@@ -1579,12 +1584,14 @@
     // Owners' guide 3A: on phones the floating seal must not sit on the text while reading. Scrolling down it
     // shrinks into the corner (still a 48px target, never hidden); scrolling up or pausing brings it back.
     const narrow = matchMedia("(max-width: 900px)");
-    let lastY = window.scrollY, rest = 0;
+    // A small wobble of the finger, or the rubber band past either end of the page, does not flip it.
+    const scrolled = () => Math.max(0, Math.min(window.scrollY, document.documentElement.scrollHeight - innerHeight));
+    let lastY = scrolled(), rest = 0;
     window.addEventListener("scroll", () => {
-      const y = window.scrollY, down = y > lastY + 4, up = y < lastY - 4;
+      const y = scrolled(), down = y > lastY + 24, up = y < lastY - 24;
       if (down || up) lastY = y;
       clearTimeout(rest);
-      if (!narrow.matches || state !== "float") { cta.classList.remove("is-compact"); return; }
+      if (!narrow.matches || state !== "float" || !formed) { cta.classList.remove("is-compact"); return; }
       if (down) cta.classList.add("is-compact");
       if (up) cta.classList.remove("is-compact");
       rest = setTimeout(() => cta.classList.remove("is-compact"), 900);

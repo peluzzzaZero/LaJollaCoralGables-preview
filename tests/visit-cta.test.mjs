@@ -67,11 +67,16 @@ test("the visit invitation is a centred closing line, not an empty band with a l
 test("the seal opens the chat assistant, whose calendar button reuses the same-page booking window", () => {
   // Owners' assistant guide, section 3A: the seal opens the chat; "Schedule directly" stays one tap away.
   assert.match(html, /<script src="chat\.js\?v=[\d.]+" data-api="https:\/\/lajolla-assistant\.lajolla-assistant\.workers\.dev" defer><\/script>/);
-  assert.match(js, /if \(link\.id === "visit-cta" && window\.LaJollaChat\) \{\s*window\.LaJollaChat\.configure\(\{ privacyUrl: "privacy\.html", openBooking: function \(url\) \{ openCalendar\(link, url\); \} \}\);\s*(?:\/\/[^\n]*\s*)?window\.LaJollaChat\.open\(section\(\) \? \{ section: section\(\) \} : undefined\);\s*return;\s*\}\s*openCalendar\(link, link\.href\);/);
+  assert.match(js, /if \(link\.id === "visit-cta" && window\.LaJollaChat\) \{\s*window\.LaJollaChat\.configure\(\{ privacyUrl: "privacy\.html", openBooking: function \(url\) \{ openCalendar\(link, url\); \} \}\);\s*(?:\/\/[^\n]*\s*)?const from = section\(\);\s*window\.LaJollaChat\.open\(from \? \{ section: from \} : undefined\);\s*return;\s*\}\s*openCalendar\(link, link\.href\);/);
   // v1.35 (guide 3A): the part of the page in view chooses the chat's first question.
-  assert.match(js, /return inView\("alcazar"\) \? "lexington" : inView\("events"\) \? "events" : "";/);
+  assert.match(js, /r\.top <= innerHeight \/ 2 && r\.bottom > innerHeight \/ 2;\s*\};\s*return holds\("alcazar"\) \? "lexington" : holds\("events"\) \? "events" : "";/);
   // On phones the floating seal shrinks while scrolling down, never hidden: 48px stays a full tap target.
   assert.match(css, /\.landing-page \.btn\.visit-cta\.is-float\.is-compact \{ scale: \.75; \}/);
+  // The shrink eases only without reduced motion; only the fully formed seal shrinks, and a wobble does not flip it.
+  assert.match(css, /@media \(max-width: 900px\) and \(prefers-reduced-motion: no-preference\) \{\s*\.landing-page \.btn\.visit-cta\.is-float \{ transition:[^}]*scale \.3s/);
+  assert.doesNotMatch(css.replace(/@media \(max-width: 900px\) and \(prefers-reduced-motion: no-preference\) \{[^]*?\n\}/, ""), /scale \.3s/);
+  assert.match(js, /formed = m > \.98;\s*if \(!formed\) cta\.classList\.remove\("is-compact"\);/);
+  assert.match(js, /down = y > lastY \+ 24, up = y < lastY - 24;/);
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");

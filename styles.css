@@ -2306,8 +2306,11 @@ html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
 /* v1.35 (owners' guide 3A): on phones the floating seal shrinks into its corner while the visitor scrolls down
    and comes back when they scroll up or pause. 64px × .75 = 48px, still a full tap target; never hidden. */
 @media (max-width: 900px) {
-  .landing-page .btn.visit-cta.is-float { transform-origin: 100% 100%; transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), scale .3s var(--ease); }
+  .landing-page .btn.visit-cta.is-float { transform-origin: 100% 100%; }
   .landing-page .btn.visit-cta.is-float.is-compact { scale: .75; }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .landing-page .btn.visit-cta.is-float { transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease), scale .3s var(--ease); }
 }
 body.booking-open .visit-cta { visibility: hidden; }
 /* v1.34: the chat opens where the seal floats; the seal steps aside while the chat is open. */
