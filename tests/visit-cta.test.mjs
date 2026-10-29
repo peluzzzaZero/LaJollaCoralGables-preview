@@ -71,10 +71,10 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
-  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 4e50395\)/);
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 5976f4a\)/);
   // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
   const body = chat.split("\n").slice(2).join("\n");
-  assert.equal(createHash("sha256").update(body).digest("hex"), "ea94f27e6f09f64a23619660b6d666e0af96e0d5da08edee8ec4ce3da0025399");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "a8a72e67a4d5c27b1f82c9d45a383e57a2b83cd8a905b7fb766357a3617bc544");
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);
@@ -83,6 +83,12 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   assert.match(chat, /subtitle: "Asistente con IA del equipo de La Jolla"/);
   assert.match(chat, /privacy: "Replies are written by AI\./);
   assert.match(chat, /privacy: "Las respuestas las escribe una IA\./);
+  // Turnstile is loaded only when the assistant answers "verification_required", from Cloudflare's own address.
+  assert.match(chat, /d\.error !== "verification_required"/);
+  assert.match(chat, /"https:\/\/challenges\.cloudflare\.com\/turnstile\/v0\/api\.js\?render=explicit"/);
+  // Invisible unless a tap is needed; a check that times out or cannot run ends with the calendar help.
+  assert.match(chat, /appearance: "interaction-only"/);
+  for (const callback of ["before-interactive-callback", "timeout-callback", "unsupported-callback", "error-callback", "expired-callback"]) assert.ok(chat.includes(`"${callback}"`), callback);
   // The public copy carries no internal notes.
   assert.doesNotMatch(chat, /Epic Lux|\/\/ Dan:/);
 });
@@ -93,4 +99,7 @@ test("the privacy page explains the chat assistant in both languages", () => {
   assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>En la página de inicio, Agende una visita abre[^<]*respuestas las escribe una IA/);
   assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*hosted by Cloudflare[^<]*30 days without activity[^<]*Estimates shown in the chat are informational/);
   assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*alojado en Cloudflare[^<]*30 días sin actividad[^<]*estimados que muestra el chat son informativos/);
+  // The person check (Cloudflare Turnstile) that chat.js loads when the assistant asks for it.
+  assert.match(privacy, /<h2>Chat assistant<\/h2>\s*<p>[^<]*Cloudflare Turnstile, to check once per conversation that the chat is used by a person/);
+  assert.match(privacy, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*Cloudflare Turnstile, para comprobar una vez por conversación que el chat lo usa una persona/);
 });

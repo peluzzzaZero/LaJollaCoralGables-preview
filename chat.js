@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 4e50395).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit 5976f4a).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -11,6 +11,9 @@
  *   data-api       assistant base URL (default: the script's own origin)
  *   data-launcher  "true" to show a small round launcher (default: none, the site opens it)
  *   data-lang      "en" | "es" (default: <html lang> or the site's language switch)
+ *
+ * When the assistant asks for it (403 verification_required), the widget runs Cloudflare Turnstile
+ * once per conversation, usually invisibly, and sends the message again with the token.
  *
  * Look and behaviour follow the owners' assistant guide (20 Oct 2026):
  * brand colours and Garamond, "Talk to a person" always visible, a short privacy
@@ -101,6 +104,8 @@
     ".ljc-typing i{width:6px;height:6px;border-radius:50%;background:var(--sand);opacity:.4;animation:ljc-dot 1s infinite}" +
     ".ljc-typing i:nth-child(2){animation-delay:.15s}.ljc-typing i:nth-child(3){animation-delay:.3s}" +
     "@keyframes ljc-dot{50%{opacity:1}}" +
+    // The check takes no room while it runs invisibly; only a check that needs a tap is shown.
+    ".ljc-human{display:flex;justify-content:center;overflow:hidden;max-height:0}.ljc-human.ljc-tap{max-height:none;padding:0 8px 10px}" +
     ".ljc-foot{border-top:1px solid var(--line);background:var(--paper);padding:10px 12px 8px}" +
     ".ljc-form{display:flex;gap:8px}" +
     ".ljc-in{flex:1;font:16px/1.3 Manrope,'Helvetica Neue',Arial,sans-serif;border:1px solid var(--line);border-radius:999px;padding:10px 15px;min-width:0;background:#fffdf8;color:var(--brown)}" +
@@ -117,7 +122,7 @@
   var ICON_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
   var ICON_PERSON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.3-3.6 4.1-5.4 7.5-5.4s6.2 1.8 7.5 5.4"/></svg>';
 
-  var root, panel, log, input, launchBtn, typing, returnFocus, labels = {}, busy = false, pending = null;
+  var root, panel, log, human, input, launchBtn, typing, returnFocus, labels = {}, busy = false, pending = null;
   var options = { openBooking: null, privacyUrl: "/privacy.html" };
 
   function el(tag, cls, text) {
@@ -202,6 +207,7 @@
     panel.appendChild(head);
     panel.appendChild(bar);
     panel.appendChild(log);
+    panel.appendChild((human = el("div", "ljc-human")));
     panel.appendChild(foot);
     root.appendChild(panel);
     if (launcher) {
@@ -303,15 +309,37 @@
     setTyping(true);
     // A request that hangs ends after 20 s with the same help as an error; starting over cancels it.
     var ctrl = window.AbortController ? new AbortController() : null;
-    var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 20000);
+    var giveUp = null;
+    var expire = function () { if (ctrl) ctrl.abort(); if (giveUp) giveUp(new Error("timeout")); };
+    var timer = setTimeout(expire, 20000);
     var mine = (pending = { ctrl: ctrl });
-    fetch(api + "/api/chat", {
-      method: "POST",
-      signal: ctrl ? ctrl.signal : undefined,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ sessionId: state.id, message: value, lang: lang() }),
-    })
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    function post(token) {
+      return fetch(api + "/api/chat", {
+        method: "POST",
+        signal: ctrl ? ctrl.signal : undefined,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ sessionId: state.id, message: value, lang: lang(), turnstile: token || undefined }),
+      }).then(function (r) {
+        if (r.status === 403 && !token)
+          return r.json().then(function (d) {
+            if (d.error !== "verification_required" || !d.siteKey) throw new Error(403);
+            // The 20 s limit covers loading and the invisible check; it pauses only while the check waits for a tap.
+            return new Promise(function (ok, fail) {
+              giveUp = fail;
+              verify(d.siteKey, function () { clearTimeout(timer); }).then(ok, fail);
+            }).then(function (t) {
+              giveUp = null;
+              if (mine !== pending) throw new Error("cancelled");
+              clearTimeout(timer);
+              timer = setTimeout(expire, 20000);
+              return post(t);
+            });
+          });
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      });
+    }
+    post()
       .then(function (data) {
         if (mine !== pending) return;
         setTyping(false);
@@ -323,6 +351,7 @@
       })
       .catch(function () {
         if (mine !== pending) return;
+        endCheck();
         setTyping(false);
         var t = T[lang()];
         render({ text: t.error, link: { label: t.calendar, url: BOOKING_URL } });
@@ -331,6 +360,46 @@
         clearTimeout(timer);
         if (mine === pending) { pending = null; busy = false; }
       });
+  }
+
+  /** Cloudflare Turnstile, loaded only when the assistant asks for it; resolves with a one-time token.
+   *  `onTap` runs when the check needs the visitor to tap it (the widget is shown then). */
+  var turnstileReady, check = null;
+  function verify(siteKey, onTap) {
+    turnstileReady = turnstileReady || new Promise(function (ok, fail) {
+      var sc = document.createElement("script");
+      sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      sc.async = true;
+      sc.onload = function () { if (window.turnstile) ok(window.turnstile); else { turnstileReady = null; fail(new Error("turnstile")); } };
+      sc.onerror = function () { turnstileReady = null; fail(new Error("turnstile")); };
+      document.head.appendChild(sc);
+    });
+    return turnstileReady.then(function (ts) {
+      return new Promise(function (ok, fail) {
+        endCheck();
+        var mine = (check = { ts: ts, id: null });
+        // A check left behind by "Start over" never touches the new conversation's check.
+        var done = function (fn, v) { if (check !== mine) return; endCheck(); fn(v); };
+        var no = function () { done(fail, new Error("turnstile")); };
+        mine.id = ts.render(human.appendChild(el("div")), {
+          sitekey: siteKey,
+          appearance: "interaction-only",
+          size: window.innerWidth < 420 ? "compact" : "normal",
+          language: lang(),
+          callback: function (token) { done(ok, token); },
+          "before-interactive-callback": function () { if (check !== mine) return; human.className = "ljc-human ljc-tap"; if (onTap) onTap(); },
+          "error-callback": no,
+          "expired-callback": no,
+          "timeout-callback": no,
+          "unsupported-callback": no,
+        });
+      });
+    });
+  }
+
+  function endCheck() {
+    if (check) { try { check.ts.remove(check.id); } catch (e) {} check = null; }
+    if (human) { human.textContent = ""; human.className = "ljc-human"; }
   }
 
   /** The site can switch language after load: refresh the fixed labels on every open. */
@@ -365,6 +434,7 @@
   /** A new conversation: new id (the old one is deleted after 30 idle days), empty log, the welcome again. */
   function restart() {
     if (pending) { if (pending.ctrl) pending.ctrl.abort(); pending = null; }
+    endCheck();
     busy = false;
     setTyping(false);
     state = fresh();
