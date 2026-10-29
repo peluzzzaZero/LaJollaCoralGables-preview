@@ -1553,6 +1553,8 @@
       cta.style.height = h.toFixed(1) + "px";
       cta.style.borderRadius = mix(radius, h / 2, m).toFixed(1) + "px";
       cta.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+      // The phone shrink (CSS scale) happens around the seal's on-screen corner, not the layout box's at the origin.
+      cta.style.transformOrigin = (x + w).toFixed(1) + "px " + (y + h).toFixed(1) + "px";
       // The words fade out over the first 40% while the monogram fades in from 20% to 65%.
       cta.style.setProperty("--cta-label", clamp(1 - m / .4).toFixed(3));
       cta.style.setProperty("--cta-seal", clamp((m - .2) / .45).toFixed(3));
@@ -1587,11 +1589,15 @@
     // A small wobble of the finger, or the rubber band past either end of the page, does not flip it.
     const scrolled = () => Math.max(0, Math.min(window.scrollY, document.documentElement.scrollHeight - innerHeight));
     let lastY = scrolled(), rest = 0;
+    // After a reload mid-page or a jump to a section, the next scroll is not read as "scrolling down".
+    const reset = () => { lastY = scrolled(); };
+    window.addEventListener("load", reset);
+    window.addEventListener("hashchange", reset);
     window.addEventListener("scroll", () => {
       const y = scrolled(), down = y > lastY + 24, up = y < lastY - 24;
       if (down || up) lastY = y;
       clearTimeout(rest);
-      if (!narrow.matches || state !== "float" || !formed) { cta.classList.remove("is-compact"); return; }
+      if (!narrow.matches || reduced.matches || state !== "float" || !formed) { cta.classList.remove("is-compact"); return; }
       if (down) cta.classList.add("is-compact");
       if (up) cta.classList.remove("is-compact");
       rest = setTimeout(() => cta.classList.remove("is-compact"), 900);

@@ -2304,9 +2304,9 @@ html:not(.cta-ready) .landing-page .btn.visit-cta { transition: none; }
   .visit-cta, .visit-cta-slot[data-cta-slot="float"] { right: max(28px, env(safe-area-inset-right)); bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px)); }
 }
 /* v1.35 (owners' guide 3A): on phones the floating seal shrinks into its corner while the visitor scrolls down
-   and comes back when they scroll up or pause. 64px × .75 = 48px, still a full tap target; never hidden. */
+   and comes back when they scroll up or pause. 64px × .75 = 48px, still a full tap target; never hidden. The script sets
+   transform-origin to the seal's on-screen corner and does not shrink it with reduced motion. */
 @media (max-width: 900px) {
-  .landing-page .btn.visit-cta.is-float { transform-origin: 100% 100%; }
   .landing-page .btn.visit-cta.is-float.is-compact { scale: .75; }
 }
 @media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
