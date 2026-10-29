@@ -80,10 +80,10 @@ test("the seal opens the chat assistant, whose calendar button reuses the same-p
   // Without the assistant, the seal is still the calendar link (fallback and no-JS).
   assert.match(js, /function openCalendar\(link, url\) \{[^]*?if \(!frame\.hasAttribute\("src"\)\) frame\.src = url;/);
   const chat = readFileSync(new URL("../chat.js", import.meta.url), "utf8");
-  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit 2d3364f\)/);
+  assert.match(chat, /Copied from github\.com\/peluzzzaZero\/lajollaAsistente web-widget\/widget\.js \(commit c375de2\)/);
   // Byte-for-byte the upstream file at that commit (after the two-line header): edits belong upstream.
   const body = chat.split("\n").slice(2).join("\n");
-  assert.equal(createHash("sha256").update(body).digest("hex"), "6d1f29b318593e9250bb851bec02f9d9bcbef72b800bd13fd8a06b9803f19458");
+  assert.equal(createHash("sha256").update(body).digest("hex"), "4935a557082b6ba478fddc086cde7ac6b3db8476b0cc1a80b91a4a8a6aacb8e1");
   assert.match(chat, /direct: "Schedule directly"/);
   assert.match(chat, /direct: "Agendar directo"/);
   assert.doesNotMatch(chat, /ballroom|facebook/i);
