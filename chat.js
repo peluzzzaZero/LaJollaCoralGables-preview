@@ -1,4 +1,4 @@
-/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit e46263c).
+/* Copied from github.com/peluzzzaZero/lajollaAsistente web-widget/widget.js (commit ae86a74).
  * Change it there first, then copy it here with a new cache key. The assistant runs on Cloudflare Workers. */
 /* La Jolla assistant: website chat widget (vanilla JS, no dependencies).
  *
@@ -35,13 +35,13 @@
     en: {
       subtitle: "AI assistant of the La Jolla team", placeholder: "Write a message", send: "Send", close: "Close chat", open: "Chat with La Jolla",
       error: "Sorry, something went wrong. You can book on our calendar, call 786-290-8813 or write to info@lajollacoralgables.com.",
-      calendar: "Open the booking calendar", direct: "Schedule directly", person: "Talk to a person", personMsg: "Talk to a person",
+      calendar: "Open the booking calendar", direct: "Schedule directly", person: "Talk to a person", personMsg: "Talk to a person", reviews: "Read our Google reviews", directions: "Get directions",
       restart: "Start over", typing: "La Jolla is writing", privacy: "Replies are written by AI. What you type is processed by AI services and kept to help you.", privacyLink: "Privacy policy",
     },
     es: {
       subtitle: "Asistente con IA del equipo de La Jolla", placeholder: "Escriba un mensaje", send: "Enviar", close: "Cerrar chat", open: "Chatear con La Jolla",
       error: "Perdone, algo falló. Puede reservar en nuestro calendario, llamar al 786-290-8813 o escribir a info@lajollacoralgables.com.",
-      calendar: "Abrir el calendario de reservas", direct: "Agendar directo", person: "Hablar con una persona", personMsg: "Hablar con una persona",
+      calendar: "Abrir el calendario de reservas", direct: "Agendar directo", person: "Hablar con una persona", personMsg: "Hablar con una persona", reviews: "Leer reseñas en Google", directions: "Cómo llegar",
       restart: "Empezar de nuevo", typing: "La Jolla está escribiendo", privacy: "Las respuestas las escribe una IA. Lo que escribe lo procesan servicios de IA y lo guardamos para ayudarle.", privacyLink: "Política de privacidad",
     },
   };
@@ -96,7 +96,7 @@
     ".ljc-bot{background:#fffdf8;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:5px}" +
     ".ljc-me{background:var(--sage);color:#fff;align-self:flex-end;border-bottom-right-radius:5px}" +
     ".ljc-chips{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start;max-width:100%}" +
-    ".ljc-tel{color:inherit;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}" +
+    ".ljc-tel{color:inherit;white-space:nowrap;text-decoration:underline;text-underline-offset:2px}.ljc a.ljc-url{color:inherit;text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}" +
     ".ljc-chip,.ljc-link{font:600 15px/1.25 'Cormorant Garamond',Georgia,serif;border:1px solid var(--sage);background:#fffdf8;color:var(--sage-dark);border-radius:999px;padding:6px 14px;cursor:pointer;text-decoration:none;text-align:left}" +
     ".ljc .ljc-chip:hover{background:var(--sage);color:#fff}" +
     // Beat the host page's own link colours (e.g. a:hover).
@@ -234,15 +234,35 @@
 
   function scrollDown() { log.scrollTop = log.scrollHeight; }
 
+  // A short, readable name for an address the assistant wrote out in full.
+  function urlLabel(url) {
+    var t = T[lang()];
+    if (isBookingUrl(url)) return t.calendar;
+    if (/^https:\/\/(www\.)?google\.com\/maps\/.*query=La(%20|\+)Jolla/.test(url)) return t.reviews;
+    if (/^https:\/\/(www\.)?google\.com\/maps\//.test(url)) return t.directions;
+    var host = url.replace(/^https:\/\/(www\.)?/, "").split(/[/?#]/)[0];
+    return ({ "instagram.com": "Instagram", "tiktok.com": "TikTok", "pinterest.com": "Pinterest", "lajollacoralgables.com": "lajollacoralgables.com" })[host] || host;
+  }
+
   function addMsg(text, who) {
     var msg = el("div", "ljc-msg " + (who === "me" ? "ljc-me" : "ljc-bot"));
-    // The venue's phone number is a tap-to-call link that never breaks across lines.
-    String(text).split(/(\b\d{3}-\d{3}-\d{4}\b)/).forEach(function (part, i) {
-      if (i % 2 && who !== "me") {
-        var a = el("a", "ljc-tel", part);
-        a.href = "tel:+1" + part.replace(/-/g, "");
-        msg.appendChild(a);
-      } else msg.appendChild(document.createTextNode(part));
+    // Links in the assistant's text are never shown as raw addresses: the phone becomes tap-to-call, the email a
+    // mail link, "Instagram (https://…)" the linked word "Instagram", and a bare address a short label.
+    String(text).split(/(\b\d{3}-\d{3}-\d{4}\b|[\w.+-]+@[\w-]+\.[\w.]*\w|[A-Za-zÀ-ÿ]+ \(https:\/\/[^\s)]+\)|https:\/\/[^\s)]*[^\s).,;:!?])/).forEach(function (part, i) {
+      if (!(i % 2) || who === "me") return msg.appendChild(document.createTextNode(part));
+      var named = /^(\S+) \((https:\/\/[^\s)]+)\)$/.exec(part);
+      if (named || /^https:/.test(part)) {
+        var url = named ? named[2] : part;
+        var u = el("a", "ljc-url", named ? named[1] : urlLabel(url));
+        u.href = url;
+        if (isBookingUrl(url) && options.openBooking) u.onclick = function (e) { e.preventDefault(); options.openBooking(url); };
+        else { u.target = "_blank"; u.rel = "noopener"; }
+        return msg.appendChild(u);
+      }
+      var mail = part.indexOf("@") > 0;
+      var a = el("a", mail ? "ljc-url" : "ljc-tel", part);
+      a.href = mail ? "mailto:" + part : "tel:+1" + part.replace(/-/g, "");
+      msg.appendChild(a);
     });
     log.appendChild(msg);
     scrollDown();

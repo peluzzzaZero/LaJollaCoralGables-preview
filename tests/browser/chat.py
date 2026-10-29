@@ -18,7 +18,7 @@ def assistant(mode):
   if mode=='error':await route.fulfill(status=500,headers=CORS,body='');return
   if mode=='verify' and 'turnstile' not in json.loads(route.request.post_data):
    await route.fulfill(status=403,headers=CORS,content_type='application/json',body=json.dumps({'error':'verification_required','siteKey':'test-site-key'}));return
-  reply={'text':'Welcome. Call 786-290-8813.','quickReplies':[{'label':'Schedule a tour','value':'schedule a tour'}],'link':{'label':'Unsafe','url':'javascript:alert(1)'}}
+  reply={'text':'Welcome. Call 786-290-8813 or write to info@lajollacoralgables.com. Follow us on Instagram (https://www.instagram.com/lajollacoralgables/) and see our reviews: https://www.google.com/maps/search/?api=1&query=La%20Jolla%20Coral%20Gables.','quickReplies':[{'label':'Schedule a tour','value':'schedule a tour'}],'link':{'label':'Unsafe','url':'javascript:alert(1)'}}
   await route.fulfill(status=200,headers=CORS,content_type='application/json',body=json.dumps({'replies':[reply]}))
  return handler
 async def page_for(browser,base,mode,language,width):
@@ -45,6 +45,11 @@ async def main(base,output):
     assert await page.locator('.ljc-log a[href^="javascript:"]').count()==0
     assert await page.locator('.ljc-link-text').inner_text()=='Unsafe'
     assert await page.locator('.ljc-tel').get_attribute('href')=='tel:+17862908813'
+    # v1.35.0: addresses in the text are short, clickable names; never a raw https:// address.
+    assert 'https://' not in await page.locator('.ljc-bot').first.inner_text()
+    links=await page.locator('.ljc-bot a.ljc-url').evaluate_all('els=>els.map(e=>[e.textContent,e.getAttribute("href"),e.target])')
+    reviews='Read our Google reviews' if language=='en' else 'Leer reseñas en Google'
+    assert links==[['info@lajollacoralgables.com','mailto:info@lajollacoralgables.com',''],['Instagram','https://www.instagram.com/lajollacoralgables/','_blank'],[reviews,'https://www.google.com/maps/search/?api=1&query=La%20Jolla%20Coral%20Gables','_blank']],links
     # Phones: no keyboard over the welcome; the sheet fills the screen.
     focused=await page.evaluate('document.activeElement.className')
     assert focused==('ljc-in' if width>=600 else 'ljc-panel'),(width,focused)
@@ -73,12 +78,12 @@ async def main(base,output):
    await page.locator('.ljc-bot').first.wait_for(timeout=5000)
    assert await page.locator('.ljc-human > *').count()==0
    if passes:
-    assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
+    assert (await page.locator('.ljc-bot').first.inner_text()).startswith('Welcome. Call 786-290-8813 or write to info@')
     assert [m.get('turnstile') for m in sent]==[None,'test-token'],sent
    else:
     # A check that cannot run (Cloudflare client error) is not an error for the visitor: the message goes again as
     # "unavailable" and the assistant answers from its fixed rules only. Later messages skip the failed check.
-    assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
+    assert (await page.locator('.ljc-bot').first.inner_text()).startswith('Welcome. Call 786-290-8813 or write to info@')
     assert [m.get('turnstile') for m in sent]==[None,'unavailable'],sent
     await page.locator('.ljc-in').fill('Is there parking?');await page.locator('.ljc-in').press('Enter')
     await page.locator('.ljc-bot').nth(1).wait_for(timeout=5000)
@@ -93,7 +98,7 @@ async def main(base,output):
   await page.route('https://challenges.cloudflare.com/**',lambda route:route.abort())
   await page.evaluate('window.LaJollaChat.open()')
   await page.locator('.ljc-bot').first.wait_for(timeout=5000)
-  assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
+  assert (await page.locator('.ljc-bot').first.inner_text()).startswith('Welcome. Call 786-290-8813 or write to info@')
   assert [m.get('turnstile') for m in sent]==[None,'unavailable'],sent
   assert not [e for e in errors if 'challenges.cloudflare.com' not in e],errors
   rows.append({'person_check':'script_blocked','answered_without_check':True});await page.close()
