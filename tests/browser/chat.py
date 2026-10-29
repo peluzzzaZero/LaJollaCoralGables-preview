@@ -87,6 +87,16 @@ async def main(base,output):
     assert await page.locator('.ljc-bot').filter(has_text='algo falló').count()==0
    assert not errors,errors
    rows.append({'person_check':'passed' if passes else 'failed','answered_without_check':not passes});await page.close()
+  # A Turnstile script that the browser blocks (an ad blocker, a firewall) is answered at once without the check.
+  page,errors=await page_for(browser,base,'verify','en',1440)
+  sent=[];page.on('request',lambda r:sent.append(json.loads(r.post_data)) if r.method=='POST' and r.url.startswith(ASSISTANT) else None)
+  await page.route('https://challenges.cloudflare.com/**',lambda route:route.abort())
+  await page.evaluate('window.LaJollaChat.open()')
+  await page.locator('.ljc-bot').first.wait_for(timeout=5000)
+  assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
+  assert [m.get('turnstile') for m in sent]==[None,'unavailable'],sent
+  assert not [e for e in errors if 'challenges.cloudflare.com' not in e],errors
+  rows.append({'person_check':'script_blocked','answered_without_check':True});await page.close()
   # A check that never answers (or a script that never loads) ends after 20 s with the calendar.
   for stall in ('silent','no-script'):
    page,errors=await page_for(browser,base,'verify','en',1440)
