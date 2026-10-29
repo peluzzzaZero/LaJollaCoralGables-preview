@@ -273,3 +273,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 
 - Owners' guide 3A: opened from The Lexington the chat asks "Planning something intimate upstairs?", from the occasions "What are we celebrating?". On phones the floating seal shrinks into its corner while scrolling down and returns on scroll up or pause. Addresses in the chat show as short, clickable names instead of raw links. See `tests/releases/v1.35.0.md`.
 
+## v1.36.0 — the privacy and terms pages describe the chat's providers in general terms
+
+- Privacy names no AI, hosting, security-check or email provider for the chat; terms gain a short chat disclaimer (replies may be wrong; not an offer, quote or contract). See `tests/releases/v1.36.0.md`.
+
