@@ -5,11 +5,19 @@ from playwright.async_api import async_playwright
 from review import ASSISTANT, mock_booking, run
 
 CORS={'access-control-allow-origin':'*','access-control-allow-headers':'content-type','access-control-allow-methods':'POST, OPTIONS'}
+# Stands in for Cloudflare Turnstile. pass/fail: answers after 300 ms; silent: never answers;
+# tap: asks for a tap at once and waits. Every render is kept in window.tsCalls.
+def turnstile(mode):
+ act={'pass':"setTimeout(function(){o.callback('test-token')},300)",'fail':"setTimeout(function(){o['error-callback']()},300)",'silent':'','tap':"o['before-interactive-callback']()"}[mode]
+ body="window.tsCalls=[];window.turnstile={render:function(el,o){window.tsOptions=o;window.tsCalls.push(o);var b=document.createElement('div');b.className='test-turnstile';b.style.cssText='width:'+(o.size==='compact'?150:300)+'px;height:65px';el.appendChild(b);%s;return 'w'+window.tsCalls.length},remove:function(){}};"%act
+ return lambda route:route.fulfill(content_type='application/javascript',body=body)
 def assistant(mode):
  async def handler(route):
   if route.request.method=='OPTIONS':await route.fulfill(status=204,headers=CORS);return
   if mode=='hang':return  # never answers
   if mode=='error':await route.fulfill(status=500,headers=CORS,body='');return
+  if mode=='verify' and 'turnstile' not in json.loads(route.request.post_data):
+   await route.fulfill(status=403,headers=CORS,content_type='application/json',body=json.dumps({'error':'verification_required','siteKey':'test-site-key'}));return
   reply={'text':'Welcome. Call 786-290-8813.','quickReplies':[{'label':'Schedule a tour','value':'schedule a tour'}],'link':{'label':'Unsafe','url':'javascript:alert(1)'}}
   await route.fulfill(status=200,headers=CORS,content_type='application/json',body=json.dumps({'replies':[reply]}))
  return handler
@@ -52,6 +60,63 @@ async def main(base,output):
   assert await page.locator('.ljc-me').count()==0
   assert not errors,errors
   rows.append({'expired_chat_removed':True});await page.close()
+  # When the assistant asks for the person check, the chat runs Turnstile once and sends the message again with its token.
+  for passes in (True,False):
+   page,errors=await page_for(browser,base,'verify','es',1440)
+   sent=[];page.on('request',lambda r:sent.append(json.loads(r.post_data)) if r.method=='POST' and r.url.startswith(ASSISTANT) else None)
+   await page.route('https://challenges.cloudflare.com/**',turnstile('pass' if passes else 'fail'))
+   await page.evaluate('window.LaJollaChat.open()')
+   await page.locator('.test-turnstile').wait_for(state='attached')
+   assert await page.evaluate('[tsOptions.sitekey,tsOptions.appearance,tsOptions.language,tsOptions.size].join()')=='test-site-key,interaction-only,es,normal'
+   # An invisible check takes no room in the chat.
+   assert await page.evaluate('document.querySelector(".ljc-human").getBoundingClientRect().height')==0
+   await page.locator('.ljc-bot').first.wait_for(timeout=5000)
+   assert await page.locator('.ljc-human > *').count()==0
+   if passes:
+    assert await page.locator('.ljc-bot').first.inner_text()=='Welcome. Call 786-290-8813.'
+    assert [m.get('turnstile') for m in sent]==[None,'test-token'],sent
+   else:
+    assert 'algo falló' in await page.locator('.ljc-bot').first.inner_text()
+    assert await page.locator('.ljc-log a.ljc-link[href^="https://bookings.cloud.microsoft/"]').count()==1
+   assert not errors,errors
+   rows.append({'person_check':'passed' if passes else 'failed','fallback':not passes});await page.close()
+  # A check that never answers (or a script that never loads) ends after 20 s with the calendar.
+  for stall in ('silent','no-script'):
+   page,errors=await page_for(browser,base,'verify','en',1440)
+   if stall=='silent':await page.route('https://challenges.cloudflare.com/**',turnstile('silent'))
+   else:await page.route('https://challenges.cloudflare.com/**',lambda route:None)
+   await page.clock.install()
+   await page.evaluate('window.LaJollaChat.open()')
+   await page.locator('.ljc-typing').wait_for()
+   await page.clock.run_for(19000);assert await page.locator('.ljc-bot').count()==0
+   await page.clock.run_for(2000)
+   await page.locator('.ljc-bot').filter(has_text='something went wrong').wait_for(timeout=5000)
+   assert await page.locator('.ljc-log a.ljc-link[href^="https://bookings.cloud.microsoft/"]').count()==1
+   assert await page.locator('.ljc-human > *').count()==0 and await page.locator('.ljc-typing').count()==0
+   assert not errors,errors
+   rows.append({'person_check_stalled':stall,'fallback':True});await page.close()
+  # A check that needs a tap is shown, fits a phone, and has no time limit while it waits; "Start over" replaces it cleanly.
+  page,errors=await page_for(browser,base,'verify','en',390)
+  await page.route('https://challenges.cloudflare.com/**',turnstile('tap'))
+  await page.clock.install()
+  await page.evaluate('window.LaJollaChat.open()')
+  await page.locator('.test-turnstile').wait_for()
+  assert await page.evaluate('tsOptions.size')=='compact'
+  box=await page.evaluate('(()=>{var h=document.querySelector(".ljc-human");return [h.getBoundingClientRect().height>0,h.scrollWidth<=h.clientWidth]})()')
+  assert box==[True,True],box
+  await page.clock.run_for(25000);assert await page.locator('.ljc-bot').count()==0
+  await page.wait_for_timeout(400);await page.screenshot(path=str(output/'chat-390-person-check.png'))
+  await page.locator('.ljc-restart').click()
+  await page.locator('.test-turnstile').wait_for()
+  assert await page.evaluate('tsCalls.length')==2
+  # The first check answering late changes nothing in the new conversation.
+  await page.evaluate("tsCalls[0].callback('old-token')")
+  assert await page.locator('.ljc-human .test-turnstile').count()==1
+  await page.evaluate("tsCalls[1].callback('new-token')")
+  await page.locator('.ljc-bot').first.wait_for(timeout=5000)
+  assert await page.locator('.ljc-bot').count()==1 and await page.locator('.ljc-human > *').count()==0
+  assert not errors,errors
+  rows.append({'person_check':'tap','width':390,'start_over':True});await page.close()
   # A failed request offers the calendar; a request that never ends stops after 20 s with the same help.
   for mode in ('error','hang'):
    page,errors=await page_for(browser,base,mode,'en',1440)
@@ -72,5 +137,5 @@ async def main(base,output):
    assert not errors,errors
    rows.append({'mode':mode,'fallback':True});await page.close()
   await browser.close()
- (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Chat: {len(rows)} AI-notice, link, expiry, error and timeout cases passed with the assistant stubbed.')
+ (output/'results.json').write_text(json.dumps(rows,indent=2));print(f'Chat: {len(rows)} AI-notice, link, expiry, person-check, error and timeout cases passed with the assistant stubbed.')
 if __name__=='__main__':run(lambda base,out,args:main(base,out))
