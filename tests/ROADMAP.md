@@ -280,3 +280,7 @@ Ten occasions, ten photographs from the owner's media; a sticky frame that follo
 ## v1.36.1 — the first message in the chat is never lost
 
 - A tap or message sent while the chat's welcome was still loading was ignored; now it is sent right after. See `tests/releases/v1.36.1.md`.
+
+## v1.36.2 — the seal no longer covers "Good to know" on phones
+
+- The floating "Schedule a visit" seal covered the end of a line in the tour's "Good to know" notes on phones (weekly checks of 26 Oct, 2 and 9 Nov). It now slips aside there, as it already did over the map. See `tests/releases/v1.36.2.md`.
