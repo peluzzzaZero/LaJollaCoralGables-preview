@@ -124,3 +124,9 @@ test("the legal pages do not name the chat's technology providers", () => {
   assert.match(terms, /<h2>Chat assistant<\/h2>\s*<p>[^<]*may be incomplete or wrong[^<]*not reserve a date for an event/);
   assert.match(terms, /<h2>Asistente de chat<\/h2>\s*<p>[^<]*pueden ser incompletas o incorrectas[^<]*no reserva una fecha para un evento/);
 });
+
+test("on phones the seal slips aside over the tour's Good to know notes, as over the map", () => {
+  const script = readFileSync(new URL("../script.js", import.meta.url), "utf8");
+  assert.match(script, /const avoid = \[map\?\.closest\("\.location-place"\) \|\| map, \.\.\.document\.querySelectorAll\("\.tour-paper > h3, \.tour-paper > ul"\)\]\.filter\(Boolean\);/);
+  assert.match(script, /for \(const el of avoid\)/);
+});
