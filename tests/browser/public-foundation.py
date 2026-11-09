@@ -99,6 +99,13 @@ async def main(base, output):
                                   const x=Math.min(c.right,m.right,innerWidth)-Math.max(c.left,m.left,0),y=Math.min(c.bottom,m.bottom,innerHeight)-Math.max(c.top,m.top,0);return x>1&&y>1}''')
                                 assert not overlap,(width,language,'seal over the map',label,k)
                         await cross('scroll')
+                        # v1.36.2: the seal never covers a line of the tour's "Good to know" notes (on phones it slips aside like over the map).
+                        notes_y,notes_h=await page.evaluate('(()=>{const a=document.querySelector(".tour-paper > h3").getBoundingClientRect(),b=document.querySelector(".tour-paper > ul").getBoundingClientRect();return [a.top+scrollY,b.bottom-a.top]})()')
+                        for k in range(0,int((vh0+notes_h)/(vh0*.1))+2):
+                            await page.evaluate(f'scrollTo(0,{notes_y-vh0+vh0*.1*k})');await page.wait_for_timeout(450)
+                            covered=await page.evaluate('''()=>{const c=document.getElementById("visit-cta").getBoundingClientRect();
+                              return [...document.querySelectorAll(".tour-paper > h3, .tour-paper li")].some(m=>{const x=Math.min(c.right,m.right,innerWidth)-Math.max(c.left,m.left,0),y=Math.min(c.bottom,m.bottom,innerHeight)-Math.max(c.top,m.top,0);return x>1&&y>1})}''')
+                            assert not covered,(width,language,'seal over Good to know',k)
                         # Focus that was not from the keyboard (a tap, or focus returned by the booking dialog) must not park it on the map.
                         await page.mouse.click(5,height//2)
                         await page.evaluate('document.getElementById("visit-cta").focus({preventScroll:true})')

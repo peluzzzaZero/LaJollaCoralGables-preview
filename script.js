@@ -1497,9 +1497,10 @@
     const slot = (name) => document.querySelector('[data-cta-slot="' + name + '"]');
     const start = slot("start"), float = slot("float"), end = slot("end");
     // The seal slips off the right edge while the map (and its "Open in Google Maps" link) is under it,
-    // so Google's controls, the pin and the link stay clear.
+    // so Google's controls, the pin and the link stay clear. On phones it does the same over the "Good to know"
+    // notes of the tour, so their lines are never covered (their calendar link offers the same visit meanwhile).
     const map = document.querySelector("[data-location-map]");
-    const avoid = map?.closest(".location-place") || map;
+    const avoid = [map?.closest(".location-place") || map, ...document.querySelectorAll(".tour-paper > h3, .tour-paper > ul")].filter(Boolean);
     if (!cta || !start || !float || !end) return;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const clamp = (v) => Math.min(1, Math.max(0, v));
@@ -1508,20 +1509,24 @@
     const radius = parseFloat(getComputedStyle(start).borderTopLeftRadius) || 0;
     let frame = 0, settle = 0, state = "", formed = false;
     function aside(f) {
-      const m = avoid?.getBoundingClientRect();
       const box = { left: f.left, top: f.top, width: f.width, height: f.height, tucked: 0 };
-      if (!m || f.right <= m.left || f.left >= m.right) return box;
-      const right = innerWidth - m.right;
-      // Wide screens: wait in the margin beside the map.
-      if (right >= f.width + 12) {
-        const t = clamp(Math.min(f.bottom + f.height - m.top, m.bottom + f.height - f.top) / f.height);
-        box.left = mix(f.left, m.right + (right - f.width) / 2, reduced.matches ? Math.ceil(t) : ease(t));
-        return box;
-      }
-      // Otherwise slide out to the right as the map arrives and back once it has gone; keyboard focus keeps it in view.
-      // Fully out before the map reaches the seal, and back only once it has fully passed (with room for a fast fling).
+      // Fully out before an avoided block reaches the seal, and back only once it has fully passed (with room for a fast fling).
       const d = Math.max(f.height * 1.6, window.innerHeight * .2);
-      let t = clamp(Math.min(f.bottom + d - m.top, m.bottom + d - f.top) / d);
+      let t = 0;
+      for (const el of avoid) {
+        const m = el.getBoundingClientRect();
+        if (f.right <= m.left || f.left >= m.right) continue;
+        const right = innerWidth - m.right;
+        // Wide screens: wait in the margin beside the map.
+        if (right >= f.width + 12) {
+          const w = clamp(Math.min(f.bottom + f.height - m.top, m.bottom + f.height - f.top) / f.height);
+          box.left = mix(f.left, m.right + (right - f.width) / 2, reduced.matches ? Math.ceil(w) : ease(w));
+          return box;
+        }
+        // Otherwise slide out to the right as the block arrives and back once it has gone; keyboard focus keeps it in view.
+        t = Math.max(t, clamp(Math.min(f.bottom + d - m.top, m.bottom + d - f.top) / d));
+      }
+      if (!t) return box;
       // Only keyboard focus brings it back: a tap (or focus returned after the booking dialog) must not park it on the map.
       if (cta.matches(":focus-visible")) t = 0;
       t = reduced.matches ? Math.ceil(t) : ease(t);
