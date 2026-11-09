@@ -1520,6 +1520,8 @@
         // Wide screens: wait in the margin beside the map.
         if (right >= f.width + 12) {
           const w = clamp(Math.min(f.bottom + f.height - m.top, m.bottom + f.height - f.top) / f.height);
+          // Only a block that is actually near the seal decides; one far above or below lets the others be checked.
+          if (!w) continue;
           box.left = mix(f.left, m.right + (right - f.width) / 2, reduced.matches ? Math.ceil(w) : ease(w));
           return box;
         }
